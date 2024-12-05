@@ -4,14 +4,8 @@
 
 ## Docker Compose
 
-To start all containers:
+### Development
 
 ````bash
-docker-compose -p chives-box up -d
+docker-compose -p chives-box -f docker/docker-compose.dev.yml up  -d
 ```` 
-
-Only start the datasource container:
-
-```bash
-docker-compose -p chaives-box up -d datasource
-```
