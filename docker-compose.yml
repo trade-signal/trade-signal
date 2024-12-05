@@ -1,0 +1,13 @@
+version: '3.7'
+
+services:
+  datasource:
+    container_name: aktools
+    # image: registry.cn-shanghai.aliyuncs.com/akfamily/aktools:1.15.31
+    image: jei888/aktools:latest
+    restart: always
+    environment:
+      TZ: Asia/Shanghai
+    ports:
+      # - 8080:8080
+      - 8080:80
