@@ -18,7 +18,7 @@ model Stock {
   type     String // a,sh,sz
   code     String    @unique
   name     String?
-  fullname String?
+  fullName String?
   date     DateTime?
   symbol   String?
 

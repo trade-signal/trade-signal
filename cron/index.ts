@@ -1,10 +1,23 @@
 import "dotenv/config";
-import prisma from "../prisma/db";
 
-console.log("Cron job running...");
+import { checkStock, seedStocks } from "./stock/names";
+
+const initData = async () => {
+  const hasStock = await checkStock();
+
+  if (hasStock) {
+    console.log("Stock available! No need to seed.");
+    return;
+  }
+
+  await seedStocks();
+};
 
 async function main() {
-  // Your cron job code here
+  console.log("Starting cron job...");
+
+  await initData();
+
   console.log("Cron job completed.");
 }
 
