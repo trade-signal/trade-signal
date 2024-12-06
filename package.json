@@ -2,15 +2,22 @@
   "name": "chives-box",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
+    "dev": "npm run cron:dev && npm run frontend:dev",
+    "frontend:dev": "next dev --turbopack",
+    "cron:dev": "tsx cron/index.ts",
+    "build": "npm run cron:build && npm run frontend:build",
+    "frontend:build": "next build",
+    "cron:build": "tsx cron/index.ts --outDir .cron",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
     "@mantine/core": "^7.14.3",
     "@mantine/hooks": "^7.14.3",
+    "@prisma/client": "^6.0.1",
+    "dotenv": "^16.4.7",
     "next": "15.0.3",
     "react": "^18",
     "react-dom": "^18"
@@ -23,6 +30,7 @@
     "postcss-preset-mantine": "^1.17.0",
     "postcss-simple-vars": "^7.0.1",
     "prisma": "^6.0.1",
+    "tsx": "^4.19.2",
     "typescript": "^5"
   }
 }
