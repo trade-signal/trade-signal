@@ -11,7 +11,7 @@ import styles from "./page.module.css";
 const features = [
   {
     title: "精准的技术指标计算",
-    description: "MACD、RSI、KDJ 等核心指标实时分析"
+    description: "MACD、KDJ、BOLL 等核心指标实时分析"
   },
   {
     title: "智能形态识别",
@@ -64,8 +64,8 @@ export default function Home() {
         </h1>
 
         <Text className={styles.description} color="dimmed">
-          提供全面的实时市场数据和专业的分析功能，帮助用户做出更加明智的投资决策。
-          通过先进的技术，打造您的智能投资助手，让投资决策更简单、更科学、更高效。
+          融合实时市场数据与专业分析工具，助您精准把握市场脉搏，洞察投资机遇。
+          依托人工智能技术，为您打造智能投资助手，让每一个决策都建立在数据和科学的基础之上。
         </Text>
 
         <SimpleGrid

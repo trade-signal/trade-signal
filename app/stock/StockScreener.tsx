@@ -14,7 +14,7 @@ const StockScreener = () => {
   return (
     <SimpleGrid cols={5} mb={10} mt={10}>
       <Select
-        size="sm"
+        size="xs"
         value={filters.industry}
         onChange={industry => handleFilterChange({ industry })}
         checkIconPosition="right"
