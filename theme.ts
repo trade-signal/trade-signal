@@ -1,5 +1,14 @@
 "use client";
 
-import { createTheme } from "@mantine/core";
+import { createTheme, virtualColor } from "@mantine/core";
 
-export const theme = createTheme();
+export const theme = createTheme({
+  primaryColor: "custom",
+  colors: {
+    custom: virtualColor({
+      name: "custom",
+      dark: "cyan",
+      light: "red"
+    })
+  }
+});

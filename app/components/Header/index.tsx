@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Burger, Container, Group, Image } from "@mantine/core";
+import { Burger, Container, Group, Image, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -11,6 +11,7 @@ import styles from "./index.module.css";
 const links = [
   { link: "/explore", label: "探索" },
   { link: "/stock", label: "股票" },
+  { link: "/strategy", label: "策略" },
   { link: "/settings", label: "设置" }
 ];
 
@@ -33,13 +34,19 @@ const Header = () => {
   return (
     <header className={styles.header}>
       <Container className={styles.inner}>
-        <Image
-          style={{ width: 28, height: 28 }}
-          className={styles.logo}
-          src="/icon.svg"
-          alt="Chives Box logo"
-          onClick={() => router.push("/")}
-        />
+        <Group>
+          <Image
+            style={{ width: 28, height: 28, cursor: "pointer" }}
+            className={styles.logo}
+            src="/icon.svg"
+            alt="Chives Box logo"
+            onClick={() => router.push("/")}
+          />
+          <Text fw={700} fz="lg">
+            韭菜盒子
+          </Text>
+        </Group>
+
         <Group gap={5} visibleFrom="xs">
           {items}
         </Group>

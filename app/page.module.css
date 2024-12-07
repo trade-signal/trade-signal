@@ -1,6 +1,6 @@
 .wrapper {
   position: relative;
-  padding-top: 140px;
+  padding-top: 80px;
   padding-bottom: 80px;
 }
 
@@ -9,18 +9,7 @@
   z-index: 1;
 }
 
-.dots {
-  position: absolute;
-  color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5));
-}
-
-.dotsLeft {
-  left: 0;
-  top: 0;
-}
-
 .title {
-  text-align: center;
   font-weight: 800;
   font-size: 40px;
   letter-spacing: -1px;
@@ -29,15 +18,18 @@
   font-family: Greycliff CF, var(--mantine-font-family);
 }
 
-.highlight {
-  color: light-dark(var(--mantine-color-blue-6), var(--mantine-color-blue-4));
+.item {
+  display: flex;
+}
+
+.itemTitle {
+  margin-bottom: calc(var(--mantine-spacing-xs) / 2);
 }
 
 .description {
-  text-align: center;
+  margin-top: var(--mantine-spacing-xs);
 }
 
-.controls {
-  display: flex;
-  justify-content: center;
+.highlight {
+  color: light-dark(var(--mantine-color-blue-6), var(--mantine-color-blue-4));
 }

@@ -1,7 +1,12 @@
-import { Button, Container, Group, Text, Title } from '@mantine/core';
-import styles from './not-found.module.css';
+"use client";
+
+import { Button, Container, Group, Text, Title } from "@mantine/core";
+import styles from "./not-found.module.css";
+import { useRouter } from "next/navigation";
 
 const NotFound = () => {
+  const router = useRouter();
+
   return (
     <Container className={styles.root}>
       <div className={styles.label}>404</div>
@@ -10,7 +15,7 @@ const NotFound = () => {
         很抱歉,这只是一个404页面。你可能输入了错误的地址,或者该页面已经被移动到其他URL。
       </Text>
       <Group justify="center">
-        <Button variant="subtle" size="md">
+        <Button variant="subtle" size="md" onClick={() => router.push("/")}>
           返回首页
         </Button>
       </Group>

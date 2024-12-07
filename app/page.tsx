@@ -1,10 +1,55 @@
-import { Button, Container, Group, Stack, Text } from "@mantine/core";
+import {
+  Button,
+  Container,
+  Group,
+  SimpleGrid,
+  Stack,
+  Text
+} from "@mantine/core";
 import styles from "./page.module.css";
 
+const features = [
+  {
+    title: "精准的技术指标计算",
+    description: "MACD、RSI、KDJ等核心指标实时分析"
+  },
+  {
+    title: "智能形态识别",
+    description: "头肩顶、双底等典型形态自动检测"
+  },
+  {
+    title: "多维度选股策略",
+    description: "基于技术面、基本面的综合筛选系统"
+  },
+  {
+    title: "个性化策略构建",
+    description: "灵活定制您的专属选股条件"
+  },
+  {
+    title: "历史数据回测",
+    description: "验证策略有效性，优化投资决策"
+  },
+  {
+    title: "智能交易执行",
+    description: "设置条件单，自动执行交易指令"
+  }
+];
+
 export default function Home() {
+  const items = features.map((item, index) => (
+    <div className={styles.item} key={index}>
+      <div>
+        <Text fw={700} fz="lg" className={styles.itemTitle}>
+          {item.title}
+        </Text>
+        <Text c="dimmed">{item.description}</Text>
+      </div>
+    </div>
+  ));
+
   return (
     <div className={styles.wrapper}>
-      <Container size={750} className={styles.inner}>
+      <Container size={800} className={styles.inner}>
         <h1 className={styles.title}>
           一个强大的{" "}
           <Text
@@ -23,16 +68,14 @@ export default function Home() {
           通过先进的技术，打造您的智能投资助手，让投资决策更简单、更科学、更高效。
         </Text>
 
-        <Group mt="md" className={styles.controls}>
-          <Button
-            size="md"
-            className={styles.control}
-            variant="gradient"
-            bg="red"
-          >
-            开始探索
-          </Button>
-        </Group>
+        <SimpleGrid
+          cols={{ base: 1, xs: 2 }}
+          spacing={40}
+          verticalSpacing={20}
+          mt={50}
+        >
+          {items}
+        </SimpleGrid>
       </Container>
     </div>
   );

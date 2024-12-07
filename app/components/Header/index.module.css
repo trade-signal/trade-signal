@@ -2,9 +2,9 @@
   width: 100%;
   height: 56px;
   background-color: var(--mantine-color-body);
-  border-bottom: 1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+  border-bottom: 1px solid
+    light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
   padding: 0 40px;
-  color: #fff;
   font-size: 24px;
   font-weight: bold;
   box-sizing: border-box;
@@ -29,7 +29,10 @@
   font-weight: 500;
 
   @mixin hover {
-    background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+    background-color: light-dark(
+      var(--mantine-color-gray-0),
+      var(--mantine-color-dark-6)
+    );
   }
 
   [data-mantine-color-scheme] &[data-active] {
