@@ -34,13 +34,12 @@ const Header = () => {
   return (
     <header className={styles.header}>
       <Container className={styles.inner}>
-        <Group>
+        <Group style={{ cursor: "pointer" }} onClick={() => router.push("/")}>
           <Image
-            style={{ width: 28, height: 28, cursor: "pointer" }}
+            style={{ width: 28, height: 28 }}
             className={styles.logo}
             src="/icon.svg"
             alt="Chives Box logo"
-            onClick={() => router.push("/")}
           />
           <Text fw={700} fz="lg">
             韭菜盒子
