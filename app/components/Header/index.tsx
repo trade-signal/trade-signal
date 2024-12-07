@@ -11,7 +11,7 @@ import styles from "./index.module.css";
 const links = [
   { link: "/explore", label: "探索" },
   { link: "/stock", label: "股票" },
-  { link: "/strategy", label: "策略" },
+  { link: "/news", label: "新闻" },
   { link: "/settings", label: "设置" }
 ];
 
@@ -42,7 +42,7 @@ const Header = () => {
             alt="Chives Box logo"
           />
           <Text fw={700} fz="lg">
-            韭菜盒子
+            Chives Box
           </Text>
         </Group>
 
