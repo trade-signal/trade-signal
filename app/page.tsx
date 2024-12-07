@@ -1,19 +1,15 @@
-import styles from "./page.module.css";
-
 import { Image, Title } from "@mantine/core";
+import Header from "@/app/components/Header";
+
+import styles from "./page.module.css";
 
 export default function Home() {
   return (
     <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          w={160}
-          className={styles.logo}
-          src="/icon.svg"
-          alt="Chives Box logo"
-        />
-        <Title>Chives Box</Title>
-      </main>
+      <header className={styles.header}>
+        <Header />
+      </header>
+      <main className={styles.main}></main>
     </div>
   );
 }
