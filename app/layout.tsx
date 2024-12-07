@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 
 import { theme } from "../theme";
+import Header from "./components/Header";
 
 export const metadata: Metadata = {
   title: "韭菜盒子",
@@ -26,7 +27,10 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <MantineProvider theme={theme}>{children}</MantineProvider>
+        <MantineProvider theme={theme}>
+          <Header />
+          <main>{children}</main>
+        </MantineProvider>
       </body>
     </html>
   );

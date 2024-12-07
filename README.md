@@ -32,14 +32,6 @@ docker-compose -p chives-box -f docker/docker-compose.dev.yml up  -d
 npm install && npm run dev
 ```` 
 
-or
-
-直接运行
-
-````bash
-npm run dev
-```` 
-
 ## 生产环境
 
 TODO

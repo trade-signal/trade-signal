@@ -14,13 +14,24 @@ datasource db {
 }
 
 model Stock {
-  id       Int       @id @default(autoincrement())
-  type     String // a,sh,sz
-  code     String    @unique
-  name     String?
-  fullname String?
-  date     DateTime?
-  symbol   String?
+  id         Int          @id @default(autoincrement())
+  type       String // a,sh,sz
+  code       String       @unique
+  name       String?
+  fullName   String?
+  date       DateTime?
+  symbol     String?
+  StockRange StockRange[]
 
   @@map("chives_stocks")
+}
+
+model StockRange {
+  id      Int      @id @default(autoincrement())
+  stockId Int
+  stock   Stock    @relation(fields: [stockId], references: [id])
+  start   DateTime
+  end     DateTime
+  open    Float
+  close   Float
 }

@@ -17,6 +17,9 @@
 /.next/
 /out/
 
+# cron jobs
+/.cron
+
 # production
 /build
 
