@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Burger, Container, Group, Image, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import Link from "next/link";
@@ -39,10 +38,10 @@ const Header = () => {
             style={{ width: 28, height: 28 }}
             className={styles.logo}
             src="/icon.svg"
-            alt="Chives Box logo"
+            alt="TradeSignal logo"
           />
           <Text fw={700} fz="lg">
-            Chives Box
+            TradeSignal
           </Text>
         </Group>
 

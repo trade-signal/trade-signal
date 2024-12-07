@@ -1,11 +1,4 @@
-import {
-  Button,
-  Container,
-  Group,
-  SimpleGrid,
-  Stack,
-  Text
-} from "@mantine/core";
+import { Container, SimpleGrid, Text } from "@mantine/core";
 import styles from "./page.module.css";
 
 const features = [
@@ -51,21 +44,21 @@ export default function Home() {
     <div className={styles.wrapper}>
       <Container size={800} className={styles.inner}>
         <h1 className={styles.title}>
-          一个强大的{" "}
+          让投资更{" "}
           <Text
             component="span"
             variant="gradient"
             gradient={{ from: "green", to: "red", deg: 45 }}
             inherit
           >
-            智能投资
+            智慧高效
           </Text>{" "}
-          分析工具
+          的分析平台
         </h1>
 
         <Text className={styles.description} color="dimmed">
-          融合实时市场数据与专业分析工具，助您精准把握市场脉搏，洞察投资机遇。
-          依托人工智能技术，为您打造智能投资助手，让每一个决策都建立在数据和科学的基础之上。
+          提供实时市场数据和分析功能，助您捕捉市场脉动，做出精准投资决策。
+          运用前沿人工智能，打造您的智慧投资伙伴，让每一次交易决策都有据可依，稳健前行。
         </Text>
 
         <SimpleGrid

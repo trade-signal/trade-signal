@@ -1,10 +1,10 @@
 <div align="center">
 
-# Chives Box (韭菜盒子)
+# TradeSignal (交易信标)
 
-**韭菜盒子** - 提供实时市场数据和分析功能，帮助用户做出更好的投资决策。
+**交易信标** - 提供实时市场数据和分析功能，助您捕捉市场脉动，做出精准投资决策。
 
-**Chives Box** - Provides real-time market data and analysis features to help users make better investment decisions.
+**TradeSignal** - Provides real-time market data and analysis features, helping you capture market dynamics and make precise investment decisions.
 
 富贵险中求，也在险中丢；求时十之一，丢时十之九。
 
