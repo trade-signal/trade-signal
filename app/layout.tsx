@@ -7,8 +7,9 @@ import { theme } from "../theme";
 import Header from "./components/Header";
 
 export const metadata: Metadata = {
-  title: "韭菜盒子",
-  description: "提供实时市场数据和分析功能，帮助用户做出更好的投资决策。"
+  title: "交易信标",
+  description:
+    "提供实时市场数据和分析功能，助您捕捉市场脉动，做出精准投资决策。"
 };
 
 export default function RootLayout({
