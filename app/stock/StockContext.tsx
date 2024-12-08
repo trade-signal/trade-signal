@@ -2,13 +2,22 @@
 
 import { createContext, useContext, useState, ReactNode } from "react";
 
-interface StockFilters {
-  startDate?: string;
-  endDate?: string;
-  industry?: string;
+export interface StockFilters {
+  // 行业
+  industry?: string | null;
+  // 价格
+  price?: number | null;
+  // 总市值
+  totalMarketValue?: number | null;
+  // 流通市值
+  floatMarketValue?: number | null;
+  // 市盈率
+  peRatio?: number | null;
+  // 市净率
+  pbRatio?: number | null;
 }
 
-interface StockContextType {
+export interface StockContextType {
   filters: StockFilters;
   setFilters: (filters: StockFilters) => void;
 }

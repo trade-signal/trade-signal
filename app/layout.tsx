@@ -7,7 +7,7 @@ import { theme } from "../theme";
 import Header from "./components/Header";
 
 export const metadata: Metadata = {
-  title: "交易信标",
+  title: "TradeSignal",
   description:
     "提供实时市场数据和分析功能，助您捕捉市场脉动，做出精准投资决策。"
 };

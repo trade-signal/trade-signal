@@ -14,24 +14,116 @@ datasource db {
 }
 
 model Stock {
-  id         Int          @id @default(autoincrement())
-  type       String // a,sh,sz
-  code       String       @unique
-  name       String?
-  fullName   String?
-  date       DateTime?
-  symbol     String?
-  StockRange StockRange[]
+  id Int @id @default(autoincrement())
 
-  @@map("chives_stocks")
+  // a - 上证、sh - 深证、sz - 北证
+  type     String
+  // 股票代码
+  code     String    @unique
+  // 股票名称
+  name     String?
+  // 股票全称
+  fullName String?
+  // 上市日期
+  date     DateTime?
+  // 所属板块
+  symbol   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  stockInfo     StockInfo[]
+  stockRealTime StockRealTime[]
+
+  @@map("trade_signal_stocks")
 }
 
-model StockRange {
-  id      Int      @id @default(autoincrement())
+model StockInfo {
+  id Int @id @default(autoincrement())
+
   stockId Int
-  stock   Stock    @relation(fields: [stockId], references: [id])
-  start   DateTime
-  end     DateTime
-  open    Float
-  close   Float
+  stock   Stock @relation(fields: [stockId], references: [id])
+
+  // 股票代码
+  code String @unique
+  // 股票名称
+  name String
+
+  // 总股本
+  totalShares      Float
+  // 流通股本
+  floatShares      Float
+  // 总市值
+  totalMarketValue Float
+  // 流通市值
+  floatMarketValue Float
+  // 行业
+  industry         String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("trade_signal_stock_infos")
+}
+
+// 实时数据
+model StockRealTime {
+  id Int @id @default(autoincrement())
+
+  stockId Int
+  stock   Stock @relation(fields: [stockId], references: [id])
+
+  // 股票代码
+  code String
+  // 股票名称
+  name String
+
+  // 最新价
+  price                     Float
+  // 涨跌幅
+  changePercent             Float
+  // 涨跌额
+  changeAmount              Float
+  // 成交量
+  volume                    Float
+  // 成交额
+  amount                    Float
+  // 振幅
+  amplitude                 Float
+  // 最高
+  high                      Float
+  // 最低
+  low                       Float
+  // 开盘
+  open                      Float
+  // 昨收
+  preClose                  Float
+  // 量比
+  volumeRatio               Float
+  // 换手率
+  turnoverRate              Float
+  // 市盈率
+  peRatio                   Float
+  // 市净率
+  pbRatio                   Float
+  // 总市值
+  totalMarketValue          Float
+  // 流通市值
+  floatMarketValue          Float
+  // 涨速
+  changeSpeed               Float
+  // 5 分钟涨跌幅   
+  fiveMinutesChangePercent  Float
+  // 60 分钟涨跌幅
+  sixtyMinutesChangePercent Float
+  // 年初至今涨跌幅
+  yearToDateChangePercent   Float
+
+  // 时间
+  time DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("trade_signal_stock_real_time")
 }

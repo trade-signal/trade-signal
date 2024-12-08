@@ -1,4 +1,3 @@
-import dayjs from "dayjs";
 import { Stock } from "@prisma/client";
 import prisma from "@/prisma/db";
 import { get } from "@/common/shared/request";
@@ -13,9 +12,13 @@ export const checkStock = async () => {
   return stocks.length > 0;
 };
 
+export const findStocks = async () => {
+  return await prisma.stock.findMany();
+};
+
 const getShStocks = () => {
   return new Promise(async resolve => {
-    const stocks: Stock[] = [];
+    const stocks: Partial<Stock>[] = [];
     const set = new Set();
 
     const symbols: STOCK_SH_SYMBOLS[] = ["主板A股", "主板B股", "科创板"];
@@ -25,7 +28,7 @@ const getShStocks = () => {
 
       if (!data) continue;
 
-      data.forEach(item => {
+      data.forEach((item: any) => {
         const {
           证券代码: code,
           证券简称: name,
@@ -54,7 +57,7 @@ const getShStocks = () => {
 
 const getSzStocks = () => {
   return new Promise(async resolve => {
-    const stocks: Stock[] = [];
+    const stocks: Partial<Stock>[] = [];
     const set = new Set();
 
     const symbols: STOCK_SZ_SYMBOLS[] = [
@@ -69,7 +72,7 @@ const getSzStocks = () => {
 
       if (!data || data.length === 0) continue;
 
-      data.forEach(item => {
+      data.forEach((item: any) => {
         const { A股代码: code, A股简称: name, A股上市日期: date } = item;
 
         if (!code || set.has(code)) return;
@@ -92,14 +95,14 @@ const getSzStocks = () => {
 
 const getBjStocks = () => {
   return new Promise(async resolve => {
-    const stocks: Stock[] = [];
+    const stocks: Partial<Stock>[] = [];
     const set = new Set();
 
-    const data = await get("/stock_info_bj_name_code");
+    const data = await get("/stock_info_bj_name_code", {});
 
     if (!data || data.length === 0) return resolve(stocks);
 
-    data.forEach(item => {
+    data.forEach((item: any) => {
       const { 证券代码: code, 证券简称: name, 上市日期: date } = item;
 
       if (!code || set.has(code)) return;
@@ -119,27 +122,27 @@ const getBjStocks = () => {
   });
 };
 
-export const getStocks = () =>
-  Promise.all([getShStocks(), getSzStocks(), getBjStocks()]);
+// 抓取股票数据
+export const fetchStocks = () =>
+  Promise.all([getShStocks(), getSzStocks(), getBjStocks()]) as Promise<
+    Partial<Stock>[][]
+  >;
 
+// 种子数据
 export const seedStocks = async () => {
   try {
     console.log("Seeding stocks...");
 
-    const stocks = await Promise.all([
-      getShStocks(),
-      getSzStocks(),
-      getBjStocks()
-    ]);
+    const stocks = await fetchStocks();
 
     for (const stock of stocks) {
       await prisma.stock.createMany({
-        data: stock
+        data: stock as any
       });
     }
 
     console.log("Stocks seeded successfully.");
   } catch (error) {
-    console.error(error);
+    console.log("Stocks seeding failed.", error);
   }
 };

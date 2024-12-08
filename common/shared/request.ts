@@ -1,5 +1,4 @@
 import EnvVars from "@/common/constants/vars";
-import request from "@/common/shared/request";
 
 const request = async (url: string, options: any, headers: any) => {
   const baseUrl = EnvVars.API_URL;
@@ -15,8 +14,8 @@ const request = async (url: string, options: any, headers: any) => {
   }).then(response => response.json());
 };
 
-export const get = (url: string, params, headers: any = {}) => {
-  const queryString = new URLSearchParams(params).toString();
+export const get = (url: string, params: any, headers: any = {}) => {
+  const queryString = params ? new URLSearchParams(params).toString() : "";
   return request(`${url}?${queryString}`, { method: "GET" }, headers);
 };
 

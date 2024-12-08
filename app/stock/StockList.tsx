@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useStockContext } from './StockContext';
+import { useEffect } from "react";
+import { useStockContext } from "./StockContext";
 
 const StockList = () => {
   const { filters } = useStockContext();
 
   useEffect(() => {
     // fetchStockData(filters);
-    console.log(filters); 
+    console.log(filters);
   }, [filters]);
 
   return <div>StockList</div>;

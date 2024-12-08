@@ -9,9 +9,10 @@ import styles from "./index.module.css";
 
 const links = [
   { link: "/explore", label: "探索" },
+  // { link: "/chart", label: "图表" },
   { link: "/stock", label: "股票" },
   { link: "/news", label: "新闻" },
-  { link: "/settings", label: "设置" }
+  { link: "/contact", label: "联系我们" }
 ];
 
 const Header = () => {

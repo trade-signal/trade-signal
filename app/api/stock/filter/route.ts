@@ -5,6 +5,6 @@ export const GET = async () => {
 
   return Response.json({
     success: true,
-    data: stocks,
+    data: stocks
   });
 };
