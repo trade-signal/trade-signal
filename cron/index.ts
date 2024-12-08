@@ -1,4 +1,6 @@
 import "dotenv/config";
+
+import { CronJob } from "cron";
 import { checkStocks, seedStockSelection } from "./stock/selection";
 
 const initData = async () => {
@@ -14,10 +16,25 @@ const initData = async () => {
   console.log("Stocks seeded successfully.");
 };
 
+const runDailyJob = () => {
+  const job = new CronJob("30 17 * * 1-5", async () => {
+    console.log("Running daily job...");
+
+    await seedStockSelection();
+
+    console.log("Daily job completed.");
+  });
+  job.start();
+};
+
+const initCron = () => {};
+
 async function main() {
   console.log("Starting cron job...");
 
   await initData();
+
+  initCron();
 
   console.log("Cron job completed.");
 }

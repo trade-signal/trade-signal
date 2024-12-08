@@ -1,6 +1,6 @@
 import { get } from "@/shared/request";
 import prisma from "@/prisma/db";
-import { indicatorMapping } from "@/cron/config/indicator";
+import { indicatorMapping, IndicatorType } from "@/cron/config/indicator";
 
 /**
  * 选股指标
