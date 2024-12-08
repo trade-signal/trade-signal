@@ -1,15 +1,6 @@
 version: "3.7"
 
 services:
-  aktools:
-    platform: linux/amd64
-    image: jei888/aktools:latest
-    restart: always
-    environment:
-      TZ: Asia/Shanghai
-    ports:
-      - 8080:80
-
   db:
     image: postgres:15.4
     restart: always

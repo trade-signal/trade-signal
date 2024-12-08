@@ -12,19 +12,18 @@
 
 ## 功能特性
 
-TODO
+* 精准的技术指标计算: MACD、KDJ、BOLL 等
+* 智能形态识别: 头肩顶、双底、红三兵等
+* 多维度选股策略: 基于技术面、基本面等多维度综合筛选
+* 个性化策略构建: 灵活定制您的专属选股条件，满足不同投资偏好
 
 ## 开发环境
 
-### 前置依赖
-
-使用 docker-compose 启动依赖服务，aktools、postgres 。
+使用 docker-compose 启动 postgres 。
 
 ````bash
-docker-compose -p chives-box -f docker/docker-compose.dev.yml up  -d
+docker-compose -p trade-signal -f docker/docker-compose.dev.yml up  -d
 ```` 
-
-### 运行项目
 
 安装依赖并启动服务
 

@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "chives-box",
+      name: "trade-signal",
       script: "npm run start",
       instances: 2,
       exec_mode: "cluster",
