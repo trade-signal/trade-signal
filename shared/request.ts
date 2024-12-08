@@ -1,11 +1,5 @@
-import EnvVars from "@/common/constants/vars";
-
 const request = async (url: string, options: any, headers: any) => {
-  const baseUrl = EnvVars.API_URL;
-
-  if (!baseUrl) throw new Error("API_URL is not set in environment variables");
-
-  return fetch(`${baseUrl}${url}`, {
+  return fetch(url, {
     headers: {
       "Content-Type": "application/json",
       ...headers

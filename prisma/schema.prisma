@@ -13,117 +13,185 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Stock {
-  id Int @id @default(autoincrement())
+model StockSelection {
+  id String @id @default(cuid())
 
-  // a - 上证、sh - 深证、sz - 北证
-  type     String
-  // 股票代码
-  code     String    @unique
-  // 股票名称
-  name     String?
-  // 股票全称
-  fullName String?
-  // 上市日期
-  date     DateTime?
-  // 所属板块
-  symbol   String?
+  // 基本信息
+  date     DateTime
+  code     String   @unique @db.VarChar(6)
+  name     String   @db.VarChar(20)
+  secucode String   @db.VarChar(10)
 
+  // 交易数据
+  newPrice      Float
+  changeRate    Float
+  volumeRatio   Float
+  highPrice     Float
+  lowPrice      Float
+  preClosePrice Float
+  volume        Float
+  dealAmount    Float
+  turnoverRate  Float
+  amplitude     Float
+
+  // 公司信息
+  listingDate DateTime
+  industry    String   @db.VarChar(50)
+  area        String   @db.VarChar(50)
+  concept     String   @db.VarChar(800)
+  style       String   @db.VarChar(255)
+
+  // 指数成分
+  isHs300  Boolean
+  isSz50   Boolean
+  isZz500  Boolean
+  isZz1000 Boolean
+  isCy50   Boolean
+
+  // 估值指标
+  pe9                     Float // 市盈率TTM
+  pbnewmrq                Float // 市净率MRQ
+  pettmdeducted           Float // 市盈率TTM扣非
+  ps9                     Float // 市销率TTM
+  pcfjyxjl9               Float // 市现率TTM
+  predictPeSyear          Float // 预测市盈率今年
+  predictPeNyear          Float // 预测市盈率明年
+  totalMarketCap          Float // 总市值
+  freeCap                 Float // 流通市值
+  dtsyl                   Float // 动态市盈率
+  ycpeg                   Float // 预测PEG
+  enterpriseValueMultiple Float // 企业价值倍数
+
+  // 每股指标
+  basicEps           Float // 每股收益
+  bvps               Float // 每股净资产
+  perNetcashOperate  Float // 每股经营现金流
+  perFcfe            Float // 每股自由现金流
+  perCapitalReserve  Float // 每股资本公积
+  perUnassignProfit  Float // 每股未分配利润
+  perSurplusReserve  Float // 每股盈余公积
+  perRetainedEarning Float // 每股留存收益
+
+  // 财务指标
+  parentNetprofit    Float // 归属净利润
+  deductNetprofit    Float // 扣非净利润
+  totalOperateIncome Float // 营业总收入
+  roeWeight          Float // 净资产收益率ROE
+  jroa               Float // 总资产净利率ROA
+  roic               Float // 投入资本回报率ROIC
+  zxgxl              Float // 最新股息率
+  saleGpr            Float // 毛利率
+  saleNpr            Float // 净利率
+
+  // 增长指标
+  netprofitYoyRatio         Float // 净利润增长率
+  deductNetprofitGrowthrate Float // 扣非净利润增长率
+  toiYoyRatio               Float // 营收增长率
+  netprofitGrowthrate3y     Float // 净利润3年复合增长率
+  incomeGrowthrate3y        Float // 营收3年复合增长率
+  predictNetprofitRatio     Float // 预测净利润同比增长
+  predictIncomeRatio        Float // 预测营收同比增长
+  basicepsYoyRatio          Float // 每股收益同比增长率
+  totalProfitGrowthrate     Float // 利润总额同比增长率
+  operateProfitGrowthrate   Float // 营业利润同比增长率
+
+  // 资产负债指标
+  debtAssetRatio   Float // 资产负债率
+  equityRatio      Float // 产权比率
+  equityMultiplier Float // 权益乘数
+  currentRatio     Float // 流动比率
+  speedRatio       Float // 速动比率
+
+  // 股本结构
+  totalShares         Float // 总股本
+  freeShares          Float // 流通股本
+  holderNewest        Int // 最新股东户数
+  holderRatio         Float // 股东户数增长率
+  holdAmount          Float // 户均持股金额
+  avgHoldNum          Float // 户均持股数量
+  holdnumGrowthrate3q Float // 户均持股数季度增长率
+  holdnumGrowthrateHy Float // 户均持股数半年增长率
+  holdRatioCount      Float // 十大股东持股比例合计
+  freeHoldRatio       Float // 十大流通股东比例合计
+
+  // 技术指标
+  macdGoldenFork   Boolean // MACD金叉日线
+  macdGoldenForkz  Boolean // MACD金叉周线
+  macdGoldenForky  Boolean // MACD金叉月线
+  kdjGoldenFork    Boolean // KDJ金叉日线
+  kdjGoldenForkz   Boolean // KDJ金叉周线
+  kdjGoldenForky   Boolean // KDJ金叉月线
+  breakThrough     Boolean // 放量突破
+  lowFundsInflow   Boolean // 低位资金净流入
+  highFundsOutflow Boolean // 高位资金净流出
+
+  // 均线突破
+  breakupMa5days  Boolean // 向上突破均线5日
+  breakupMa10days Boolean // 向上突破均线10日
+  breakupMa20days Boolean // 向上突破均线20日
+  breakupMa30days Boolean // 向上突破均线30日
+  breakupMa60days Boolean // 向上突破均线60日
+  longAvgArray    Boolean // 均线多头排列
+  shortAvgArray   Boolean // 均线空头排列
+
+  // K线形态
+  upperLargeVolume Boolean // 连涨放量
+  downNarrowVolume Boolean // 下跌无量
+  oneDayangLine    Boolean // 一根大阳线
+  twoDayangLines   Boolean // 两根大阳线
+  riseSun          Boolean // 旭日东升
+  powerFulgun      Boolean // 强势多方炮
+  restoreJustice   Boolean // 拨云见日
+  down7days        Boolean // 七仙女下凡
+  upper8days       Boolean // 八仙过海
+  upper9days       Boolean // 九阳神功
+  upper4days       Boolean // 四串阳
+  heavenRule       Boolean // 天量法则
+  upsideVolume     Boolean // 放量上攻
+
+  // 股东机构
+  allcorpNum       Int // 机构持股家数合计
+  allcorpFundNum   Int // 基金持股家数
+  allcorpQsNum     Int // 券商持股家数
+  allcorpQfiiNum   Int // QFII持股家数
+  allcorpBxNum     Int // 保险公司持股家数
+  allcorpSbNum     Int // 社保持股家数
+  allcorpXtNum     Int // 信托公司持股家数
+  allcorpRatio     Float // 机构持股比例合计
+  allcorpFundRatio Float // 基金持股比例
+  allcorpQsRatio   Float // 券商持股比例
+  allcorpQfiiRatio Float // QFII持股比例
+  allcorpBxRatio   Float // 保险公司持股比例
+  allcorpSbRatio   Float // 社保持股比例
+  allcorpXtRatio   Float // 信托公司持股比例
+
+  // 资金流向
+  netInflow         Float // 当日净流入额
+  netinflow3days    Float // 3日主力净流入
+  netinflow5days    Float // 5日主力净流入
+  nowinterstRatio   Float // 当日增仓占比
+  nowinterstRatio3d Float // 3日增仓占比
+  nowinterstRatio5d Float // 5日增仓占比
+  ddx               Float // 当日DDX
+  ddx3d             Float // 3日DDX
+  ddx5d             Float // 5日DDX
+  ddxRed10d         Int // 10日内DDX飘红天数
+
+  // 涨跌幅数据
+  changerate3days  Float // 3日涨跌幅
+  changerate5days  Float // 5日涨跌幅
+  changerate10days Float // 10日涨跌幅
+  changerateTy     Float // 今年以来涨跌幅
+  upnday           Int // 连涨天数
+  downnday         Int // 连跌天数
+
+  // 港股通数据
+  mutualNetbuyAmt Float // 沪深股通净买入金额
+  holdRatio       Float // 沪深股通持股比例
+
+  // 系统字段
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  stockInfo     StockInfo[]
-  stockRealTime StockRealTime[]
-
-  @@map("trade_signal_stocks")
-}
-
-model StockInfo {
-  id Int @id @default(autoincrement())
-
-  stockId Int
-  stock   Stock @relation(fields: [stockId], references: [id])
-
-  // 股票代码
-  code String @unique
-  // 股票名称
-  name String
-
-  // 总股本
-  totalShares      Float
-  // 流通股本
-  floatShares      Float
-  // 总市值
-  totalMarketValue Float
-  // 流通市值
-  floatMarketValue Float
-  // 行业
-  industry         String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("trade_signal_stock_infos")
-}
-
-// 实时数据
-model StockRealTime {
-  id Int @id @default(autoincrement())
-
-  stockId Int
-  stock   Stock @relation(fields: [stockId], references: [id])
-
-  // 股票代码
-  code String
-  // 股票名称
-  name String
-
-  // 最新价
-  price                     Float
-  // 涨跌幅
-  changePercent             Float
-  // 涨跌额
-  changeAmount              Float
-  // 成交量
-  volume                    Float
-  // 成交额
-  amount                    Float
-  // 振幅
-  amplitude                 Float
-  // 最高
-  high                      Float
-  // 最低
-  low                       Float
-  // 开盘
-  open                      Float
-  // 昨收
-  preClose                  Float
-  // 量比
-  volumeRatio               Float
-  // 换手率
-  turnoverRate              Float
-  // 市盈率
-  peRatio                   Float
-  // 市净率
-  pbRatio                   Float
-  // 总市值
-  totalMarketValue          Float
-  // 流通市值
-  floatMarketValue          Float
-  // 涨速
-  changeSpeed               Float
-  // 5 分钟涨跌幅   
-  fiveMinutesChangePercent  Float
-  // 60 分钟涨跌幅
-  sixtyMinutesChangePercent Float
-  // 年初至今涨跌幅
-  yearToDateChangePercent   Float
-
-  // 时间
-  time DateTime
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("trade_signal_stock_real_time")
+  @@map("stock_selection")
 }
