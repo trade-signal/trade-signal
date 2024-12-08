@@ -17,36 +17,36 @@ model StockSelection {
   id String @id @default(cuid())
 
   // 基本信息
-  date     DateTime
-  code     String   @unique @db.VarChar(6)
-  name     String   @db.VarChar(20)
-  secucode String   @db.VarChar(10)
+  date     DateTime // 交易日期
+  code     String   @unique @db.VarChar(6) // 股票代码
+  name     String   @db.VarChar(20) // 股票名称
+  secucode String   @db.VarChar(10) // 全代码
 
   // 交易数据
-  newPrice      Float
-  changeRate    Float
-  volumeRatio   Float
-  highPrice     Float
-  lowPrice      Float
-  preClosePrice Float
-  volume        Float
-  dealAmount    Float
-  turnoverRate  Float
-  amplitude     Float
+  newPrice      Float // 最新价
+  changeRate    Float // 涨跌幅
+  volumeRatio   Float // 换手率
+  highPrice     Float // 最高价
+  lowPrice      Float // 最低价
+  preClosePrice Float // 昨收价
+  volume        Float // 成交量
+  dealAmount    Float // 成交额
+  turnoverRate  Float // 换手率
+  amplitude     Float // 振幅
 
   // 公司信息
   listingDate DateTime
-  industry    String   @db.VarChar(50)
-  area        String   @db.VarChar(50)
-  concept     String   @db.VarChar(800)
-  style       String   @db.VarChar(255)
+  industry    String   @db.VarChar(50) // 行业
+  area        String   @db.VarChar(50) // 地区
+  concept     String   @db.VarChar(800) // 概念
+  style       String   @db.VarChar(255) // 风格
 
   // 指数成分
-  isHs300  Boolean
-  isSz50   Boolean
-  isZz500  Boolean
-  isZz1000 Boolean
-  isCy50   Boolean
+  isHs300  Boolean // 沪深300
+  isSz50   Boolean // 上证50
+  isZz500  Boolean // 中证500
+  isZz1000 Boolean // 中证1000
+  isCy50   Boolean // 创业板50
 
   // 估值指标
   pe9                     Float // 市盈率TTM

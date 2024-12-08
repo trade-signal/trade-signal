@@ -1,6 +1,6 @@
 import { get } from "@/shared/request";
 import prisma from "@/prisma/db";
-import { selectionMapping } from "@/cron/config/selection";
+import { indicatorMapping } from "@/cron/config/indicator";
 
 /**
  * 选股指标
@@ -13,7 +13,9 @@ const getStockSelection = async (page: number, pageSize: number) => {
     const url = `https://data.eastmoney.com/dataapi/xuangu/list`;
 
     // 选股指标 初始值 "SECUCODE,SECURITY_CODE,SECURITY_NAME_ABBR,CHANGE_RATE"
-    const sty = Object.values(selectionMapping).join(",");
+    const sty = Object.values(indicatorMapping)
+      .map(item => item.value)
+      .join(",");
 
     // 过滤条件
     // const filter = `(MARKET+in+("上交所主板","深交所主板","深交所创业板","上交所科创板","上交所风险警示板","深交所风险警示板","北京证券交易所"))(NEW_PRICE>0)`;
@@ -21,7 +23,7 @@ const getStockSelection = async (page: number, pageSize: number) => {
 
     const response = await get(url, {
       sty,
-      filter: encodeURIComponent(filter),
+      filter: filter,
       p: page,
       ps: pageSize,
       source: "SELECT_SECURITIES",
@@ -35,13 +37,33 @@ const getStockSelection = async (page: number, pageSize: number) => {
   }
 };
 
+const normalizeValue = (type: IndicatorType, value: string) => {
+  if (type === "date") {
+    return new Date(value);
+  }
+  if (type === "number") {
+    return Number(value);
+  }
+  if (type === "boolean") {
+    return value === "1";
+  }
+  if (type === "array") {
+    return Array.isArray(value) ? value.join(",") : value;
+  }
+  return value || "";
+};
+
+const arrayToObject = (array: any[]) => {
+  return array.reduce((acc, cur) => ({ ...acc, ...cur }), {});
+};
+
 const getStocks = async () => {
   let page = 1;
   let pageSize = 1000;
 
   const stocks = [];
 
-  const values = Object.values(selectionMapping);
+  const keys = Object.keys(indicatorMapping);
 
   while (true) {
     console.log(`正在获取第${page}页数据`);
@@ -50,13 +72,24 @@ const getStocks = async () => {
       const response = await getStockSelection(page, pageSize);
 
       if (!response.success) {
-        console.log(`获取选股指标失败`);
-        break;
+        throw new Error(`获取选股指标失败: ${response.message}`);
       }
 
       const { count, data } = response.result;
 
-      stocks.push(...data.map((item: any) => values.map(key => item[key])));
+      const list = data.map((item: any) =>
+        arrayToObject(
+          keys.map(key => {
+            const { type, value } = indicatorMapping[key];
+
+            return {
+              [key]: normalizeValue(type, item[value])
+            };
+          })
+        )
+      );
+
+      stocks.push(...list);
 
       if (page * pageSize >= count) break;
 
@@ -84,10 +117,23 @@ export const seedStockSelection = async () => {
   // 2. 获取选股指标
   const stocks = await getStocks();
 
+  if (stocks.length === 0) {
+    console.log(`选股指标为空`);
+    return;
+  }
+
+  console.log(`选股指标数量: ${stocks.length}`);
+
   // 3. 写入选股指标
-  await prisma.stockSelection.createMany({
-    data: stocks.map(item => ({ ...item }))
-  });
+  while (stocks.length > 0) {
+    const _stocks = stocks.splice(0, 1000);
+
+    console.log(`正在写入${_stocks.length}条选股指标`);
+
+    await prisma.stockSelection.createMany({
+      data: _stocks
+    });
+  }
 
   console.log(`写入选股指标成功`);
 };
