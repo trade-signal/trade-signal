@@ -3,6 +3,10 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 
 export interface StockFilters {
+  // 行业
+  industry?: string | null;
+  // 概念
+  concept?: string | null;
   // 价格
   price?: number | null;
   // 总市值
@@ -13,10 +17,10 @@ export interface StockFilters {
   peRatio?: number | null;
   // 股息率
   dividendYield?: number | null;
-  // 行业
-  industry?: string | null;
-  // 概念
-  concept?: string | null;
+  // 毛利率
+  saleGpr?: number | null;
+  // 每股经营现金流
+  perNetcashOperate?: number | null;
 }
 
 export interface StockContextType {
