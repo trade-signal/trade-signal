@@ -1,4 +1,4 @@
-import { Box, Container, Group, SimpleGrid, Stack, Title } from "@mantine/core";
+import { Container } from "@mantine/core";
 
 import { StockProvider } from "./StockContext";
 import StockScreener from "./StockScreener";

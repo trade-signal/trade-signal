@@ -1,6 +1,7 @@
 import { get } from "@/shared/request";
 import prisma from "@/prisma/db";
 import { indicatorMapping, IndicatorType } from "@/cron/config/indicator";
+import { StockSelection } from "@prisma/client";
 
 /**
  * 选股指标
@@ -57,7 +58,7 @@ const arrayToObject = (array: any[]) => {
   return array.reduce((acc, cur) => ({ ...acc, ...cur }), {});
 };
 
-const getStocks = async () => {
+const getStocks = async (): Promise<Partial<StockSelection>[]> => {
   let page = 1;
   let pageSize = 1000;
 
@@ -108,6 +109,20 @@ export const checkStocks = async () => {
   return stocks.length > 0;
 };
 
+const getUniqueStocks = async (stocks: Partial<StockSelection>[]) => {
+  const uniqueStocks = [] as Partial<StockSelection>[];
+
+  const codes = new Set();
+
+  stocks.forEach(stock => {
+    if (codes.has(stock.code)) return;
+    codes.add(stock.code);
+    uniqueStocks.push(stock);
+  });
+
+  return uniqueStocks;
+};
+
 export const seedStockSelection = async () => {
   console.log(`开始写入选股指标`);
 
@@ -124,14 +139,18 @@ export const seedStockSelection = async () => {
 
   console.log(`选股指标数量: ${stocks.length}`);
 
-  // 3. 写入选股指标
-  while (stocks.length > 0) {
-    const _stocks = stocks.splice(0, 1000);
+  const uniqueStocks = await getUniqueStocks(stocks);
 
-    console.log(`正在写入${_stocks.length}条选股指标`);
+  console.log(`去重后选股指标数量: ${uniqueStocks.length}`);
+
+  // 3. 写入选股指标
+  while (uniqueStocks.length > 0) {
+    const list = uniqueStocks.splice(0, 1000);
+
+    console.log(`正在写入${list.length}条选股指标`);
 
     await prisma.stockSelection.createMany({
-      data: _stocks
+      data: list as any
     });
   }
 

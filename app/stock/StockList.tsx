@@ -7,7 +7,6 @@ const StockList = () => {
   const { filters } = useStockContext();
 
   useEffect(() => {
-    // fetchStockData(filters);
     console.log(filters);
   }, [filters]);
 

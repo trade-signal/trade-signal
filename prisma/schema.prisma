@@ -194,5 +194,5 @@ model StockSelection {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("trade_signal_stock_selection")
+  @@map("stock_selection")
 }

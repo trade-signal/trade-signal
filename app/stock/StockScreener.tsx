@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { SimpleGrid, Stack, Title, MultiSelect } from "@mantine/core";
+import { get } from "@/shared/request";
 import { StockFilters, useStockContext } from "./StockContext";
-import { Select, SimpleGrid, Stack, Title } from "@mantine/core";
 
 const StockScreener = () => {
   const { filters, setFilters } = useStockContext();
@@ -10,15 +12,42 @@ const StockScreener = () => {
     setFilters({ ...filters, ...newFilters });
   };
 
+  const [industries, setIndustries] = useState<string[]>([]);
+  const [concepts, setConcepts] = useState<string[]>([]);
+
+  const getFilter = async () => {
+    const response = await get("/api/stock/filter", {});
+
+    if (response.success) {
+      setIndustries(response.data.industries);
+      setConcepts(response.data.concepts);
+    }
+  };
+
+  useEffect(() => {
+    getFilter();
+  }, []);
+
   return (
     <Stack mt={10} mb={10}>
       <Title order={5}>股票筛选器</Title>
       <SimpleGrid cols={8}>
-        <Select
+        <MultiSelect
           value={filters.industry}
+          placeholder="请选择行业"
           onChange={industry => handleFilterChange({ industry })}
           checkIconPosition="right"
-          data={["全部行业", "科技", "金融", "医疗", "制造"]}
+          data={industries}
+          searchable
+        />
+
+        <MultiSelect
+          value={filters.concept}
+          placeholder="请选择概念"
+          onChange={concept => handleFilterChange({ concept })}
+          checkIconPosition="right"
+          data={concepts}
+          searchable
         />
       </SimpleGrid>
     </Stack>

@@ -2,11 +2,18 @@
 
 import { createContext, useContext, useState, ReactNode } from "react";
 
+const PRICE_RANGE = [
+  {
+    label: "",
+    value: ""
+  }
+];
+
 export interface StockFilters {
   // 行业
-  industry?: string | null;
+  industry?: string[];
   // 概念
-  concept?: string | null;
+  concept?: string[];
   // 价格
   price?: number | null;
   // 总市值
@@ -32,7 +39,11 @@ const StockContext = createContext<StockContextType | undefined>(undefined);
 
 export function StockProvider({ children }: { children: ReactNode }) {
   const [filters, setFilters] = useState<StockFilters>({
-    industry: "全部行业"
+    industry: [],
+    concept: [],
+    price: null,
+    totalMarketValue: null,
+    floatMarketValue: null
   });
 
   return (

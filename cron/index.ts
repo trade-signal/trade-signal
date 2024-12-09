@@ -27,14 +27,18 @@ const runDailyJob = () => {
   job.start();
 };
 
-const initCron = () => {};
+const initCron = () => {
+  runDailyJob();
+};
 
 async function main() {
   console.log("Starting cron job...");
 
   await initData();
 
-  initCron();
+  if (process.env.NODE_ENV === "production") {
+    initCron();
+  }
 
   console.log("Cron job completed.");
 }
