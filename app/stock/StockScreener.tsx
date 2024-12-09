@@ -12,15 +12,15 @@ const StockScreener = () => {
     setFilters({ ...filters, ...newFilters });
   };
 
-  const [industries, setIndustries] = useState<string[]>([]);
-  const [concepts, setConcepts] = useState<string[]>([]);
+  const [industryData, setIndustryData] = useState<string[]>([]);
+  const [conceptData, setConceptData] = useState<string[]>([]);
 
   const getFilter = async () => {
     const response = await get("/api/stock/filter", {});
 
     if (response.success) {
-      setIndustries(response.data.industries);
-      setConcepts(response.data.concepts);
+      setIndustryData(response.data.industries);
+      setConceptData(response.data.concepts);
     }
   };
 
@@ -33,20 +33,20 @@ const StockScreener = () => {
       <Title order={5}>股票筛选器</Title>
       <SimpleGrid cols={8}>
         <MultiSelect
-          value={filters.industry}
+          value={filters.industries}
           placeholder="请选择行业"
-          onChange={industry => handleFilterChange({ industry })}
+          onChange={industries => handleFilterChange({ industries })}
           checkIconPosition="right"
-          data={industries}
+          data={industryData}
           searchable
         />
 
         <MultiSelect
-          value={filters.concept}
+          value={filters.concepts}
           placeholder="请选择概念"
-          onChange={concept => handleFilterChange({ concept })}
+          onChange={concepts => handleFilterChange({ concepts })}
           checkIconPosition="right"
-          data={concepts}
+          data={conceptData}
           searchable
         />
       </SimpleGrid>
