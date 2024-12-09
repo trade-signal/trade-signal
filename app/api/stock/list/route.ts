@@ -1,5 +1,6 @@
 import { type NextRequest } from "next/server";
 import prisma from "@/prisma/db";
+import { Prisma } from "@prisma/client";
 
 export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;
@@ -44,9 +45,10 @@ export const GET = async (request: NextRequest) => {
     success: true,
     data,
     pagination: {
-      total,
       page,
-      pageSize
+      pageSize,
+      total,
+      totalPage: Math.ceil(total / pageSize)
     }
   });
 };

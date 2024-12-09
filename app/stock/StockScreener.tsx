@@ -31,10 +31,10 @@ const StockScreener = () => {
   return (
     <Stack mt={10} mb={10}>
       <Title order={5}>股票筛选器</Title>
-      <SimpleGrid cols={8}>
+      <SimpleGrid cols={6}>
         <MultiSelect
           value={filters.industries}
-          placeholder="请选择行业"
+          placeholder="行业"
           onChange={industries => handleFilterChange({ industries })}
           checkIconPosition="right"
           data={industryData}
@@ -43,7 +43,7 @@ const StockScreener = () => {
 
         <MultiSelect
           value={filters.concepts}
-          placeholder="请选择概念"
+          placeholder="概念"
           onChange={concepts => handleFilterChange({ concepts })}
           checkIconPosition="right"
           data={conceptData}
