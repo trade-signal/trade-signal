@@ -5,9 +5,8 @@ export type IndicatorMapping = Record<
   { type: IndicatorType; value: string; label: string }
 >;
 
-// 选股指标映射 20241208
-export const indicatorMapping: IndicatorMapping = {
-  // 基本信息
+// 基本信息指标
+export const basicIndicatorMapping: IndicatorMapping = {
   date: {
     type: "date",
     value: "MAX_TRADE_DATE",
@@ -27,9 +26,11 @@ export const indicatorMapping: IndicatorMapping = {
     type: "string",
     value: "SECUCODE",
     label: "全代码"
-  },
+  }
+};
 
-  // 交易数据
+// 交易数据指标
+export const tradeIndicatorMapping: IndicatorMapping = {
   newPrice: {
     type: "number",
     value: "NEW_PRICE",
@@ -79,9 +80,11 @@ export const indicatorMapping: IndicatorMapping = {
     type: "number",
     value: "AMPLITUDE",
     label: "振幅"
-  },
+  }
+};
 
-  // 公司信息
+// 公司信息指标
+export const companyIndicatorMapping: IndicatorMapping = {
   listingDate: {
     type: "date",
     value: "LISTING_DATE",
@@ -106,9 +109,11 @@ export const indicatorMapping: IndicatorMapping = {
     type: "array",
     value: "STYLE",
     label: "风格"
-  },
+  }
+};
 
-  // 指数成分
+// 指数成分指标
+export const indexComponentMapping: IndicatorMapping = {
   isHs300: {
     type: "boolean",
     value: "IS_HS300",
@@ -133,9 +138,11 @@ export const indicatorMapping: IndicatorMapping = {
     type: "boolean",
     value: "IS_CY50",
     label: "创业板50"
-  },
+  }
+};
 
-  // 估值指标
+// 估值指标
+export const valuationIndicatorMapping: IndicatorMapping = {
   pe9: {
     type: "number",
     value: "PE9",
@@ -195,9 +202,11 @@ export const indicatorMapping: IndicatorMapping = {
     type: "number",
     value: "ENTERPRISE_VALUE_MULTIPLE",
     label: "企业价值倍数"
-  },
+  }
+};
 
-  // 每股指标
+// 每股指标
+export const perShareIndicatorMapping: IndicatorMapping = {
   basicEps: {
     type: "number",
     value: "BASIC_EPS",
@@ -237,9 +246,11 @@ export const indicatorMapping: IndicatorMapping = {
     type: "number",
     value: "PER_RETAINED_EARNING",
     label: "每股留存收益"
-  },
+  }
+};
 
-  // 财务指标
+// 财务指标
+export const financialIndicatorMapping: IndicatorMapping = {
   parentNetprofit: {
     type: "number",
     value: "PARENT_NETPROFIT",
@@ -284,9 +295,11 @@ export const indicatorMapping: IndicatorMapping = {
     type: "number",
     value: "SALE_NPR",
     label: "净利率"
-  },
+  }
+};
 
-  // 增长指标
+// 增长指标
+export const growthIndicatorMapping: IndicatorMapping = {
   netprofitYoyRatio: {
     type: "number",
     value: "NETPROFIT_YOY_RATIO",
@@ -336,9 +349,11 @@ export const indicatorMapping: IndicatorMapping = {
     type: "number",
     value: "OPERATE_PROFIT_GROWTHRATE",
     label: "营业利润同比增长率"
-  },
+  }
+};
 
-  // 资产负债指标
+// 资产负债指标
+export const balanceSheetIndicatorMapping: IndicatorMapping = {
   debtAssetRatio: {
     type: "number",
     value: "DEBT_ASSET_RATIO",
@@ -363,9 +378,11 @@ export const indicatorMapping: IndicatorMapping = {
     type: "number",
     value: "SPEED_RATIO",
     label: "速动比率"
-  },
+  }
+};
 
-  // 股本结构
+// 股本结构指标
+export const shareStructureIndicatorMapping: IndicatorMapping = {
   totalShares: {
     type: "number",
     value: "TOTAL_SHARES",
@@ -415,9 +432,11 @@ export const indicatorMapping: IndicatorMapping = {
     type: "number",
     value: "FREE_HOLD_RATIO",
     label: "十大流通股东比例合计"
-  },
+  }
+};
 
-  // 技术指标
+// 技术指标
+export const technicalIndicatorMapping: IndicatorMapping = {
   macdGoldenFork: {
     type: "boolean",
     value: "MACD_GOLDEN_FORK",
@@ -462,9 +481,11 @@ export const indicatorMapping: IndicatorMapping = {
     type: "boolean",
     value: "HIGH_FUNDS_OUTFLOW",
     label: "高位资金净流出"
-  },
+  }
+};
 
-  // 均线突破
+// 均线指标
+export const maIndicatorMapping: IndicatorMapping = {
   breakupMa5days: {
     type: "boolean",
     value: "BREAKUP_MA_5DAYS",
@@ -499,9 +520,11 @@ export const indicatorMapping: IndicatorMapping = {
     type: "boolean",
     value: "SHORT_AVG_ARRAY",
     label: "均线空头排列"
-  },
+  }
+};
 
-  // K线形态
+// K线形态指标
+export const klinePatternIndicatorMapping: IndicatorMapping = {
   upperLargeVolume: {
     type: "boolean",
     value: "UPPER_LARGE_VOLUME",
@@ -560,15 +583,17 @@ export const indicatorMapping: IndicatorMapping = {
   heavenRule: {
     type: "boolean",
     value: "HEAVEN_RULE",
-    label: "天量法则"
+    label: "天��法则"
   },
   upsideVolume: {
     type: "boolean",
     value: "UPSIDE_VOLUME",
     label: "放量上攻"
-  },
+  }
+};
 
-  // 股东机构
+// 股东机构指标
+export const institutionalHoldingIndicatorMapping: IndicatorMapping = {
   allcorpNum: {
     type: "number",
     value: "ALLCORP_NUM",
@@ -638,9 +663,11 @@ export const indicatorMapping: IndicatorMapping = {
     type: "number",
     value: "ALLCORP_XT_RATIO",
     label: "信托公司持股比例"
-  },
+  }
+};
 
-  // 资金流向
+// 资金流向指标
+export const capitalFlowIndicatorMapping: IndicatorMapping = {
   netInflow: {
     type: "number",
     value: "NET_INFLOW",
@@ -690,9 +717,11 @@ export const indicatorMapping: IndicatorMapping = {
     type: "number",
     value: "DDX_RED_10D",
     label: "10日内DDX飘红天数"
-  },
+  }
+};
 
-  // 涨跌幅数据
+// 涨跌幅指标
+export const priceChangeIndicatorMapping: IndicatorMapping = {
   changerate3days: {
     type: "number",
     value: "CHANGERATE_3DAYS",
@@ -722,9 +751,11 @@ export const indicatorMapping: IndicatorMapping = {
     type: "number",
     value: "DOWNNDAY",
     label: "连跌天数"
-  },
+  }
+};
 
-  // 港股通数据
+// 港股通指标
+export const hkConnectIndicatorMapping: IndicatorMapping = {
   mutualNetbuyAmt: {
     type: "number",
     value: "MUTUAL_NETBUY_AMT",
@@ -735,4 +766,25 @@ export const indicatorMapping: IndicatorMapping = {
     value: "HOLD_RATIO",
     label: "沪深股通持股比例"
   }
+};
+
+// 合并所有指标
+export const indicatorMapping: IndicatorMapping = {
+  ...basicIndicatorMapping,
+  ...tradeIndicatorMapping,
+  ...companyIndicatorMapping,
+  ...indexComponentMapping,
+  ...valuationIndicatorMapping,
+  ...perShareIndicatorMapping,
+  ...financialIndicatorMapping,
+  ...growthIndicatorMapping,
+  ...balanceSheetIndicatorMapping,
+  ...shareStructureIndicatorMapping,
+  ...technicalIndicatorMapping,
+  ...maIndicatorMapping,
+  ...klinePatternIndicatorMapping,
+  ...institutionalHoldingIndicatorMapping,
+  ...capitalFlowIndicatorMapping,
+  ...priceChangeIndicatorMapping,
+  ...hkConnectIndicatorMapping
 };

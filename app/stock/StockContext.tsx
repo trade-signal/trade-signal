@@ -3,6 +3,10 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 
 export interface StockFilters {
+  // 分页
+  page?: number;
+  pageSize?: number;
+
   // 行业
   industries?: string[];
   // 概念
@@ -32,6 +36,8 @@ const StockContext = createContext<StockContextType | undefined>(undefined);
 
 export function StockProvider({ children }: { children: ReactNode }) {
   const [filters, setFilters] = useState<StockFilters>({
+    page: 1,
+    pageSize: 20,
     industries: [],
     concepts: [],
     price: null,

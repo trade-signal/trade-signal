@@ -7,19 +7,46 @@ export const GET = async (request: NextRequest) => {
   const industries = searchParams.get("industries");
   const concepts = searchParams.get("concepts");
 
+  const page = Number(searchParams.get("page")) || 1;
+  const pageSize = Number(searchParams.get("pageSize")) || 20;
+
+  const offset = (page - 1) * pageSize;
+  const limit = pageSize;
+
+  let where: Prisma.StockSelectionWhereInput = {};
+
+  if (industries) {
+    where.industry = {
+      in: industries.split(",")
+    };
+  }
+
+  if (concepts) {
+    where.concept = {
+      in: concepts.split(",")
+    };
+  }
+
   const data = await prisma.stockSelection.findMany({
-    where: {
-      industry: {
-        in: industries?.split(",") || []
-      },
-      concept: {
-        in: concepts?.split(",") || []
-      }
-    }
+    where,
+    orderBy: {
+      code: "asc"
+    },
+    skip: offset,
+    take: limit
   });
 
-  return {
+  const total = await prisma.stockSelection.count({
+    where
+  });
+
+  return Response.json({
     success: true,
-    data: data
-  };
+    data,
+    pagination: {
+      total,
+      page,
+      pageSize
+    }
+  });
 };

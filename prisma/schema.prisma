@@ -26,7 +26,7 @@ model StockSelection {
   // 交易数据
   newPrice      Float // 最新价
   changeRate    Float // 涨跌幅
-  volumeRatio   Float // 换手率
+  volumeRatio   Float // 量比
   highPrice     Float // 最高价
   lowPrice      Float // 最低价
   preClosePrice Float // 昨收价
@@ -126,7 +126,7 @@ model StockSelection {
   lowFundsInflow   Boolean // 低位资金净流入
   highFundsOutflow Boolean // 高位资金净流出
 
-  // 均线突破
+  // 均线指标
   breakupMa5days  Boolean // 向上突破均线5日
   breakupMa10days Boolean // 向上突破均线10日
   breakupMa20days Boolean // 向上突破均线20日
