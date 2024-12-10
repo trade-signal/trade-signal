@@ -17,6 +17,7 @@
     "@mantine/core": "^7.14.3",
     "@mantine/hooks": "^7.14.3",
     "@prisma/client": "^6.0.1",
+    "@tabler/icons-react": "^3.24.0",
     "cron": "^2.3.0",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.7",

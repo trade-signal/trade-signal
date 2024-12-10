@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { SimpleGrid, Stack, Title, MultiSelect, Text } from "@mantine/core";
+import { Stack, Group, Title, MultiSelect, Text } from "@mantine/core";
 import { get } from "@/shared/request";
 
 import ComboboxMultiSelect from "@/app/components/ComboboxMultiSelect";
@@ -11,7 +11,7 @@ const StockScreener = () => {
   const { filters, setFilters } = useStockContext();
 
   const handleFilterChange = (newFilters: Partial<StockFilters>) => {
-    setFilters({ ...filters, ...newFilters });
+    setFilters({ ...filters, ...newFilters, page: 1 });
   };
 
   const [industryData, setIndustryData] = useState<string[]>([]);
@@ -36,13 +36,14 @@ const StockScreener = () => {
     <Stack mt={10} mb={10}>
       <Title order={5}>股票筛选器</Title>
 
-      <SimpleGrid cols={4}>
+      <Group>
         <ComboboxMultiSelect
           title="行业"
           value={filters.industries}
           data={industryData}
           onChange={industries => handleFilterChange({ industries })}
           clearable
+          searchable
           nothingFoundMessage="未找到相关行业"
         />
 
@@ -63,7 +64,7 @@ const StockScreener = () => {
           clearable
           nothingFoundMessage="未找到相关风格"
         />
-      </SimpleGrid>
+      </Group>
     </Stack>
   );
 };

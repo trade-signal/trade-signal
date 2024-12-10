@@ -1,20 +1,23 @@
 import { useState, type FC } from "react";
 import {
-  PillsInput,
   Pill,
   Combobox,
   CheckIcon,
   Group,
   useCombobox,
   Text,
-  ScrollArea
+  ScrollArea,
+  Button,
+  Box
 } from "@mantine/core";
+import { IconX } from "@tabler/icons-react";
 
 interface ComboboxMultiSelectProps {
   title: string;
   data: string[];
-  value: string[];
-  placeholder: string;
+  value?: string[];
+  searchable?: boolean;
+  placeholder?: string;
   clearable?: boolean;
   nothingFoundMessage?: string;
   onChange: (value: string[]) => void;
@@ -24,9 +27,10 @@ const ComboboxMultiSelect: FC<ComboboxMultiSelectProps> = props => {
   const {
     title,
     data,
-    value,
+    value = [],
+    searchable = false,
+    clearable = false,
     placeholder,
-    clearable,
     nothingFoundMessage,
     onChange
   } = props;
@@ -39,26 +43,28 @@ const ComboboxMultiSelect: FC<ComboboxMultiSelectProps> = props => {
   const [search, setSearch] = useState("");
   const [values, setValues] = useState<string[]>([]);
 
-  const handleValueSelect = (val: string) =>
-    setValues(current =>
-      current.includes(val) ? current.filter(v => v !== val) : [...current, val]
-    );
+  const handleValueSelect = (val: string) => {
+    const newValues = values.includes(val)
+      ? values.filter(v => v !== val)
+      : [...values, val];
 
-  const handleValueRemove = (val: string) =>
-    setValues(current => current.filter(v => v !== val));
+    setValues(newValues);
+    onChange(newValues);
+  };
+
+  const handleClear = () => {
+    setValues([]);
+    onChange([]);
+  };
 
   const pills =
     values.length > 1 ? (
       <Pill>{values.length} 项</Pill>
     ) : (
       values.map(item => (
-        <Pill
-          key={item}
-          withRemoveButton
-          onRemove={() => handleValueRemove(item)}
-        >
+        <Text key={item} size="xs">
           {item}
-        </Pill>
+        </Text>
       ))
     );
 
@@ -74,33 +80,48 @@ const ComboboxMultiSelect: FC<ComboboxMultiSelectProps> = props => {
     ));
 
   return (
-    <Combobox store={combobox} onOptionSubmit={handleValueSelect}>
-      <Combobox.DropdownTarget>
-        <PillsInput onClick={() => combobox.openDropdown()}>
-          <Group gap={5}>
-            <Text style={{ fontSize: 14 }} c="gray">
-              {title}
-            </Text>
-            <Pill.Group>{pills}</Pill.Group>
-          </Group>
-        </PillsInput>
-      </Combobox.DropdownTarget>
+    <Combobox
+      width={250}
+      store={combobox}
+      position="bottom-start"
+      withArrow
+      onOptionSubmit={handleValueSelect}
+    >
+      <Combobox.Target withAriaAttributes={false}>
+        <Button
+          variant="outline"
+          w={"auto"}
+          onClick={() => combobox.toggleDropdown()}
+        >
+          {title}{" "}
+          <Box mt={2} ml={8}>
+            {pills}
+          </Box>
+          {clearable && values.length > 0 && (
+            <Box ml={8} onClick={handleClear}>
+              <IconX size={12} />
+            </Box>
+          )}
+        </Button>
+      </Combobox.Target>
 
       <Combobox.Dropdown>
-        <Combobox.Search
-          p="5px 10px"
-          styles={{
-            input: {
-              border: "1px solid #e0e0e0",
-              borderRadius: 5
-            }
-          }}
-          value={search}
-          placeholder={placeholder || "搜素"}
-          onChange={event => {
-            setSearch(event.currentTarget.value);
-          }}
-        />
+        {searchable && (
+          <Combobox.Search
+            p="5px 10px"
+            styles={{
+              input: {
+                border: "1px solid #e0e0e0",
+                borderRadius: 5
+              }
+            }}
+            value={search}
+            placeholder={placeholder || "搜素"}
+            onChange={event => {
+              setSearch(event.currentTarget.value);
+            }}
+          />
+        )}
 
         <Combobox.Options>
           <ScrollArea.Autosize type="scroll" mah={200}>
@@ -108,7 +129,7 @@ const ComboboxMultiSelect: FC<ComboboxMultiSelectProps> = props => {
               options
             ) : (
               <Combobox.Empty>
-                <Text size="xs" color="gray">
+                <Text size="xs" c="gray">
                   {nothingFoundMessage || "未找到相关数据"}
                 </Text>
               </Combobox.Empty>
