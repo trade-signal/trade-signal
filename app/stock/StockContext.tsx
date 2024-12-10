@@ -11,6 +11,8 @@ export interface StockFilters {
   industries?: string[];
   // 概念
   concepts?: string[];
+  // 风格
+  styles?: string[];
   // 价格
   price?: number | null;
   // 总市值
@@ -40,6 +42,7 @@ export function StockProvider({ children }: { children: ReactNode }) {
     pageSize: 20,
     industries: [],
     concepts: [],
+    styles: [],
     price: null,
     totalMarketValue: null,
     floatMarketValue: null

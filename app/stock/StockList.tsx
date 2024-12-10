@@ -2,9 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { get } from "@/shared/request";
-import { StockFilters, useStockContext } from "./StockContext";
+
 import { StockSelection } from "@prisma/client";
-import { Button, Group, Pagination, Table, Text } from "@mantine/core";
+import {
+  Button,
+  Group,
+  LoadingOverlay,
+  Pagination,
+  Table,
+  Text
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { StockFilters, useStockContext } from "./StockContext";
 
 interface Pagination {
   page: number;
@@ -16,7 +25,8 @@ interface Pagination {
 const StockList = () => {
   const { filters, setFilters } = useStockContext();
 
-  const [loading, setLoading] = useState(false);
+  const [visible, { open, close }] = useDisclosure(false);
+
   const [stockList, setStockList] = useState<StockSelection[]>([]);
   const [pagination, setPagination] = useState<Pagination>({
     page: 1,
@@ -30,15 +40,11 @@ const StockList = () => {
       return;
     }
 
-    setLoading(true);
-
     const response = await get("/api/stock/list", {
       ...filters,
       industries: filters.industries?.join(","),
       concepts: filters.concepts?.join(",")
     });
-
-    console.log(response);
 
     if (response.success) {
       const { data, pagination } = response;
@@ -47,8 +53,6 @@ const StockList = () => {
       setStockList(data);
       setPagination({ page, pageSize, total, totalPage });
     }
-
-    setLoading(false);
   };
 
   const handleFilterChange = (newFilters: Partial<StockFilters>) => {
@@ -61,15 +65,16 @@ const StockList = () => {
 
   useEffect(() => {
     (async () => {
-      setLoading(true);
+      open();
       await getStockList();
-      setLoading(false);
+      close();
     })();
   }, [filters]);
 
   return (
     <>
       <Table.ScrollContainer
+        pos="relative"
         minWidth={500}
         style={{
           height: "calc(100vh - 240px)",
@@ -78,6 +83,12 @@ const StockList = () => {
           borderBottom: "1px solid #eee"
         }}
       >
+        <LoadingOverlay
+          visible={visible}
+          zIndex={1000}
+          overlayProps={{ radius: "sm", blur: 2 }}
+        />
+
         <Table stickyHeader verticalSpacing="xs">
           <Table.Thead>
             <Table.Tr>

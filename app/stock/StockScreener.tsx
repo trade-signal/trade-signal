@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { SimpleGrid, Stack, Title, MultiSelect } from "@mantine/core";
+import { SimpleGrid, Stack, Title, MultiSelect, Text } from "@mantine/core";
 import { get } from "@/shared/request";
+
+import ComboboxMultiSelect from "@/app/components/ComboboxMultiSelect";
 import { StockFilters, useStockContext } from "./StockContext";
 
 const StockScreener = () => {
@@ -14,6 +16,7 @@ const StockScreener = () => {
 
   const [industryData, setIndustryData] = useState<string[]>([]);
   const [conceptData, setConceptData] = useState<string[]>([]);
+  const [styleData, setStyleData] = useState<string[]>([]);
 
   const getFilter = async () => {
     const response = await get("/api/stock/filter", {});
@@ -21,6 +24,7 @@ const StockScreener = () => {
     if (response.success) {
       setIndustryData(response.data.industries);
       setConceptData(response.data.concepts);
+      setStyleData(response.data.styles);
     }
   };
 
@@ -31,23 +35,33 @@ const StockScreener = () => {
   return (
     <Stack mt={10} mb={10}>
       <Title order={5}>股票筛选器</Title>
-      <SimpleGrid cols={6}>
-        <MultiSelect
+
+      <SimpleGrid cols={4}>
+        <ComboboxMultiSelect
+          title="行业"
           value={filters.industries}
-          placeholder="行业"
-          onChange={industries => handleFilterChange({ industries })}
-          checkIconPosition="right"
           data={industryData}
-          searchable
+          onChange={industries => handleFilterChange({ industries })}
+          clearable
+          nothingFoundMessage="未找到相关行业"
         />
 
-        <MultiSelect
+        <ComboboxMultiSelect
+          title="概念"
           value={filters.concepts}
-          placeholder="概念"
-          onChange={concepts => handleFilterChange({ concepts })}
-          checkIconPosition="right"
           data={conceptData}
-          searchable
+          onChange={concepts => handleFilterChange({ concepts })}
+          clearable
+          nothingFoundMessage="未找到相关概念"
+        />
+
+        <ComboboxMultiSelect
+          title="风格"
+          value={filters.styles}
+          data={styleData}
+          onChange={styles => handleFilterChange({ styles })}
+          clearable
+          nothingFoundMessage="未找到相关风格"
         />
       </SimpleGrid>
     </Stack>
