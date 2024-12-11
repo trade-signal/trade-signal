@@ -15,8 +15,6 @@ datasource db {
 }
 
 model StockSelection {
-  id String @id @default(cuid())
-
   // 基本信息
   date     DateTime // 交易日期
   code     String   @unique @db.VarChar(6) // 股票代码
@@ -194,5 +192,6 @@ model StockSelection {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@id([date, code]) // 复合主键
   @@map("stock_selection")
 }

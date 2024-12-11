@@ -123,13 +123,19 @@ const getUniqueStocks = async (stocks: Partial<StockSelection>[]) => {
   return uniqueStocks;
 };
 
-export const seedStockSelection = async () => {
+export const seedStockSelection = async (date?: string) => {
   console.log(`开始写入选股指标`);
 
-  // 1. 删除所有选股指标
-  await prisma.stockSelection.deleteMany();
+  if (date) {
+    // 删除指定日期的选股指标
+    await prisma.stockSelection.deleteMany({
+      where: {
+        date: new Date(date)
+      }
+    });
+  }
 
-  // 2. 获取选股指标
+  // 获取选股指标
   const stocks = await getStocks();
 
   if (stocks.length === 0) {
@@ -143,16 +149,10 @@ export const seedStockSelection = async () => {
 
   console.log(`去重后选股指标数量: ${uniqueStocks.length}`);
 
-  // 3. 写入选股指标
-  while (uniqueStocks.length > 0) {
-    const list = uniqueStocks.splice(0, 1000);
-
-    console.log(`正在写入${list.length}条选股指标`);
-
-    await prisma.stockSelection.createMany({
-      data: list as any
-    });
-  }
+  // 写入选股指标
+  await prisma.stockSelection.create({
+    data: uniqueStocks as any
+  });
 
   console.log(`写入选股指标成功`);
 };

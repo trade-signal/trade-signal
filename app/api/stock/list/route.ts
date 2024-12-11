@@ -7,6 +7,7 @@ export const GET = async (request: NextRequest) => {
 
   const industries = searchParams.get("industries");
   const concepts = searchParams.get("concepts");
+  const styles = searchParams.get("styles");
 
   const page = Number(searchParams.get("page")) || 1;
   const pageSize = Number(searchParams.get("pageSize")) || 20;
@@ -23,9 +24,18 @@ export const GET = async (request: NextRequest) => {
   }
 
   if (concepts) {
-    where.concept = {
-      in: concepts.split(",")
-    };
+    where.OR = concepts.split(",").map(concept => ({
+      concept: {
+        contains: concept.trim()
+      }
+    }));
+  }
+  if (styles) {
+    where.OR = styles.split(",").map(style => ({
+      style: {
+        contains: style.trim()
+      }
+    }));
   }
 
   const data = await prisma.stockSelection.findMany({
