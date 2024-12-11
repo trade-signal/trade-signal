@@ -150,9 +150,15 @@ export const seedStockSelection = async (date?: string) => {
   console.log(`去重后选股指标数量: ${uniqueStocks.length}`);
 
   // 写入选股指标
-  await prisma.stockSelection.create({
-    data: uniqueStocks as any
-  });
+  while (uniqueStocks.length > 0) {
+    const list = uniqueStocks.splice(0, 1000);
+
+    console.log(`正在写入${list.length}条选股指标`);
+
+    await prisma.stockSelection.createMany({
+      data: list as any
+    });
+  }
 
   console.log(`写入选股指标成功`);
 };
