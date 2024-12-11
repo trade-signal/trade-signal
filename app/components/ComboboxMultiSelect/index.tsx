@@ -10,7 +10,12 @@ import {
   Button,
   Box
 } from "@mantine/core";
-import { IconX } from "@tabler/icons-react";
+import {
+  IconCaretDown,
+  IconChevronDown,
+  IconChevronUp,
+  IconX
+} from "@tabler/icons-react";
 
 interface ComboboxMultiSelectProps {
   title: string;
@@ -102,10 +107,15 @@ const ComboboxMultiSelect: FC<ComboboxMultiSelectProps> = props => {
               <IconX size={12} />
             </Box>
           )}
+          {combobox.dropdownOpened ? (
+            <IconChevronUp size={14} />
+          ) : (
+            <IconChevronDown size={14} />
+          )}
         </Button>
       </Combobox.Target>
 
-      <Combobox.Dropdown>
+      <Combobox.Dropdown styles={{ dropdown: { zIndex: 1000 } }}>
         {searchable && (
           <Combobox.Search
             p="5px 10px"

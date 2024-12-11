@@ -1,15 +1,15 @@
 "use client";
 
-import { Burger, Container, Group, Image, Text } from "@mantine/core";
+import { Burger, Button, Group, Image, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import styles from "./index.module.css";
+import { IconUser } from "@tabler/icons-react";
 
 const links = [
   { link: "/explore", label: "探索" },
-  // { link: "/chart", label: "图表" },
   { link: "/stock", label: "股票" },
   { link: "/news", label: "新闻" },
   { link: "/contact", label: "联系我们" }
@@ -18,22 +18,18 @@ const links = [
 const Header = () => {
   const [opened, { toggle }] = useDisclosure(false);
   const router = useRouter();
-  const pathname = usePathname();
+
+  const isLoggedIn = true;
 
   const items = links.map(link => (
-    <Link
-      key={link.label}
-      href={link.link}
-      className={styles.link}
-      data-active={pathname === link.link || undefined}
-    >
+    <Link key={link.label} href={link.link} className={styles.link}>
       {link.label}
     </Link>
   ));
 
   return (
     <header className={styles.header}>
-      <Container className={styles.inner}>
+      <Group className={styles.inner}>
         <Group style={{ cursor: "pointer" }} onClick={() => router.push("/")}>
           <Image
             style={{ width: 28, height: 28 }}
@@ -50,8 +46,19 @@ const Header = () => {
           {items}
         </Group>
 
+        <Group justify="center" grow>
+          {isLoggedIn ? (
+            <IconUser size={22} />
+          ) : (
+            <>
+              <Button variant="default">登录</Button>
+              <Button>注册</Button>
+            </>
+          )}
+        </Group>
+
         <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" />
-      </Container>
+      </Group>
     </header>
   );
 };
