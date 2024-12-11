@@ -10,12 +10,7 @@ import {
   Button,
   Box
 } from "@mantine/core";
-import {
-  IconCaretDown,
-  IconChevronDown,
-  IconChevronUp,
-  IconX
-} from "@tabler/icons-react";
+import { IconChevronDown, IconChevronUp, IconX } from "@tabler/icons-react";
 
 interface ComboboxMultiSelectProps {
   title: string;
@@ -64,7 +59,7 @@ const ComboboxMultiSelect: FC<ComboboxMultiSelectProps> = props => {
 
   const pills =
     values.length > 1 ? (
-      <Pill>{values.length} 项</Pill>
+      <Pill c="indigo">{values.length} 项</Pill>
     ) : (
       values.map(item => (
         <Text key={item} size="xs">
@@ -102,20 +97,28 @@ const ComboboxMultiSelect: FC<ComboboxMultiSelectProps> = props => {
           <Box mt={2} ml={8}>
             {pills}
           </Box>
-          {clearable && values.length > 0 && (
-            <Box ml={8} onClick={handleClear}>
-              <IconX size={12} />
-            </Box>
-          )}
-          {combobox.dropdownOpened ? (
-            <IconChevronUp size={14} />
-          ) : (
-            <IconChevronDown size={14} />
-          )}
+          <Box ml={values.length > 0 ? 6 : 0}>
+            {combobox.dropdownOpened ? (
+              <IconChevronUp size={14} />
+            ) : (
+              <IconChevronDown size={14} />
+            )}
+          </Box>
         </Button>
       </Combobox.Target>
 
       <Combobox.Dropdown styles={{ dropdown: { zIndex: 1000 } }}>
+        {clearable && values.length > 0 && (
+          <Group
+            gap={5}
+            p="5px 10px"
+            onClick={handleClear}
+            style={{ cursor: "pointer" }}
+          >
+            <IconX size={18} /> <Text size="sm">清空已选</Text>
+          </Group>
+        )}
+
         {searchable && (
           <Combobox.Search
             p="5px 10px"

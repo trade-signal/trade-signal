@@ -8,7 +8,7 @@ export const theme = createTheme({
     custom: virtualColor({
       name: "custom",
       dark: "cyan",
-      light: "gray"
+      light: "indigo"
     })
   }
 });

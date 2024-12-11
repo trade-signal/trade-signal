@@ -38,7 +38,7 @@ const TableContainer = ({
         borderBottom: "1px solid #eee"
       }}
     >
-      <Table stickyHeader verticalSpacing="xs">
+      <Table stickyHeader highlightOnHover verticalSpacing="xs">
         {children}
       </Table>
       <div ref={ref} style={{ height: "20px" }} />
@@ -51,13 +51,15 @@ const StockTable = ({
   data,
   loading,
   onLoadMore,
-  total
+  total,
+  pageSize = 20
 }: {
   columns: Column[];
   data: StockSelection[];
   loading: boolean;
   onLoadMore: () => void;
   total: number;
+  pageSize?: number;
 }) => (
   <>
     <TableContainer onLoadMore={onLoadMore}>
@@ -91,9 +93,10 @@ const StockTable = ({
         ))}
       </Table.Tbody>
     </TableContainer>
-    <Group mt="sm">
+    <Group justify="flex-end" mt="sm">
       <Text size="sm" c="dimmed">
-        共 {total} 条数据
+        共 {total} 条数据 · {Math.ceil(total / pageSize)} 页 (已加载{" "}
+        {Math.ceil(data.length / pageSize)} 页)
       </Text>
     </Group>
   </>

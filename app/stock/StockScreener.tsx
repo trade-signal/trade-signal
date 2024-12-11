@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Stack, Group, Title, MultiSelect, Text } from "@mantine/core";
+import { Stack, Group, Title } from "@mantine/core";
 import { get } from "@/shared/request";
 
-import ComboboxMultiSelect from "@/app/components/ComboboxMultiSelect";
+import StockMultiSelect from "./StockMultiSelect";
 import { StockFilters, useStockContext } from "./StockContext";
 
 const StockScreener = () => {
@@ -37,7 +37,7 @@ const StockScreener = () => {
       <Title order={5}>股票筛选器</Title>
 
       <Group>
-        <ComboboxMultiSelect
+        <StockMultiSelect
           title="行业"
           value={filters.industries}
           data={industryData}
@@ -47,7 +47,7 @@ const StockScreener = () => {
           nothingFoundMessage="未找到相关行业"
         />
 
-        <ComboboxMultiSelect
+        <StockMultiSelect
           title="概念"
           value={filters.concepts}
           data={conceptData}
@@ -57,7 +57,7 @@ const StockScreener = () => {
           nothingFoundMessage="未找到相关概念"
         />
 
-        <ComboboxMultiSelect
+        <StockMultiSelect
           title="风格"
           value={filters.styles}
           data={styleData}

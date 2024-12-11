@@ -19,9 +19,9 @@ export default function Home() {
             gradient={{ from: "blue", to: "red" }}
             inherit
           >
-            智能投资数据
+            智能投资
           </Text>{" "}
-          分析平台
+          数据分析平台
         </h1>
 
         <Text className={styles.description} c="dimmed">

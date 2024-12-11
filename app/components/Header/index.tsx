@@ -12,7 +12,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import styles from "./index.module.css";
 import {
@@ -64,11 +64,17 @@ const actions: SpotlightActionData[] = [
 const Header = () => {
   const [opened, { toggle }] = useDisclosure(false);
   const router = useRouter();
+  const pathname = usePathname();
 
   const isLoggedIn = false;
 
   const items = links.map(link => (
-    <Link key={link.label} href={link.link} className={styles.link}>
+    <Link
+      key={link.label}
+      href={link.link}
+      className={styles.link}
+      data-active={pathname === link.link || undefined}
+    >
       {link.label}
     </Link>
   ));
@@ -98,16 +104,9 @@ const Header = () => {
             src="/icon.svg"
             alt="TradeSignal logo"
           />
-          <Text fw={700} fz="lg">
-            TradeSignal
-          </Text>
         </Group>
 
-        <Group
-          gap={5}
-          visibleFrom="xs"
-          style={{ transform: "translateX(-80px)" }}
-        >
+        <Group gap={5} visibleFrom="xs">
           <Box onClick={spotlight.open} style={{ cursor: "pointer" }}>
             <TextInput
               radius="xl"

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { get } from "@/shared/request";
 import { StockSelection } from "@prisma/client";
-import { Tabs } from "@mantine/core";
+import { Tabs, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useStockContext } from "./StockContext";
 import StockTable, { Column } from "./StockTable";
@@ -16,6 +16,20 @@ interface TabConfig {
 
 const formatNumber = (value: number, decimals = 2) => value.toFixed(decimals);
 const formatBillion = (value: number) => (value / 100000000).toFixed(2);
+const renderSignal = (value: boolean) => {
+  if (value) {
+    return (
+      <Text span c="green.7" fw={700}>
+        ✓
+      </Text>
+    );
+  }
+  return (
+    <Text span c="red.7" fw={700}>
+      ✗
+    </Text>
+  );
+};
 
 const TAB_CONFIGS: TabConfig[] = [
   {
@@ -295,6 +309,86 @@ const TAB_CONFIGS: TabConfig[] = [
         render: formatNumber
       }
     ]
+  },
+  {
+    value: "technical",
+    label: "技术指标",
+    columns: [
+      { key: "code", title: "股票代码", width: 100 },
+      { key: "name", title: "股票名称", width: 120 },
+      {
+        key: "macdGoldenFork",
+        title: "MACD金叉",
+        width: 90,
+        render: renderSignal
+      },
+      {
+        key: "kdjGoldenFork",
+        title: "KDJ金叉",
+        width: 90,
+        render: renderSignal
+      },
+      {
+        key: "breakupMa5days",
+        title: "破5日线",
+        width: 90,
+        render: renderSignal
+      },
+      {
+        key: "breakupMa20days",
+        title: "破20日线",
+        width: 90,
+        render: renderSignal
+      },
+      {
+        key: "longAvgArray",
+        title: "均线多头",
+        width: 90,
+        render: renderSignal
+      },
+      {
+        key: "breakThrough",
+        title: "放量突破",
+        width: 90,
+        render: renderSignal
+      },
+      {
+        key: "upperLargeVolume",
+        title: "连涨放量",
+        width: 90,
+        render: renderSignal
+      },
+      {
+        key: "downNarrowVolume",
+        title: "下跌无量",
+        width: 90,
+        render: renderSignal
+      },
+      {
+        key: "oneDayangLine",
+        title: "大阳线",
+        width: 90,
+        render: renderSignal
+      },
+      {
+        key: "twoDayangLines",
+        title: "两阳线",
+        width: 90,
+        render: renderSignal
+      },
+      {
+        key: "lowFundsInflow",
+        title: "低位吸筹",
+        width: 90,
+        render: renderSignal
+      },
+      {
+        key: "highFundsOutflow",
+        title: "高位出货",
+        width: 90,
+        render: renderSignal
+      }
+    ]
   }
 ];
 
@@ -376,6 +470,7 @@ const StockList = () => {
             loading={isFirstLoading}
             onLoadMore={handleLoadMore}
             total={total}
+            pageSize={20}
           />
         </Tabs.Panel>
       ))}
