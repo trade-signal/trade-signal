@@ -99,7 +99,7 @@ const Header = () => {
       <Group className={styles.inner}>
         <Group style={{ cursor: "pointer" }} onClick={() => router.push("/")}>
           <Image
-            style={{ width: rem(28), height: rem(28) }}
+            style={{ width: rem(30), height: rem(30) }}
             className={styles.logo}
             src="/icon.svg"
             alt="TradeSignal logo"
@@ -121,7 +121,7 @@ const Header = () => {
 
         <Group justify="center" grow>
           {isLoggedIn ? (
-            <IconUser size={22} />
+            <IconUser size={rem(22)} />
           ) : (
             <>
               <Button variant="default">登录</Button>
