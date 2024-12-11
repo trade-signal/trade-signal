@@ -2,7 +2,8 @@ module.exports = {
   apps: [
     {
       name: "trade-signal",
-      script: "npm run start",
+      script: "npm",
+      args: "start",
       instances: 2,
       exec_mode: "cluster",
       env: {
@@ -10,9 +11,12 @@ module.exports = {
       }
     },
     {
-      name: "cron",
+      name: "cron-jobs",
       script: "./cron/index.js",
-      instances: 1
+      instances: 1,
+      env: {
+        NODE_ENV: "production"
+      }
     }
   ]
 };

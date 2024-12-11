@@ -45,7 +45,15 @@ npm install && npm run dev
 
 ## 生产环境
 
-TODO
+```bash
+docker build -t trade-signal:latest .
+```
+
+```bash
+docker run -d -p 3000:3000 \
+  --env-file .env.production \
+  trade-signal:latest
+```
 
 ## 参考
 
