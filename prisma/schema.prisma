@@ -193,5 +193,9 @@ model StockSelection {
   updatedAt DateTime @updatedAt
 
   @@id([date, code]) // 复合主键
+  @@index([date, code]) // 日期和代码复合索引
+  @@index([industry]) // 行业索引
+  @@index([concept]) // 概念索引
+  @@index([style]) // 风格索引
   @@map("stock_selection")
 }

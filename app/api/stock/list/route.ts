@@ -15,7 +15,14 @@ export const GET = async (request: NextRequest) => {
   const offset = (page - 1) * pageSize;
   const limit = pageSize;
 
-  let where: Prisma.StockSelectionWhereInput = {};
+  const maxDate = await prisma.stockSelection.findFirst({
+    orderBy: { date: "desc" },
+    select: { date: true }
+  });
+
+  let where: Prisma.StockSelectionWhereInput = {
+    date: { equals: maxDate?.date }
+  };
 
   if (industries) {
     where.industry = {

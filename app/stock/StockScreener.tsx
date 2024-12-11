@@ -53,6 +53,7 @@ const StockScreener = () => {
           data={conceptData}
           onChange={concepts => handleFilterChange({ concepts })}
           clearable
+          searchable
           nothingFoundMessage="未找到相关概念"
         />
 
@@ -62,6 +63,7 @@ const StockScreener = () => {
           data={styleData}
           onChange={styles => handleFilterChange({ styles })}
           clearable
+          searchable
           nothingFoundMessage="未找到相关风格"
         />
       </Group>

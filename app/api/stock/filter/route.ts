@@ -1,8 +1,14 @@
 import prisma from "@/prisma/db";
 
 export const GET = async () => {
+  const maxDate = await prisma.stockSelection.findFirst({
+    orderBy: { date: "desc" },
+    select: { date: true }
+  });
+
   const data = await prisma.stockSelection.findMany({
     distinct: ["industry"],
+    where: { date: { equals: maxDate?.date } },
     select: { industry: true, concept: true, style: true },
     orderBy: { industry: "asc" }
   });
