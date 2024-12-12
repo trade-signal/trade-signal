@@ -16,10 +16,10 @@ datasource db {
 
 model StockSelection {
   // 基本信息
-  date     DateTime // 交易日期
-  code     String   @unique @db.VarChar(6) // 股票代码
-  name     String   @db.VarChar(20) // 股票名称
-  secucode String   @db.VarChar(10) // 全代码
+  date     String @db.VarChar(10) // 交易日期
+  code     String @db.VarChar(6) // 股票代码
+  name     String @db.VarChar(20) // 股票名称
+  secucode String @db.VarChar(10) // 全代码
 
   // 交易数据
   newPrice      Float // 最新价
@@ -34,11 +34,11 @@ model StockSelection {
   amplitude     Float // 振幅
 
   // 公司信息
-  listingDate DateTime
-  industry    String   @db.VarChar(50) // 行业
-  area        String   @db.VarChar(50) // 地区
-  concept     String   @db.VarChar(800) // 概念
-  style       String   @db.VarChar(255) // 风格
+  listingDate String @db.VarChar(10) // 上市日期
+  industry    String @db.VarChar(50) // 行业
+  area        String @db.VarChar(50) // 地区
+  concept     String @db.VarChar(800) // 概念
+  style       String @db.VarChar(255) // 风格
 
   // 指数成分
   isHs300  Boolean // 沪深300

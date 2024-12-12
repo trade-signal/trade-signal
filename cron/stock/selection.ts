@@ -2,6 +2,7 @@ import { get } from "@/shared/request";
 import prisma from "@/prisma/db";
 import { indicatorMapping, IndicatorType } from "@/cron/config/indicator";
 import { StockSelection } from "@prisma/client";
+import dayjs from "dayjs";
 
 /**
  * 选股指标
@@ -40,7 +41,7 @@ const getStockSelection = async (page: number, pageSize: number) => {
 
 const normalizeValue = (type: IndicatorType, value: string) => {
   if (type === "date") {
-    return new Date(value);
+    return dayjs(value).format("YYYY-MM-DD");
   }
   if (type === "number") {
     return Number(value);
@@ -104,8 +105,10 @@ const getStocks = async (): Promise<Partial<StockSelection>[]> => {
   return stocks;
 };
 
-export const checkStocks = async () => {
-  const stocks = await prisma.stockSelection.findMany();
+export const checkStocks = async (date?: string) => {
+  const stocks = await prisma.stockSelection.findMany({
+    where: { date: dayjs(date).format("YYYY-MM-DD") }
+  });
   return stocks.length > 0;
 };
 
@@ -124,16 +127,16 @@ const getUniqueStocks = async (stocks: Partial<StockSelection>[]) => {
 };
 
 export const seedStockSelection = async (date?: string) => {
-  console.log(`开始写入选股指标`);
-
   if (date) {
     // 删除指定日期的选股指标
     await prisma.stockSelection.deleteMany({
       where: {
-        date: new Date(date)
+        date: dayjs(date).format("YYYY-MM-DD")
       }
     });
   }
+
+  console.log(`开始获取选股指标`);
 
   // 获取选股指标
   const stocks = await getStocks();
@@ -148,6 +151,8 @@ export const seedStockSelection = async (date?: string) => {
   const uniqueStocks = await getUniqueStocks(stocks);
 
   console.log(`去重后选股指标数量: ${uniqueStocks.length}`);
+
+  console.log(`开始写入选股指标`);
 
   // 写入选股指标
   while (uniqueStocks.length > 0) {
