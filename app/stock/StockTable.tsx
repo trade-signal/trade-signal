@@ -70,7 +70,7 @@ const StockTable = ({
       />
       <Table.Thead>
         <Table.Tr>
-          <Table.Th style={{ width: 50 }}>序号</Table.Th>
+          <Table.Th style={{ width: 60 }}>序号</Table.Th>
           {columns.map(column => (
             <Table.Th key={column.key} style={{ width: column.width }}>
               {column.title}

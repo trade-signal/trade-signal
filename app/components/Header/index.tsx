@@ -66,6 +66,10 @@ const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
 
+  if (pathname === "/sign") {
+    return null;
+  }
+
   const isLoggedIn = false;
 
   const items = links.map(link => (
@@ -124,8 +128,15 @@ const Header = () => {
             <IconUser size={rem(22)} />
           ) : (
             <>
-              <Button variant="default">登录</Button>
-              <Button>注册</Button>
+              <Button
+                variant="default"
+                onClick={() => router.push("/sign?type=login")}
+              >
+                登录
+              </Button>
+              <Button onClick={() => router.push("/sign?type=register")}>
+                注册
+              </Button>
             </>
           )}
         </Group>
