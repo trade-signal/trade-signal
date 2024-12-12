@@ -129,7 +129,7 @@ const ComboboxMultiSelect: FC<ComboboxMultiSelectProps> = props => {
               }
             }}
             value={search}
-            placeholder={placeholder || "搜素"}
+            placeholder={placeholder || "搜索"}
             onChange={event => {
               setSearch(event.currentTarget.value);
             }}

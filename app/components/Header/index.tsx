@@ -1,28 +1,17 @@
 "use client";
 
-import {
-  Box,
-  Burger,
-  Button,
-  Group,
-  Image,
-  rem,
-  Text,
-  TextInput
-} from "@mantine/core";
+import { useState } from "react";
+
+import { Box, Button, Group, Image, rem, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { IconUser } from "@tabler/icons-react";
+import { spotlight } from "@mantine/spotlight";
+import AuthorizationModal, { AuthType } from "../AuthorizationModal";
+import SpotlightModal from "../SpotlightModal";
 
 import styles from "./index.module.css";
-import {
-  IconDashboard,
-  IconFileText,
-  IconHome,
-  IconSearch,
-  IconUser
-} from "@tabler/icons-react";
-import { spotlight, Spotlight, SpotlightActionData } from "@mantine/spotlight";
 
 const links = [
   { link: "/explore", label: "探索" },
@@ -31,44 +20,21 @@ const links = [
   { link: "/contact", label: "联系我们" }
 ];
 
-const actions: SpotlightActionData[] = [
-  {
-    id: "stock",
-    label: "股票",
-    description: "跳转至股票页面",
-    onClick: () => console.log("Home"),
-    leftSection: (
-      <IconHome style={{ width: rem(24), height: rem(24) }} stroke={1.5} />
-    )
-  },
-  {
-    id: "news",
-    label: "新闻",
-    description: "跳转至新闻页面",
-    onClick: () => console.log("Dashboard"),
-    leftSection: (
-      <IconDashboard style={{ width: rem(24), height: rem(24) }} stroke={1.5} />
-    )
-  },
-  {
-    id: "contact",
-    label: "联系我们",
-    description: "访问文档以了解更多功能",
-    onClick: () => console.log("Documentation"),
-    leftSection: (
-      <IconFileText style={{ width: rem(24), height: rem(24) }} stroke={1.5} />
-    )
-  }
-];
-
 const Header = () => {
-  const [opened, { toggle }] = useDisclosure(false);
   const router = useRouter();
   const pathname = usePathname();
 
-  if (pathname === "/sign") {
+  if (pathname === "/signin" || pathname === "/signup") {
     return null;
   }
+
+  const [authType, setAuthType] = useState<AuthType>("signin");
+  const [visible, { open, close }] = useDisclosure(false);
+
+  const handleAuthType = (type: AuthType) => {
+    setAuthType(type);
+    open();
+  };
 
   const isLoggedIn = false;
 
@@ -85,21 +51,6 @@ const Header = () => {
 
   return (
     <header className={styles.header}>
-      <Spotlight
-        actions={actions}
-        nothingFound="Nothing found..."
-        highlightQuery
-        searchProps={{
-          leftSection: (
-            <IconSearch
-              style={{ width: rem(20), height: rem(20) }}
-              stroke={1.5}
-            />
-          ),
-          placeholder: "搜素..."
-        }}
-      />
-
       <Group className={styles.inner}>
         <Group style={{ cursor: "pointer" }} onClick={() => router.push("/")}>
           <Image
@@ -130,19 +81,19 @@ const Header = () => {
             <>
               <Button
                 variant="default"
-                onClick={() => router.push("/sign?type=login")}
+                onClick={() => handleAuthType("signin")}
               >
                 登录
               </Button>
-              <Button onClick={() => router.push("/sign?type=register")}>
-                注册
-              </Button>
+              <Button onClick={() => handleAuthType("signup")}>注册</Button>
             </>
           )}
         </Group>
-
-        <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" />
       </Group>
+
+      <SpotlightModal />
+
+      <AuthorizationModal type={authType} visible={visible} onClose={close} />
     </header>
   );
 };
