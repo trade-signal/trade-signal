@@ -1,16 +1,17 @@
+"use client";
+
 import "@mantine/core/styles.css";
 import "@mantine/spotlight/styles.css";
 
 import type { Metadata } from "next";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import { Session } from "next-auth";
-import { SessionProvider } from "next-auth/react"
+import { SessionProvider } from "next-auth/react";
 
 import { theme } from "../theme";
 import Header from "./components/Header";
 
-
-export const metadata: Metadata = {
+const metadata: Metadata = {
   title: "交易信标 | TradeSignal",
   description:
     "提供实时市场数据和分析功能，助您捕捉市场脉动，做出精准投资决策。"
@@ -32,6 +33,8 @@ export default function RootLayout({
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no"
         />
+        <title>{metadata.title}</title>
+        <meta name="description" content={metadata.description} />
       </head>
       <body>
         <MantineProvider theme={theme}>

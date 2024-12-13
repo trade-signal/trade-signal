@@ -4,7 +4,7 @@ import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import prisma from "@/prisma/db";
 
-export default NextAuth({
+const handler = NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [
     GithubProvider({
@@ -18,10 +18,6 @@ export default NextAuth({
       clientId: process.env.GOOGLE_ID as string,
       clientSecret: process.env.GOOGLE_SECRET as string
     })
-    // TODO: 添加本地登录
-    // CredentialsProvider({
-    //   name: "Credentials",
-    // })
   ],
   callbacks: {
     async session({ session, user }) {
@@ -38,3 +34,5 @@ export default NextAuth({
     }
   }
 });
+
+export { handler as GET, handler as POST };
