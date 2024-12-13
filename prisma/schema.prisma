@@ -14,6 +14,51 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+model User {
+  id    String  @id @default(cuid())
+  email String  @unique // 邮箱
+  name  String? // 用户名
+  image String? // 头像
+
+  accounts Account[] // 账户
+  sessions Session[] // 会话
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("user")
+}
+
+model Account {
+  id                String    @id @default(cuid())
+  userId            String    @unique // 用户ID
+  type              String // 类型
+  provider          String // 提供商
+  providerAccountId String // 提供商账户ID
+  refreshToken      String? // 刷新令牌
+  accessToken       String? // 访问令牌
+  expiresAt         DateTime? // 过期时间
+  tokenType         String? // 令牌类型
+  scope             String? // 范围
+  idToken           String? // ID令牌
+  sessionState      String? // 会话状态
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("account")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String // 用户ID
+  sessionToken String   @unique // 会话令牌
+  expires      DateTime // 过期时间
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
 model StockSelection {
   // 基本信息
   date     String @db.VarChar(10) // 交易日期

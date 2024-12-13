@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Anchor,
   Button,
@@ -11,9 +12,9 @@ import {
   TextInput
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { signIn } from "next-auth/react";
 import { GoogleButton } from "./GoogleButton";
 import { GithubButton } from "./GithubButton";
-import { useState } from "react";
 
 type FormValues = {
   email: string;
@@ -75,8 +76,12 @@ const AuthorizationModal = (props: AuthorizationModalProps) => {
         </Text>
 
         <Group grow mb="md" mt="md">
-          <GoogleButton radius="xl">Google</GoogleButton>
-          <GithubButton radius="xl">Github</GithubButton>
+          <GoogleButton radius="xl" onClick={() => signIn("google")}>
+            Google
+          </GoogleButton>
+          <GithubButton radius="xl" onClick={() => signIn("github")}>
+            Github
+          </GithubButton>
         </Group>
 
         <Divider label="或使用邮箱登录" labelPosition="center" my="lg" />
@@ -133,7 +138,16 @@ const AuthorizationModal = (props: AuthorizationModalProps) => {
             >
               {currentType === "signup" ? "已有账号？登录" : "没有账号？注册"}
             </Anchor>
-            <Button type="submit" radius="xl">
+            <Button
+              type="submit"
+              radius="xl"
+              onClick={() => {
+                signIn("credentials", {
+                  email: form.values.email,
+                  password: form.values.password
+                });
+              }}
+            >
               {currentType === "signup" ? "注册" : "登录"}
             </Button>
           </Group>

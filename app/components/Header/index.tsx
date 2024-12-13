@@ -4,10 +4,11 @@ import { useState } from "react";
 
 import { Box, Button, Group, Image, rem, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { spotlight } from "@mantine/spotlight";
+import { IconUser } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { IconUser } from "@tabler/icons-react";
-import { spotlight } from "@mantine/spotlight";
+import { useSession } from "next-auth/react";
 import AuthorizationModal, { AuthType } from "../AuthorizationModal";
 import SpotlightModal from "../SpotlightModal";
 
@@ -23,6 +24,7 @@ const links = [
 const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
+  const { data: session } = useSession();
 
   if (pathname === "/signin" || pathname === "/signup") {
     return null;
@@ -36,7 +38,7 @@ const Header = () => {
     open();
   };
 
-  const isLoggedIn = false;
+  const isLoggedIn = !!session;
 
   const items = links.map(link => (
     <Link

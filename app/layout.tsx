@@ -3,9 +3,12 @@ import "@mantine/spotlight/styles.css";
 
 import type { Metadata } from "next";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
+import { Session } from "next-auth";
+import { SessionProvider } from "next-auth/react"
 
 import { theme } from "../theme";
 import Header from "./components/Header";
+
 
 export const metadata: Metadata = {
   title: "交易信标 | TradeSignal",
@@ -14,9 +17,11 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-  children
+  children,
+  session
 }: Readonly<{
   children: React.ReactNode;
+  session: Session;
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -30,8 +35,10 @@ export default function RootLayout({
       </head>
       <body>
         <MantineProvider theme={theme}>
-          <Header />
-          <main>{children}</main>
+          <SessionProvider session={session}>
+            <Header />
+            <main>{children}</main>
+          </SessionProvider>
         </MantineProvider>
       </body>
     </html>
