@@ -12,7 +12,7 @@ module.exports = {
     },
     {
       name: "cron-jobs",
-      script: "./cron/index.js",
+      script: ".cron/index.cjs",
       instances: 1,
       env: {
         NODE_ENV: "production"

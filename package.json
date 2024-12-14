@@ -9,7 +9,7 @@
     "cron:dev": "tsx cron/index.ts",
     "build": "npm run cron:build && npm run frontend:build",
     "frontend:build": "next build",
-    "cron:build": "tsx cron/index.ts --outDir .cron",
+    "cron:build": "tsup cron/index.ts --outDir .cron",
     "start": "next start",
     "lint": "next lint"
   },
@@ -39,6 +39,7 @@
     "postcss-preset-mantine": "^1.17.0",
     "postcss-simple-vars": "^7.0.1",
     "prisma": "^6.0.1",
+    "tsup": "^8.3.5",
     "tsx": "^4.19.2",
     "typescript": "^5"
   }

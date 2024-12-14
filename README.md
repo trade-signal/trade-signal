@@ -45,14 +45,37 @@ npm install && npm run dev
 
 ## 生产环境
 
+### 构建镜像
+
 ```bash
 docker build -t trade-signal:latest .
 ```
 
+### 启动容器
+
 ```bash
 docker run -d -p 3000:3000 \
   --env-file .env.production \
+  --name trade-signal \
   trade-signal:latest
+```
+
+```bash
+docker run -d -p 3000:3000 \
+  -e DATABASE_URL=${DATABASE_URL} \
+  -e DIRECT_URL=${DIRECT_URL} \
+  -e GITHUB_ID=${GITHUB_ID} \
+  -e GITHUB_SECRET=${GITHUB_SECRET} \
+  -e GOOGLE_ID=${GOOGLE_ID} \
+  -e GOOGLE_SECRET=${GOOGLE_SECRET} \
+  --name trade-signal \
+  trade-signal:latest
+```
+
+or
+
+```bash
+docker-compose -p trade-signal -f docker/docker-compose.prod.yml up -d
 ```
 
 ## 参考
