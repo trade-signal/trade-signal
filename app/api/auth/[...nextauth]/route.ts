@@ -32,15 +32,6 @@ const handler = NextAuth({
     // })
   ],
   callbacks: {
-    async signIn({ user }) {
-      if (user.email) {
-        await prisma.user.update({
-          where: { id: user.id },
-          data: { emailVerified: true }
-        });
-      }
-      return true;
-    },
     async session({ session, user }) {
       if (session.user) {
         session.user.id = user.id;

@@ -43,7 +43,6 @@ const AuthorizationModal = (props: AuthorizationModalProps) => {
   const form = useForm({
     initialValues: {
       email: "",
-      csrfToken: "",
       name: "",
       password: ""
     },
@@ -55,7 +54,10 @@ const AuthorizationModal = (props: AuthorizationModalProps) => {
   });
 
   const handleConfirm = (values: FormValues) => {
-    console.log(values);
+    signIn("credentials", {
+      email: values.email,
+      password: values.password
+    });
   };
 
   const toogle = () => {
@@ -95,8 +97,6 @@ const AuthorizationModal = (props: AuthorizationModalProps) => {
 
         <form onSubmit={form.onSubmit(handleConfirm)}>
           <Stack>
-            <TextInput value={form.values.csrfToken} />
-
             {currentType === "signup" && (
               <TextInput
                 label="用户名"
