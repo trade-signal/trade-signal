@@ -13,11 +13,15 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { signIn } from "next-auth/react";
+import { getCsrfToken } from "next-auth/react";
+import { GetServerSidePropsContext } from "next/types";
+
 import { GoogleButton } from "./GoogleButton";
 import { GithubButton } from "./GithubButton";
 
 type FormValues = {
   email: string;
+  csrfToken: string;
   name?: string;
   password: string;
 };
@@ -27,17 +31,19 @@ export type AuthType = "signin" | "signup";
 type AuthorizationModalProps = {
   type: AuthType;
   visible: boolean;
+  withCloseButton?: boolean;
   onClose: () => void;
 };
 
 const AuthorizationModal = (props: AuthorizationModalProps) => {
-  const { type, visible, onClose } = props;
+  const { type, visible, withCloseButton = true, onClose } = props;
 
   const [currentType, setCurrentType] = useState(type);
 
   const form = useForm({
     initialValues: {
       email: "",
+      csrfToken: "",
       name: "",
       password: ""
     },
@@ -69,6 +75,7 @@ const AuthorizationModal = (props: AuthorizationModalProps) => {
       transitionProps={{ transition: "fade", duration: 200 }}
       onClose={handleClose}
       closeOnClickOutside={false}
+      withCloseButton={withCloseButton}
     >
       <Paper w={400} m="auto" mt="10%" radius="md" p="xl" withBorder>
         <Text size="lg" fw={500} mb={20}>
@@ -88,6 +95,8 @@ const AuthorizationModal = (props: AuthorizationModalProps) => {
 
         <form onSubmit={form.onSubmit(handleConfirm)}>
           <Stack>
+            <TextInput value={form.values.csrfToken} />
+
             {currentType === "signup" && (
               <TextInput
                 label="用户名"
@@ -111,7 +120,6 @@ const AuthorizationModal = (props: AuthorizationModalProps) => {
               error={form.errors.email && "Invalid email"}
               radius="md"
             />
-
             <PasswordInput
               required
               label="密码"
@@ -158,3 +166,10 @@ const AuthorizationModal = (props: AuthorizationModalProps) => {
 };
 
 export default AuthorizationModal;
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const csrfToken = await getCsrfToken(context);
+  return {
+    props: { csrfToken }
+  };
+}

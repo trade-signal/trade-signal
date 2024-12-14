@@ -26,6 +26,8 @@ const Header = () => {
   const pathname = usePathname();
   const { data: session } = useSession();
 
+  console.log(session);
+
   if (pathname === "/signin" || pathname === "/signup") {
     return null;
   }
@@ -53,7 +55,7 @@ const Header = () => {
 
   return (
     <header className={styles.header}>
-      <Group className={styles.inner}>
+      <Group justify="space-between" className={styles.inner}>
         <Group style={{ cursor: "pointer" }} onClick={() => router.push("/")}>
           <Image
             style={{ width: rem(30), height: rem(30) }}

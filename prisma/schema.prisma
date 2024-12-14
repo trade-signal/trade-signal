@@ -15,10 +15,12 @@ datasource db {
 }
 
 model User {
-  id    String  @id @default(cuid())
-  email String  @unique // 邮箱
-  name  String? // 用户名
-  image String? // 头像
+  id            String  @id @default(cuid())
+  email         String  @unique // 邮箱
+  emailVerified Boolean @default(false) // 邮箱是否验证
+  name          String? // 用户名
+  image         String? // 头像
+  password      String? // 密码
 
   accounts Account[] // 账户
   sessions Session[] // 会话
@@ -31,20 +33,22 @@ model User {
 
 model Account {
   id                String    @id @default(cuid())
-  userId            String    @unique // 用户ID
-  type              String // 类型
-  provider          String // 提供商
-  providerAccountId String // 提供商账户ID
-  refreshToken      String? // 刷新令牌
-  accessToken       String? // 访问令牌
-  expiresAt         DateTime? // 过期时间
-  tokenType         String? // 令牌类型
-  scope             String? // 范围
-  idToken           String? // ID令牌
-  sessionState      String? // 会话状态
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refreshToken      String?
+  accessToken       String?
+  expiresAt         DateTime?
+  tokenType         String?
+  scope             String?
+  idToken           String?
+  sessionState      String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  // 添加复合唯一约束
+  @@unique([provider, providerAccountId])
   @@map("account")
 }
 
@@ -215,7 +219,7 @@ model StockSelection {
   netinflow5days    Float // 5日主力净流入
   nowinterstRatio   Float // 当日增仓占比
   nowinterstRatio3d Float // 3日增仓占比
-  nowinterstRatio5d Float // 5日增仓占比
+  nowinterstRatio5d Float // 5日增��占比
   ddx               Float // 当日DDX
   ddx3d             Float // 3日DDX
   ddx5d             Float // 5日DDX
