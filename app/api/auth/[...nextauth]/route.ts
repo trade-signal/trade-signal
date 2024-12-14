@@ -21,6 +21,13 @@ const handler = NextAuth({
       clientId: process.env.GOOGLE_ID!,
       clientSecret: process.env.GOOGLE_SECRET!,
       allowDangerousEmailAccountLinking: true, // 允许危险邮件账户链接
+      authorization: {
+        params: {
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code"
+        }
+      },
       httpOptions: {
         timeout: 1000 * 10 * 10 // 100 seconds
       }
