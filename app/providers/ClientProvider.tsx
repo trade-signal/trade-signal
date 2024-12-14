@@ -2,6 +2,7 @@
 
 import { MantineProvider } from "@mantine/core";
 import { SessionProvider } from "next-auth/react";
+import { Notifications } from "@mantine/notifications";
 import { Session } from "next-auth";
 
 import { theme } from "../../theme";
@@ -17,6 +18,7 @@ export default function ClientProvider({
   return (
     <MantineProvider theme={theme}>
       <SessionProvider session={session}>
+        <Notifications />
         <Header />
         <main>{children}</main>
       </SessionProvider>

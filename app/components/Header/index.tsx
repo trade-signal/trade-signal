@@ -2,13 +2,29 @@
 
 import { useState } from "react";
 
-import { Box, Button, Group, Image, rem, TextInput } from "@mantine/core";
+import {
+  Avatar,
+  Box,
+  Button,
+  Group,
+  Image,
+  Menu,
+  rem,
+  Text,
+  TextInput
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { spotlight } from "@mantine/spotlight";
-import { IconUser } from "@tabler/icons-react";
+import {
+  IconArrowsLeftRight,
+  IconLanguage,
+  IconMessageCircle,
+  IconMoon,
+  IconUser
+} from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import AuthorizationModal, { AuthType } from "../AuthorizationModal";
 import SpotlightModal from "../SpotlightModal";
 
@@ -25,12 +41,6 @@ const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { data: session } = useSession();
-
-  console.log(session);
-
-  if (pathname === "/signin" || pathname === "/signup") {
-    return null;
-  }
 
   const [authType, setAuthType] = useState<AuthType>("signin");
   const [visible, { open, close }] = useDisclosure(false);
@@ -80,7 +90,76 @@ const Header = () => {
 
         <Group justify="center" grow>
           {isLoggedIn ? (
-            <IconUser size={rem(22)} />
+            <Menu shadow="md">
+              <Menu.Target>
+                {session?.user?.image ? (
+                  <Avatar
+                    src={session?.user?.image || ""}
+                    size={rem(32)}
+                    alt={session?.user?.name || ""}
+                    style={{ cursor: "pointer" }}
+                  />
+                ) : (
+                  <Text>{session?.user?.name}</Text>
+                )}
+              </Menu.Target>
+
+              <Menu.Dropdown style={{ width: rem(200) }}>
+                <Menu.Item
+                  disabled
+                  leftSection={
+                    <IconUser style={{ width: rem(14), height: rem(14) }} />
+                  }
+                >
+                  个人资料
+                </Menu.Item>
+
+                <Menu.Item
+                  disabled
+                  leftSection={
+                    <IconMessageCircle
+                      style={{ width: rem(14), height: rem(14) }}
+                    />
+                  }
+                >
+                  最新消息
+                </Menu.Item>
+
+                <Menu.Divider />
+
+                <Menu.Item
+                  disabled
+                  leftSection={
+                    <IconMoon style={{ width: rem(14), height: rem(14) }} />
+                  }
+                  onClick={() => signOut()}
+                >
+                  暗色模式
+                </Menu.Item>
+
+                <Menu.Item
+                  disabled
+                  leftSection={
+                    <IconLanguage style={{ width: rem(14), height: rem(14) }} />
+                  }
+                >
+                  语言
+                </Menu.Item>
+
+                <Menu.Divider />
+
+                <Menu.Item
+                  leftSection={
+                    <IconArrowsLeftRight
+                      style={{ width: rem(14), height: rem(14) }}
+                    />
+                  }
+                  onClick={() => signOut()}
+                >
+                  退出登录
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
           ) : (
             <>
               <Button

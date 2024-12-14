@@ -2,49 +2,75 @@ import NextAuth from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
-// import CredentialsProvider from "next-auth/providers/credentials";
+import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "@/prisma/db";
+import { hashPassword } from "@/shared/encrypt";
 
 const handler = NextAuth({
-  debug: true,
-  pages: {
-    signIn: "/auth/signin"
-  },
   adapter: PrismaAdapter(prisma),
   providers: [
     GithubProvider({
-      clientId: process.env.GITHUB_ID as string,
-      clientSecret: process.env.GITHUB_SECRET as string,
+      clientId: process.env.GITHUB_ID!,
+      clientSecret: process.env.GITHUB_SECRET!,
+      allowDangerousEmailAccountLinking: true, // 允许危险邮件账户链接
       httpOptions: {
-        timeout: 1000 * 10 * 5 // 50 seconds
+        timeout: 1000 * 10 * 10 // 100 seconds
       }
     }),
     GoogleProvider({
-      clientId: process.env.GOOGLE_ID as string,
-      clientSecret: process.env.GOOGLE_SECRET as string
+      clientId: process.env.GOOGLE_ID!,
+      clientSecret: process.env.GOOGLE_SECRET!,
+      allowDangerousEmailAccountLinking: true, // 允许危险邮件账户链接
+      httpOptions: {
+        timeout: 1000 * 10 * 10 // 100 seconds
+      }
+    }),
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" }
+      },
+      async authorize(credentials) {
+        if (!credentials) return null;
+
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email }
+        });
+
+        if (!user) return null;
+
+        if (!user.password) return null;
+        if (user.password !== hashPassword(credentials.password)) return null;
+
+        return user;
+      }
     })
-    // CredentialsProvider({
-    //   name: "Credentials",
-    //   credentials: {
-    //     username: { label: "Username", type: "text", placeholder: "jsmith" },
-    //     password: { label: "Password", type: "password" }
-    //   }
-    // })
   ],
+  session: {
+    strategy: "jwt"
+  },
+  jwt: {
+    secret: process.env.NEXTAUTH_SECRET || "secret"
+  },
   callbacks: {
-    async session({ session, user }) {
-      if (session.user) {
-        session.user.id = user.id;
+    async session({ session, token, user }) {
+      if (session?.user && token) {
+        session.user.id = token.id as string;
       }
       return session;
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       if (user) {
         token.id = user.id;
       }
       return token;
     }
-  }
+  },
+  pages: {
+    signIn: "/auth/signin"
+  },
+  debug: true
 });
 
 export { handler as GET, handler as POST };

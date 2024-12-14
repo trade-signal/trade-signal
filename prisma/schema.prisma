@@ -17,7 +17,7 @@ datasource db {
 model User {
   id            String    @id @default(cuid())
   email         String    @unique // 邮箱
-  emailVerified DateTime?
+  emailVerified DateTime? @default(now())
   name          String? // 用户名
   image         String? // 头像
   password      String? // 密码
@@ -32,18 +32,19 @@ model User {
 }
 
 model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
+  id                       String  @id @default(cuid())
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String? @db.Text
+  refresh_token_expires_in Int?
+  access_token             String? @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? @db.Text
+  session_state            String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -52,6 +53,7 @@ model Account {
   @@map("account")
 }
 
+// @deprecated These models are not used in JWT mode, but required by next-auth schema
 model Session {
   id           String   @id @default(cuid())
   userId       String // 用户ID
@@ -63,6 +65,7 @@ model Session {
   @@map("session")
 }
 
+// @deprecated These models are not used in JWT mode, but required by next-auth schema
 model VerificationToken {
   identifier String
   token      String   @unique
@@ -228,7 +231,7 @@ model StockSelection {
   netinflow5days    Float // 5日主力净流入
   nowinterstRatio   Float // 当日增仓占比
   nowinterstRatio3d Float // 3日增仓占比
-  nowinterstRatio5d Float // 5日增��占比
+  nowinterstRatio5d Float // 5日增仓占比
   ddx               Float // 当日DDX
   ddx3d             Float // 3日DDX
   ddx5d             Float // 5日DDX
