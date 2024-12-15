@@ -52,7 +52,8 @@ const StockTable = ({
   loading,
   onLoadMore,
   total,
-  pageSize = 20
+  pageSize = 20,
+  statisticsDate
 }: {
   columns: Column[];
   data: StockSelection[];
@@ -60,6 +61,7 @@ const StockTable = ({
   onLoadMore: () => void;
   total: number;
   pageSize?: number;
+  statisticsDate?: string;
 }) => (
   <>
     <TableContainer onLoadMore={onLoadMore}>
@@ -97,6 +99,9 @@ const StockTable = ({
       <Text size="sm" c="dimmed">
         共 {total} 条数据 · {Math.ceil(total / pageSize)} 页 (已加载{" "}
         {Math.ceil(data.length / pageSize)} 页)
+      </Text>
+      <Text size="sm" c="dimmed">
+        数据更新时间: {statisticsDate}
       </Text>
     </Group>
   </>

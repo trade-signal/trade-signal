@@ -61,6 +61,9 @@ export const GET = async (request: NextRequest) => {
   return Response.json({
     success: true,
     data,
+    statistics: {
+      date: maxDate?.date
+    },
     pagination: {
       page,
       pageSize,

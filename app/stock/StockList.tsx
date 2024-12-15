@@ -400,8 +400,9 @@ const StockList = () => {
   const [page, setPage] = useState(1);
   const [isFirstLoading, setIsFirstLoading] = useState(true);
   const [total, setTotal] = useState(0);
+  const [statistics, setStatistics] = useState<{ date: string }>({ date: "" });
 
-  const getStockList = async (currentPage: number) => {
+  const getStockList = async (currentPage: number, hasMore: boolean) => {
     if (!hasMore || (currentPage > 1 && visible)) return;
 
     if (currentPage === 1) {
@@ -426,6 +427,7 @@ const StockList = () => {
       if (currentPage === 1) {
         setStockList(data);
         setTotal(pagination.total);
+        setStatistics(response.statistics);
       } else {
         setStockList(prev => [...prev, ...data]);
       }
@@ -443,12 +445,12 @@ const StockList = () => {
     setPage(1);
     setHasMore(true);
     setIsFirstLoading(true);
-    getStockList(1);
+    getStockList(1, true);
   }, [filters]);
 
   useEffect(() => {
     if (page > 1) {
-      getStockList(page);
+      getStockList(page, hasMore);
     }
   }, [page]);
 
@@ -471,6 +473,7 @@ const StockList = () => {
             onLoadMore={handleLoadMore}
             total={total}
             pageSize={20}
+            statisticsDate={statistics.date}
           />
         </Tabs.Panel>
       ))}
