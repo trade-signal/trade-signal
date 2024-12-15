@@ -1,6 +1,6 @@
 "use client";
 
-import { Center, MantineProvider, Text } from "@mantine/core";
+import { AppShell, Center, MantineProvider, Text } from "@mantine/core";
 import { SessionProvider } from "next-auth/react";
 import { Session } from "next-auth";
 import { Notifications } from "@mantine/notifications";
@@ -41,8 +41,10 @@ export default function ClientProvider({
     <MantineProvider theme={theme}>
       <SessionProvider session={session}>
         <Notifications />
-        <Header />
-        <main>{children}</main>
+        <AppShell header={{ height: 56 }} visibleFrom="xs">
+          <Header />
+          <AppShell.Main>{children}</AppShell.Main>
+        </AppShell>
       </SessionProvider>
     </MantineProvider>
   );

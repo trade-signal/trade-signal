@@ -34,7 +34,7 @@ const StockList = () => {
     const response = await get("/api/stock/list", {
       ...filters,
       page: currentPage,
-      pageSize: 20,
+      pageSize: filters.pageSize || 20,
       orderBy,
       order,
       industries: filters.industries?.join(","),
@@ -102,7 +102,7 @@ const StockList = () => {
             firstLoading={isFirstLoading}
             loading={loading}
             total={total}
-            pageSize={20}
+            pageSize={filters.pageSize || 20}
             statisticsDate={statistics.date}
             orderBy={orderBy}
             order={order}

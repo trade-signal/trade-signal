@@ -11,7 +11,8 @@ import {
   Menu,
   rem,
   Text,
-  TextInput
+  TextInput,
+  AppShell
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { spotlight } from "@mantine/spotlight";
@@ -64,8 +65,8 @@ const Header = () => {
   ));
 
   return (
-    <header className={styles.header}>
-      <Group justify="space-between" className={styles.inner} visibleFrom="xs">
+    <AppShell.Header className={styles.header} visibleFrom="xs">
+      <Group justify="space-between" className={styles.inner}>
         <Group style={{ cursor: "pointer" }} onClick={() => router.push("/")}>
           <Image
             style={{ width: rem(30), height: rem(30) }}
@@ -177,7 +178,7 @@ const Header = () => {
       <SpotlightModal />
 
       <AuthorizationModal type={authType} visible={visible} onClose={close} />
-    </header>
+    </AppShell.Header>
   );
 };
 

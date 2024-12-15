@@ -36,10 +36,15 @@ export interface StockContextType {
 
 const StockContext = createContext<StockContextType | undefined>(undefined);
 
+const getInitialPageSize = () => {
+  if (window.innerHeight > 1000) return 30;
+  return 20;
+};
+
 export function StockProvider({ children }: { children: ReactNode }) {
   const [filters, setFilters] = useState<StockFilters>({
     page: 1,
-    pageSize: 20,
+    pageSize: getInitialPageSize(),
     industries: [],
     concepts: [],
     styles: [],

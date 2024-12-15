@@ -90,14 +90,14 @@ const StockTable = ({
               style={{ width: column.width, cursor: "pointer" }}
               onClick={() => onSort(column.key)}
             >
-              <Group gap={4}>
+              <Group gap={4} align="center">
                 {column.title}
                 {column.sortable && orderBy === column.key && (
                   <Button variant="transparent" size="compact-xs">
                     {order === "asc" ? (
-                      <IconSortAscending size={12} />
+                      <IconSortAscending size={18} />
                     ) : (
-                      <IconSortDescending size={12} />
+                      <IconSortDescending size={18} />
                     )}
                   </Button>
                 )}
@@ -121,7 +121,7 @@ const StockTable = ({
         ))}
       </Table.Tbody>
     </TableContainer>
-    <Group justify="flex-end" mt="sm" gap="xs">
+    <Group justify="flex-end" mt="sm" gap="xs" style={{ height: 30 }}>
       {firstLoading ? (
         <Text size="sm" c="dimmed">
           数据加载中...
