@@ -1,8 +1,19 @@
 import { useEffect } from "react";
 import { StockSelection } from "@prisma/client";
-import { LoadingOverlay, Table, Text, Group, Button, Box } from "@mantine/core";
+import {
+  LoadingOverlay,
+  Table,
+  Text,
+  Group,
+  Button,
+  TextInput
+} from "@mantine/core";
 import { useIntersection } from "@mantine/hooks";
-import { IconSortAscending, IconSortDescending } from "@tabler/icons-react";
+import {
+  IconSearch,
+  IconSortAscending,
+  IconSortDescending
+} from "@tabler/icons-react";
 import { getOrderBy } from "./StockListConfig";
 
 export interface Column {
@@ -11,6 +22,8 @@ export interface Column {
   width?: number;
   render?: (value: any) => React.ReactNode;
   sortable?: boolean;
+  searchable?: boolean;
+  align?: "left" | "center" | "right";
 }
 
 const TableContainer = ({
@@ -49,6 +62,33 @@ const TableContainer = ({
   );
 };
 
+const ColumnSortCell = ({
+  column,
+  orderBy,
+  order
+}: {
+  column: Column;
+  orderBy?: string;
+  order?: string;
+}) => {
+  return (
+    <Group gap={2} align="center" style={{ cursor: "pointer" }}>
+      <Text fw="normal" size="sm">
+        {column.title}
+      </Text>
+      {column.sortable && orderBy === column.key && (
+        <Button variant="transparent" size="compact-xs">
+          {order === "asc" ? (
+            <IconSortAscending size={18} />
+          ) : (
+            <IconSortDescending size={18} />
+          )}
+        </Button>
+      )}
+    </Group>
+  );
+};
+
 const StockTable = ({
   columns,
   data,
@@ -59,7 +99,9 @@ const StockTable = ({
   statisticsDate,
   orderBy,
   order,
-  onSort
+  search,
+  onSort,
+  onSearch
 }: {
   columns: Column[];
   data: StockSelection[];
@@ -70,8 +112,10 @@ const StockTable = ({
   statisticsDate?: string;
   orderBy?: string;
   order?: string;
+  search?: string;
   onLoadMore: () => void;
   onSort: (key: string) => void;
+  onSearch: (value: string) => void;
 }) => (
   <>
     <TableContainer onLoadMore={onLoadMore}>
@@ -83,23 +127,44 @@ const StockTable = ({
       />
       <Table.Thead>
         <Table.Tr>
-          <Table.Th style={{ width: 60 }}>序号</Table.Th>
           {columns.map(column => (
             <Table.Th
               key={column.key}
+              fw="normal"
+              fz="sm"
+              c="#666"
               style={{ width: column.width, cursor: "pointer" }}
               onClick={() => onSort(column.key)}
             >
               <Group gap={4} align="center">
-                {column.title}
-                {column.sortable && orderBy === column.key && (
-                  <Button variant="transparent" size="compact-xs">
-                    {order === "asc" ? (
-                      <IconSortAscending size={18} />
-                    ) : (
-                      <IconSortDescending size={18} />
-                    )}
-                  </Button>
+                {column.searchable ? (
+                  <TextInput
+                    size="xs"
+                    label={
+                      <ColumnSortCell
+                        column={column}
+                        orderBy={orderBy}
+                        order={order}
+                      />
+                    }
+                    variant="filled"
+                    placeholder="搜索"
+                    rightSection={<IconSearch size={18} />}
+                    value={search}
+                    onClick={e => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                    onChange={e => {
+                      onSearch(e.target.value);
+                    }}
+                  />
+                ) : (
+                  <ColumnSortCell
+                    column={column}
+                    orderBy={orderBy}
+                    order={order}
+                  />
                 )}
               </Group>
             </Table.Th>
@@ -109,9 +174,12 @@ const StockTable = ({
       <Table.Tbody>
         {data.map((stock, index) => (
           <Table.Tr key={`${stock.code}-${index}-${orderBy}-${order}`}>
-            <Table.Td>{index + 1}</Table.Td>
             {columns.map(column => (
-              <Table.Td key={column.key} style={{ width: column.width }}>
+              <Table.Td
+                key={column.key}
+                style={{ width: column.width }}
+                align={column.align}
+              >
                 {column.render
                   ? column.render(stock[column.key])
                   : String(stock[column.key])}
@@ -119,6 +187,16 @@ const StockTable = ({
             ))}
           </Table.Tr>
         ))}
+
+        {data.length === 0 && (
+          <Table.Tr h={300}>
+            <Table.Td colSpan={columns.length} style={{ textAlign: "center" }}>
+              <Text size="sm" c="dimmed">
+                暂无数据
+              </Text>
+            </Table.Td>
+          </Table.Tr>
+        )}
       </Table.Tbody>
     </TableContainer>
     <Group justify="flex-end" mt="sm" gap="xs" style={{ height: 30 }}>

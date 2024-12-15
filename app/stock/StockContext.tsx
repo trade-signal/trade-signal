@@ -25,6 +25,9 @@ export interface StockFilters {
   totalMarketValue?: StockMarketValue | null;
   // 市盈率
   peRatio?: StockPeRatio | null;
+
+  // 搜索
+  search?: string;
 }
 
 export interface StockContextType {
@@ -48,7 +51,8 @@ export const getInitialFilters = () => {
     styles: [],
     newPrice: null,
     totalMarketValue: null,
-    peRatio: null
+    peRatio: null,
+    search: ""
   };
 };
 

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { get } from "@/shared/request";
 import { StockSelection } from "@prisma/client";
 import { Tabs } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { useDebouncedCallback, useDisclosure } from "@mantine/hooks";
 
 import { useStockContext } from "./StockContext";
 import { TAB_CONFIGS } from "./StockListConfig";
@@ -15,6 +15,9 @@ const StockList = () => {
 
   const [orderBy, setOrderBy] = useState("newPrice");
   const [order, setOrder] = useState("desc");
+
+  const [search, setSearch] = useState("");
+  const [searchValue, setSearchValue] = useState("");
 
   const [stockList, setStockList] = useState<StockSelection[]>([]);
   const [statistics, setStatistics] = useState<{ date: string }>({ date: "" });
@@ -38,6 +41,7 @@ const StockList = () => {
       pageSize: filters.pageSize || 20,
       orderBy,
       order,
+      search,
       industries: filters.industries?.join(","),
       concepts: filters.concepts?.join(",")
     });
@@ -66,6 +70,15 @@ const StockList = () => {
     setOrder(key === orderBy ? (order === "asc" ? "desc" : "asc") : "desc");
   };
 
+  const handleSearch = useDebouncedCallback(value => {
+    setSearch(value);
+  }, 500);
+
+  const handleSearchValueChange = (value: string) => {
+    setSearchValue(value);
+    handleSearch(value);
+  };
+
   const handleLoadMore = () => {
     if (hasMore && !loading) {
       setPage(prev => prev + 1);
@@ -77,7 +90,7 @@ const StockList = () => {
     setPage(1);
     setHasMore(true);
     getStockList(1, true);
-  }, [filters, orderBy, order]);
+  }, [filters, orderBy, order, search]);
 
   useEffect(() => {
     if (page > 1 && !loading) {
@@ -107,8 +120,10 @@ const StockList = () => {
             statisticsDate={statistics.date}
             orderBy={orderBy}
             order={order}
-            onLoadMore={handleLoadMore}
+            search={searchValue}
             onSort={handleSort}
+            onSearch={handleSearchValueChange}
+            onLoadMore={handleLoadMore}
           />
         </Tabs.Panel>
       ))}

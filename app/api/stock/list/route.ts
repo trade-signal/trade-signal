@@ -58,6 +58,8 @@ export const GET = async (request: NextRequest) => {
   const orderBy = searchParams.get("orderBy") || "newPrice";
   const order = searchParams.get("order") || "desc";
 
+  const search = searchParams.get("search");
+
   const page = Number(searchParams.get("page")) || 1;
   const pageSize = Number(searchParams.get("pageSize")) || 20;
 
@@ -103,6 +105,12 @@ export const GET = async (request: NextRequest) => {
   }
   if (peRatio) {
     where.pe9 = getPeRatioRange(peRatio as StockPeRatio);
+  }
+
+  if (search) {
+    where.code = {
+      contains: search.trim()
+    };
   }
 
   const data = await prisma.stockSelection.findMany({
