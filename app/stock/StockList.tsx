@@ -5,6 +5,7 @@ import { get } from "@/shared/request";
 import { StockSelection } from "@prisma/client";
 import { Tabs } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+
 import { useStockContext } from "./StockContext";
 import { TAB_CONFIGS } from "./StockListConfig";
 import StockTable from "./StockTable";

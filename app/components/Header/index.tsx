@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
 import {
   Avatar,
   Box,
@@ -14,7 +12,6 @@ import {
   TextInput,
   AppShell
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import { spotlight } from "@mantine/spotlight";
 import {
   IconArrowsLeftRight,
@@ -25,8 +22,8 @@ import {
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { signOut, useSession } from "next-auth/react";
-import AuthorizationModal, { AuthType } from "../AuthorizationModal";
+import { signOut } from "next-auth/react";
+import { useLoginContext } from "@/app/providers/LoginProvider";
 import SpotlightModal from "../SpotlightModal";
 
 import styles from "./index.module.css";
@@ -41,17 +38,9 @@ const links = [
 const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
-  const { data: session } = useSession();
 
-  const [authType, setAuthType] = useState<AuthType>("signin");
-  const [visible, { open, close }] = useDisclosure(false);
-
-  const handleAuthType = (type: AuthType) => {
-    setAuthType(type);
-    open();
-  };
-
-  const isLoggedIn = !!session;
+  const { visible, authType, close, showLoginModal, isLoggedIn, userInfo } =
+    useLoginContext();
 
   const items = links.map(link => (
     <Link
@@ -93,15 +82,15 @@ const Header = () => {
           {isLoggedIn ? (
             <Menu shadow="md">
               <Menu.Target>
-                {session?.user?.image ? (
+                {userInfo?.image ? (
                   <Avatar
-                    src={session?.user?.image || ""}
+                    src={userInfo?.image || ""}
                     size={rem(32)}
-                    alt={session?.user?.name || ""}
+                    alt={userInfo?.name || ""}
                     style={{ cursor: "pointer" }}
                   />
                 ) : (
-                  <Text>{session?.user?.name}</Text>
+                  <Text>{userInfo?.name}</Text>
                 )}
               </Menu.Target>
 
@@ -165,19 +154,17 @@ const Header = () => {
             <>
               <Button
                 variant="default"
-                onClick={() => handleAuthType("signin")}
+                onClick={() => showLoginModal("signin")}
               >
                 登录
               </Button>
-              <Button onClick={() => handleAuthType("signup")}>注册</Button>
+              <Button onClick={() => showLoginModal("signup")}>注册</Button>
             </>
           )}
         </Group>
       </Group>
 
       <SpotlightModal />
-
-      <AuthorizationModal type={authType} visible={visible} onClose={close} />
     </AppShell.Header>
   );
 };

@@ -11,6 +11,7 @@ import {
   Box
 } from "@mantine/core";
 import { IconChevronDown, IconChevronUp, IconX } from "@tabler/icons-react";
+import { useLoginContext } from "@/app/providers/LoginProvider";
 
 interface ComboboxMultiSelectProps {
   title: string;
@@ -24,6 +25,8 @@ interface ComboboxMultiSelectProps {
 }
 
 const ComboboxMultiSelect: FC<ComboboxMultiSelectProps> = props => {
+  const { isLoggedIn, showLoginModal } = useLoginContext();
+
   const {
     title,
     data,
@@ -44,6 +47,12 @@ const ComboboxMultiSelect: FC<ComboboxMultiSelectProps> = props => {
   const [values, setValues] = useState<string[]>([]);
 
   const handleValueSelect = (val: string) => {
+    if (!isLoggedIn) {
+      combobox.closeDropdown();
+      showLoginModal("signin");
+      return;
+    }
+
     const newValues = values.includes(val)
       ? values.filter(v => v !== val)
       : [...values, val];

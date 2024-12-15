@@ -15,6 +15,7 @@ import { useForm } from "@mantine/form";
 import { signIn } from "next-auth/react";
 import { notifications } from "@mantine/notifications";
 import { post } from "@/shared/request";
+import { AuthType } from "@/app/providers/LoginProvider";
 
 import { GoogleButton } from "./GoogleButton";
 import { GithubButton } from "./GithubButton";
@@ -23,8 +24,6 @@ type FormValues = {
   email: string;
   password: string;
 };
-
-export type AuthType = "signin" | "signup";
 
 type AuthorizationModalProps = {
   type: AuthType;

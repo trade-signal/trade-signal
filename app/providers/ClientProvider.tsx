@@ -9,6 +9,7 @@ import { IconDeviceLaptop } from "@tabler/icons-react";
 
 import { theme } from "../../theme";
 import Header from "../components/Header";
+import { LoginProvider } from "./LoginProvider";
 
 export default function ClientProvider({
   children,
@@ -40,11 +41,13 @@ export default function ClientProvider({
   return (
     <MantineProvider theme={theme}>
       <SessionProvider session={session}>
-        <Notifications />
-        <AppShell header={{ height: 56 }} visibleFrom="xs">
-          <Header />
-          <AppShell.Main>{children}</AppShell.Main>
-        </AppShell>
+        <LoginProvider>
+          <Notifications />
+          <AppShell header={{ height: 56 }} visibleFrom="xs">
+            <Header />
+            <AppShell.Main>{children}</AppShell.Main>
+          </AppShell>
+        </LoginProvider>
       </SessionProvider>
     </MantineProvider>
   );
