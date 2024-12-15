@@ -10,7 +10,8 @@ import {
   rem,
   Text,
   TextInput,
-  AppShell
+  AppShell,
+  Title
 } from "@mantine/core";
 import { spotlight } from "@mantine/spotlight";
 import {
@@ -55,13 +56,21 @@ const Header = () => {
   return (
     <AppShell.Header className={styles.header} visibleFrom="xs">
       <Group justify="space-between" className={styles.inner}>
-        <Group style={{ cursor: "pointer" }} onClick={() => router.push("/")}>
+        <Group
+          gap={5}
+          style={{ cursor: "pointer" }}
+          onClick={() => router.push("/")}
+        >
           <Image
-            style={{ width: rem(30), height: rem(30) }}
-            className={styles.logo}
+            style={{ width: rem(32), height: rem(32) }}
             src="/icon.svg"
             alt="TradeSignal logo"
           />
+          <Title order={3} visibleFrom="xl">
+            <Text fw={700} size="xl" inherit>
+              TradeSignal
+            </Text>
+          </Title>
         </Group>
 
         <Group gap={5}>
