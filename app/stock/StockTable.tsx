@@ -56,7 +56,6 @@ const StockTable = ({
   loading,
   onLoadMore,
   total,
-  pageSize = 20,
   statisticsDate,
   orderBy,
   order,

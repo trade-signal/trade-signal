@@ -65,7 +65,7 @@ const Header = () => {
 
   return (
     <header className={styles.header}>
-      <Group justify="space-between" className={styles.inner}>
+      <Group justify="space-between" className={styles.inner} visibleFrom="xs">
         <Group style={{ cursor: "pointer" }} onClick={() => router.push("/")}>
           <Image
             style={{ width: rem(30), height: rem(30) }}
@@ -75,7 +75,7 @@ const Header = () => {
           />
         </Group>
 
-        <Group gap={5} visibleFrom="xs">
+        <Group gap={5}>
           <Box onClick={spotlight.open} style={{ cursor: "pointer" }}>
             <TextInput
               radius="xl"

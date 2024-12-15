@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Container, Group, Text } from "@mantine/core";
+import { Box, Button, Container, Group, Text } from "@mantine/core";
 import { IconBrandGithubFilled } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
@@ -9,7 +9,7 @@ export default function Home() {
   const router = useRouter();
 
   return (
-    <div className={styles.wrapper}>
+    <Box className={styles.wrapper} visibleFrom="xs">
       <Container size={700} className={styles.inner}>
         <h1 className={styles.title}>
           打造您的{" "}
@@ -52,6 +52,6 @@ export default function Home() {
           </Button>
         </Group>
       </Container>
-    </div>
+    </Box>
   );
 }
