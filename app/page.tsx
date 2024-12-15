@@ -43,6 +43,7 @@ export default function Home() {
           <Button
             component="a"
             href="https://github.com/yzqzy"
+            target="_blank"
             size="xl"
             variant="default"
             className={styles.control}

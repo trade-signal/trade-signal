@@ -39,8 +39,7 @@ const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const { visible, authType, close, showLoginModal, isLoggedIn, userInfo } =
-    useLoginContext();
+  const { showLoginModal, isLoggedIn, userInfo } = useLoginContext();
 
   const items = links.map(link => (
     <Link
@@ -90,7 +89,7 @@ const Header = () => {
                     style={{ cursor: "pointer" }}
                   />
                 ) : (
-                  <Text>{userInfo?.name}</Text>
+                  <Text style={{ cursor: "pointer" }}>{userInfo?.name}</Text>
                 )}
               </Menu.Target>
 
