@@ -7,6 +7,20 @@ interface TabConfig {
   columns: Column[];
 }
 
+const getColor = (value: number) => {
+  if (value > 0) return "red.7";
+  if (value < 0) return "green.7";
+  return "gray.7";
+};
+
+const formatPercent = (value: number, decimals = 2) => {
+  const val = value.toFixed(decimals);
+  return (
+    <Text span c={getColor(Number(val))} fw={700}>
+      {val}%
+    </Text>
+  );
+};
 const formatNumber = (value: number, decimals = 2) => value.toFixed(decimals);
 const formatBillion = (value: number) => (value / 100000000).toFixed(2);
 const renderSignal = (value: boolean) => {
@@ -44,7 +58,7 @@ export const TAB_CONFIGS: TabConfig[] = [
         key: "changeRate",
         title: "涨跌幅(%)",
         width: 100,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       },
       {
@@ -58,12 +72,12 @@ export const TAB_CONFIGS: TabConfig[] = [
         key: "turnoverRate",
         title: "换手率(%)",
         width: 100,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       },
       {
         key: "pe9",
-        title: "市盈率",
+        title: "市盈率TTM",
         width: 90,
         render: formatNumber,
         sortable: true
@@ -72,14 +86,14 @@ export const TAB_CONFIGS: TabConfig[] = [
         key: "roeWeight",
         title: "ROE(%)",
         width: 90,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       },
       {
         key: "netprofitYoyRatio",
         title: "净利润增长(%)",
         width: 120,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       }
     ]
@@ -101,21 +115,21 @@ export const TAB_CONFIGS: TabConfig[] = [
         key: "changeRate",
         title: "涨跌幅(%)",
         width: 100,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       },
       {
         key: "amplitude",
         title: "振幅(%)",
         width: 90,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       },
       {
         key: "turnoverRate",
         title: "换手率(%)",
         width: 100,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       },
       {
@@ -136,14 +150,14 @@ export const TAB_CONFIGS: TabConfig[] = [
         key: "changerate5days",
         title: "5日涨跌(%)",
         width: 110,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       },
       {
         key: "changerate10days",
         title: "10日涨跌(%)",
         width: 110,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       }
     ]
@@ -165,35 +179,35 @@ export const TAB_CONFIGS: TabConfig[] = [
         key: "netprofitYoyRatio",
         title: "净利润增长(%)",
         width: 120,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       },
       {
         key: "toiYoyRatio",
         title: "营收增长(%)",
         width: 110,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       },
       {
         key: "saleGpr",
         title: "毛利率(%)",
         width: 100,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       },
       {
         key: "saleNpr",
         title: "净利率(%)",
         width: 100,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       },
       {
         key: "debtAssetRatio",
         title: "资产负债率(%)",
         width: 120,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       },
       {
@@ -250,7 +264,7 @@ export const TAB_CONFIGS: TabConfig[] = [
         key: "zxgxl",
         title: "股息率(%)",
         width: 100,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       },
       {
@@ -272,42 +286,42 @@ export const TAB_CONFIGS: TabConfig[] = [
         key: "netprofitYoyRatio",
         title: "净利润同比(%)",
         width: 120,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       },
       {
         key: "netprofitGrowthrate3y",
         title: "净利润3年复合(%)",
         width: 140,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       },
       {
         key: "toiYoyRatio",
         title: "营收同比(%)",
         width: 110,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       },
       {
         key: "incomeGrowthrate3y",
         title: "营收3年复合(%)",
         width: 130,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       },
       {
         key: "basicepsYoyRatio",
         title: "EPS增长率(%)",
         width: 120,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       },
       {
         key: "predictNetprofitRatio",
         title: "预测净利增长(%)",
         width: 130,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       }
     ]
@@ -322,21 +336,21 @@ export const TAB_CONFIGS: TabConfig[] = [
         key: "roeWeight",
         title: "ROE(%)",
         width: 90,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       },
       {
         key: "jroa",
         title: "ROA(%)",
         width: 90,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       },
       {
         key: "roic",
         title: "ROIC(%)",
         width: 90,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       },
       {
@@ -372,42 +386,42 @@ export const TAB_CONFIGS: TabConfig[] = [
         key: "allcorpRatio",
         title: "机构持股比例(%)",
         width: 130,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       },
       {
         key: "allcorpFundRatio",
         title: "基金持股比例(%)",
         width: 130,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       },
       {
         key: "allcorpSbRatio",
         title: "社保持股比例(%)",
         width: 130,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       },
       {
         key: "allcorpQfiiRatio",
         title: "QFII持股比例(%)",
         width: 130,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       },
       {
         key: "holdRatioCount",
         title: "十大股东比例(%)",
         width: 130,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       },
       {
         key: "holderRatio",
         title: "户数增长率(%)",
         width: 120,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       }
     ]
@@ -450,14 +464,14 @@ export const TAB_CONFIGS: TabConfig[] = [
         key: "nowinterstRatio",
         title: "当日增仓比(%)",
         width: 120,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       },
       {
         key: "nowinterstRatio5d",
         title: "5日增仓比(%)",
         width: 120,
-        render: formatNumber,
+        render: formatPercent,
         sortable: true
       }
     ]
@@ -555,3 +569,16 @@ export const TAB_CONFIGS: TabConfig[] = [
     ]
   }
 ];
+
+// 排序字段
+export const getOrderBy = (orderBy?: string, order?: string) => {
+  if (!orderBy || !order) return "";
+
+  const columns = new Set(
+    TAB_CONFIGS.flatMap(tab => tab.columns.map(column => column))
+  );
+  const column = Array.from(columns).find(column => column.key === orderBy);
+  if (!column) return "";
+
+  return `${column.title} ${order === "asc" ? "升序" : "降序"}`;
+};

@@ -18,14 +18,14 @@ const StockList = () => {
   const [stockList, setStockList] = useState<StockSelection[]>([]);
   const [statistics, setStatistics] = useState<{ date: string }>({ date: "" });
 
-  const [visible, { open, close }] = useDisclosure(false);
+  const [loading, { open, close }] = useDisclosure(false);
   const [isFirstLoading, setIsFirstLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [hasMore, setHasMore] = useState(true);
 
   const getStockList = async (currentPage: number, hasMore: boolean) => {
-    if (!hasMore || (currentPage > 1 && visible)) return;
+    if (!hasMore || (currentPage > 1 && loading)) return;
 
     if (currentPage === 1) {
       open();
@@ -42,7 +42,6 @@ const StockList = () => {
     });
 
     if (currentPage === 1) {
-      close();
       setIsFirstLoading(false);
     }
 
@@ -57,6 +56,8 @@ const StockList = () => {
       }
       setHasMore(currentPage < pagination.totalPage);
     }
+
+    close();
   };
 
   const handleSort = (key: string) => {
@@ -65,19 +66,20 @@ const StockList = () => {
   };
 
   const handleLoadMore = () => {
-    if (hasMore && !visible) {
+    if (hasMore && !loading) {
       setPage(prev => prev + 1);
     }
   };
 
   useEffect(() => {
+    open();
     setPage(1);
     setHasMore(true);
     getStockList(1, true);
   }, [filters, orderBy, order]);
 
   useEffect(() => {
-    if (page > 1) {
+    if (page > 1 && !loading) {
       getStockList(page, hasMore);
     }
   }, [page]);
@@ -97,7 +99,8 @@ const StockList = () => {
           <StockTable
             columns={tab.columns}
             data={stockList}
-            loading={isFirstLoading}
+            firstLoading={isFirstLoading}
+            loading={loading}
             total={total}
             pageSize={20}
             statisticsDate={statistics.date}

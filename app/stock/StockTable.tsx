@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import { StockSelection } from "@prisma/client";
-import { LoadingOverlay, Table, Text, Group, Button } from "@mantine/core";
+import { LoadingOverlay, Table, Text, Group, Button, Box } from "@mantine/core";
 import { useIntersection } from "@mantine/hooks";
 import { IconSortAscending, IconSortDescending } from "@tabler/icons-react";
+import { getOrderBy } from "./StockListConfig";
 
 export interface Column {
   key: keyof StockSelection;
@@ -51,6 +52,7 @@ const TableContainer = ({
 const StockTable = ({
   columns,
   data,
+  firstLoading,
   loading,
   onLoadMore,
   total,
@@ -62,6 +64,7 @@ const StockTable = ({
 }: {
   columns: Column[];
   data: StockSelection[];
+  firstLoading: boolean;
   loading: boolean;
   total: number;
   pageSize?: number;
@@ -74,9 +77,10 @@ const StockTable = ({
   <>
     <TableContainer onLoadMore={onLoadMore}>
       <LoadingOverlay
-        visible={loading}
+        visible={firstLoading || loading}
+        loaderProps={{ size: "sm", type: firstLoading ? "bars" : "oval" }}
         zIndex={1000}
-        overlayProps={{ radius: "sm", blur: 2 }}
+        overlayProps={{ radius: "sm", blur: firstLoading ? 2 : 0 }}
       />
       <Table.Thead>
         <Table.Tr>
@@ -105,7 +109,7 @@ const StockTable = ({
       </Table.Thead>
       <Table.Tbody>
         {data.map((stock, index) => (
-          <Table.Tr key={stock.code}>
+          <Table.Tr key={`${stock.code}-${index}-${orderBy}-${order}`}>
             <Table.Td>{index + 1}</Table.Td>
             {columns.map(column => (
               <Table.Td key={column.key} style={{ width: column.width }}>
@@ -118,14 +122,18 @@ const StockTable = ({
         ))}
       </Table.Tbody>
     </TableContainer>
-    <Group justify="flex-end" mt="sm">
-      <Text size="sm" c="dimmed">
-        共 {total} 条数据 · {Math.ceil(total / pageSize)} 页 (已加载{" "}
-        {Math.ceil(data.length / pageSize)} 页)
-      </Text>
-      <Text size="sm" c="dimmed">
-        数据更新时间: {statisticsDate}
-      </Text>
+    <Group justify="flex-end" mt="sm" gap="xs">
+      {firstLoading ? (
+        <Text size="sm" c="dimmed">
+          数据加载中...
+        </Text>
+      ) : (
+        <Text size="sm" c="dimmed">
+          {statisticsDate && `${statisticsDate} · `}
+          {orderBy && `${getOrderBy(orderBy, order)} · `}共 {total} 条记录 (
+          {data.length}/{total})
+        </Text>
+      )}
     </Group>
   </>
 );
