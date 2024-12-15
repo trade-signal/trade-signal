@@ -9,6 +9,9 @@ export const GET = async (request: NextRequest) => {
   const concepts = searchParams.get("concepts");
   const styles = searchParams.get("styles");
 
+  const orderBy = searchParams.get("orderBy") || "newPrice";
+  const order = searchParams.get("order") || "desc";
+
   const page = Number(searchParams.get("page")) || 1;
   const pageSize = Number(searchParams.get("pageSize")) || 20;
 
@@ -48,7 +51,7 @@ export const GET = async (request: NextRequest) => {
   const data = await prisma.stockSelection.findMany({
     where,
     orderBy: {
-      code: "asc"
+      [orderBy]: order
     },
     skip: offset,
     take: limit

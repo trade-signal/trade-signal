@@ -1,13 +1,15 @@
 import { useEffect } from "react";
 import { StockSelection } from "@prisma/client";
-import { LoadingOverlay, Table, Text, Group } from "@mantine/core";
+import { LoadingOverlay, Table, Text, Group, Button } from "@mantine/core";
 import { useIntersection } from "@mantine/hooks";
+import { IconSortAscending, IconSortDescending } from "@tabler/icons-react";
 
 export interface Column {
   key: keyof StockSelection;
   title: string;
   width?: number;
   render?: (value: any) => React.ReactNode;
+  sortable?: boolean;
 }
 
 const TableContainer = ({
@@ -53,15 +55,21 @@ const StockTable = ({
   onLoadMore,
   total,
   pageSize = 20,
-  statisticsDate
+  statisticsDate,
+  orderBy,
+  order,
+  onSort
 }: {
   columns: Column[];
   data: StockSelection[];
   loading: boolean;
-  onLoadMore: () => void;
   total: number;
   pageSize?: number;
   statisticsDate?: string;
+  orderBy?: string;
+  order?: string;
+  onLoadMore: () => void;
+  onSort: (key: string) => void;
 }) => (
   <>
     <TableContainer onLoadMore={onLoadMore}>
@@ -74,8 +82,23 @@ const StockTable = ({
         <Table.Tr>
           <Table.Th style={{ width: 60 }}>序号</Table.Th>
           {columns.map(column => (
-            <Table.Th key={column.key} style={{ width: column.width }}>
-              {column.title}
+            <Table.Th
+              key={column.key}
+              style={{ width: column.width, cursor: "pointer" }}
+              onClick={() => onSort(column.key)}
+            >
+              <Group gap={4}>
+                {column.title}
+                {column.sortable && orderBy === column.key && (
+                  <Button variant="transparent" size="compact-xs">
+                    {order === "asc" ? (
+                      <IconSortAscending size={12} />
+                    ) : (
+                      <IconSortDescending size={12} />
+                    )}
+                  </Button>
+                )}
+              </Group>
             </Table.Th>
           ))}
         </Table.Tr>
