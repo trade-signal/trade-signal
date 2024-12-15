@@ -64,6 +64,9 @@ const initCron = () => {
 async function main() {
   console.log("Starting cron job...");
 
+  console.log(`当前时间: ${dayjs().format("YYYY-MM-DD HH:mm:ss")}`);
+  console.log(`运行环境: ${process.env.NODE_ENV}`);
+
   await initData();
 
   if (process.env.NODE_ENV === "production") {
