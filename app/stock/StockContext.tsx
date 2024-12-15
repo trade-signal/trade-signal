@@ -37,7 +37,7 @@ export interface StockContextType {
 const StockContext = createContext<StockContextType | undefined>(undefined);
 
 const getInitialPageSize = () => {
-  if (window.innerHeight > 1000) return 30;
+  if (typeof window !== "undefined" && window.innerHeight > 1000) return 30;
   return 20;
 };
 
