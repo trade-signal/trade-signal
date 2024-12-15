@@ -4,15 +4,6 @@ import { useSession } from "next-auth/react";
 import { useDisclosure } from "@mantine/hooks";
 import { SessionUser } from "next-auth";
 
-export interface LoginContextType {
-  visible: boolean;
-  authType: AuthType;
-  isLoggedIn: boolean;
-  userInfo?: SessionUser;
-  close: () => void;
-  showLoginModal: (type: AuthType) => void;
-}
-
 export type AuthType = "signin" | "signup";
 
 export const useLogin = () => {
@@ -43,6 +34,15 @@ export const useLogin = () => {
     showLoginModal
   };
 };
+
+export interface LoginContextType {
+  visible: boolean;
+  authType: AuthType;
+  isLoggedIn: boolean;
+  userInfo?: SessionUser;
+  close: () => void;
+  showLoginModal: (type: AuthType) => void;
+}
 
 const LoginContext = createContext<LoginContextType | undefined>(undefined);
 

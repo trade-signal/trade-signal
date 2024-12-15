@@ -1,4 +1,4 @@
-import { useState, type FC } from "react";
+import { useEffect, useState, type FC } from "react";
 import {
   Pill,
   Combobox,
@@ -8,43 +8,39 @@ import {
   Text,
   ScrollArea,
   Button,
-  Box
+  Box,
+  Divider
 } from "@mantine/core";
 import { IconChevronDown, IconChevronUp, IconX } from "@tabler/icons-react";
 import { useLoginContext } from "@/app/providers/LoginProvider";
 
-interface ComboboxMultiSelectProps {
+interface StockScreenerSelectProps {
   title: string;
-  data: string[];
-  value?: string[];
-  searchable?: boolean;
-  placeholder?: string;
+  data: { label: string; value: string; desc: string }[];
+  value?: string | null;
   clearable?: boolean;
   nothingFoundMessage?: string;
-  onChange: (value: string[]) => void;
+  onChange: (value: string | null) => void;
 }
 
-const ComboboxMultiSelect: FC<ComboboxMultiSelectProps> = props => {
+const StockScreenerSelect: FC<StockScreenerSelectProps> = props => {
   const { isLoggedIn, showLoginModal } = useLoginContext();
 
-  const {
-    title,
-    data,
-    value = [],
-    searchable = false,
-    clearable = false,
-    placeholder,
-    nothingFoundMessage,
-    onChange
-  } = props;
+  const { title, data, value, clearable, nothingFoundMessage, onChange } =
+    props;
 
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
     onDropdownOpen: () => combobox.updateSelectedOptionIndex("active")
   });
 
-  const [search, setSearch] = useState("");
-  const [values, setValues] = useState<string[]>([]);
+  const [currentValue, setCurrentValue] = useState<string | null>(
+    value || null
+  );
+
+  useEffect(() => {
+    setCurrentValue(value || null);
+  }, [value]);
 
   const handleValueSelect = (val: string) => {
     if (!isLoggedIn) {
@@ -53,40 +49,32 @@ const ComboboxMultiSelect: FC<ComboboxMultiSelectProps> = props => {
       return;
     }
 
-    const newValues = values.includes(val)
-      ? values.filter(v => v !== val)
-      : [...values, val];
-
-    setValues(newValues);
-    onChange(newValues);
+    setCurrentValue(val);
+    onChange(val);
   };
 
   const handleClear = () => {
-    setValues([]);
-    onChange([]);
+    setCurrentValue(null);
+    onChange(null);
   };
 
-  const pills =
-    values.length > 1 ? (
-      <Pill c="indigo">{values.length} 项</Pill>
-    ) : (
-      values.map(item => (
-        <Text key={item} size="xs">
-          {item}
-        </Text>
-      ))
-    );
-
-  const options = data
-    .filter(item => item.toLowerCase().includes(search.trim().toLowerCase()))
-    .map(item => (
-      <Combobox.Option value={item} key={item} active={value.includes(item)}>
-        <Group gap="sm">
-          <span>{item}</span>
-          {values.includes(item) ? <CheckIcon size={12} /> : null}
-        </Group>
-      </Combobox.Option>
-    ));
+  const options = data.map(item => (
+    <Combobox.Option
+      value={item.value}
+      key={item.value}
+      active={currentValue === item.value}
+    >
+      <Group gap="sm">
+        <Box>
+          <Text size="sm">{item.label}</Text>
+          <Text size="xs" c="gray">
+            {item.desc}
+          </Text>
+        </Box>
+        {currentValue === item.value ? <CheckIcon size={12} /> : null}
+      </Group>
+    </Combobox.Option>
+  ));
 
   return (
     <Combobox
@@ -104,9 +92,9 @@ const ComboboxMultiSelect: FC<ComboboxMultiSelectProps> = props => {
         >
           {title}{" "}
           <Box mt={2} ml={8}>
-            {pills}
+            {value}
           </Box>
-          <Box ml={values.length > 0 ? 6 : 0}>
+          <Box ml={6}>
             {combobox.dropdownOpened ? (
               <IconChevronUp size={14} />
             ) : (
@@ -117,7 +105,7 @@ const ComboboxMultiSelect: FC<ComboboxMultiSelectProps> = props => {
       </Combobox.Target>
 
       <Combobox.Dropdown styles={{ dropdown: { zIndex: 1000 } }}>
-        {clearable && values.length > 0 && (
+        {clearable && currentValue && (
           <Group
             gap={5}
             p="5px 10px"
@@ -128,22 +116,7 @@ const ComboboxMultiSelect: FC<ComboboxMultiSelectProps> = props => {
           </Group>
         )}
 
-        {searchable && (
-          <Combobox.Search
-            p="5px 10px"
-            styles={{
-              input: {
-                border: "1px solid #e0e0e0",
-                borderRadius: 5
-              }
-            }}
-            value={search}
-            placeholder={placeholder || "搜索"}
-            onChange={event => {
-              setSearch(event.currentTarget.value);
-            }}
-          />
-        )}
+        {currentValue && <Divider mb={10} />}
 
         <Combobox.Options>
           <ScrollArea.Autosize type="scroll" mah={200}>
@@ -163,4 +136,4 @@ const ComboboxMultiSelect: FC<ComboboxMultiSelectProps> = props => {
   );
 };
 
-export default ComboboxMultiSelect;
+export default StockScreenerSelect;

@@ -1,6 +1,11 @@
 "use client";
 
 import { createContext, useContext, useState, ReactNode } from "react";
+import {
+  StockMarketValue,
+  StockPeRatio,
+  StockPriceRange
+} from "./StockScreenerConfig";
 
 export interface StockFilters {
   // 分页
@@ -13,20 +18,13 @@ export interface StockFilters {
   concepts?: string[];
   // 风格
   styles?: string[];
+
   // 价格
-  price?: number | null;
+  newPrice?: StockPriceRange | null;
   // 总市值
-  totalMarketValue?: number | null;
-  // 流通市值
-  floatMarketValue?: number | null;
+  totalMarketValue?: StockMarketValue | null;
   // 市盈率
-  peRatio?: number | null;
-  // 股息率
-  dividendYield?: number | null;
-  // 毛利率
-  saleGpr?: number | null;
-  // 每股经营现金流
-  perNetcashOperate?: number | null;
+  peRatio?: StockPeRatio | null;
 }
 
 export interface StockContextType {
@@ -41,17 +39,21 @@ const getInitialPageSize = () => {
   return 20;
 };
 
-export function StockProvider({ children }: { children: ReactNode }) {
-  const [filters, setFilters] = useState<StockFilters>({
+export const getInitialFilters = () => {
+  return {
     page: 1,
     pageSize: getInitialPageSize(),
     industries: [],
     concepts: [],
     styles: [],
-    price: null,
+    newPrice: null,
     totalMarketValue: null,
-    floatMarketValue: null
-  });
+    peRatio: null
+  };
+};
+
+export function StockProvider({ children }: { children: ReactNode }) {
+  const [filters, setFilters] = useState<StockFilters>(getInitialFilters());
 
   return (
     <StockContext.Provider value={{ filters, setFilters }}>

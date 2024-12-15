@@ -1,11 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Stack, Group, Title } from "@mantine/core";
+import { Stack, Group, Title, Button } from "@mantine/core";
 import { get } from "@/shared/request";
 
-import StockMultiSelect from "./StockMultiSelect";
-import { StockFilters, useStockContext } from "./StockContext";
+import StockScreenerMultiSelect from "./StockScreenerMultiSelect";
+import StockScreenerSelect from "./StockScreenerSelect";
+import {
+  getInitialFilters,
+  StockFilters,
+  useStockContext
+} from "./StockContext";
+import {
+  StockMarketValue,
+  StockMarketValueConfig,
+  StockPeRatio,
+  StockPeRatioConfig,
+  StockPriceRange,
+  StockPriceRangeConfig
+} from "./StockScreenerConfig";
 
 const StockScreener = () => {
   const { filters, setFilters } = useStockContext();
@@ -37,7 +50,7 @@ const StockScreener = () => {
       <Title order={5}>股票筛选器</Title>
 
       <Group>
-        <StockMultiSelect
+        <StockScreenerMultiSelect
           title="行业"
           value={filters.industries}
           data={industryData}
@@ -47,7 +60,7 @@ const StockScreener = () => {
           nothingFoundMessage="未找到相关行业"
         />
 
-        <StockMultiSelect
+        <StockScreenerMultiSelect
           title="概念"
           value={filters.concepts}
           data={conceptData}
@@ -57,7 +70,7 @@ const StockScreener = () => {
           nothingFoundMessage="未找到相关概念"
         />
 
-        <StockMultiSelect
+        <StockScreenerMultiSelect
           title="风格"
           value={filters.styles}
           data={styleData}
@@ -66,6 +79,45 @@ const StockScreener = () => {
           searchable
           nothingFoundMessage="未找到相关风格"
         />
+
+        <StockScreenerSelect
+          title="最新价"
+          value={filters.newPrice}
+          data={StockPriceRangeConfig}
+          clearable
+          onChange={price =>
+            handleFilterChange({ newPrice: price as StockPriceRange })
+          }
+        />
+
+        <StockScreenerSelect
+          title="总市值"
+          value={filters.totalMarketValue}
+          data={StockMarketValueConfig}
+          clearable
+          onChange={totalMarketValue =>
+            handleFilterChange({
+              totalMarketValue: totalMarketValue as StockMarketValue
+            })
+          }
+        />
+
+        <StockScreenerSelect
+          title="市盈率TTM"
+          value={filters.peRatio}
+          data={StockPeRatioConfig}
+          clearable
+          onChange={peRatio =>
+            handleFilterChange({ peRatio: peRatio as StockPeRatio })
+          }
+        />
+
+        <Button
+          variant="subtle"
+          onClick={() => handleFilterChange(getInitialFilters())}
+        >
+          重置所有
+        </Button>
       </Group>
     </Stack>
   );
