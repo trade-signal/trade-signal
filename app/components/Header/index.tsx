@@ -62,12 +62,12 @@ const Header = () => {
           onClick={() => router.push("/")}
         >
           <Image
-            style={{ width: rem(28), height: rem(28) }}
+            style={{ width: rem(32), height: rem(32) }}
             src="/icon.svg"
             alt="TradeSignal logo"
           />
           <Title order={3} visibleFrom="xl">
-            <Text fw={700} size="xl" inherit>
+            <Text fw="bolder" size="xl" inherit>
               TradeSignal
             </Text>
           </Title>
