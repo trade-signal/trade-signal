@@ -36,7 +36,10 @@ RUN rm -rf /root/.npm /root/.cache
 FROM base AS runner
 WORKDIR /app
 
-RUN apk add --no-cache openssl
+# 安装 tzdata 包并设置时区
+RUN apk add --no-cache openssl tzdata
+ENV TZ=Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 ENV NODE_ENV=production
 ENV PORT=3000

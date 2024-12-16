@@ -4,6 +4,7 @@ import { CronJob } from "cron";
 import dayjs from "dayjs";
 import { getRunDate } from "@/shared/date";
 import { checkStocks, seedStockSelection } from "./stock/selection";
+import { initTradeDates } from "./stock/trade_date";
 
 // 每日运行
 const runDailyJob = () => {
@@ -17,15 +18,13 @@ const runDailyJob = () => {
   job.start();
 };
 
-// 运行所有任务
-const runJobs = () => {
+// 运行定时任务
+const runScheduleJobs = () => {
   runDailyJob();
 };
 
-const initData = async () => {
-  const runDate = getRunDate();
-
-  console.log(`运行日期: ${runDate}`);
+const runStockSelectionJob = async (runDate: string) => {
+  console.log("Running seedStockSelectionJob...");
 
   const hasStocks = await checkStocks(runDate);
 
@@ -42,13 +41,17 @@ const initData = async () => {
 async function main() {
   console.log("Starting cron job...");
 
+  const runDate = getRunDate();
+
   console.log(`当前时间: ${dayjs().format("YYYY-MM-DD HH:mm:ss")}`);
+  console.log(`运行日期: ${runDate}`);
   console.log(`运行环境: ${process.env.NODE_ENV || "development"}`);
 
-  await initData();
+  await initTradeDates();
+  await runStockSelectionJob(runDate);
 
   if (process.env.NODE_ENV === "production") {
-    runJobs();
+    runScheduleJobs();
   }
 
   console.log("Cron job completed.");

@@ -8,6 +8,7 @@ const request = async (url: string, options: any, headers: any) => {
   }).then(response => response.json());
 };
 
+
 export const get = (url: string, params: any, headers: any = {}) => {
   const queryString = params ? new URLSearchParams(params).toString() : "";
   return request(`${url}?${queryString}`, { method: "GET" }, headers);
