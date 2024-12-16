@@ -1,15 +1,47 @@
 "use client";
 
-import { AppShell, Center, MantineProvider, Text } from "@mantine/core";
-import { SessionProvider } from "next-auth/react";
-import { Session } from "next-auth";
+import { useEffect, useState } from "react";
+import { AppShell, Button, Center, MantineProvider, Text } from "@mantine/core";
+import { SessionProvider, useSession } from "next-auth/react";
+import { getServerSession, Session } from "next-auth";
 import { Notifications } from "@mantine/notifications";
-import { useMediaQuery } from "@mantine/hooks";
+import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { IconDeviceLaptop } from "@tabler/icons-react";
 
-import { theme } from "../../theme";
-import Header from "../components/Header";
-import { LoginProvider } from "./LoginProvider";
+import { theme } from "@/theme";
+import Header from "@/app/components/common/Header";
+import RightAside from "@/app/components/common/RightAside";
+import { LoginProvider, useLogin } from "@/app/providers/LoginProvider";
+import SpotlightModal from "@/app/components/modals/SpotlightModal";
+
+function AppContent({ children }: { children: React.ReactNode }) {
+  // const { isLoggedIn } = useLogin();
+  // const [showRightAside, { open, close }] = useDisclosure(false);
+
+  // useEffect(() => {
+  //   isLoggedIn ? open() : close();
+  // }, [isLoggedIn]);
+
+  return (
+    <AppShell
+      header={{ height: 56 }}
+      // aside={{
+      //   width: 300,
+      //   breakpoint: "sm",
+      //   collapsed: { desktop: !showRightAside }
+      // }}
+      visibleFrom="xs"
+    >
+      <AppShell.Header visibleFrom="xs">
+        <Header />
+      </AppShell.Header>
+
+      <AppShell.Main>{children}</AppShell.Main>
+
+      {/* <AppShell.Aside>{showRightAside && <RightAside />}</AppShell.Aside> */}
+    </AppShell>
+  );
+}
 
 export default function ClientProvider({
   children,
@@ -43,10 +75,8 @@ export default function ClientProvider({
       <SessionProvider session={session}>
         <LoginProvider>
           <Notifications />
-          <AppShell header={{ height: 56 }} visibleFrom="xs">
-            <Header />
-            <AppShell.Main>{children}</AppShell.Main>
-          </AppShell>
+          <SpotlightModal />
+          <AppContent>{children}</AppContent>
         </LoginProvider>
       </SessionProvider>
     </MantineProvider>

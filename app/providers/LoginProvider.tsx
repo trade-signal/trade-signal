@@ -1,8 +1,8 @@
 import { ReactNode, createContext, useContext, useState } from "react";
-import AuthorizationModal from "../components/AuthorizationModal";
 import { useSession } from "next-auth/react";
 import { useDisclosure } from "@mantine/hooks";
 import { SessionUser } from "next-auth";
+import AuthorizationModal from "@/app/components/modals/AuthorizationModal";
 
 export type AuthType = "signin" | "signup";
 

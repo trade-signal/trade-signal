@@ -1,6 +1,6 @@
 "use client";
 
-import AuthorizationModal from "@/app/components/AuthorizationModal";
+import AuthorizationModal from "@/app/components/modals/AuthorizationModal";
 
 const SignIn = () => {
   return (

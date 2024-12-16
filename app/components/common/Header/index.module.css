@@ -10,14 +10,6 @@
   box-sizing: border-box;
 }
 
-.inner {
-  height: 56px;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
 .link {
   display: block;
   line-height: 1;
