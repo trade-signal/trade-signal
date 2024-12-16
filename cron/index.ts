@@ -2,37 +2,30 @@ import "dotenv/config";
 
 import { CronJob } from "cron";
 import dayjs from "dayjs";
+import { getRunDate } from "@/shared/date";
 import { checkStocks, seedStockSelection } from "./stock/selection";
 
-// 获取运行日期
-const getRunDate = () => {
-  const now = dayjs();
-  const currentHour = now.hour();
-  const currentMinute = now.minute();
+// 每日运行
+const runDailyJob = () => {
+  const job = new CronJob("30 17 * * 1-5", async () => {
+    console.log("Running daily job...");
 
-  // 获取最近的工作日
-  const getLastWorkday = (date: dayjs.Dayjs) => {
-    const day = date.day();
-    if (day === 0) return date.subtract(2, "day"); // 周日 -> 周五
-    if (day === 6) return date.subtract(1, "day"); // 周六 -> 周五
-    return date;
-  };
+    await seedStockSelection();
 
-  // 判断是否在收盘数据处理时间之前（17:30前）
-  const isBeforeClosingTime =
-    currentHour < 17 || (currentHour === 17 && currentMinute < 30);
+    console.log("Daily job completed.");
+  });
+  job.start();
+};
 
-  // 获取基准日期：收盘前取前一天，收盘后取当天
-  const baseDate = isBeforeClosingTime ? now.subtract(1, "day") : now;
-
-  // 返回最近的工作日
-  return getLastWorkday(baseDate).format("YYYY-MM-DD");
+// 运行所有任务
+const runJobs = () => {
+  runDailyJob();
 };
 
 const initData = async () => {
   const runDate = getRunDate();
 
-  console.log(`运行批次: ${runDate}`);
+  console.log(`运行日期: ${runDate}`);
 
   const hasStocks = await checkStocks(runDate);
 
@@ -46,22 +39,6 @@ const initData = async () => {
   console.log("Stocks seeded successfully.");
 };
 
-const runDailyJob = () => {
-  const job = new CronJob("30 17 * * 1-5", async () => {
-    console.log("Running daily job...");
-
-    await seedStockSelection();
-
-    console.log("Daily job completed.");
-  });
-  job.start();
-};
-
-const initCron = () => {
-  console.log("Initializing cron job...");
-  runDailyJob();
-};
-
 async function main() {
   console.log("Starting cron job...");
 
@@ -71,7 +48,7 @@ async function main() {
   await initData();
 
   if (process.env.NODE_ENV === "production") {
-    initCron();
+    runJobs();
   }
 
   console.log("Cron job completed.");
