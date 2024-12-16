@@ -72,12 +72,12 @@ const ColumnSortCell = ({
   order?: string;
 }) => {
   return (
-    <Group gap={2} align="center" style={{ cursor: "pointer" }}>
-      <Text fw="normal" size="sm">
+    <Group gap={2} style={{ cursor: "pointer", flexWrap: "nowrap" }}>
+      <Text fw="normal" size="sm" style={{ whiteSpace: "nowrap" }}>
         {column.title}
       </Text>
       {column.sortable && orderBy === column.key && (
-        <Button variant="transparent" size="compact-xs">
+        <Button variant="transparent" size="compact-xs" pr={0} mr={0}>
           {order === "asc" ? (
             <IconSortAscending size={18} />
           ) : (
@@ -87,6 +87,12 @@ const ColumnSortCell = ({
       )}
     </Group>
   );
+};
+
+const transformAlign = (align: Column["align"]) => {
+  if (align === "left") return "flex-start";
+  if (align === "right") return "flex-end";
+  return "center";
 };
 
 const StockTable = ({
@@ -133,10 +139,16 @@ const StockTable = ({
               fw="normal"
               fz="sm"
               c="#666"
-              style={{ width: column.width, cursor: "pointer" }}
+              style={{
+                width: column.width,
+                cursor: "pointer"
+              }}
               onClick={() => onSort(column.key)}
             >
-              <Group gap={4} align="center">
+              <Group
+                gap={4}
+                style={{ justifyContent: transformAlign(column.align) }}
+              >
                 {column.searchable ? (
                   <TextInput
                     size="xs"
