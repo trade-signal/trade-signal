@@ -107,13 +107,17 @@ export const checkNews = async (date?: string) => {
 
 const transformNews = (news: any) => {
   return news.map((item: any) => {
+    const { id, rich_text, create_time, tag, ext } = item;
+    const { stocks, docurl } = JSON.parse(ext || "{}");
+
     return {
       source: "新浪财经",
-      sourceId: String(item.id),
-      sourceUrl: item.docurl,
-      content: item.rich_text,
-      date: new Date(item.create_time),
-      tags: JSON.stringify(item.tag || [])
+      sourceId: String(id),
+      sourceUrl: docurl || "",
+      content: rich_text || "",
+      date: new Date(create_time),
+      tags: JSON.stringify(tag || []),
+      stocks: JSON.stringify(stocks || [])
     };
   });
 };

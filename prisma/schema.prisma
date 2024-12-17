@@ -270,7 +270,8 @@ model News {
   sourceUrl String?  @db.VarChar(1000) // 原文链接
   content   String   @db.Text // 新闻内容
   date      DateTime @default(now()) // 发布日期时间
-  tags      String   @db.VarChar(255) // 标签json
+  tags      String   @db.VarChar(1000) // 标签json
+  stocks    String   @db.VarChar(2000) // 关联股票json
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
