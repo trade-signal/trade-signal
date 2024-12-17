@@ -77,7 +77,7 @@ const handler = NextAuth({
   pages: {
     signIn: "/auth/signin"
   },
-  debug: true
+  debug: process.env.NODE_ENV === "development"
 });
 
 export { handler as GET, handler as POST };
