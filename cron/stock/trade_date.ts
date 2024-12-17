@@ -287,7 +287,7 @@ return _mi_run = function () {
 }
     ,
     g()()
-`
+`;
 
 const decodeTradeDate = (data: string) => {
   const decode = new Function("t", hk_js_decode);
@@ -299,11 +299,11 @@ const transformTradeDate = (dictList: string[]) => {
   dates.push(new Date(1992, 5, 4));
   dates.sort((a, b) => a.getTime() - b.getTime());
   return dates.map(item => dayjs(item).format("YYYY-MM-DD"));
-}
+};
 
 /**
  * 交易日历
- * 
+ *
  * 新浪财经-交易日历-历史数据
  * https://finance.sina.com.cn/realstock/company/klc_td_sh.txt
  */
@@ -320,13 +320,13 @@ const getTradeDate = async () => {
     console.log(`获取交易日历失败: ${error}`);
     return [];
   }
-}
+};
 
 let tradeDates: string[] = [];
 
 const clearTradeDates = () => {
   tradeDates = [];
-}
+};
 
 const initTradeDates = async () => {
   if (tradeDates.length === 0) {

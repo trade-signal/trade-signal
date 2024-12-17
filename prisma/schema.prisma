@@ -261,3 +261,22 @@ model StockSelection {
   @@index([style]) // 风格索引
   @@map("stock_selection")
 }
+
+model News {
+  id String @id @default(cuid())
+
+  source    String   @db.VarChar(255) // 来源
+  sourceId  String   @db.VarChar(255) // 来源ID
+  sourceUrl String?  @db.VarChar(1000) // 原文链接
+  content   String   @db.Text // 新闻内容
+  date      DateTime @default(now()) // 发布日期时间
+  tags      String   @db.VarChar(255) // 标签json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([source, sourceId]) // 复合唯一约束
+  @@index([date]) // 日期索引
+  @@index([source, sourceId]) // 来源和来源ID复合索引
+  @@map("news")
+}

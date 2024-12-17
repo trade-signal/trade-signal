@@ -3,39 +3,39 @@ import "dotenv/config";
 import { CronJob } from "cron";
 import dayjs from "dayjs";
 import { getRunDate } from "@/shared/date";
-import { checkStocks, seedStockSelection } from "./stock/selection";
+import { initStockSelectionData, seedStockSelection } from "./stock/selection";
 import { initTradeDates } from "./stock/trade_date";
+import { initNewsData, seedNews } from "./news/news";
 
-// 每日运行
-const runDailyJob = () => {
-  const job = new CronJob("30 17 * * 1-5", async () => {
-    console.log("Running daily job...");
-
+const runSchedulerJobs = () => {
+  // 工作日运行：17:30
+  new CronJob("30 17 * * 1-5", async () => {
     await seedStockSelection();
+  }).start();
 
-    console.log("Daily job completed.");
-  });
-  job.start();
+  // 工作日运行:
+  // - 早盘前: 8:30
+  // - 早盘中: 10:00
+  // - 午间: 12:00
+  // - 午盘中: 14:00
+  // - 收盘后: 15:30
+  // - 晚间: 19:30, 21:30
+  new CronJob("30 8,10,12,14,15,19,21 * * 1-5", async () => {
+    await seedNews();
+  }).start();
+
+  // 非工作日运行:
+  // - 上午: 8:30, 10:30
+  // - 下午: 14:30, 16:30
+  // - 晚间: 19:30, 21:30
+  new CronJob("30 8,10,14,16,19,21 * * 0,6", async () => {
+    await seedNews();
+  }).start();
 };
 
-// 运行定时任务
-const runScheduleJobs = () => {
-  runDailyJob();
-};
-
-const runStockSelectionJob = async (runDate: string) => {
-  console.log("Running seedStockSelectionJob...");
-
-  const hasStocks = await checkStocks(runDate);
-
-  if (hasStocks) {
-    console.log("Stocks available! No need to seed.");
-    return;
-  }
-
-  await seedStockSelection(runDate);
-
-  console.log("Stocks seeded successfully.");
+const runSeedJobs = async (runDate: string) => {
+  await initTradeDates();
+  await Promise.all([initNewsData(runDate), initStockSelectionData(runDate)]);
 };
 
 async function main() {
@@ -47,11 +47,10 @@ async function main() {
   console.log(`运行日期: ${runDate}`);
   console.log(`运行环境: ${process.env.NODE_ENV || "development"}`);
 
-  await initTradeDates();
-  await runStockSelectionJob(runDate);
+  await runSeedJobs(runDate);
 
   if (process.env.NODE_ENV === "production") {
-    runScheduleJobs();
+    runSchedulerJobs();
   }
 
   console.log("Cron job completed.");
