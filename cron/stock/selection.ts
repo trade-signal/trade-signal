@@ -123,12 +123,15 @@ export const checkStocks = async (date?: string) => {
 
 export const seedStockSelection = async (date?: string) => {
   if (date) {
-    // 删除指定日期的选股指标
-    await prisma.stockSelection.deleteMany({
+    // 删除指定日期及之后的所有数据
+    const deleted = await prisma.stockSelection.deleteMany({
       where: {
-        date: dayjs(date).format("YYYY-MM-DD")
+        date: {
+          gte: dayjs(date).format("YYYY-MM-DD")
+        }
       }
     });
+    console.log(`删除选股指标: ${deleted.count}`);
   }
 
   print(`开始获取选股指标`);
