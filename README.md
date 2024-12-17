@@ -1,6 +1,6 @@
 <div align="center">
 
-# TradeSignal (交易信标)
+# TradeSignal
 
 **交易信标** - 提供实时市场数据和分析功能，助您捕捉市场脉动，做出精准投资决策。
 
@@ -8,35 +8,45 @@
 
 富贵险中求，也在险中丢；求时十之一，丢时十之九。
 
+_Fortune favors the bold, but risk management is key._
+
 </div>
 
 ## 功能特性
 
-* 精准的技术指标计算: MACD、KDJ、BOLL 等
-* 智能形态识别: 头肩顶、双底、红三兵等
-* 多维度选股策略: 基于技术面、基本面等多维度综合筛选
-* 个性化策略构建: 灵活定制您的专属选股条件，满足不同投资偏好
+* 全方位技术分析：集成 MACD、KDJ、BOLL 等主流技术指标，提供精准市场洞察
+* 智能形态识别：自动识别关键市场形态，包括头肩顶、双底、突破形态等
+* 多维度选股引擎：结合技术面、基本面、资金面等多维数据，智能筛选优质标的
+* 策略定制平台：支持个性化交易策略构建，灵活适配不同风险偏好
 
 ## 开发环境
 
-使用 docker-compose 启动 postgres 。
+使用 docker-compose 启动 postgres:
 
 ````bash
 docker-compose -p trade-signal -f docker/docker-compose.dev.yml up  -d
 ```` 
 
-根目录下新建 .env 文件，配置数据库连接信息，示例如下：
+在根目录下创建 .env 文件，并填写数据库连接信息:
 
 ```environment
-# Environment variables declared in this file are automatically made available to Prisma.
-# See the documentation for more detail: https://pris.ly/d/prisma-schema#accessing-environment-variables-from-the-schema
+# Connect to Supabase via connection pooling with Supavisor.
+DATABASE_URL=[Your Supabase Database URL]
 
-# Prisma supports the native connection string format for PostgreSQL, MySQL, SQLite, SQL Server, MongoDB and CockroachDB.
-# See the documentation for all the connection string options: https://pris.ly/d/connection-strings
+# Direct connection to the database. Used for migrations.
+DIRECT_URL=[Your Database URL]
 
-DATABASE_URL="postgresql://postgres:123456@localhost:5432/postgres?schema=public"
+# Github OAuth credentials.
+GITHUB_ID=[Your Github ID]
+GITHUB_SECRET=[Your Github Secret]
+
+# Google OAuth credentials.
+GOOGLE_ID=[Your Google ID]
+GOOGLE_SECRET=[Your Google Secret]
+
+# NextAuth secret
+NEXTAUTH_SECRET=[Your NextAuth Secret]
 ``` 
-
 安装依赖并启动服务
 
 ````bash
@@ -51,7 +61,7 @@ npm install && npm run dev
 docker build -t trade-signal:latest .
 ```
 
-### 启动容器
+### 运行容器
 
 ```bash
 docker run -d -p 3000:3000 \
@@ -78,7 +88,7 @@ or
 docker-compose -p trade-signal -f docker/docker-compose.prod.yml up -d
 ```
 
-## 参考
+## 参考资料
 
 * [AkShare](https://github.com/jindaxiang/akshare) - 开源财经数据接口库
 * [AkTools](https://github.com/jindaxiang/aktools) - 基于 AkShare 的 HTTP API 库
