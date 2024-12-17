@@ -30,6 +30,7 @@ import styles from "./index.module.css";
 interface Link {
   link: string;
   label: string;
+  disabled?: boolean;
   icon?: React.ReactNode;
   target?: string;
   group?: string;
@@ -37,7 +38,7 @@ interface Link {
 }
 
 const links: Link[] = [
-  { link: "/explore", label: "探索" },
+  { link: "/explore", label: "探索", disabled: true },
   { link: "/stock", label: "股票" },
   { link: "/news", label: "新闻" },
   {
@@ -119,6 +120,10 @@ const Header = () => {
         href={link.link}
         className={styles.link}
         data-active={pathname === link.link || undefined}
+        style={{
+          pointerEvents: link.disabled ? "none" : "auto",
+          color: link.disabled ? "gray" : "inherit"
+        }}
       >
         {link.label}
       </Link>
