@@ -46,7 +46,7 @@ const links: Link[] = [
     label: "更多",
     children: [
       {
-        link: "https://github.com/yzqzy",
+        link: "https://github.com/trade-signal",
         label: "Github",
         icon: <IconBrandGithub style={{ width: rem(14), height: rem(14) }} />,
         target: "_blank"

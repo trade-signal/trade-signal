@@ -42,7 +42,7 @@ export default function Home() {
 
           <Button
             component="a"
-            href="https://github.com/yzqzy"
+            href="https://github.com/trade-signal"
             target="_blank"
             size="xl"
             variant="default"
