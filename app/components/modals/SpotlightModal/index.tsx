@@ -32,18 +32,6 @@ const useActions = () => {
           stroke={1.5}
         />
       )
-    },
-    {
-      id: "contact",
-      label: "联系我们",
-      description: "访问文档以了解更多功能",
-      onClick: () => router.push("/contact"),
-      leftSection: (
-        <IconFileText
-          style={{ width: rem(24), height: rem(24) }}
-          stroke={1.5}
-        />
-      )
     }
   ];
 

@@ -8,12 +8,13 @@ import {
   rem,
   Text,
   TextInput,
-  AppShell,
   Title
 } from "@mantine/core";
 import { spotlight } from "@mantine/spotlight";
 import {
   IconArrowsLeftRight,
+  IconBrandGithubFilled,
+  IconBrandTelegram,
   IconLanguage,
   IconMessageCircle,
   IconMoon,
@@ -26,12 +27,82 @@ import { useLoginContext } from "@/app/providers/LoginProvider";
 
 import styles from "./index.module.css";
 
-const links = [
+interface Link {
+  link: string;
+  label: string;
+  icon?: React.ReactNode;
+  target?: string;
+  group?: string;
+  children?: Link[];
+}
+
+const links: Link[] = [
   { link: "/explore", label: "探索" },
   { link: "/stock", label: "股票" },
   { link: "/news", label: "新闻" },
-  { link: "/contact", label: "联系我们" }
+  {
+    link: "/more",
+    label: "更多",
+    children: [
+      {
+        link: "https://github.com/yzqzy",
+        label: "Github",
+        icon: (
+          <IconBrandGithubFilled style={{ width: rem(14), height: rem(14) }} />
+        ),
+        target: "_blank",
+        group: "关注我们"
+      },
+      {
+        link: "https://t.me/+25mzy3YRvbA4ODM1",
+        label: "Telegram",
+        icon: <IconBrandTelegram style={{ width: rem(14), height: rem(14) }} />,
+        target: "_blank",
+        group: "关注我们"
+      }
+    ]
+  }
 ];
+
+const LinkMenu = (link: Omit<Link, "children"> & { children: Link[] }) => {
+  return (
+    <Menu key={link.label} shadow="md" trigger="hover">
+      <Menu.Target>
+        <Link
+          href={link.link}
+          className={styles.link}
+          onClick={e => e.preventDefault()}
+        >
+          {link.label}
+        </Link>
+      </Menu.Target>
+      <Menu.Dropdown style={{ width: rem(200) }}>
+        {link.children.map((child, index) => {
+          const lastGroup = link.children[index - 1]?.group;
+
+          return (
+            <>
+              {child.group && child.group !== lastGroup && (
+                <Menu.Label>{child.group}</Menu.Label>
+              )}
+
+              <Menu.Item
+                h={rem(40)}
+                key={child.label}
+                component={Link}
+                href={child.link}
+                leftSection={child.icon}
+                target={child.target}
+              >
+                {child.label}
+              </Menu.Item>
+            </>
+          );
+        })}
+      </Menu.Dropdown>
+    </Menu>
+  );
+};
 
 const Header = () => {
   const router = useRouter();
@@ -39,16 +110,20 @@ const Header = () => {
 
   const { showLoginModal, isLoggedIn, userInfo } = useLoginContext();
 
-  const items = links.map(link => (
-    <Link
-      key={link.label}
-      href={link.link}
-      className={styles.link}
-      data-active={pathname === link.link || undefined}
-    >
-      {link.label}
-    </Link>
-  ));
+  const items = links.map(link =>
+    link.children ? (
+      <LinkMenu key={link.label} {...link} children={link.children as Link[]} />
+    ) : (
+      <Link
+        key={link.label}
+        href={link.link}
+        className={styles.link}
+        data-active={pathname === link.link || undefined}
+      >
+        {link.label}
+      </Link>
+    )
+  );
 
   return (
     <Group justify="space-between" className={styles.header}>
