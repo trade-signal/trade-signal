@@ -13,7 +13,7 @@ import {
 import { spotlight } from "@mantine/spotlight";
 import {
   IconArrowsLeftRight,
-  IconBrandGithubFilled,
+  IconBrandGithub,
   IconBrandTelegram,
   IconLanguage,
   IconMessageCircle,
@@ -48,18 +48,14 @@ const links: Link[] = [
       {
         link: "https://github.com/yzqzy",
         label: "Github",
-        icon: (
-          <IconBrandGithubFilled style={{ width: rem(14), height: rem(14) }} />
-        ),
-        target: "_blank",
-        group: "关注我们"
+        icon: <IconBrandGithub style={{ width: rem(14), height: rem(14) }} />,
+        target: "_blank"
       },
       {
         link: "https://t.me/+25mzy3YRvbA4ODM1",
         label: "Telegram",
         icon: <IconBrandTelegram style={{ width: rem(14), height: rem(14) }} />,
-        target: "_blank",
-        group: "关注我们"
+        target: "_blank"
       }
     ]
   }
