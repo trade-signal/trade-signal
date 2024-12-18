@@ -1,6 +1,6 @@
 import { type NextRequest } from "next/server";
-import prisma from "@/prisma/db";
 import { Prisma } from "@prisma/client";
+import prisma from "@/prisma/db";
 import {
   StockPriceRange,
   StockMarketValue,
