@@ -15,9 +15,6 @@ export const GET = async (request: NextRequest) => {
 
   let where: Prisma.NewsWhereInput = {};
 
-  const total = await prisma.news.count({
-    where
-  });
   if (tags) {
     where.OR = tags.split(",").map(tag => ({
       tags: {
@@ -25,6 +22,10 @@ export const GET = async (request: NextRequest) => {
       }
     }));
   }
+
+  const total = await prisma.news.count({
+    where
+  });
 
   const data = await prisma.news.findMany({
     where,

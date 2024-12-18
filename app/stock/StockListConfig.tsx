@@ -1,43 +1,17 @@
-import { Text } from "@mantine/core";
 import { StockSelection } from "@prisma/client";
 import { Column } from "@/app/components/tables/DataTable/types";
+import {
+  formatBillion,
+  formatNumber,
+  formatPercent,
+  renderSignal
+} from "@/app/components/tables/DataTable/util";
 
 interface TabConfig {
   value: string;
   label: string;
   columns: Column<StockSelection>[];
 }
-
-const getColor = (value: number) => {
-  if (value > 0) return "red.7";
-  if (value < 0) return "green.7";
-  return "gray.7";
-};
-
-const formatPercent = (value: number, decimals = 2) => {
-  const val = value.toFixed(decimals);
-  return (
-    <Text span c={getColor(Number(val))} fw={700}>
-      {val}%
-    </Text>
-  );
-};
-const formatNumber = (value: number, decimals = 2) => value.toFixed(decimals);
-const formatBillion = (value: number) => (value / 100000000).toFixed(2);
-const renderSignal = (value: boolean) => {
-  if (value) {
-    return (
-      <Text span c="green.7" fw={700}>
-        ✓
-      </Text>
-    );
-  }
-  return (
-    <Text span c="red.7" fw={700}>
-      ✗
-    </Text>
-  );
-};
 
 // 公共列
 const COMMON_COLUMNS = [

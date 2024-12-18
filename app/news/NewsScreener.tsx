@@ -1,16 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Stack, Group, Title, Button } from "@mantine/core";
+import { Stack, Group, Title, SegmentedControl, Text } from "@mantine/core";
 import { get } from "@/shared/request";
 
-import ScreenerMultiSelect from "@/app/components/ScreenerMultiSelect";
-import { getInitialFilters, NewsFilters, useNewsContext } from "./NewsContext";
+import { NewsFilters, useNewsContext } from "./NewsContext";
 
 const NewsScreener = () => {
   const { filters, setFilters } = useNewsContext();
 
-  const [tags, setTags] = useState<Tag[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
 
   const handleFilterChange = (newFilters: Partial<NewsFilters>) => {
     setFilters({ ...filters, ...newFilters, page: 1 });
@@ -20,7 +19,7 @@ const NewsScreener = () => {
     const response = await get("/api/news/filter", {});
 
     if (response.success) {
-      setTags(response.data.tags);
+      setTags(["全部", ...response.data.tags]);
     }
   };
 
@@ -28,19 +27,29 @@ const NewsScreener = () => {
     getFilter();
   }, []);
 
+  console.log(tags);
+
   return (
     <Stack mt={10} mb={10}>
       <Title order={5}>新闻筛选器</Title>
 
       <Group>
-        <ScreenerMultiSelect
-          title="标签"
-          value={filters.tags}
+        <SegmentedControl
+          withItemsBorders={false}
+          size="md"
+          radius="md"
+          color="indigo"
+          styles={{
+            root: {
+              background: "transparent"
+            },
+            control: {
+              padding: 0
+            }
+          }}
+          value={filters.tags?.[0] || "全部"}
           data={tags}
-          onChange={tags => handleFilterChange({ tags })}
-          clearable
-          searchable
-          nothingFoundMessage="未找到相关标签"
+          onChange={tag => handleFilterChange({ tags: [tag] })}
         />
       </Group>
     </Stack>

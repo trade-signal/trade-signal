@@ -119,7 +119,7 @@ const Header = () => {
         data-active={pathname === link.link || undefined}
         style={{
           pointerEvents: link.disabled ? "none" : "auto",
-          color: link.disabled ? "gray" : "inherit"
+          color: link.disabled ? "gray" : ""
         }}
       >
         {link.label}

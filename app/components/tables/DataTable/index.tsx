@@ -9,36 +9,43 @@ import { Column } from "./types";
 interface DataTableProps<T> {
   columns: Column<T>[];
   data: T[];
-  firstLoading: boolean;
-  loading: boolean;
   total: number;
+
+  loading: boolean;
+  firstLoading: boolean;
+
+  height?: string;
+  statisticsDate?: string;
+
   orderBy?: string;
   order?: string;
-  search?: string;
-  statisticsDate?: string;
   getOrderBy?: (orderBy: string, order: string) => string;
+
+  search?: string;
+
   onLoadMore: () => void;
-  onSort: (key: string) => void;
-  onSearch: (value: string) => void;
+  onSort?: (key: string) => void;
+  onSearch?: (value: string) => void;
 }
 
 const DataTable = <T extends Record<string, any>>({
   columns,
   data,
-  firstLoading,
-  loading,
   total,
+  loading,
+  firstLoading,
+  height,
+  statisticsDate,
   orderBy,
   order,
-  search,
-  statisticsDate,
   getOrderBy,
+  search,
   onLoadMore,
   onSort,
   onSearch
 }: DataTableProps<T>) => (
   <Box>
-    <DataTableContainer onLoadMore={onLoadMore}>
+    <DataTableContainer onLoadMore={onLoadMore} height={height}>
       <LoadingOverlay
         visible={firstLoading || loading}
         loaderProps={{ size: "sm", type: firstLoading ? "bars" : "oval" }}

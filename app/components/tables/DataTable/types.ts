@@ -1,3 +1,5 @@
+export type ColumnAlign = "left" | "center" | "right";
+
 export interface Column<T> {
   key: keyof T;
   title: string;
@@ -5,7 +7,7 @@ export interface Column<T> {
   render?: (value: any) => React.ReactNode;
   sortable?: boolean;
   searchable?: boolean;
-  align?: "left" | "center" | "right";
+  align?: ColumnAlign;
 }
 
 export interface SortProps {

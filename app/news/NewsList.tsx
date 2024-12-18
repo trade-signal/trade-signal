@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { get } from "@/shared/request";
+import { News } from "@prisma/client";
 import { useDisclosure } from "@mantine/hooks";
-import { Stack } from "@mantine/core";
+import DataTable from "@/app/components/tables/DataTable";
 
 import { useNewsContext } from "./NewsContext";
+import { COLUMNS } from "./NewsListConfig";
 
 const NewsList = () => {
   const { filters } = useNewsContext();
@@ -25,11 +27,13 @@ const NewsList = () => {
       open();
     }
 
+    const tag = filters.tags?.[0] || "";
+
     const response = await get("/api/news/list", {
       ...filters,
       page: currentPage,
       pageSize: filters.pageSize || 20,
-      tags: filters.tags?.join(",")
+      tags: tag === "全部" ? "" : tag
     });
 
     if (currentPage === 1) {
@@ -69,7 +73,17 @@ const NewsList = () => {
     }
   }, [page]);
 
-  return <Stack>123</Stack>;
+  return (
+    <DataTable
+      height="calc(100vh - 210px)"
+      columns={COLUMNS}
+      data={newsList}
+      firstLoading={isFirstLoading}
+      loading={loading}
+      total={total}
+      onLoadMore={handleLoadMore}
+    />
+  );
 };
 
 export default NewsList;

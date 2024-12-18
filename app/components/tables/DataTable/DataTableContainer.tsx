@@ -3,9 +3,11 @@ import { useIntersection } from "@mantine/hooks";
 import { Table } from "@mantine/core";
 
 const TableContainer = ({
+  height,
   children,
   onLoadMore
 }: {
+  height?: string;
   children: React.ReactNode;
   onLoadMore: () => void;
 }) => {
@@ -24,7 +26,7 @@ const TableContainer = ({
       pos="relative"
       minWidth={500}
       style={{
-        height: "calc(100vh - 240px)",
+        height: height || "calc(100vh - 240px)",
         width: "100%",
         overflow: "auto",
         borderBottom: "1px solid #eee"
