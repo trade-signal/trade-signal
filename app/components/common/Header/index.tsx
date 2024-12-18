@@ -40,7 +40,7 @@ interface Link {
 const links: Link[] = [
   { link: "/explore", label: "探索", disabled: true },
   { link: "/stock", label: "股票" },
-  { link: "/news", label: "新闻" },
+  { link: "/news", label: "新闻", disabled: true },
   {
     link: "/more",
     label: "更多",

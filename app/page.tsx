@@ -35,7 +35,7 @@ export default function Home() {
             className={styles.control}
             variant="gradient"
             gradient={{ from: "blue", to: "red" }}
-            onClick={() => router.push("/explore")}
+            onClick={() => router.push("/stock")}
           >
             立即体验
           </Button>
