@@ -19,7 +19,7 @@ interface DataTableProps<T> {
 
   orderBy?: string;
   order?: string;
-  getOrderBy?: (orderBy: string, order: string) => string;
+  getOrderBy?: (orderBy: string, order?: string) => string;
 
   search?: string;
 

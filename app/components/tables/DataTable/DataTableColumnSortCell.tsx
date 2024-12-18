@@ -1,13 +1,13 @@
-import { Column } from "@/app/stock/StockTable";
+import { Column } from "@/app/components/tables/DataTable/types";
 import { Button, Group, Text } from "@mantine/core";
 import { IconSortAscending, IconSortDescending } from "@tabler/icons-react";
 
-const DataTableColumnSortCell = ({
+const DataTableColumnSortCell = <T,>({
   column,
   orderBy,
   order
 }: {
-  column: Column;
+  column: Column<T>;
   orderBy?: string;
   order?: string;
 }) => {

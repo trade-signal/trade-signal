@@ -7,7 +7,7 @@ interface DataTableFooterProps {
   statisticsDate?: string;
   orderBy?: string;
   order?: string;
-  getOrderBy?: (orderBy: string, order: string) => string;
+  getOrderBy?: (orderBy: string, order?: string) => string;
 }
 
 const DataTableFooter = ({

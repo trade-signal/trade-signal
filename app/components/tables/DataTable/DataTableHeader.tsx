@@ -52,7 +52,7 @@ const DataTableHeader = <T extends Record<string, any>>({
                 <TextInput
                   size="xs"
                   label={
-                    <DataTableColumnSortCell
+                    <DataTableColumnSortCell<T>
                       column={column}
                       orderBy={orderBy}
                       order={order}
@@ -69,7 +69,7 @@ const DataTableHeader = <T extends Record<string, any>>({
                   onChange={e => handleSearch(e.target.value)}
                 />
               ) : (
-                <DataTableColumnSortCell
+                <DataTableColumnSortCell<T>
                   column={column}
                   orderBy={orderBy}
                   order={order}
