@@ -2,13 +2,7 @@ import { Column } from "@/app/stock/StockTable";
 import { Button, Group, Text } from "@mantine/core";
 import { IconSortAscending, IconSortDescending } from "@tabler/icons-react";
 
-export const transformAlign = (align: Column["align"]) => {
-  if (align === "left") return "flex-start";
-  if (align === "right") return "flex-end";
-  return "center";
-};
-
-const TableColumnSortCell = ({
+const DataTableColumnSortCell = ({
   column,
   orderBy,
   order
@@ -35,4 +29,4 @@ const TableColumnSortCell = ({
   );
 };
 
-export default TableColumnSortCell;
+export default DataTableColumnSortCell;

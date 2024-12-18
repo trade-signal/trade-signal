@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect } from "react";
 import { useIntersection } from "@mantine/hooks";
 import { Table } from "@mantine/core";
