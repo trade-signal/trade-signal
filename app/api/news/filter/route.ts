@@ -29,10 +29,14 @@ export const GET = async () => {
     return acc;
   }, new Set<Tag>());
 
+  const sortedTags = Array.from(tags).sort(
+    (a, b) => Number(a.id) - Number(b.id)
+  );
+
   return Response.json({
     success: true,
     data: {
-      tags: Array.from(tags).sort((a, b) => Number(a.id) - Number(b.id))
+      tags: sortedTags.map(tag => tag.name)
     }
   });
 };

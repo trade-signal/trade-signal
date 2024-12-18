@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect } from "react";
 import { StockSelection } from "@prisma/client";
 import {
@@ -14,6 +16,10 @@ import {
   IconSortAscending,
   IconSortDescending
 } from "@tabler/icons-react";
+import TableContainer from "@/app/components/Table/TableContainer";
+import TableColumnSortCell, {
+  transformAlign
+} from "@/app/components/Table/TableColumnCell";
 import { getOrderBy } from "./StockListConfig";
 
 export interface Column {
@@ -25,75 +31,6 @@ export interface Column {
   searchable?: boolean;
   align?: "left" | "center" | "right";
 }
-
-const TableContainer = ({
-  children,
-  onLoadMore
-}: {
-  children: React.ReactNode;
-  onLoadMore: () => void;
-}) => {
-  const { ref, entry } = useIntersection({
-    threshold: 0.5
-  });
-
-  useEffect(() => {
-    if (entry?.isIntersecting) {
-      onLoadMore();
-    }
-  }, [entry?.isIntersecting]);
-
-  return (
-    <Table.ScrollContainer
-      pos="relative"
-      minWidth={500}
-      style={{
-        height: "calc(100vh - 240px)",
-        width: "100%",
-        overflow: "auto",
-        borderBottom: "1px solid #eee"
-      }}
-    >
-      <Table stickyHeader highlightOnHover verticalSpacing="xs">
-        {children}
-      </Table>
-      <div ref={ref} style={{ height: "20px" }} />
-    </Table.ScrollContainer>
-  );
-};
-
-const ColumnSortCell = ({
-  column,
-  orderBy,
-  order
-}: {
-  column: Column;
-  orderBy?: string;
-  order?: string;
-}) => {
-  return (
-    <Group gap={2} style={{ cursor: "pointer", flexWrap: "nowrap" }}>
-      <Text fw="normal" size="sm" style={{ whiteSpace: "nowrap" }}>
-        {column.title}
-      </Text>
-      {column.sortable && orderBy === column.key && (
-        <Button variant="transparent" size="compact-xs" pr={0} mr={0}>
-          {order === "asc" ? (
-            <IconSortAscending size={18} />
-          ) : (
-            <IconSortDescending size={18} />
-          )}
-        </Button>
-      )}
-    </Group>
-  );
-};
-
-const transformAlign = (align: Column["align"]) => {
-  if (align === "left") return "flex-start";
-  if (align === "right") return "flex-end";
-  return "center";
-};
 
 const StockTable = ({
   columns,
@@ -131,6 +68,7 @@ const StockTable = ({
         zIndex={1000}
         overlayProps={{ radius: "sm", blur: firstLoading ? 2 : 0 }}
       />
+
       <Table.Thead>
         <Table.Tr>
           {columns.map(column => (
@@ -153,7 +91,7 @@ const StockTable = ({
                   <TextInput
                     size="xs"
                     label={
-                      <ColumnSortCell
+                      <TableColumnSortCell
                         column={column}
                         orderBy={orderBy}
                         order={order}
@@ -172,7 +110,7 @@ const StockTable = ({
                     }}
                   />
                 ) : (
-                  <ColumnSortCell
+                  <TableColumnSortCell
                     column={column}
                     orderBy={orderBy}
                     order={order}

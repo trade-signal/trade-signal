@@ -6,6 +6,7 @@ import {
   Image,
   Menu,
   rem,
+  Stack,
   Text,
   TextInput,
   Title
@@ -40,7 +41,7 @@ interface Link {
 const links: Link[] = [
   { link: "/explore", label: "探索", disabled: true },
   { link: "/stock", label: "股票" },
-  { link: "/news", label: "新闻", disabled: true },
+  { link: "/news", label: "新闻" },
   {
     link: "/more",
     label: "更多",
@@ -78,7 +79,7 @@ const LinkMenu = (link: Omit<Link, "children"> & { children: Link[] }) => {
           const lastGroup = link.children[index - 1]?.group;
 
           return (
-            <>
+            <Stack key={child.label}>
               {child.group && child.group !== lastGroup && (
                 <Menu.Label>{child.group}</Menu.Label>
               )}
@@ -93,7 +94,7 @@ const LinkMenu = (link: Omit<Link, "children"> & { children: Link[] }) => {
               >
                 {child.label}
               </Menu.Item>
-            </>
+            </Stack>
           );
         })}
       </Menu.Dropdown>
