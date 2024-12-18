@@ -1,10 +1,11 @@
 import { Text } from "@mantine/core";
-import { Column } from "./StockTable";
+import { StockSelection } from "@prisma/client";
+import { Column } from "@/app/components/tables/DataTable/types";
 
 interface TabConfig {
   value: string;
   label: string;
-  columns: Column[];
+  columns: Column<StockSelection>[];
 }
 
 const getColor = (value: number) => {

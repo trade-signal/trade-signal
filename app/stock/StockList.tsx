@@ -5,10 +5,11 @@ import { get } from "@/shared/request";
 import { StockSelection } from "@prisma/client";
 import { Tabs } from "@mantine/core";
 import { useDebouncedCallback, useDisclosure } from "@mantine/hooks";
+import DataTable from "@/app/components/tables/DataTable";
+import { getOrderBy } from "./StockListConfig";
 
 import { useStockContext } from "./StockContext";
 import { TAB_CONFIGS } from "./StockListConfig";
-import StockTable from "./StockTable";
 
 const StockList = () => {
   const { filters } = useStockContext();
@@ -110,13 +111,12 @@ const StockList = () => {
 
       {TAB_CONFIGS.map(tab => (
         <Tabs.Panel key={tab.value} value={tab.value}>
-          <StockTable
+          <DataTable
             columns={tab.columns}
             data={stockList}
             firstLoading={isFirstLoading}
             loading={loading}
             total={total}
-            pageSize={filters.pageSize || 20}
             statisticsDate={statistics.date}
             orderBy={orderBy}
             order={order}
@@ -124,6 +124,7 @@ const StockList = () => {
             onSort={handleSort}
             onSearch={handleSearchValueChange}
             onLoadMore={handleLoadMore}
+            getOrderBy={getOrderBy}
           />
         </Tabs.Panel>
       ))}
