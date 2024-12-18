@@ -12,8 +12,8 @@ const print = (message: string) => {
 };
 
 const runSchedulerJobs = () => {
-  // 工作日运行：17:30
-  new CronJob("30 17 * * 1-5", async () => {
+  // 工作日运行：16:00
+  new CronJob("0 16 * * 1-5", async () => {
     print("Running seedStockSelection job...");
     await seedStockSelection();
     print("Running seedStockSelection job completed...");
