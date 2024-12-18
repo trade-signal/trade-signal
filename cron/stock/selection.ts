@@ -122,44 +122,48 @@ export const checkStocks = async (date?: string) => {
 };
 
 export const seedStockSelection = async (date?: string) => {
-  if (date) {
-    // 删除指定日期及之后的所有数据
-    const deleted = await prisma.stockSelection.deleteMany({
-      where: {
-        date: {
-          gte: dayjs(date).format("YYYY-MM-DD")
+  try {
+    if (date) {
+      // 删除指定日期及之后的所有数据
+      const deleted = await prisma.stockSelection.deleteMany({
+        where: {
+          date: {
+            gte: dayjs(date).format("YYYY-MM-DD")
+          }
         }
-      }
-    });
-    console.log(`删除选股指标: ${deleted.count}`);
+      });
+      console.log(`删除选股指标: ${deleted.count}`);
+    }
+
+    print(`开始获取选股指标`);
+
+    // 获取选股指标
+    const stocks = await getStocks();
+
+    if (stocks.length === 0) {
+      print(`选股指标为空`);
+      return;
+    }
+
+    print(`选股指标数量: ${stocks.length}`);
+    print(`开始写入选股指标`);
+
+    // 写入选股指标
+    while (stocks.length > 0) {
+      const list = stocks.splice(0, 1000);
+
+      print(`正在写入${list.length}条选股指标`);
+
+      await prisma.stockSelection.createMany({
+        data: list as any,
+        skipDuplicates: true
+      });
+    }
+
+    print(`写入选股指标成功`);
+  } catch (error) {
+    print(`获取选股指标失败: ${error}`);
   }
-
-  print(`开始获取选股指标`);
-
-  // 获取选股指标
-  const stocks = await getStocks();
-
-  if (stocks.length === 0) {
-    print(`选股指标为空`);
-    return;
-  }
-
-  print(`选股指标数量: ${stocks.length}`);
-  print(`开始写入选股指标`);
-
-  // 写入选股指标
-  while (stocks.length > 0) {
-    const list = stocks.splice(0, 1000);
-
-    print(`正在写入${list.length}条选股指标`);
-
-    await prisma.stockSelection.createMany({
-      data: list as any,
-      skipDuplicates: true
-    });
-  }
-
-  print(`写入选股指标成功`);
 };
 
 export const initStockSelectionData = async (runDate: string) => {

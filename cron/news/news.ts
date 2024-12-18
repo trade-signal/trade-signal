@@ -124,53 +124,61 @@ const transformNews = (news: any) => {
 
 // 获取最新全球财经快讯
 export const seedLatestNews = async () => {
-  print(`开始获取最新全球财经快讯`);
+  try {
+    print(`开始获取最新全球财经快讯`);
 
-  const news = await getWorldNews(1, 20);
-  const newsData = transformNews(news);
+    const news = await getWorldNews(1, 20);
+    const newsData = transformNews(news);
 
-  print(`全球财经快讯数量: ${newsData.length}`);
-  print(`开始写入全球财经快讯`);
+    print(`全球财经快讯数量: ${newsData.length}`);
+    print(`开始写入全球财经快讯`);
 
-  await prisma.news.createMany({
-    data: newsData,
-    skipDuplicates: true
-  });
+    await prisma.news.createMany({
+      data: newsData,
+      skipDuplicates: true
+    });
 
-  print(`写入全球财经快讯成功`);
+    print(`写入全球财经快讯成功`);
+  } catch (error) {
+    print(`获取最新全球财经快讯失败: ${error}`);
+  }
 };
 
 // 获取全球财经快讯
 export const seedNews = async () => {
-  print(`开始获取全球财经快讯`);
+  try {
+    print(`开始获取全球财经快讯`);
 
-  const news = await getNews();
+    const news = await getNews();
 
-  if (news.length === 0) {
-    print(`全球财经快讯为空`);
-    return;
+    if (news.length === 0) {
+      print(`全球财经快讯为空`);
+      return;
+    }
+
+    await clearOldNews();
+
+    const newsData = transformNews(news);
+
+    print(`全球财经快讯数量: ${newsData.length}`);
+    print(`开始写入全球财经快讯`);
+
+    await prisma.news.createMany({
+      data: newsData,
+      skipDuplicates: true
+    });
+
+    print(`写入全球财经快讯成功`);
+  } catch (error) {
+    print(`获取全球财经快讯失败: ${error}`);
   }
-
-  await clearOldNews();
-
-  const newsData = transformNews(news);
-
-  print(`全球财经快讯数量: ${newsData.length}`);
-  print(`开始写入全球财经快讯`);
-
-  await prisma.news.createMany({
-    data: newsData,
-    skipDuplicates: true
-  });
-
-  print(`写入全球财经快讯成功`);
 };
 
 export const initNewsData = async (runDate: string) => {
   const hasNews = await checkNews(runDate);
 
   if (hasNews) {
-    console.log("News available! No need to seed.");
+    print("News available! No need to seed.");
     return;
   }
 
