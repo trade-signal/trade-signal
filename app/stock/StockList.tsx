@@ -8,7 +8,7 @@ import { useDebouncedCallback, useDisclosure } from "@mantine/hooks";
 import DataTable from "@/app/components/tables/DataTable";
 import { getOrderBy } from "./StockListConfig";
 
-import { useStockContext } from "./StockContext";
+import { StockFilters, useStockContext } from "./StockContext";
 import { TAB_CONFIGS } from "./StockListConfig";
 
 const StockList = () => {
@@ -64,10 +64,17 @@ const StockList = () => {
     setFilters({ ...filters, ...newFilters, page: 1 });
   };
 
+  type SortOrder = "asc" | "desc";
+
   const handleSort = (key: string) => {
+    const { orderBy, order } = filters;
+
+    const newOrder: SortOrder =
+      key === orderBy ? (order === "asc" ? "desc" : "asc") : "desc";
+
     handleFilterChange({
       orderBy: key,
-      order: key === orderBy ? (order === "asc" ? "desc" : "asc") : "desc"
+      order: newOrder
     });
   };
 

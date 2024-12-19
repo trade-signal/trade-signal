@@ -5,9 +5,10 @@ import {
   useContext,
   useState,
   ReactNode,
-  useEffect
+  Suspense
 } from "react";
 import { useSearchParams } from "next/navigation";
+import { Loader } from "@mantine/core";
 import {
   StockMarketValue,
   StockPeRatio,
@@ -69,24 +70,30 @@ export const getInitialFilters = () => {
   };
 };
 
-const useInitialFilters = () => {
+const FiltersProvider = ({ children }: { children: ReactNode }) => {
   const searchParams = useSearchParams();
   const symbol = searchParams.get("symbol");
-  const search = symbol ? Number(symbol.replace(/[a-zA-Z]/g, "")) : "";
+  const search = symbol ? symbol.replace(/[a-zA-Z]/g, "") : "";
 
-  return {
+  const initialFilters = {
     ...getInitialFilters(),
     search
   };
-};
 
-export function StockProvider({ children }: { children: ReactNode }) {
-  const [filters, setFilters] = useState<StockFilters>(useInitialFilters());
+  const [filters, setFilters] = useState<StockFilters>(initialFilters);
 
   return (
     <StockContext.Provider value={{ filters, setFilters }}>
       {children}
     </StockContext.Provider>
+  );
+};
+
+export function StockProvider({ children }: { children: ReactNode }) {
+  return (
+    <Suspense fallback={<Loader size="md" color="gray" />}>
+      <FiltersProvider>{children}</FiltersProvider>
+    </Suspense>
   );
 }
 
