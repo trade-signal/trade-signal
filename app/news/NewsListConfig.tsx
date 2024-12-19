@@ -1,5 +1,5 @@
 import { News } from "@prisma/client";
-import { Pill } from "@mantine/core";
+import { HoverCard, Pill, Text } from "@mantine/core";
 import { Column } from "../components/tables/DataTable/types";
 import { formatDateE } from "../components/tables/DataTable/util";
 
@@ -70,14 +70,22 @@ const formatStocks = (stockStr: string, row: News) => {
     if (stocks.length === 0) return "--";
 
     return stocks.map(stock => (
-      <Pill
-        size="sm"
-        key={generateRowKey(row, stock)}
-        c={getMarketColor(stock.market)}
-        style={{ margin: "0 4px 4px 0" }}
-      >
-        {`${getMarketLabel(stock.market)} ${stock.symbol}`}
-      </Pill>
+      <HoverCard key={generateRowKey(row, stock)} position="top">
+        <HoverCard.Target>
+          <Pill
+            size="sm"
+            c={getMarketColor(stock.market)}
+            style={{ margin: "0 4px 4px 0" }}
+          >
+            {`${getMarketLabel(stock.market)} · ${stock.symbol}`}
+          </Pill>
+        </HoverCard.Target>
+        <HoverCard.Dropdown p="xs">
+          <Text size="xs">市场：{getMarketLabel(stock.market)}</Text>
+          <Text size="xs">代码：{stock.symbol}</Text>
+          <Text size="xs">名称：{stock.key}</Text>
+        </HoverCard.Dropdown>
+      </HoverCard>
     ));
   } catch (error) {
     return "--";
