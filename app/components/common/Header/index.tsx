@@ -172,9 +172,7 @@ const Header = () => {
                 />
               ) : (
                 <Text
-                  fw="bolder"
                   size="sm"
-                  c="dimmed"
                   style={{
                     cursor: "pointer",
                     maxWidth: rem(100),

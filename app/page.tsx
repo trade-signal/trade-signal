@@ -35,8 +35,10 @@ export default function Home() {
 
         <Group className={styles.controls}>
           <Button
+            variant="outline"
             className={styles.control}
             onClick={() => router.push("/stock")}
+            size="xl"
           >
             立即体验
           </Button>
@@ -48,6 +50,7 @@ export default function Home() {
             variant="default"
             className={styles.control}
             leftSection={<IconBrandGithubFilled size={20} />}
+            size="xl"
           >
             GitHub
           </Button>
