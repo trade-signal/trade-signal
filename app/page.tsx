@@ -12,16 +12,20 @@ export default function Home() {
     <Box className={styles.wrapper} visibleFrom="xs">
       <Container size={700} className={styles.inner}>
         <h1 className={styles.title}>
-          打造您的{" "}
+          <Text component="span" inherit>
+            交易信标
+          </Text>
           <Text
             component="span"
-            variant="gradient"
-            gradient={{ from: "blue", to: "red" }}
+            c="dimmed"
             inherit
+            style={{
+              marginLeft: "1rem",
+              transform: "translateY(4px)"
+            }}
           >
-            智能投资
-          </Text>{" "}
-          数据分析平台
+            TradeSignal
+          </Text>
         </h1>
 
         <Text className={styles.description} c="dimmed">
@@ -31,10 +35,7 @@ export default function Home() {
 
         <Group className={styles.controls}>
           <Button
-            size="xl"
             className={styles.control}
-            variant="gradient"
-            gradient={{ from: "blue", to: "red" }}
             onClick={() => router.push("/stock")}
           >
             立即体验
@@ -44,7 +45,6 @@ export default function Home() {
             component="a"
             href="https://github.com/trade-signal"
             target="_blank"
-            size="xl"
             variant="default"
             className={styles.control}
             leftSection={<IconBrandGithubFilled size={20} />}
