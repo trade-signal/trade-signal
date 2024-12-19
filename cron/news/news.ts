@@ -57,6 +57,7 @@ const getNews = async () => {
       const response = await getWorldNews(page, pageSize);
 
       if (!response.status || response.status.code !== 0) {
+        print(JSON.stringify(response));
         throw new Error(`获取全球财经快讯失败: ${response.msg || "未知错误"}`);
       }
 
