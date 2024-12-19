@@ -25,7 +25,7 @@ const DataTableBody = <T extends Record<string, any>>({
             align={column.align}
           >
             {column.render
-              ? column.render(item[column.key])
+              ? column.render(item[column.key], item, index)
               : String(item[column.key])}
           </Table.Td>
         ))}

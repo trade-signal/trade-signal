@@ -73,6 +73,17 @@ const NewsList = () => {
     }
   }, [page]);
 
+  {
+    /* <Group gap="xs" m={0}>
+        {Object.entries(MARKET_COLORS).map(([key, value]) => (
+          <Group key={key} gap={4}>
+            <Text size="xs">{MARKET_LABELS[key]}</Text>
+            <Box bg={value} w={10} h={10} />
+          </Group>
+        ))}
+      </Group> */
+  }
+
   return (
     <DataTable
       height="calc(100vh - 210px)"

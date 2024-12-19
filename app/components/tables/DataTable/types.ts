@@ -4,7 +4,7 @@ export interface Column<T> {
   key: keyof T;
   title: string;
   width?: number;
-  render?: (value: any) => React.ReactNode;
+  render?: (value: any, row: T, index: number) => React.ReactNode;
   sortable?: boolean;
   searchable?: boolean;
   align?: ColumnAlign;
