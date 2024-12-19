@@ -12,13 +12,9 @@ import { useStockContext } from "./StockContext";
 import { TAB_CONFIGS } from "./StockListConfig";
 
 const StockList = () => {
-  const { filters } = useStockContext();
+  const { filters, setFilters } = useStockContext();
 
-  const [orderBy, setOrderBy] = useState("newPrice");
-  const [order, setOrder] = useState("desc");
-
-  const [search, setSearch] = useState("");
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState(filters.search || "");
 
   const [stockList, setStockList] = useState<StockSelection[]>([]);
   const [statistics, setStatistics] = useState<{ date: string }>({ date: "" });
@@ -40,9 +36,7 @@ const StockList = () => {
       ...filters,
       page: currentPage,
       pageSize: filters.pageSize || 20,
-      orderBy,
-      order,
-      search,
+      search: filters.search || "",
       industries: filters.industries?.join(","),
       concepts: filters.concepts?.join(",")
     });
@@ -66,13 +60,19 @@ const StockList = () => {
     close();
   };
 
+  const handleFilterChange = (newFilters: Partial<StockFilters>) => {
+    setFilters({ ...filters, ...newFilters, page: 1 });
+  };
+
   const handleSort = (key: string) => {
-    setOrderBy(key);
-    setOrder(key === orderBy ? (order === "asc" ? "desc" : "asc") : "desc");
+    handleFilterChange({
+      orderBy: key,
+      order: key === orderBy ? (order === "asc" ? "desc" : "asc") : "desc"
+    });
   };
 
   const handleSearch = useDebouncedCallback(value => {
-    setSearch(value);
+    handleFilterChange({ search: value });
   }, 500);
 
   const handleSearchValueChange = (value: string) => {
@@ -91,7 +91,7 @@ const StockList = () => {
     setPage(1);
     setHasMore(true);
     getStockList(1, true);
-  }, [filters, orderBy, order, search]);
+  }, [filters]);
 
   useEffect(() => {
     if (page > 1 && !loading) {
@@ -118,8 +118,8 @@ const StockList = () => {
             loading={loading}
             total={total}
             statisticsDate={statistics.date}
-            orderBy={orderBy}
-            order={order}
+            orderBy={filters.orderBy}
+            order={filters.order}
             search={searchValue}
             onSort={handleSort}
             onSearch={handleSearchValueChange}

@@ -12,7 +12,6 @@ import {
   Divider
 } from "@mantine/core";
 import { IconChevronDown, IconChevronUp, IconX } from "@tabler/icons-react";
-import { useLoginContext } from "@/app/providers/LoginProvider";
 
 interface StockScreenerSelectProps {
   title: string;
@@ -24,8 +23,6 @@ interface StockScreenerSelectProps {
 }
 
 const StockScreenerSelect: FC<StockScreenerSelectProps> = props => {
-  const { isLoggedIn, showLoginModal } = useLoginContext();
-
   const { title, data, value, clearable, nothingFoundMessage, onChange } =
     props;
 
@@ -43,12 +40,6 @@ const StockScreenerSelect: FC<StockScreenerSelectProps> = props => {
   }, [value]);
 
   const handleValueSelect = (val: string) => {
-    if (!isLoggedIn) {
-      combobox.closeDropdown();
-      showLoginModal("signin");
-      return;
-    }
-
     setCurrentValue(val);
     onChange(val);
   };

@@ -37,7 +37,7 @@ export default function Home() {
           <Button
             variant="outline"
             className={styles.control}
-            onClick={() => router.push("/stock")}
+            onClick={() => router.push("/news")}
             size="xl"
           >
             立即体验

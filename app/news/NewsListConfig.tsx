@@ -1,4 +1,5 @@
 import { News } from "@prisma/client";
+import Link from "next/link";
 import { HoverCard, Pill, Text } from "@mantine/core";
 import { Column } from "../components/tables/DataTable/types";
 import { formatDateE } from "../components/tables/DataTable/util";
@@ -69,24 +70,43 @@ const formatStocks = (stockStr: string, row: News) => {
     const stocks = JSON.parse(stockStr) as Stock[];
     if (stocks.length === 0) return "--";
 
-    return stocks.map(stock => (
-      <HoverCard key={generateRowKey(row, stock)} position="top">
-        <HoverCard.Target>
-          <Pill
-            size="sm"
-            c={getMarketColor(stock.market)}
-            style={{ margin: "0 4px 4px 0" }}
-          >
-            {`${getMarketLabel(stock.market)} · ${stock.symbol}`}
-          </Pill>
-        </HoverCard.Target>
-        <HoverCard.Dropdown p="xs">
-          <Text size="xs">市场：{getMarketLabel(stock.market)}</Text>
-          <Text size="xs">代码：{stock.symbol}</Text>
-          <Text size="xs">名称：{stock.key}</Text>
-        </HoverCard.Dropdown>
-      </HoverCard>
-    ));
+    return stocks.map(stock => {
+      const isCn =
+        stock.market === MarketType.CN &&
+        ["sz", "sh"].some(key => stock.symbol.startsWith(key));
+      const marketLabel = getMarketLabel(stock.market);
+      const marketColor = getMarketColor(stock.market);
+
+      return (
+        <HoverCard key={generateRowKey(row, stock)} position="top">
+          <HoverCard.Target>
+            <Pill
+              size="sm"
+              c={marketColor}
+              style={{
+                margin: "0 4px 4px 0"
+              }}
+            >
+              {`${marketLabel} · ${stock.symbol}`}
+            </Pill>
+          </HoverCard.Target>
+          <HoverCard.Dropdown p="xs">
+            <Text size="xs">市场：{marketLabel}</Text>
+            {isCn ? (
+              <Text size="xs">
+                代码：
+                <Link href={`/stock?symbol=${stock.symbol}`} target="_blank">
+                  {stock.symbol}
+                </Link>
+              </Text>
+            ) : (
+              <Text size="xs">代码：{stock.symbol}</Text>
+            )}
+            <Text size="xs">名称：{stock.key}</Text>
+          </HoverCard.Dropdown>
+        </HoverCard>
+      );
+    });
   } catch (error) {
     return "--";
   }

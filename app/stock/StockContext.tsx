@@ -1,6 +1,13 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect
+} from "react";
+import { useSearchParams } from "next/navigation";
 import {
   StockMarketValue,
   StockPeRatio,
@@ -25,6 +32,10 @@ export interface StockFilters {
   totalMarketValue?: StockMarketValue | null;
   // 市盈率
   peRatio?: StockPeRatio | null;
+
+  // 排序
+  orderBy?: string;
+  order?: string;
 
   // 搜索
   search?: string;
@@ -52,12 +63,25 @@ export const getInitialFilters = () => {
     newPrice: null,
     totalMarketValue: null,
     peRatio: null,
-    search: ""
+    search: "",
+    orderBy: "newPrice",
+    order: "desc"
+  };
+};
+
+const useInitialFilters = () => {
+  const searchParams = useSearchParams();
+  const symbol = searchParams.get("symbol");
+  const search = symbol ? Number(symbol.replace(/[a-zA-Z]/g, "")) : "";
+
+  return {
+    ...getInitialFilters(),
+    search
   };
 };
 
 export function StockProvider({ children }: { children: ReactNode }) {
-  const [filters, setFilters] = useState<StockFilters>(getInitialFilters());
+  const [filters, setFilters] = useState<StockFilters>(useInitialFilters());
 
   return (
     <StockContext.Provider value={{ filters, setFilters }}>
