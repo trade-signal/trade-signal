@@ -2,7 +2,7 @@ import { News } from "@prisma/client";
 import Link from "next/link";
 import { HoverCard, Pill, Text } from "@mantine/core";
 import { Column } from "../components/tables/DataTable/types";
-import { formatDateE } from "../components/tables/DataTable/util";
+import { formatDateDiff } from "../components/tables/DataTable/util";
 
 // 定义市场类型枚举
 enum MarketType {
@@ -116,14 +116,14 @@ export const COLUMNS: Column<News>[] = [
   {
     key: "date",
     title: "发布时间",
-    width: 200,
+    width: 140,
     align: "left",
-    render: formatDateE
+    render: formatDateDiff
   },
   {
     key: "stocks",
     title: "关联市场",
-    width: 260,
+    width: 240,
     align: "left",
     render: formatStocks
   },
@@ -136,6 +136,6 @@ export const COLUMNS: Column<News>[] = [
     key: "source",
     title: "来源",
     align: "center",
-    width: 100
+    width: 200
   }
 ];

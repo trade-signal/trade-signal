@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { Text } from "@mantine/core";
+import { HoverCard, Popover, Text, Tooltip } from "@mantine/core";
 import { ColumnAlign } from "./types";
 
 export const transformAlign = (align?: ColumnAlign) => {
@@ -50,3 +50,35 @@ export const renderSignal = (value: boolean) => {
 export const formatDate = (value: string) => dayjs(value).format("YYYY-MM-DD");
 export const formatDateE = (value: string) =>
   dayjs(value).format("YYYY-MM-DD HH:mm:ss");
+
+export const formatDateDiff = (value: string) => {
+  const now = dayjs();
+  const date = dayjs(value);
+  const diffMinutes = now.diff(date, "minutes");
+  const diffHours = now.diff(date, "hours");
+  const diffDays = now.diff(date, "days");
+
+  let relativeTime = "";
+  if (diffDays > 0) {
+    relativeTime = `${diffDays}天前`;
+  } else if (diffHours > 0) {
+    relativeTime = `${diffHours}小时前`;
+  } else if (diffMinutes > 0) {
+    relativeTime = `${diffMinutes}分钟前`;
+  } else {
+    relativeTime = "刚刚";
+  }
+
+  return (
+    <HoverCard position="top">
+      <HoverCard.Target>
+        <Text size="sm">{relativeTime}</Text>
+      </HoverCard.Target>
+      <HoverCard.Dropdown>
+        <Text size="xs" c="gray.7" fw={500}>
+          {formatDateE(value)}
+        </Text>
+      </HoverCard.Dropdown>
+    </HoverCard>
+  );
+};
