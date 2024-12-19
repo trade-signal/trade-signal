@@ -9,11 +9,11 @@ import { NewsFilters, useNewsContext } from "./NewsContext";
 const NewsScreener = () => {
   const { filters, setFilters } = useNewsContext();
 
-  const [tags, setTags] = useState<string[]>([]);
-
   const handleFilterChange = (newFilters: Partial<NewsFilters>) => {
     setFilters({ ...filters, ...newFilters, page: 1 });
   };
+
+  const [tags, setTags] = useState<string[]>(["全部"]);
 
   const getFilter = async () => {
     const response = await get("/api/news/filter", {});
@@ -26,8 +26,6 @@ const NewsScreener = () => {
   useEffect(() => {
     getFilter();
   }, []);
-
-  console.log(tags);
 
   return (
     <Stack mt={10} mb={10}>
