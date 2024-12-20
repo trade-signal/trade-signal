@@ -150,7 +150,13 @@ export const seedStockSelection = async (date?: string) => {
 
     // 写入选股指标
     while (stocks.length > 0) {
-      const list = stocks.splice(0, 1000);
+      let list = stocks.splice(0, 1000);
+
+      list = list.map(item => ({
+        ...item,
+        // fix: 量比为空时，取0
+        volumeRatio: item.volumeRatio || 0
+      }));
 
       print(`正在写入${list.length}条选股指标`);
 

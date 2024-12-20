@@ -14,13 +14,13 @@ export const getRunDate = () => {
     return date;
   };
 
-  // 判断是否在收盘数据处理时间之前（17:30前）
+  // 判断是否在收盘数据处理时间之前（16:00前）
   const isBeforeClosingTime =
-    currentHour < 17 || (currentHour === 17 && currentMinute < 30);
+    currentHour < 16 || (currentHour === 16 && currentMinute < 0);
 
   // 获取基准日期：收盘前取前一天，收盘后取当天
   const baseDate = isBeforeClosingTime ? now.subtract(1, "day") : now;
 
   // 返回最近的工作日
   return getLastWorkday(baseDate).format("YYYY-MM-DD");
-};  
+};
