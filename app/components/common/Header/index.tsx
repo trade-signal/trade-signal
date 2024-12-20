@@ -146,7 +146,7 @@ const Header = () => {
         </Title>
       </Group>
 
-      <Group gap={5}>
+      <Group gap={5} align="center">
         <Box onClick={spotlight.open} style={{ cursor: "pointer" }}>
           <TextInput
             radius="xl"
@@ -159,7 +159,7 @@ const Header = () => {
         {items}
       </Group>
 
-      <Group justify="center" grow>
+      <Group style={{ width: 180 }} justify="flex-end" grow>
         {isLoggedIn ? (
           <Menu shadow="md">
             <Menu.Target>
@@ -175,7 +175,7 @@ const Header = () => {
                   size="sm"
                   style={{
                     cursor: "pointer",
-                    maxWidth: rem(100),
+                    textAlign: "right",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     whiteSpace: "nowrap"
@@ -244,10 +244,16 @@ const Header = () => {
           </Menu>
         ) : (
           <>
-            <Button variant="default" onClick={() => showLoginModal("signin")}>
+            <Button
+              size="sm"
+              variant="default"
+              onClick={() => showLoginModal("signin")}
+            >
               登录
             </Button>
-            <Button onClick={() => showLoginModal("signup")}>注册</Button>
+            <Button size="sm" onClick={() => showLoginModal("signup")}>
+              注册
+            </Button>
           </>
         )}
       </Group>

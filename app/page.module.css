@@ -1,7 +1,8 @@
 .wrapper {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-top: 25vh;
   height: calc(100vh - 90px);
   background-color: light-dark(
     var(--mantine-color-white),
