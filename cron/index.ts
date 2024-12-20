@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 import { getRunDate } from "@/shared/date";
 import { initStockSelectionData, seedStockSelection } from "./stock/selection";
 import { initTradeDates } from "./stock/trade_date";
-import { initNewsData, seedNews } from "./news/news";
+import { initNewsData, seedNews } from "./news";
 
 const print = (message: string) => {
   console.log(`[cron] [${dayjs().format("YYYY-MM-DD HH:mm:ss")}] ${message}`);
