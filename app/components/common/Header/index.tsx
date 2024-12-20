@@ -166,9 +166,8 @@ const Header = () => {
               {userInfo?.image ? (
                 <Avatar
                   src={userInfo?.image || ""}
-                  size={rem(32)}
+                  style={{ width: rem(32), height: rem(32), cursor: "pointer" }}
                   alt={userInfo?.name || ""}
-                  style={{ cursor: "pointer" }}
                 />
               ) : (
                 <Text
