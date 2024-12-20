@@ -1,4 +1,5 @@
 import prisma from "@/prisma/db";
+import dayjs from "dayjs";
 
 interface Tag {
   id: string;
@@ -7,7 +8,12 @@ interface Tag {
 
 export const GET = async () => {
   const data = await prisma.news.findMany({
-    select: { tags: true }
+    select: { tags: true },
+    where: {
+      date: {
+        gte: dayjs().subtract(3, "day").toDate()
+      }
+    }
   });
 
   const keys = new Set<string>();

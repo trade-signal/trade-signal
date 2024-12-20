@@ -1,7 +1,12 @@
 import dayjs from "dayjs";
 
+interface RunDateConfig {
+  hour: number;
+  minute: number;
+}
+
 // 获取运行日期
-export const getRunDate = () => {
+export const getRunDate = (config: RunDateConfig = { hour: 16, minute: 0 }) => {
   const now = dayjs();
   const currentHour = now.hour();
   const currentMinute = now.minute();
@@ -14,9 +19,10 @@ export const getRunDate = () => {
     return date;
   };
 
-  // 判断是否在收盘数据处理时间之前（16:00前）
+  // 判断是否在收盘数据处理时间之前，默认 16:00 之前
   const isBeforeClosingTime =
-    currentHour < 16 || (currentHour === 16 && currentMinute < 0);
+    currentHour < config.hour ||
+    (currentHour === config.hour && currentMinute < config.minute);
 
   // 获取基准日期：收盘前取前一天，收盘后取当天
   const baseDate = isBeforeClosingTime ? now.subtract(1, "day") : now;

@@ -84,13 +84,21 @@ const getNews = async () => {
 
 // 清除超过7天的数据
 const clearOldNews = async () => {
-  await prisma.news.deleteMany({
+  print("检测是否存在超过7天的数据");
+
+  const result = await prisma.news.deleteMany({
     where: {
       date: {
-        lt: dayjs().subtract(7, "day").toDate()
+        lt: dayjs().subtract(3, "day").toDate()
       }
     }
   });
+
+  if (result.count === 0) {
+    print("没有超过7天的数据需要清理");
+  } else {
+    print(`已清理 ${result.count} 条超过7天的数据`);
+  }
 };
 
 export const checkNews = async (date?: string) => {
@@ -157,6 +165,7 @@ export const seedNews = async () => {
       return;
     }
 
+    // 历史数据清理
     await clearOldNews();
 
     const newsData = transformNews(news);
