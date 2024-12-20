@@ -1,21 +1,12 @@
 .wrapper {
-  position: relative;
-  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: calc(100vh - 80px);
   background-color: light-dark(
     var(--mantine-color-white),
     var(--mantine-color-dark-8)
   );
-}
-
-.inner {
-  position: relative;
-  padding-top: 180px;
-  padding-bottom: 120px;
-
-  @media (max-width: $mantine-breakpoint-sm) {
-    padding-bottom: 80px;
-    padding-top: 80px;
-  }
 }
 
 .title {
