@@ -56,6 +56,34 @@ const fetchNews = async (lastTime?: number) => {
   }
 };
 
+// 财联社分类
+export const CLS_CATEGORIES = [
+  {
+    label: "全部",
+    value: ""
+  },
+  {
+    label: "重点",
+    value: "red"
+  },
+  {
+    label: "公司",
+    value: "announcement"
+  },
+  {
+    label: "看盘",
+    value: "watch"
+  },
+  {
+    label: "港美股",
+    value: "hk_us"
+  },
+  {
+    label: "基金",
+    value: "fund"
+  }
+];
+
 // 获取近24小时数据
 export const getNews = async () => {
   const news = [];
