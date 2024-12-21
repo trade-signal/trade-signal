@@ -33,7 +33,7 @@ const NewsList = () => {
       ...filters,
       page: currentPage,
       pageSize: filters.pageSize || 20,
-      tags: tag === "全部" ? "" : tag
+      categories: filters.categories || ""
     });
 
     if (currentPage === 1) {

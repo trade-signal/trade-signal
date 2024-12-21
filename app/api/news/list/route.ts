@@ -6,7 +6,7 @@ import { getFilteredParams } from "@/shared/util";
 export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;
 
-  const tags = getFilteredParams(searchParams, "tags");
+  const categories = getFilteredParams(searchParams, "categories");
 
   const page = Number(searchParams.get("page")) || 1;
   const pageSize = Number(searchParams.get("pageSize")) || 20;
@@ -16,8 +16,11 @@ export const GET = async (request: NextRequest) => {
 
   let where: Prisma.NewsWhereInput = {};
 
-  if (tags && tags.length) {
-    where.tags = { hasEvery: tags };
+  if (source) {
+    where.source = source;
+  }
+  if (categories && categories.length) {
+    where.categories = { hasEvery: categories };
   }
 
   const total = await prisma.news.count({

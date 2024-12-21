@@ -3,7 +3,6 @@ import prisma from "@/prisma/db";
 import { indicatorMapping, IndicatorType } from "@/cron/config/indicator";
 import { StockSelection } from "@prisma/client";
 import dayjs from "dayjs";
-import { delayRandom } from "@/shared/util";
 
 const spider_name = "stock_selection";
 
@@ -77,9 +76,9 @@ const getStocks = async (): Promise<Partial<StockSelection>[]> => {
 
   const keys = Object.keys(indicatorMapping);
 
-  while (true) {
-    print(`正在获取第${page}页数据`);
+  print(`开始获取选股指标`);
 
+  while (true) {
     try {
       const response = await getStockSelection(page, pageSize);
 
@@ -103,11 +102,6 @@ const getStocks = async (): Promise<Partial<StockSelection>[]> => {
 
       stocks.push(...list);
 
-      print(`获取选股指标成功: ${list.length} 条数据`);
-
-      // 随机延迟
-      await delayRandom();
-
       if (!count || page * pageSize >= count) break;
 
       page++;
@@ -116,6 +110,8 @@ const getStocks = async (): Promise<Partial<StockSelection>[]> => {
       break;
     }
   }
+
+  print(`获取选股指标完成`);
 
   return stocks;
 };
@@ -140,8 +136,6 @@ export const seedStockSelection = async (date?: string) => {
       });
       print(`删除选股指标: ${deleted.count}`);
     }
-
-    print(`开始获取选股指标`);
 
     // 获取选股指标
     const stocks = await getStocks();

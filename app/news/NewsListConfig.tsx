@@ -6,7 +6,8 @@ import { formatDateDiff } from "../components/tables/DataTable/util";
 
 // 定时来源类型
 enum SourceType {
-  SINA = "sina"
+  SINA = "sina",
+  CLS = "cls"
 }
 
 // 定义市场类型枚举
@@ -25,7 +26,8 @@ enum MarketType {
 
 // 来源映射
 export const SOURCE_MAP: Record<string, string> = {
-  [SourceType.SINA]: "新浪财经"
+  [SourceType.SINA]: "新浪财经",
+  [SourceType.CLS]: "财联社"
 };
 
 // 颜色映射

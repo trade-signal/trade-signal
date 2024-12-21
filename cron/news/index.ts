@@ -60,10 +60,10 @@ export const seedNews = async () => {
 export const initNewsData = async (runDate: string) => {
   const hasNews = await checkNews(runDate);
 
-  // if (hasNews) {
-  //   print("News available! No need to seed.");
-  //   return;
-  // }
+  if (hasNews) {
+    print("News available! No need to seed.");
+    return;
+  }
 
   await seedNews();
 };

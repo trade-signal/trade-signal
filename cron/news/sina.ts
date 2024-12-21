@@ -1,7 +1,6 @@
 import { get } from "@/shared/request";
 import { createLogger } from "@/cron/util/logger";
 import prisma from "@/prisma/db";
-import { delayRandom } from "@/shared/util";
 
 const spider_name = "sina";
 const print = createLogger(spider_name, "news");
@@ -47,9 +46,9 @@ export const getNews = async () => {
   let page = 1;
   let pageSize = 100;
 
-  while (true) {
-    print(`正在获取第${page}页数据`);
+  print(`开始获取全球财经快讯`);
 
+  while (true) {
     try {
       const response = await fetchNews(page, pageSize);
 
@@ -64,11 +63,6 @@ export const getNews = async () => {
         throw new Error(`获取全球财经快讯失败: 数据为空`);
       }
 
-      print(`获取全球财经快讯成功: ${list.length} 条数据`);
-
-      // 随机延迟
-      await delayRandom();
-
       news.push(...list);
 
       const { totalPage } = page_info;
@@ -80,6 +74,8 @@ export const getNews = async () => {
       break;
     }
   }
+
+  print(`获取全球财经快讯完成`);
 
   return news;
 };

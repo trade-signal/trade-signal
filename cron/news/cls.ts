@@ -23,17 +23,17 @@ const generateSign = (params: Record<string, any>) => {
  * 财联社 - 24小时电报
  * https://www.cls.cn/telegraph
  *
- * @param page 页码
- * @param pageSize 每页数量
+ * @param category 分类
+ * @param lastTime 时间戳
  */
 
-const fetchNews = async (lastTime?: number) => {
+const fetchNews = async (category: string, lastTime?: number) => {
   try {
     const url = `https://www.cls.cn/v1/roll/get_roll_list`;
 
     const baseParams = {
       app: "CailianpressWeb",
-      category: "",
+      category: category || "",
       last_time: lastTime || getCurrentUnixTime(),
       os: "web",
       refresh_type: 1,
@@ -86,46 +86,52 @@ export const CLS_CATEGORIES = [
 
 // 获取近24小时数据
 export const getNews = async () => {
-  const news = [];
+  const newsMap = new Map<string, ClsNews[]>(
+    CLS_CATEGORIES.map(category => [category.value, []])
+  );
 
-  let lastTime = getCurrentUnixTime();
-  let page = 1;
+  for (const category of CLS_CATEGORIES) {
+    let lastTime = getCurrentUnixTime();
+    let page = 1;
 
-  while (true) {
-    print(`正在获取第${page}页数据`);
+    print(`开始获取 ${category.label} 分类数据`);
 
-    try {
-      const data = await fetchNews(lastTime);
+    while (true) {
+      try {
+        const data = await fetchNews(category, lastTime);
 
-      if (!data || !Array.isArray(data)) {
-        throw new Error(`获取24小时电报失败: 数据为空`);
-      }
+        if (!data || !Array.isArray(data)) {
+          throw new Error(`${category.label} 分类数据获取失败: 数据为空`);
+        }
 
-      news.push(...data);
+        // 合并数据
+        newsMap.set(category.value, [
+          ...(newsMap.get(category.value) || []),
+          ...data
+        ]);
 
-      lastTime = data[data.length - 1].ctime;
+        lastTime = data[data.length - 1].ctime;
 
-      const time = dayjs(lastTime * 1e3);
+        const time = dayjs(lastTime * 1e3);
 
-      print(`获取24小时电报成功: ${data.length} 条数据`);
+        // 如果时间超过24小时前，或者页码大于30，则停止
+        if (time.isBefore(dayjs().subtract(24, "hours")) || page >= 30) {
+          print(`${category.label} 分类数据获取完成`);
+          break;
+        }
 
-      // 随机延迟
-      await delayRandom();
-
-      // 如果时间超过24小时前，或者页码大于30，则停止
-      if (time.isBefore(dayjs().subtract(24, "hours")) || page >= 30) {
-        print(`已获取近24小时数据`);
+        page++;
+      } catch (error) {
+        print(`${category.label} 分类数据获取失败: ${error}`);
         break;
       }
-
-      page++;
-    } catch (error) {
-      print(`获取24小时电报失败: ${error}`);
-      break;
     }
+
+    // 随机延迟
+    await delayRandom();
   }
 
-  return news;
+  return newsMap;
 };
 
 interface StockInfo {
@@ -232,36 +238,54 @@ interface ClsNews {
 }
 
 // 转换新闻数据
-const transformClsNews = (data: ClsNews[]) => {
-  return data.map((item: ClsNews) => {
-    const { id, content, shareurl, title, brief, ctime, subjects, stock_list } =
-      item;
+const transformClsNews = (data: Map<string, ClsNews[]>) => {
+  const result = [];
 
-    return {
-      source: "cls",
-      sourceId: String(id),
-      sourceUrl: shareurl,
-      title: title,
-      summary: brief,
-      content: content,
-      date: new Date(ctime * 1e3),
-      // hack: use subject_name as tags
-      tags: subjects?.map(item => item.subject_name) || [],
-      categories: [],
-      stocks:
-        stock_list?.map(item => ({
-          code: item.StockID,
-          market: item.schema,
-          name: item.name
-        })) || []
-    };
-  });
+  for (const [category, news] of data) {
+    print(`开始转换"${category}"分类数据`);
+
+    for (const item of news) {
+      const {
+        id,
+        content,
+        shareurl,
+        title,
+        brief,
+        ctime,
+        subjects,
+        stock_list
+      } = item;
+
+      result.push({
+        source: "cls",
+        sourceId: String(id),
+        sourceUrl: shareurl,
+        title: title,
+        summary: brief,
+        content: content,
+        date: new Date(ctime * 1e3),
+        // hack: use subject_name as tags
+        tags: subjects?.map(item => item.subject_name) || [],
+        categories: [category],
+        stocks:
+          stock_list?.map(item => ({
+            code: item.StockID,
+            market: item.schema,
+            name: item.name
+          })) || []
+      });
+    }
+
+    print(`转换"${category}"分类数据完成`);
+  }
+
+  return result;
 };
 
 export const seedClsNews = async () => {
   try {
     const newsData = await getNews();
-    print(`获取到 ${newsData.length} 条新闻`);
+    print(`获取数据完成`);
 
     print(`开始转换新闻数据`);
     const transformedNews = transformClsNews(newsData);

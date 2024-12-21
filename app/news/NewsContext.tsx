@@ -7,8 +7,10 @@ export interface NewsFilters {
   page?: number;
   pageSize?: number;
 
-  // 标签
-  tags?: string[];
+  // 来源
+  source?: string;
+  // 分类
+  categories?: string[];
 }
 
 export interface NewsContextType {
