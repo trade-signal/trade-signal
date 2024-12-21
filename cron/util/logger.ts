@@ -1,3 +1,4 @@
-export const createLogger = (name: string) => (message: string) => {
-  console.log(`[${name}] ${message}`);
-};
+export const createLogger =
+  (name: string, prefix?: string) => (message: string) => {
+    console.log(`${prefix ? `[${prefix}]` : ""}[${name}] ${message}`);
+  };

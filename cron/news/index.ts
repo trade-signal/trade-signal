@@ -2,8 +2,9 @@ import dayjs from "dayjs";
 import prisma from "@/prisma/db";
 import { createLogger } from "@/cron/util/logger";
 import { seedSinaNews } from "./sina";
+import { seedClsNews } from "./cls";
 
-const spider_name = "world_news";
+const spider_name = "news";
 const print = createLogger(spider_name);
 
 // 清除超过7天的数据
@@ -47,8 +48,8 @@ export const seedNews = async () => {
     // 清理历史数据
     await clearOldNews();
 
-    // 获取新浪新闻
-    await seedSinaNews();
+    // 获取新闻数据
+    await Promise.all([seedSinaNews(), seedClsNews()]);
 
     print(`新闻数据获取成功`);
   } catch (error) {
@@ -59,10 +60,10 @@ export const seedNews = async () => {
 export const initNewsData = async (runDate: string) => {
   const hasNews = await checkNews(runDate);
 
-  if (hasNews) {
-    print("News available! No need to seed.");
-    return;
-  }
+  // if (hasNews) {
+  //   print("News available! No need to seed.");
+  //   return;
+  // }
 
   await seedNews();
 };

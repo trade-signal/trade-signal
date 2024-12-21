@@ -2,8 +2,8 @@ import prisma from "@/prisma/db";
 import dayjs from "dayjs";
 
 const getUniqueItems = (
-  data: { tags: string[]; categories: string[] }[],
-  field: "tags" | "categories"
+  data: { categories: string[] }[],
+  field: "categories"
 ) => {
   const uniqueItems = new Set<string>();
 
@@ -18,9 +18,20 @@ const getUniqueItems = (
 };
 
 export const GET = async () => {
-  const data = await prisma.news.findMany({
-    select: { tags: true, categories: true },
+  const sinaNews = await prisma.news.findMany({
+    select: { categories: true },
     where: {
+      source: "sina",
+      date: {
+        gte: dayjs().subtract(3, "day").toDate()
+      }
+    }
+  });
+
+  const clsNews = await prisma.news.findMany({
+    select: { categories: true },
+    where: {
+      source: "cls",
       date: {
         gte: dayjs().subtract(3, "day").toDate()
       }
@@ -30,8 +41,12 @@ export const GET = async () => {
   return Response.json({
     success: true,
     data: {
-      tags: getUniqueItems(data, "tags"),
-      categories: getUniqueItems(data, "categories")
+      sina: {
+        categories: getUniqueItems(sinaNews, "categories")
+      },
+      cls: {
+        categories: getUniqueItems(clsNews, "categories")
+      }
     }
   });
 };

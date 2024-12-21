@@ -30,3 +30,6 @@ export const getRunDate = (config: RunDateConfig = { hour: 16, minute: 0 }) => {
   // 返回最近的工作日
   return getLastWorkday(baseDate).format("YYYY-MM-DD");
 };
+
+// 获取当前时间戳
+export const getCurrentUnixTime = () => dayjs().unix();

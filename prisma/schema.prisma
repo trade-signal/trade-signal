@@ -265,7 +265,7 @@ model StockSelection {
 model News {
   id String @id @default(cuid())
 
-  source     String // 来源，如 "sina"
+  source     String // 来源，如 "sina", "cls"
   sourceId   String // 源站ID
   sourceUrl  String // 源站URL
   title      String // 标题

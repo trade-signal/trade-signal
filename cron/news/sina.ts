@@ -1,10 +1,10 @@
 import { get } from "@/shared/request";
 import { createLogger } from "@/cron/util/logger";
-import { News } from "@prisma/client";
 import prisma from "@/prisma/db";
+import { delayRandom } from "@/shared/util";
 
 const spider_name = "sina";
-const print = createLogger(spider_name);
+const print = createLogger(spider_name, "news");
 
 /**
  * 全球财经快讯
@@ -41,12 +41,11 @@ const fetchNews = async (page: number, pageSize: number) => {
   }
 };
 
-// 获取近七天数据
 export const getNews = async () => {
+  const news = [];
+
   let page = 1;
   let pageSize = 100;
-
-  const news = [];
 
   while (true) {
     print(`正在获取第${page}页数据`);
@@ -64,6 +63,11 @@ export const getNews = async () => {
       if (!page_info || !list || !Array.isArray(list)) {
         throw new Error(`获取全球财经快讯失败: 数据为空`);
       }
+
+      print(`获取全球财经快讯成功: ${list.length} 条数据`);
+
+      // 随机延迟
+      await delayRandom();
 
       news.push(...list);
 
@@ -125,7 +129,6 @@ interface SinaNews {
   compere_info: string;
 }
 
-// 为ext字段添加额外的类型定义
 interface SinaNewsExt {
   stocks: Array<{
     market: string;

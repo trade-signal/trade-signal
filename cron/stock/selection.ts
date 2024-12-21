@@ -3,6 +3,7 @@ import prisma from "@/prisma/db";
 import { indicatorMapping, IndicatorType } from "@/cron/config/indicator";
 import { StockSelection } from "@prisma/client";
 import dayjs from "dayjs";
+import { delayRandom } from "@/shared/util";
 
 const spider_name = "stock_selection";
 
@@ -101,6 +102,11 @@ const getStocks = async (): Promise<Partial<StockSelection>[]> => {
       );
 
       stocks.push(...list);
+
+      print(`获取选股指标成功: ${list.length} 条数据`);
+
+      // 随机延迟
+      await delayRandom();
 
       if (!count || page * pageSize >= count) break;
 
