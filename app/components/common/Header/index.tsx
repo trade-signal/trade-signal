@@ -159,28 +159,20 @@ const Header = () => {
         {items}
       </Group>
 
-      <Group style={{ width: 180 }} justify="flex-end" grow>
+      <Group style={{ width: 180 }} grow>
         {isLoggedIn ? (
           <Menu shadow="md">
             <Menu.Target>
               {userInfo?.image ? (
-                <Avatar
-                  src={userInfo?.image || ""}
-                  size={rem(32)}
-                  alt={userInfo?.name || ""}
-                  style={{ cursor: "pointer" }}
-                />
+                <Box className={styles.avatarWrapper}>
+                  <Avatar
+                    src={userInfo?.image || ""}
+                    size={rem(32)}
+                    alt={userInfo?.name || ""}
+                  />
+                </Box>
               ) : (
-                <Text
-                  size="sm"
-                  style={{
-                    cursor: "pointer",
-                    textAlign: "right",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap"
-                  }}
-                >
+                <Text size="sm" className={styles.username}>
                   {userInfo?.name}
                 </Text>
               )}

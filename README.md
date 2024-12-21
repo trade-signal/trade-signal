@@ -2,9 +2,9 @@
 
 # TradeSignal
 
-**交易信标** - 提供实时市场数据和分析功能，助您捕捉市场脉动，做出精准投资决策。
+**交易信标** - 整合多维度市场数据，提供专业的投资分析工具。
 
-**TradeSignal** - Provides real-time market data and analysis features, helping you capture market dynamics and make precise investment decisions.
+**TradeSignal** - Integrating multi-dimensional market data to deliver professional investment analysis tools.
 
 富贵险中求，也在险中丢；求时十之一，丢时十之九。
 

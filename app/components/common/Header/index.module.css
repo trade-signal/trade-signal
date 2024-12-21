@@ -10,6 +10,20 @@
   box-sizing: border-box;
 }
 
+.avatarWrapper {
+  cursor: pointer;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.username {
+  cursor: pointer;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .link {
   display: block;
   line-height: 1;
