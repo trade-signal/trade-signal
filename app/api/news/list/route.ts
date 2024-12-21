@@ -1,11 +1,12 @@
 import { type NextRequest } from "next/server";
 import { Prisma } from "@prisma/client";
 import prisma from "@/prisma/db";
+import { getFilteredParams } from "@/shared/util";
 
 export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;
 
-  const tags = searchParams.get("tags");
+  const tags = getFilteredParams(searchParams, "tags");
 
   const page = Number(searchParams.get("page")) || 1;
   const pageSize = Number(searchParams.get("pageSize")) || 20;
@@ -15,12 +16,8 @@ export const GET = async (request: NextRequest) => {
 
   let where: Prisma.NewsWhereInput = {};
 
-  if (tags) {
-    where.OR = tags.split(",").map(tag => ({
-      tags: {
-        contains: tag.trim()
-      }
-    }));
+  if (tags && tags.length) {
+    where.tags = { hasEvery: tags };
   }
 
   const total = await prisma.news.count({

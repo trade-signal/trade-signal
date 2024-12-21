@@ -6,6 +6,7 @@ import {
   StockMarketValue,
   StockPeRatio
 } from "@/app/stock/StockScreenerConfig";
+import { getFilteredParams } from "@/shared/util";
 
 const getPriceRange = (price: StockPriceRange) => {
   const maps = {
@@ -44,12 +45,20 @@ const getPeRatioRange = (peRatio: StockPeRatio) => {
   return maps[peRatio];
 };
 
+const generateWhereOR = (params: string[], field: string) => {
+  return params.map(param => ({
+    [field]: {
+      contains: param.trim()
+    }
+  }));
+};
+
 export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;
 
-  const industries = searchParams.get("industries");
-  const concepts = searchParams.get("concepts");
-  const styles = searchParams.get("styles");
+  const industries = getFilteredParams(searchParams, "industries");
+  const concepts = getFilteredParams(searchParams, "concepts");
+  const styles = getFilteredParams(searchParams, "styles");
 
   const newPrice = searchParams.get("newPrice");
   const totalMarketValue = searchParams.get("totalMarketValue");
@@ -75,24 +84,22 @@ export const GET = async (request: NextRequest) => {
     date: { equals: maxDate?.date }
   };
 
-  if (industries) {
+  if (industries && industries.length) {
     where.industry = {
-      in: industries.split(",")
+      in: industries
     };
   }
-  if (concepts) {
-    where.OR = concepts.split(",").map(concept => ({
-      concept: {
-        contains: concept.trim()
-      }
-    }));
+
+  let whereOR: Prisma.StockSelectionWhereInput[] = [];
+
+  if (concepts && concepts.length) {
+    whereOR.push(...generateWhereOR(concepts, "concept"));
   }
-  if (styles) {
-    where.OR = styles.split(",").map(style => ({
-      style: {
-        contains: style.trim()
-      }
-    }));
+  if (styles && styles.length) {
+    whereOR.push(...generateWhereOR(styles, "style"));
+  }
+  if (whereOR.length > 0) {
+    where.OR = whereOR;
   }
 
   if (newPrice) {

@@ -1,14 +1,25 @@
 import prisma from "@/prisma/db";
 import dayjs from "dayjs";
 
-interface Tag {
-  id: string;
-  name: string;
-}
+const getUniqueItems = (
+  data: { tags: string[]; categories: string[] }[],
+  field: "tags" | "categories"
+) => {
+  const uniqueItems = new Set<string>();
+
+  data.forEach(item => {
+    const items = item[field];
+    if (Array.isArray(items)) {
+      items.forEach(value => uniqueItems.add(value));
+    }
+  });
+
+  return Array.from(uniqueItems).sort();
+};
 
 export const GET = async () => {
   const data = await prisma.news.findMany({
-    select: { tags: true },
+    select: { tags: true, categories: true },
     where: {
       date: {
         gte: dayjs().subtract(3, "day").toDate()
@@ -16,33 +27,11 @@ export const GET = async () => {
     }
   });
 
-  const keys = new Set<string>();
-
-  const tags = data.reduce((acc, curr) => {
-    if (!curr.tags) return acc;
-
-    try {
-      const values = JSON.parse(curr.tags) as Tag[];
-
-      values.forEach(value => {
-        if (keys.has(value.id)) return;
-
-        keys.add(value.id);
-        acc.add(value);
-      });
-    } catch (error) {}
-
-    return acc;
-  }, new Set<Tag>());
-
-  const sortedTags = Array.from(tags).sort(
-    (a, b) => Number(a.id) - Number(b.id)
-  );
-
   return Response.json({
     success: true,
     data: {
-      tags: sortedTags.map(tag => tag.name)
+      tags: getUniqueItems(data, "tags"),
+      categories: getUniqueItems(data, "categories")
     }
   });
 };

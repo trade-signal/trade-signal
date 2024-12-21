@@ -132,7 +132,7 @@ export const seedStockSelection = async (date?: string) => {
           }
         }
       });
-      console.log(`删除选股指标: ${deleted.count}`);
+      print(`删除选股指标: ${deleted.count}`);
     }
 
     print(`开始获取选股指标`);
@@ -176,7 +176,7 @@ export const initStockSelectionData = async (runDate: string) => {
   const hasStocks = await checkStocks(runDate);
 
   if (hasStocks) {
-    console.log("Stocks available! No need to seed.");
+    print("Stocks available! No need to seed.");
     return;
   }
 

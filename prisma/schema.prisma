@@ -81,7 +81,7 @@ model StockSelection {
   date     String @db.VarChar(10) // 交易日期
   code     String @db.VarChar(6) // 股票代码
   name     String @db.VarChar(20) // 股票名称
-  secucode String @db.VarChar(10) // 全代码
+  secucode String @db.VarChar(10) // ��代码
 
   // 交易数据
   newPrice      Float // 最新价
@@ -265,52 +265,19 @@ model StockSelection {
 model News {
   id String @id @default(cuid())
 
-  source    String   @db.VarChar(255) // 来源，sina/cls 等
-  sourceId  String   @db.VarChar(255) // 来源ID
-  sourceUrl String?  @db.VarChar(1000) // 原文链接
-  title     String   @db.VarChar(255) // 标题
-  summary   String?  @db.VarChar(1000) // 新闻摘要
-  content   String   @db.Text // 新闻内容
-  date      DateTime @default(now()) // 发布日期时间
-
-  newsTags       NewsTag[] // 新闻标签关联
-  newsStocks     NewsStock[] // 新闻股票关联
-  newsCategories NewsCategory[] // 新闻分类关联
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  source     String // 来源，如 "sina"
+  sourceId   String // 源站ID
+  sourceUrl  String // 源站URL
+  title      String // 标题
+  summary    String // 摘要
+  content    String // 内容
+  date       DateTime // 发布时间
+  tags       String[] // 标签数组
+  stocks     Json // 相关股票 [{code, market, name}]
+  categories String[] // 分类数组
 
   @@unique([source, sourceId]) // 复合唯一约束
   @@index([date]) // 日期索引
   @@index([source, sourceId]) // 来源和来源ID复合索引
   @@map("news")
-}
-
-model NewsTag {
-  id   String @id @default(cuid())
-  name String @db.VarChar(100)
-  news News[]
-
-  @@unique([name])
-  @@map("news_tag")
-}
-
-model NewsStock {
-  id   String @id @default(cuid())
-  code String @db.VarChar(6)
-  name String @db.VarChar(20)
-  news News[]
-
-  @@unique([code])
-  @@map("news_stock")
-}
-
-model NewsCategory {
-  id     String @id @default(cuid())
-  name   String @db.VarChar(255)
-  source String @db.VarChar(255) // 分类来源：sina/cls 等
-  news   News[]
-
-  @@unique([name, source])
-  @@map("news_category")
 }

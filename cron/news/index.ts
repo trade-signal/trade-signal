@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import prisma from "@/prisma/db";
-import { getNews } from "./sina";
 import { createLogger } from "@/cron/util/logger";
+import { seedSinaNews } from "./sina";
 
 const spider_name = "world_news";
 const print = createLogger(spider_name);
@@ -13,7 +13,7 @@ const clearOldNews = async () => {
   const result = await prisma.news.deleteMany({
     where: {
       date: {
-        lt: dayjs().subtract(3, "day").toDate()
+        lt: dayjs().subtract(7, "day").toDate()
       }
     }
   });
@@ -39,50 +39,18 @@ export const checkNews = async (date?: string) => {
   return news.length > 0;
 };
 
-// 转换新闻数据
-const transformSinaNews = (news: any) => {
-  return news.map((item: any) => {
-    const { id, rich_text, create_time, tag, ext } = item;
-    const { stocks, docurl } = JSON.parse(ext || "{}");
-
-    return {
-      source: "新浪财经",
-      sourceId: String(id),
-      sourceUrl: docurl || "",
-      content: rich_text || "",
-      date: new Date(create_time),
-      tags: JSON.stringify(tag || []),
-      stocks: JSON.stringify(stocks || [])
-    };
-  });
-};
-
 // 获取新闻
 export const seedNews = async () => {
   try {
     print(`开始获取新闻数据`);
 
-    const news = await getNews();
-
-    if (news.length === 0) {
-      print(`获取数据为空`);
-      return;
-    }
-
-    // 清理3天前的历史数据
+    // 清理历史数据
     await clearOldNews();
 
-    const newsData = transformSinaNews(news);
+    // 获取新浪新闻
+    await seedSinaNews();
 
-    print(`获取到 ${newsData.length} 条新闻`);
-    print(`开始写入数据库`);
-
-    await prisma.news.createMany({
-      data: newsData,
-      skipDuplicates: true // 跳过重复记录
-    });
-
-    print(`数据写入成功`);
+    print(`新闻数据获取成功`);
   } catch (error) {
     print(`新闻数据获取失败: ${error}`);
   }

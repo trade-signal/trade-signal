@@ -4,6 +4,11 @@ import { HoverCard, Pill, Text } from "@mantine/core";
 import { Column } from "../components/tables/DataTable/types";
 import { formatDateDiff } from "../components/tables/DataTable/util";
 
+// 定时来源类型
+enum SourceType {
+  SINA = "sina"
+}
+
 // 定义市场类型枚举
 enum MarketType {
   CN = "cn", // A股
@@ -17,6 +22,11 @@ enum MarketType {
   GLOBAL = "global", // 全球
   GLOBAL_BOND = "globalbd" // 全球债券
 }
+
+// 来源映射
+export const SOURCE_MAP: Record<string, string> = {
+  [SourceType.SINA]: "新浪财经"
+};
 
 // 颜色映射
 export const MARKET_COLORS: Record<string, string> = {
@@ -56,24 +66,21 @@ const getMarketLabel = (market: string): string => {
 
 interface Stock {
   market: string; // cn 国内，us 美股, hk 港股, fund 基金
-  symbol: string;
-  key: string;
+  code: string;
+  name: string;
 }
 
 const generateRowKey = (row: News, stock: Stock) =>
-  `${row.id}-${stock.key}-${stock.market}-${stock.symbol}`;
+  `${row.id}-${stock.code}-${stock.market}-${stock.name}`;
 
-const formatStocks = (stockStr: string, row: News) => {
-  if (!stockStr) return "--";
+const formatStocks = (stocks: Stock[], row: News) => {
+  if (!stocks || stocks.length === 0) return "--";
 
   try {
-    const stocks = JSON.parse(stockStr) as Stock[];
-    if (stocks.length === 0) return "--";
-
     return stocks.map(stock => {
       const isCn =
         stock.market === MarketType.CN &&
-        ["sz", "sh"].some(key => stock.symbol.startsWith(key));
+        ["sz", "sh"].some(key => stock.code.startsWith(key));
       const marketLabel = getMarketLabel(stock.market);
       const marketColor = getMarketColor(stock.market);
 
@@ -87,7 +94,7 @@ const formatStocks = (stockStr: string, row: News) => {
                 margin: "0 4px 4px 0"
               }}
             >
-              {`${marketLabel} · ${stock.symbol}`}
+              {`${marketLabel} · ${stock.code}`}
             </Pill>
           </HoverCard.Target>
           <HoverCard.Dropdown p="xs">
@@ -95,14 +102,14 @@ const formatStocks = (stockStr: string, row: News) => {
             {isCn ? (
               <Text size="xs">
                 代码：
-                <Link href={`/stock?symbol=${stock.symbol}`} target="_blank">
-                  {stock.symbol}
+                <Link href={`/stock?symbol=${stock.code}`} target="_blank">
+                  {stock.code}
                 </Link>
               </Text>
             ) : (
-              <Text size="xs">代码：{stock.symbol}</Text>
+              <Text size="xs">代码：{stock.code}</Text>
             )}
-            <Text size="xs">名称：{stock.key}</Text>
+            <Text size="xs">名称：{stock.name}</Text>
           </HoverCard.Dropdown>
         </HoverCard>
       );
@@ -136,6 +143,7 @@ export const COLUMNS: Column<News>[] = [
     key: "source",
     title: "来源",
     align: "center",
-    width: 200
+    width: 200,
+    render: source => SOURCE_MAP[source] || source
   }
 ];
