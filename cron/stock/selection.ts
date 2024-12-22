@@ -158,8 +158,6 @@ export const seedStockSelection = async (date?: string) => {
         volumeRatio: item.volumeRatio || 0
       }));
 
-      print(`正在写入${list.length}条选股指标`);
-
       await prisma.stockSelection.createMany({
         data: list as any,
         skipDuplicates: true

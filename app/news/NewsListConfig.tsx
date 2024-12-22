@@ -1,6 +1,6 @@
 import { News } from "@prisma/client";
 import Link from "next/link";
-import { HoverCard, Pill, Spoiler, Text } from "@mantine/core";
+import { HoverCard, Pill, ScrollArea, Spoiler, Text } from "@mantine/core";
 import { Column } from "../components/tables/DataTable/types";
 import { formatDateDiff } from "../components/tables/DataTable/util";
 
@@ -79,46 +79,50 @@ const formatStocks = (stocks: Stock[], row: News) => {
   if (!stocks || stocks.length === 0) return "--";
 
   try {
-    return stocks.map(stock => {
-      const market = row.source === SourceType.SINA ? stock.market : "cn";
+    return (
+      <ScrollArea.Autosize mah={120} maw={240} mx="auto" offsetScrollbars>
+        {stocks.map(stock => {
+          const market = row.source === SourceType.SINA ? stock.market : "cn";
 
-      const isCn =
-        market === MarketType.CN &&
-        ["sz", "sh"].some(key => stock.code.startsWith(key));
+          const isCn =
+            market === MarketType.CN &&
+            ["sz", "sh"].some(key => stock.code.startsWith(key));
 
-      const marketLabel = getMarketLabel(market);
-      const marketColor = getMarketColor(market);
+          const marketLabel = getMarketLabel(market);
+          const marketColor = getMarketColor(market);
 
-      return (
-        <HoverCard key={generateRowKey(row, stock)} position="top">
-          <HoverCard.Target>
-            <Pill
-              size="sm"
-              c={marketColor}
-              style={{
-                margin: "0 4px 4px 0"
-              }}
-            >
-              {`${marketLabel} · ${stock.code}`}
-            </Pill>
-          </HoverCard.Target>
-          <HoverCard.Dropdown p="xs">
-            <Text size="xs">市场：{marketLabel}</Text>
-            {isCn ? (
-              <Text size="xs">
-                代码：
-                <Link href={`/stock?symbol=${stock.code}`} target="_blank">
-                  {stock.code}
-                </Link>
-              </Text>
-            ) : (
-              <Text size="xs">代码：{stock.code}</Text>
-            )}
-            <Text size="xs">名称：{stock.name}</Text>
-          </HoverCard.Dropdown>
-        </HoverCard>
-      );
-    });
+          return (
+            <HoverCard key={generateRowKey(row, stock)} position="top">
+              <HoverCard.Target>
+                <Pill
+                  size="sm"
+                  c={marketColor}
+                  style={{
+                    margin: "0 4px 4px 0"
+                  }}
+                >
+                  {`${marketLabel} · ${stock.code}`}
+                </Pill>
+              </HoverCard.Target>
+              <HoverCard.Dropdown p="xs">
+                <Text size="xs">市场：{marketLabel}</Text>
+                {isCn ? (
+                  <Text size="xs">
+                    代码：
+                    <Link href={`/stock?symbol=${stock.code}`} target="_blank">
+                      {stock.code}
+                    </Link>
+                  </Text>
+                ) : (
+                  <Text size="xs">代码：{stock.code}</Text>
+                )}
+                <Text size="xs">名称：{stock.name}</Text>
+              </HoverCard.Dropdown>
+            </HoverCard>
+          );
+        })}
+      </ScrollArea.Autosize>
+    );
   } catch (error) {
     return "--";
   }
@@ -133,16 +137,16 @@ export const COLUMNS: Column<News>[] = [
     render: formatDateDiff
   },
   {
+    key: "stocks",
+    title: "关联市场",
+    width: 260,
+    align: "left",
+    render: formatStocks
+  },
+  {
     key: "content",
     title: "内容",
     align: "left"
-  },
-  {
-    key: "stocks",
-    title: "关联市场",
-    width: 240,
-    align: "left",
-    render: formatStocks
   },
   {
     key: "source",
