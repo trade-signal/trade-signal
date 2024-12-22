@@ -111,17 +111,19 @@ const StockScreenerSelect: FC<StockScreenerSelectProps> = props => {
 
       <Combobox.Dropdown styles={{ dropdown: { zIndex: 1000 } }}>
         {clearable && currentValue && (
-          <Group
-            gap={5}
-            p="5px 10px"
-            onClick={handleClear}
-            style={{ cursor: "pointer" }}
-          >
-            <IconX size={18} /> <Text size="sm">清空已选</Text>
-          </Group>
-        )}
+          <>
+            <Group
+              gap={5}
+              p="5px 10px"
+              onClick={handleClear}
+              style={{ cursor: "pointer" }}
+            >
+              <IconX size={18} /> <Text size="sm">清空已选</Text>
+            </Group>
 
-        {currentValue && <Divider mb={10} />}
+            <Divider mb={10} />
+          </>
+        )}
 
         <Combobox.Options>
           <ScrollArea.Autosize type="scroll" mah={200}>
