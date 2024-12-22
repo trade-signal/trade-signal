@@ -30,7 +30,7 @@ const getStockSelection = async (page: number, pageSize: number) => {
 
     // 过滤条件
     // const filter = `(MARKET+in+("上交所主板","深交所主板","深交所创业板","上交所科创板","上交所风险警示板","深交所风险警示板","北京证券交易所"))(NEW_PRICE>0)`;
-    const filter = `(MARKET+in+("上交所主板","深交所主板","深交所创业板"))(NEW_PRICE>0)`;
+    const filter = `(MARKET+in+("上交所主板","深交所主板","深交所创业板","上交所科创板"))(NEW_PRICE>0)`;
 
     const response = await get(url, {
       sty,

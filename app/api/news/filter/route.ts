@@ -14,7 +14,9 @@ const getUniqueItems = (
     }
   });
 
-  return Array.from(uniqueItems).sort();
+  return Array.from(uniqueItems)
+    .filter(item => item.trim())
+    .sort();
 };
 
 export const GET = async () => {

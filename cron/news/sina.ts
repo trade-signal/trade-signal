@@ -158,8 +158,8 @@ const transformSinaNews = (data: SinaNews[]) => {
       categories: tag?.map(t => t.name) || [],
       stocks:
         stockList?.map(s => ({
-          code: s.symbol,
           market: s.market,
+          code: s.symbol,
           name: s.key
         })) || []
     };

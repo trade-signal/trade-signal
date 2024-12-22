@@ -13,17 +13,23 @@ import {
 } from "@mantine/core";
 import { IconChevronDown, IconChevronUp, IconX } from "@tabler/icons-react";
 
+export interface DataItem {
+  label: string;
+  value: string;
+  desc?: string;
+}
+
 interface StockScreenerSelectProps {
   title: string;
-  data: { label: string; value: string; desc: string }[];
   value?: string | null;
+  data: DataItem[];
   clearable?: boolean;
   nothingFoundMessage?: string;
   onChange: (value: string | null) => void;
 }
 
 const StockScreenerSelect: FC<StockScreenerSelectProps> = props => {
-  const { title, data, value, clearable, nothingFoundMessage, onChange } =
+  const { title, value, data, clearable, nothingFoundMessage, onChange } =
     props;
 
   const combobox = useCombobox({
@@ -58,14 +64,22 @@ const StockScreenerSelect: FC<StockScreenerSelectProps> = props => {
       <Group gap="sm">
         <Box>
           <Text size="sm">{item.label}</Text>
-          <Text size="xs" c="gray">
-            {item.desc}
-          </Text>
+          {item.desc && (
+            <Text size="xs" c="gray">
+              {item.desc}
+            </Text>
+          )}
         </Box>
         {currentValue === item.value ? <CheckIcon size={12} /> : null}
       </Group>
     </Combobox.Option>
   ));
+
+  const getValueName = (value?: string | null) => {
+    if (!value) return "";
+    const item = data.find(item => item.value === value);
+    return item ? item.label : "";
+  };
 
   return (
     <Combobox
@@ -83,7 +97,7 @@ const StockScreenerSelect: FC<StockScreenerSelectProps> = props => {
         >
           {title}{" "}
           <Box mt={2} ml={8}>
-            {value}
+            {getValueName(value)}
           </Box>
           <Box ml={6}>
             {combobox.dropdownOpened ? (

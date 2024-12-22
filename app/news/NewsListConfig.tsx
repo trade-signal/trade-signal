@@ -1,6 +1,6 @@
 import { News } from "@prisma/client";
 import Link from "next/link";
-import { HoverCard, Pill, Text } from "@mantine/core";
+import { HoverCard, Pill, Spoiler, Text } from "@mantine/core";
 import { Column } from "../components/tables/DataTable/types";
 import { formatDateDiff } from "../components/tables/DataTable/util";
 
@@ -80,11 +80,14 @@ const formatStocks = (stocks: Stock[], row: News) => {
 
   try {
     return stocks.map(stock => {
+      const market = row.source === SourceType.SINA ? stock.market : "cn";
+
       const isCn =
-        stock.market === MarketType.CN &&
+        market === MarketType.CN &&
         ["sz", "sh"].some(key => stock.code.startsWith(key));
-      const marketLabel = getMarketLabel(stock.market);
-      const marketColor = getMarketColor(stock.market);
+
+      const marketLabel = getMarketLabel(market);
+      const marketColor = getMarketColor(market);
 
       return (
         <HoverCard key={generateRowKey(row, stock)} position="top">
@@ -130,16 +133,16 @@ export const COLUMNS: Column<News>[] = [
     render: formatDateDiff
   },
   {
+    key: "content",
+    title: "内容",
+    align: "left"
+  },
+  {
     key: "stocks",
     title: "关联市场",
     width: 240,
     align: "left",
     render: formatStocks
-  },
-  {
-    key: "content",
-    title: "内容",
-    align: "left"
   },
   {
     key: "source",

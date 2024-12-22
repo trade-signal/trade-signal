@@ -8,9 +8,9 @@ export interface NewsFilters {
   pageSize?: number;
 
   // 来源
-  source?: string;
+  source?: string; // sina 新浪财经，cls 财联社
   // 分类
-  categories?: string[];
+  categories?: string[]; // 分类
 }
 
 export interface NewsContextType {
@@ -31,7 +31,8 @@ export const getInitialFilters = () => {
   return {
     page: 1,
     pageSize: getInitialPageSize(),
-    tags: []
+    source: "sina",
+    categories: []
   };
 };
 

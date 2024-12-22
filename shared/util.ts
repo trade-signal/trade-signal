@@ -1,7 +1,11 @@
 export const getFilteredParams = (
   searchParams: URLSearchParams,
   paramName: string
-) => searchParams.getAll(paramName).filter(item => item.trim());
+) => {
+  const params = searchParams.get(paramName);
+  if (!params) return [];
+  return params.split(",").filter(item => item.trim());
+};
 
 export const delay = (ms: number) =>
   new Promise(resolve => setTimeout(resolve, ms));

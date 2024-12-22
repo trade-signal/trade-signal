@@ -27,13 +27,12 @@ const NewsList = () => {
       open();
     }
 
-    const tag = filters.tags?.[0] || "";
-
     const response = await get("/api/news/list", {
       ...filters,
       page: currentPage,
       pageSize: filters.pageSize || 20,
-      categories: filters.categories || ""
+      source: filters.source || "",
+      categories: filters.categories?.join(",")
     });
 
     if (currentPage === 1) {

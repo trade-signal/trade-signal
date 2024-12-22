@@ -13,10 +13,17 @@ import {
 } from "@mantine/core";
 import { IconChevronDown, IconChevronUp, IconX } from "@tabler/icons-react";
 
+export interface DataItem {
+  label: string;
+  value: string;
+  desc?: string;
+}
+
 interface StockScreenerMultiSelectProps {
   title: string;
-  data: string[];
+  data: DataItem[];
   value?: string[];
+  disabled?: boolean;
   searchable?: boolean;
   placeholder?: string;
   clearable?: boolean;
@@ -29,6 +36,7 @@ const StockScreenerMultiSelect: FC<StockScreenerMultiSelectProps> = props => {
     title,
     data,
     value = [],
+    disabled = false,
     searchable = false,
     clearable = false,
     placeholder,
@@ -55,6 +63,8 @@ const StockScreenerMultiSelect: FC<StockScreenerMultiSelectProps> = props => {
   }, [combobox.dropdownOpened]);
 
   const handleValueSelect = (val: string) => {
+    if (disabled) return;
+
     const newValues = values.includes(val)
       ? values.filter(v => v !== val)
       : [...values, val];
@@ -68,24 +78,35 @@ const StockScreenerMultiSelect: FC<StockScreenerMultiSelectProps> = props => {
     onChange([]);
   };
 
+  const getItemName = (value: string) => {
+    const item = data.find(item => item.value === value);
+    return item ? item.label : "";
+  };
+
   const pills =
     values.length > 1 ? (
       <Pill c="indigo">{values.length} 项</Pill>
     ) : (
       values.map(item => (
         <Text key={item} size="xs">
-          {item}
+          {getItemName(item)}
         </Text>
       ))
     );
 
   const options = data
-    .filter(item => item.toLowerCase().includes(search.trim().toLowerCase()))
+    .filter(item =>
+      item.label.toLowerCase().includes(search.trim().toLowerCase())
+    )
     .map(item => (
-      <Combobox.Option value={item} key={item} active={value.includes(item)}>
+      <Combobox.Option
+        value={item.value}
+        key={item.value}
+        active={value.includes(item.value)}
+      >
         <Group gap="sm">
-          <span>{item}</span>
-          {values.includes(item) ? <CheckIcon size={12} /> : null}
+          <span>{item.label}</span>
+          {values.includes(item.value) ? <CheckIcon size={12} /> : null}
         </Group>
       </Combobox.Option>
     ));
@@ -96,13 +117,23 @@ const StockScreenerMultiSelect: FC<StockScreenerMultiSelectProps> = props => {
       store={combobox}
       position="bottom-start"
       withArrow
+      disabled={disabled}
       onOptionSubmit={handleValueSelect}
     >
       <Combobox.Target withAriaAttributes={false}>
         <Button
           variant="outline"
           w={"auto"}
-          onClick={() => combobox.toggleDropdown()}
+          onClick={() => {
+            if (disabled) return;
+            combobox.toggleDropdown();
+          }}
+          style={{
+            cursor: disabled ? "not-allowed" : "pointer",
+            backgroundColor: disabled ? "#f0f0f0" : "",
+            borderColor: disabled ? "#e0e0e0" : "",
+            color: disabled ? "#808080" : ""
+          }}
         >
           {title}{" "}
           <Box mt={2} ml={8}>

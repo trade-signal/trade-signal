@@ -53,7 +53,10 @@ const StockScreener = () => {
         <ScreenerMultiSelect
           title="行业"
           value={filters.industries}
-          data={industryData}
+          data={industryData.map(item => ({
+            label: item,
+            value: item
+          }))}
           onChange={industries => handleFilterChange({ industries })}
           clearable
           searchable
@@ -63,7 +66,10 @@ const StockScreener = () => {
         <ScreenerMultiSelect
           title="概念"
           value={filters.concepts}
-          data={conceptData}
+          data={conceptData.map(item => ({
+            label: item,
+            value: item
+          }))}
           onChange={concepts => handleFilterChange({ concepts })}
           clearable
           searchable
@@ -73,7 +79,10 @@ const StockScreener = () => {
         <ScreenerMultiSelect
           title="风格"
           value={filters.styles}
-          data={styleData}
+          data={styleData.map(item => ({
+            label: item,
+            value: item
+          }))}
           onChange={styles => handleFilterChange({ styles })}
           clearable
           searchable

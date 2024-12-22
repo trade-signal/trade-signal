@@ -84,21 +84,25 @@ export const CLS_CATEGORIES = [
   }
 ];
 
+export const getCategoryName = (value: string) => {
+  return CLS_CATEGORIES.find(item => item.value === value)?.label;
+};
+
 // 获取近24小时数据
 export const getNews = async () => {
   const newsMap = new Map<string, ClsNews[]>(
     CLS_CATEGORIES.map(category => [category.value, []])
   );
 
+  print(`开始获取财联社新闻数据`);
+
   for (const category of CLS_CATEGORIES) {
     let lastTime = getCurrentUnixTime();
     let page = 1;
 
-    print(`开始获取 ${category.label} 分类数据`);
-
     while (true) {
       try {
-        const data = await fetchNews(category, lastTime);
+        const data = await fetchNews(category.value, lastTime);
 
         if (!data || !Array.isArray(data)) {
           throw new Error(`${category.label} 分类数据获取失败: 数据为空`);
@@ -116,7 +120,6 @@ export const getNews = async () => {
 
         // 如果时间超过24小时前，或者页码大于30，则停止
         if (time.isBefore(dayjs().subtract(24, "hours")) || page >= 30) {
-          print(`${category.label} 分类数据获取完成`);
           break;
         }
 
@@ -130,6 +133,8 @@ export const getNews = async () => {
     // 随机延迟
     await delayRandom();
   }
+
+  print(`财联社新闻数据获取完成`);
 
   return newsMap;
 };
@@ -241,9 +246,9 @@ interface ClsNews {
 const transformClsNews = (data: Map<string, ClsNews[]>) => {
   const result = [];
 
-  for (const [category, news] of data) {
-    print(`开始转换"${category}"分类数据`);
+  print(`开始转换财联社新闻数据`);
 
+  for (const [category, news] of data) {
     for (const item of news) {
       const {
         id,
@@ -269,15 +274,15 @@ const transformClsNews = (data: Map<string, ClsNews[]>) => {
         categories: [category],
         stocks:
           stock_list?.map(item => ({
+            market: "",
             code: item.StockID,
-            market: item.schema,
             name: item.name
           })) || []
       });
     }
-
-    print(`转换"${category}"分类数据完成`);
   }
+
+  print(`财联社新闻数据转换完成`);
 
   return result;
 };
@@ -285,9 +290,6 @@ const transformClsNews = (data: Map<string, ClsNews[]>) => {
 export const seedClsNews = async () => {
   try {
     const newsData = await getNews();
-    print(`获取数据完成`);
-
-    print(`开始转换新闻数据`);
     const transformedNews = transformClsNews(newsData);
 
     print(`开始写入数据库`);

@@ -5,15 +5,18 @@ import { Stack, Group, Title, SegmentedControl, Text } from "@mantine/core";
 import { get } from "@/shared/request";
 
 import ScreenerSelect from "@/app/components/ScreenerSelect";
-import StockScreenerMultiSelect from "@/app/components/ScreenerMultiSelect";
+import StockScreenerMultiSelect, {
+  DataItem
+} from "@/app/components/ScreenerMultiSelect";
+import { getCategoryName } from "@/cron/news/cls";
 import { NewsFilters, useNewsContext } from "./NewsContext";
 import { SOURCE_MAP } from "./NewsListConfig";
 
+interface SourceFilter {
+  categories: string[];
+}
+
 const SOURCE_OPTIONS = [
-  {
-    value: "",
-    label: "全部"
-  },
   ...Object.entries(SOURCE_MAP).map(([value, label]) => ({
     value,
     label
@@ -27,19 +30,70 @@ const NewsScreener = () => {
     setFilters({ ...filters, ...newFilters, page: 1 });
   };
 
-  const [categories, setCategories] = useState<string[]>(["全部"]);
+  const [sourceFilters, setSourceFilters] = useState<{
+    [key: string]: SourceFilter;
+  }>({});
+  const [categories, setCategories] = useState<DataItem[]>([]);
 
   const getFilter = async () => {
     const response = await get("/api/news/filter", {});
 
     if (response.success) {
-      // setCategories(["全部", ...response.data.categories]);
+      setSourceFilters(response.data);
     }
   };
 
   useEffect(() => {
     getFilter();
   }, []);
+
+  useEffect(() => {
+    handleSourceChange(filters.source || "sina");
+  }, [sourceFilters]);
+
+  const handleSourceChange = (source: string | null) => {
+    if (source) {
+      const sourceFilter = sourceFilters[source] || { categories: [] };
+
+      switch (source) {
+        case "sina": // 新浪财经
+          setCategories([
+            {
+              label: "全部",
+              value: ""
+            },
+            ...sourceFilter.categories.map(item => ({
+              label: item,
+              value: item
+            }))
+          ]);
+          break;
+        case "cls": // 财联社
+          setCategories([
+            {
+              label: "全部",
+              value: ""
+            },
+            ...sourceFilter.categories.map(item => ({
+              label: getCategoryName(item) as string,
+              value: item
+            }))
+          ]);
+          break;
+        default:
+          break;
+      }
+
+      handleFilterChange({
+        source,
+        categories: []
+      });
+      return;
+    }
+
+    setCategories([]);
+    handleFilterChange({ source: undefined, categories: [] });
+  };
 
   return (
     <Stack mt={10} mb={10}>
@@ -50,17 +104,25 @@ const NewsScreener = () => {
           title="来源"
           value={filters.source}
           data={SOURCE_OPTIONS}
-          onChange={source => handleFilterChange({ source })}
+          onChange={source => handleSourceChange(source)}
         />
 
-        <StockScreenerMultiSelect
-          title="分类"
-          value={filters.categories}
+        <SegmentedControl
+          withItemsBorders={false}
+          size="md"
+          radius="md"
+          color="indigo"
+          styles={{
+            root: {
+              background: "transparent"
+            },
+            control: {
+              padding: 0
+            }
+          }}
+          value={filters.categories?.[0] || ""}
           data={categories}
-          onChange={categories => handleFilterChange({ categories })}
-          clearable
-          searchable
-          nothingFoundMessage="未找到相关分类"
+          onChange={category => handleFilterChange({ categories: [category] })}
         />
       </Group>
     </Stack>
