@@ -3,7 +3,7 @@ import prisma from "@/prisma/db";
 import { StockSelection } from "@prisma/client";
 import dayjs from "dayjs";
 import { initBatch, updateBatchStatus } from "../batch";
-import { indicatorMapping, IndicatorType } from "./indicator";
+import { indicatorMapping, IndicatorType } from "./selection_indicator";
 
 const spider_name = "stock_selection";
 
