@@ -268,13 +268,17 @@ model News {
   source     String // 来源，如 "sina", "cls"
   sourceId   String // 源站ID
   sourceUrl  String // 源站URL
-  title      String // 标题
-  summary    String // 摘要
-  content    String // 内容
+  title      String   @default("") // 标题
+  summary    String   @default("") // 摘要
+  content    String   @default("") // 内容
   date       DateTime // 发布时间
   tags       String[] // 标签数组
   stocks     Json // 相关股票 [{code, market, name}]
   categories String[] // 分类数组
+
+  // 系统字段
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([source, sourceId]) // 复合唯一约束
   @@index([date]) // 日期索引
