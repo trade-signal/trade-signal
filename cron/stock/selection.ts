@@ -1,8 +1,9 @@
 import { get } from "@/shared/request";
 import prisma from "@/prisma/db";
-import { indicatorMapping, IndicatorType } from "@/cron/config/indicator";
 import { StockSelection } from "@prisma/client";
 import dayjs from "dayjs";
+import { initBatch, updateBatchStatus } from "../batch";
+import { indicatorMapping, IndicatorType } from "./indicator";
 
 const spider_name = "stock_selection";
 
@@ -124,6 +125,8 @@ export const checkStocks = async (date?: string) => {
 };
 
 export const seedStockSelection = async (date?: string) => {
+  const batch = await initBatch("stock_selection", "eastmoney");
+
   try {
     if (date) {
       // 删除指定日期及之后的所有数据
@@ -137,6 +140,8 @@ export const seedStockSelection = async (date?: string) => {
       print(`删除选股指标: ${deleted.count}`);
     }
 
+    await updateBatchStatus(batch.id, "fetching");
+
     // 获取选股指标
     const stocks = await getStocks();
 
@@ -146,7 +151,11 @@ export const seedStockSelection = async (date?: string) => {
     }
 
     print(`选股指标数量: ${stocks.length}`);
+    await updateBatchStatus(batch.id, "transforming");
+
     print(`开始写入选股指标`);
+
+    const total = stocks.length;
 
     // 写入选股指标
     while (stocks.length > 0) {
@@ -164,8 +173,11 @@ export const seedStockSelection = async (date?: string) => {
       });
     }
 
+    await updateBatchStatus(batch.id, "completed", total);
+
     print(`写入选股指标成功`);
   } catch (error) {
+    await updateBatchStatus(batch.id, "failed");
     print(`获取选股指标失败: ${error}`);
   }
 };

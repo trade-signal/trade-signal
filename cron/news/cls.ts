@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import { delayRandom } from "@/shared/util";
 import { getCurrentUnixTime } from "@/shared/date";
 import prisma from "@/prisma/db";
+import { initBatch, updateBatchStatus } from "../batch";
 
 const spider_name = "cls";
 const print = createLogger(spider_name, "news");
@@ -288,20 +289,28 @@ const transformClsNews = (data: Map<string, ClsNews[]>) => {
 };
 
 export const seedClsNews = async () => {
+  const batch = await initBatch("news", "cls");
+
   try {
+    await updateBatchStatus(batch.id, "fetching");
     const newsData = await getNews();
+
+    await updateBatchStatus(batch.id, "transforming");
     const transformedNews = transformClsNews(newsData);
 
-    print(`获取到 ${transformedNews.length} 条新闻`);
+    print(`已转换 ${transformedNews.length} 条新闻`);
 
     print(`开始写入数据库`);
+
     await prisma.news.createMany({
       data: transformedNews,
       skipDuplicates: true // 跳过重复记录
     });
+    await updateBatchStatus(batch.id, "completed", transformedNews.length);
 
     print(`写入数据库完成`);
   } catch (error) {
+    await updateBatchStatus(batch.id, "failed");
     print(`处理新闻数据失败: ${error}`);
   }
 };

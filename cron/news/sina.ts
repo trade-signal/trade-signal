@@ -1,6 +1,7 @@
 import { get } from "@/shared/request";
 import { createLogger } from "@/cron/util/logger";
 import prisma from "@/prisma/db";
+import { initBatch, updateBatchStatus } from "../batch";
 
 const spider_name = "sina";
 const print = createLogger(spider_name, "news");
@@ -140,6 +141,8 @@ interface SinaNewsExt {
 
 // 转换新闻数据
 const transformSinaNews = (data: SinaNews[]) => {
+  print(`开始转换新闻数据`);
+
   return data.map((item: SinaNews) => {
     const { id, rich_text, create_time, tag, ext } = item;
     const { stocks: stockList, docurl } = JSON.parse(
@@ -167,21 +170,29 @@ const transformSinaNews = (data: SinaNews[]) => {
 };
 
 export const seedSinaNews = async () => {
+  const batch = await initBatch("news", "sina");
+
   try {
+    await updateBatchStatus(batch.id, "fetching");
     const newsData = await getNews();
     print(`获取到 ${newsData.length} 条新闻`);
 
-    print(`开始转换新闻数据`);
+    await updateBatchStatus(batch.id, "transforming");
     const transformedNews = transformSinaNews(newsData);
 
+    print(`已转换 ${transformedNews.length} 条新闻`);
+
     print(`开始写入数据库`);
+
     await prisma.news.createMany({
       data: transformedNews,
       skipDuplicates: true // 跳过重复记录
     });
+    await updateBatchStatus(batch.id, "completed", transformedNews.length);
 
     print(`写入数据库完成`);
   } catch (error) {
+    await updateBatchStatus(batch.id, "failed");
     print(`处理新闻数据失败: ${error}`);
   }
 };

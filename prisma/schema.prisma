@@ -81,7 +81,7 @@ model StockSelection {
   date     String @db.VarChar(10) // 交易日期
   code     String @db.VarChar(6) // 股票代码
   name     String @db.VarChar(20) // 股票名称
-  secucode String @db.VarChar(10) // ��代码
+  secucode String @db.VarChar(10) // 股票代码
 
   // 交易数据
   newPrice      Float // 最新价
@@ -284,4 +284,24 @@ model News {
   @@index([date]) // 日期索引
   @@index([source, sourceId]) // 来源和来源ID复合索引
   @@map("news")
+}
+
+model BatchUpdate {
+  id String @id @default(cuid())
+
+  type      String // 数据类型，如 "news", "stock_selection"
+  source    String // 数据来源，如 "sina", "cls"
+  batchTime DateTime // 批次时间
+  count     Int // 更新数量
+  error     String? // 错误信息
+  status    String // 状态：pending, fetching, transforming, completed, failed
+  extra     Json? // 额外信息
+
+  // 系统字段
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([type, batchTime]) // 类型和批次时间复合索引
+  @@index([type, status]) // 类型和状态复合索引
+  @@map("batch_update")
 }
