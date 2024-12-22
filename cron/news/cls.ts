@@ -293,24 +293,12 @@ export const seedClsNews = async () => {
     const transformedNews = transformClsNews(newsData);
 
     print(`开始写入数据库`);
-    await prisma.$transaction(async tx => {
-      const results = await Promise.all(
-        transformedNews.map(news =>
-          tx.news.upsert({
-            where: {
-              source_sourceId: {
-                source: news.source,
-                sourceId: news.sourceId
-              }
-            },
-            create: news,
-            update: news
-          })
-        )
-      );
-
-      print(`成功处理 ${results.length} 条新闻数据`);
+    await prisma.news.createMany({
+      data: transformedNews,
+      skipDuplicates: true // 跳过重复记录
     });
+
+    print(`写入数据库完成`);
   } catch (error) {
     print(`处理新闻数据失败: ${error}`);
   }
