@@ -1,11 +1,11 @@
 import { get } from "@/shared/request";
-import { createLogger } from "@/cron/util/logger";
 import { md5Encrypt, sha1Encrypt } from "@/shared/encrypt";
 import dayjs from "dayjs";
 import { delayRandom } from "@/shared/util";
 import { getCurrentUnixTime } from "@/shared/date";
 import prisma from "@/prisma/db";
 import { initBatch, updateBatchStatus } from "../batch";
+import { createLogger } from "../util";
 
 const spider_name = "cls";
 const print = createLogger(spider_name, "news");

@@ -1,31 +1,26 @@
-export type IndicatorType = "date" | "string" | "number" | "boolean" | "array";
-
-export type IndicatorMapping = Record<
-  string,
-  { type: IndicatorType; value: string; label: string }
->;
+import { IndicatorMapping } from "../type";
 
 // 基本信息指标
 export const basicIndicatorMapping: IndicatorMapping = {
   date: {
     type: "date",
-    value: "MAX_TRADE_DATE",
-    label: "交易日期"
+    cn: "交易日期",
+    map: "MAX_TRADE_DATE"
   },
   code: {
     type: "string",
-    value: "SECURITY_CODE",
-    label: "股票代码"
+    cn: "股票代码",
+    map: "SECURITY_CODE"
   },
   name: {
     type: "string",
-    value: "SECURITY_NAME_ABBR",
-    label: "股票名称"
+    cn: "股票名称",
+    map: "SECURITY_NAME_ABBR"
   },
   secucode: {
     type: "string",
-    value: "SECUCODE",
-    label: "全代码"
+    cn: "全代码",
+    map: "SECUCODE"
   }
 };
 
@@ -33,53 +28,53 @@ export const basicIndicatorMapping: IndicatorMapping = {
 export const tradeIndicatorMapping: IndicatorMapping = {
   newPrice: {
     type: "number",
-    value: "NEW_PRICE",
-    label: "最新价"
+    cn: "最新价",
+    map: "NEW_PRICE"
   },
   changeRate: {
     type: "number",
-    value: "CHANGE_RATE",
-    label: "涨跌幅"
+    cn: "涨跌幅",
+    map: "CHANGE_RATE"
   },
   volumeRatio: {
     type: "number",
-    value: "VOLUME_RATIO",
-    label: "量比"
+    cn: "量比",
+    map: "VOLUME_RATIO"
   },
   highPrice: {
     type: "number",
-    value: "HIGH_PRICE",
-    label: "最高价"
+    cn: "最高价",
+    map: "HIGH_PRICE"
   },
   lowPrice: {
     type: "number",
-    value: "LOW_PRICE",
-    label: "最低价"
+    cn: "最低价",
+    map: "LOW_PRICE"
   },
   preClosePrice: {
     type: "number",
-    value: "PRE_CLOSE_PRICE",
-    label: "昨收价"
+    cn: "昨收价",
+    map: "PRE_CLOSE_PRICE"
   },
   volume: {
     type: "number",
-    value: "VOLUME",
-    label: "成交量"
+    cn: "成交量",
+    map: "VOLUME"
   },
   dealAmount: {
     type: "number",
-    value: "DEAL_AMOUNT",
-    label: "成交额"
+    cn: "成交额",
+    map: "DEAL_AMOUNT"
   },
   turnoverRate: {
     type: "number",
-    value: "TURNOVERRATE",
-    label: "换手率"
+    cn: "换手率",
+    map: "TURNOVERRATE"
   },
   amplitude: {
     type: "number",
-    value: "AMPLITUDE",
-    label: "振幅"
+    cn: "振幅",
+    map: "AMPLITUDE"
   }
 };
 
@@ -87,28 +82,28 @@ export const tradeIndicatorMapping: IndicatorMapping = {
 export const companyIndicatorMapping: IndicatorMapping = {
   listingDate: {
     type: "date",
-    value: "LISTING_DATE",
-    label: "上市日期"
+    cn: "上市日期",
+    map: "LISTING_DATE"
   },
   industry: {
     type: "string",
-    value: "INDUSTRY",
-    label: "行业"
+    cn: "行业",
+    map: "INDUSTRY"
   },
   area: {
     type: "string",
-    value: "AREA",
-    label: "地区"
+    cn: "地区",
+    map: "AREA"
   },
   concept: {
     type: "array",
-    value: "CONCEPT",
-    label: "概念"
+    cn: "概念",
+    map: "CONCEPT"
   },
   style: {
     type: "array",
-    value: "STYLE",
-    label: "风格"
+    cn: "风格",
+    map: "STYLE"
   }
 };
 
@@ -116,28 +111,28 @@ export const companyIndicatorMapping: IndicatorMapping = {
 export const indexComponentMapping: IndicatorMapping = {
   isHs300: {
     type: "boolean",
-    value: "IS_HS300",
-    label: "沪深300"
+    cn: "沪深300",
+    map: "IS_HS300"
   },
   isSz50: {
     type: "boolean",
-    value: "IS_SZ50",
-    label: "上证50"
+    cn: "上证50",
+    map: "IS_SZ50"
   },
   isZz500: {
     type: "boolean",
-    value: "IS_ZZ500",
-    label: "中证500"
+    cn: "中证500",
+    map: "IS_ZZ500"
   },
   isZz1000: {
     type: "boolean",
-    value: "IS_ZZ1000",
-    label: "中证1000"
+    cn: "中证1000",
+    map: "IS_ZZ1000"
   },
   isCy50: {
     type: "boolean",
-    value: "IS_CY50",
-    label: "创业板50"
+    cn: "创业板50",
+    map: "IS_CY50"
   }
 };
 
@@ -145,63 +140,63 @@ export const indexComponentMapping: IndicatorMapping = {
 export const valuationIndicatorMapping: IndicatorMapping = {
   pe9: {
     type: "number",
-    value: "PE9",
-    label: "市盈率TTM"
+    cn: "市盈率TTM",
+    map: "PE9"
   },
   pbnewmrq: {
     type: "number",
-    value: "PBNEWMRQ",
-    label: "市净率MRQ"
+    cn: "市净率MRQ",
+    map: "PBNEWMRQ"
   },
   pettmdeducted: {
     type: "number",
-    value: "PETTMDEDUCTED",
-    label: "市盈率TTM扣非"
+    cn: "市盈率TTM扣非",
+    map: "PETTMDEDUCTED"
   },
   ps9: {
     type: "number",
-    value: "PS9",
-    label: "市销率TTM"
+    cn: "市销率TTM",
+    map: "PS9"
   },
   pcfjyxjl9: {
     type: "number",
-    value: "PCFJYXJL9",
-    label: "市现率TTM"
+    cn: "市现率TTM",
+    map: "PCFJYXJL9"
   },
   predictPeSyear: {
     type: "number",
-    value: "PREDICT_PE_SYEAR",
-    label: "预测市盈率今年"
+    cn: "预测市盈率今年",
+    map: "PREDICT_PE_SYEAR"
   },
   predictPeNyear: {
     type: "number",
-    value: "PREDICT_PE_NYEAR",
-    label: "预测市盈率明年"
+    cn: "预测市盈率明年",
+    map: "PREDICT_PE_NYEAR"
   },
   totalMarketCap: {
     type: "number",
-    value: "TOTAL_MARKET_CAP",
-    label: "总市值"
+    cn: "总市值",
+    map: "TOTAL_MARKET_CAP"
   },
   freeCap: {
     type: "number",
-    value: "FREE_CAP",
-    label: "流通市值"
+    cn: "流通市值",
+    map: "FREE_CAP"
   },
   dtsyl: {
     type: "number",
-    value: "DTSYL",
-    label: "动态市盈率"
+    cn: "动态市盈率",
+    map: "DTSYL"
   },
   ycpeg: {
     type: "number",
-    value: "YCPEG",
-    label: "预测PEG"
+    cn: "预测PEG",
+    map: "YCPEG"
   },
   enterpriseValueMultiple: {
     type: "number",
-    value: "ENTERPRISE_VALUE_MULTIPLE",
-    label: "企业价值倍数"
+    cn: "企业价值倍数",
+    map: "ENTERPRISE_VALUE_MULTIPLE"
   }
 };
 
@@ -209,43 +204,43 @@ export const valuationIndicatorMapping: IndicatorMapping = {
 export const perShareIndicatorMapping: IndicatorMapping = {
   basicEps: {
     type: "number",
-    value: "BASIC_EPS",
-    label: "每股收益"
+    cn: "每股收益",
+    map: "BASIC_EPS"
   },
   bvps: {
     type: "number",
-    value: "BVPS",
-    label: "每股净资产"
+    cn: "每股净资产",
+    map: "BVPS"
   },
   perNetcashOperate: {
     type: "number",
-    value: "PER_NETCASH_OPERATE",
-    label: "每股经营现金流"
+    cn: "每股经营现金流",
+    map: "PER_NETCASH_OPERATE"
   },
   perFcfe: {
     type: "number",
-    value: "PER_FCFE",
-    label: "每股自由现金流"
+    cn: "每股自由现金流",
+    map: "PER_FCFE"
   },
   perCapitalReserve: {
     type: "number",
-    value: "PER_CAPITAL_RESERVE",
-    label: "每股资本公积"
+    cn: "每股资本公积",
+    map: "PER_CAPITAL_RESERVE"
   },
   perUnassignProfit: {
     type: "number",
-    value: "PER_UNASSIGN_PROFIT",
-    label: "每股未分配利润"
+    cn: "每股未分配利润",
+    map: "PER_UNASSIGN_PROFIT"
   },
   perSurplusReserve: {
     type: "number",
-    value: "PER_SURPLUS_RESERVE",
-    label: "每股盈余公积"
+    cn: "每股盈余公积",
+    map: "PER_SURPLUS_RESERVE"
   },
   perRetainedEarning: {
     type: "number",
-    value: "PER_RETAINED_EARNING",
-    label: "每股留存收益"
+    cn: "每股留存收益",
+    map: "PER_RETAINED_EARNING"
   }
 };
 
@@ -253,48 +248,48 @@ export const perShareIndicatorMapping: IndicatorMapping = {
 export const financialIndicatorMapping: IndicatorMapping = {
   parentNetprofit: {
     type: "number",
-    value: "PARENT_NETPROFIT",
-    label: "归属净利润"
+    cn: "归属净利润",
+    map: "PARENT_NETPROFIT"
   },
   deductNetprofit: {
     type: "number",
-    value: "DEDUCT_NETPROFIT",
-    label: "扣非净利润"
+    cn: "扣非净利润",
+    map: "DEDUCT_NETPROFIT"
   },
   totalOperateIncome: {
     type: "number",
-    value: "TOTAL_OPERATE_INCOME",
-    label: "营业总收入"
+    cn: "营业总收入",
+    map: "TOTAL_OPERATE_INCOME"
   },
   roeWeight: {
     type: "number",
-    value: "ROE_WEIGHT",
-    label: "净资产收益率ROE"
+    cn: "净资产收益率ROE",
+    map: "ROE_WEIGHT"
   },
   jroa: {
     type: "number",
-    value: "JROA",
-    label: "总资产净利率ROA"
+    cn: "总资产净利率ROA",
+    map: "JROA"
   },
   roic: {
     type: "number",
-    value: "ROIC",
-    label: "投入资本回报率ROIC"
+    cn: "投入资本回报率ROIC",
+    map: "ROIC"
   },
   zxgxl: {
     type: "number",
-    value: "ZXGXL",
-    label: "最新股息率"
+    cn: "最新股息率",
+    map: "ZXGXL"
   },
   saleGpr: {
     type: "number",
-    value: "SALE_GPR",
-    label: "毛利率"
+    cn: "毛利率",
+    map: "SALE_GPR"
   },
   saleNpr: {
     type: "number",
-    value: "SALE_NPR",
-    label: "净利率"
+    cn: "净利率",
+    map: "SALE_NPR"
   }
 };
 
@@ -302,53 +297,53 @@ export const financialIndicatorMapping: IndicatorMapping = {
 export const growthIndicatorMapping: IndicatorMapping = {
   netprofitYoyRatio: {
     type: "number",
-    value: "NETPROFIT_YOY_RATIO",
-    label: "净利润增长率"
+    cn: "净利润增长率",
+    map: "NETPROFIT_YOY_RATIO"
   },
   deductNetprofitGrowthrate: {
     type: "number",
-    value: "DEDUCT_NETPROFIT_GROWTHRATE",
-    label: "扣非净利润增长率"
+    cn: "扣非净利润增长率",
+    map: "DEDUCT_NETPROFIT_GROWTHRATE"
   },
   toiYoyRatio: {
     type: "number",
-    value: "TOI_YOY_RATIO",
-    label: "营收增长率"
+    cn: "营收增长率",
+    map: "TOI_YOY_RATIO"
   },
   netprofitGrowthrate3y: {
     type: "number",
-    value: "NETPROFIT_GROWTHRATE_3Y",
-    label: "净利润3年复合增长率"
+    cn: "净利润3年复合增长率",
+    map: "NETPROFIT_GROWTHRATE_3Y"
   },
   incomeGrowthrate3y: {
     type: "number",
-    value: "INCOME_GROWTHRATE_3Y",
-    label: "营收3年复合增长率"
+    cn: "营收3年复合增长率",
+    map: "INCOME_GROWTHRATE_3Y"
   },
   predictNetprofitRatio: {
     type: "number",
-    value: "PREDICT_NETPROFIT_RATIO",
-    label: "预测净利润同比增长"
+    cn: "预测净利润同比增长",
+    map: "PREDICT_NETPROFIT_RATIO"
   },
   predictIncomeRatio: {
     type: "number",
-    value: "PREDICT_INCOME_RATIO",
-    label: "预测营收同比增长"
+    cn: "预测营收同比增长",
+    map: "PREDICT_INCOME_RATIO"
   },
   basicepsYoyRatio: {
     type: "number",
-    value: "BASICEPS_YOY_RATIO",
-    label: "每股收益同比增长率"
+    cn: "每股收益同比增长率",
+    map: "BASICEPS_YOY_RATIO"
   },
   totalProfitGrowthrate: {
     type: "number",
-    value: "TOTAL_PROFIT_GROWTHRATE",
-    label: "利润总额同比增长率"
+    cn: "利润总额同比增长率",
+    map: "TOTAL_PROFIT_GROWTHRATE"
   },
   operateProfitGrowthrate: {
     type: "number",
-    value: "OPERATE_PROFIT_GROWTHRATE",
-    label: "营业利润同比增长率"
+    cn: "营业利润同比增长率",
+    map: "OPERATE_PROFIT_GROWTHRATE"
   }
 };
 
@@ -356,28 +351,28 @@ export const growthIndicatorMapping: IndicatorMapping = {
 export const balanceSheetIndicatorMapping: IndicatorMapping = {
   debtAssetRatio: {
     type: "number",
-    value: "DEBT_ASSET_RATIO",
-    label: "资产负债率"
+    cn: "资产负债率",
+    map: "DEBT_ASSET_RATIO"
   },
   equityRatio: {
     type: "number",
-    value: "EQUITY_RATIO",
-    label: "产权比率"
+    cn: "产权比率",
+    map: "EQUITY_RATIO"
   },
   equityMultiplier: {
     type: "number",
-    value: "EQUITY_MULTIPLIER",
-    label: "权益乘数"
+    cn: "权益乘数",
+    map: "EQUITY_MULTIPLIER"
   },
   currentRatio: {
     type: "number",
-    value: "CURRENT_RATIO",
-    label: "流动比率"
+    cn: "流动比率",
+    map: "CURRENT_RATIO"
   },
   speedRatio: {
     type: "number",
-    value: "SPEED_RATIO",
-    label: "速动比率"
+    cn: "速动比率",
+    map: "SPEED_RATIO"
   }
 };
 
@@ -385,53 +380,53 @@ export const balanceSheetIndicatorMapping: IndicatorMapping = {
 export const shareStructureIndicatorMapping: IndicatorMapping = {
   totalShares: {
     type: "number",
-    value: "TOTAL_SHARES",
-    label: "总股本"
+    cn: "总股本",
+    map: "TOTAL_SHARES"
   },
   freeShares: {
     type: "number",
-    value: "FREE_SHARES",
-    label: "流通股本"
+    cn: "流通股本",
+    map: "FREE_SHARES"
   },
   holderNewest: {
     type: "number",
-    value: "HOLDER_NEWEST",
-    label: "最新股东户数"
+    cn: "最新股东户数",
+    map: "HOLDER_NEWEST"
   },
   holderRatio: {
     type: "number",
-    value: "HOLDER_RATIO",
-    label: "股东户数增长率"
+    cn: "股东户数增长率",
+    map: "HOLDER_RATIO"
   },
   holdAmount: {
     type: "number",
-    value: "HOLD_AMOUNT",
-    label: "户均持股金额"
+    cn: "户均持股金额",
+    map: "HOLD_AMOUNT"
   },
   avgHoldNum: {
     type: "number",
-    value: "AVG_HOLD_NUM",
-    label: "户均持股数量"
+    cn: "户均持股数量",
+    map: "AVG_HOLD_NUM"
   },
   holdnumGrowthrate3q: {
     type: "number",
-    value: "HOLDNUM_GROWTHRATE_3Q",
-    label: "户均持股数季度增长率"
+    cn: "户均持股数季度增长率",
+    map: "HOLDNUM_GROWTHRATE_3Q"
   },
   holdnumGrowthrateHy: {
     type: "number",
-    value: "HOLDNUM_GROWTHRATE_HY",
-    label: "户均持股数半年增长率"
+    cn: "户均持股数半年增长率",
+    map: "HOLDNUM_GROWTHRATE_HY"
   },
   holdRatioCount: {
     type: "number",
-    value: "HOLD_RATIO_COUNT",
-    label: "十大股东持股比例合计"
+    cn: "十大股东持股比例合计",
+    map: "HOLD_RATIO_COUNT"
   },
   freeHoldRatio: {
     type: "number",
-    value: "FREE_HOLD_RATIO",
-    label: "十大流通股东比例合计"
+    cn: "十大流通股东比例合计",
+    map: "FREE_HOLD_RATIO"
   }
 };
 
@@ -439,48 +434,48 @@ export const shareStructureIndicatorMapping: IndicatorMapping = {
 export const technicalIndicatorMapping: IndicatorMapping = {
   macdGoldenFork: {
     type: "boolean",
-    value: "MACD_GOLDEN_FORK",
-    label: "MACD金叉日线"
+    cn: "MACD金叉日线",
+    map: "MACD_GOLDEN_FORK"
   },
   macdGoldenForkz: {
     type: "boolean",
-    value: "MACD_GOLDEN_FORKZ",
-    label: "MACD金叉周线"
+    cn: "MACD金叉周线",
+    map: "MACD_GOLDEN_FORKZ"
   },
   macdGoldenForky: {
     type: "boolean",
-    value: "MACD_GOLDEN_FORKY",
-    label: "MACD金叉月线"
+    cn: "MACD金叉月线",
+    map: "MACD_GOLDEN_FORKY"
   },
   kdjGoldenFork: {
     type: "boolean",
-    value: "KDJ_GOLDEN_FORK",
-    label: "KDJ金叉日线"
+    cn: "KDJ金叉日线",
+    map: "KDJ_GOLDEN_FORK"
   },
   kdjGoldenForkz: {
     type: "boolean",
-    value: "KDJ_GOLDEN_FORKZ",
-    label: "KDJ金叉周线"
+    cn: "KDJ金叉周线",
+    map: "KDJ_GOLDEN_FORKZ"
   },
   kdjGoldenForky: {
     type: "boolean",
-    value: "KDJ_GOLDEN_FORKY",
-    label: "KDJ金叉月线"
+    cn: "KDJ金叉月线",
+    map: "KDJ_GOLDEN_FORKY"
   },
   breakThrough: {
     type: "boolean",
-    value: "BREAK_THROUGH",
-    label: "放量突破"
+    cn: "放量突破",
+    map: "BREAK_THROUGH"
   },
   lowFundsInflow: {
     type: "boolean",
-    value: "LOW_FUNDS_INFLOW",
-    label: "低位资金净流入"
+    cn: "低位资金净流入",
+    map: "LOW_FUNDS_INFLOW"
   },
   highFundsOutflow: {
     type: "boolean",
-    value: "HIGH_FUNDS_OUTFLOW",
-    label: "高位资金净流出"
+    cn: "高位资金净流出",
+    map: "HIGH_FUNDS_OUTFLOW"
   }
 };
 
@@ -488,38 +483,38 @@ export const technicalIndicatorMapping: IndicatorMapping = {
 export const maIndicatorMapping: IndicatorMapping = {
   breakupMa5days: {
     type: "boolean",
-    value: "BREAKUP_MA_5DAYS",
-    label: "向上突破均线5日"
+    cn: "向上突破均线5日",
+    map: "BREAKUP_MA_5DAYS"
   },
   breakupMa10days: {
     type: "boolean",
-    value: "BREAKUP_MA_10DAYS",
-    label: "向上突破均线10日"
+    cn: "向上突破均线10日",
+    map: "BREAKUP_MA_10DAYS"
   },
   breakupMa20days: {
     type: "boolean",
-    value: "BREAKUP_MA_20DAYS",
-    label: "向上突破均线20日"
+    cn: "向上突破均线20日",
+    map: "BREAKUP_MA_20DAYS"
   },
   breakupMa30days: {
     type: "boolean",
-    value: "BREAKUP_MA_30DAYS",
-    label: "向上突破均线30日"
+    cn: "向上突破均线30日",
+    map: "BREAKUP_MA_30DAYS"
   },
   breakupMa60days: {
     type: "boolean",
-    value: "BREAKUP_MA_60DAYS",
-    label: "向上突破均线60日"
+    cn: "向上突破均线60日",
+    map: "BREAKUP_MA_60DAYS"
   },
   longAvgArray: {
     type: "boolean",
-    value: "LONG_AVG_ARRAY",
-    label: "均线多头排列"
+    cn: "均线多头排列",
+    map: "LONG_AVG_ARRAY"
   },
   shortAvgArray: {
     type: "boolean",
-    value: "SHORT_AVG_ARRAY",
-    label: "均线空头排列"
+    cn: "均线空头排列",
+    map: "SHORT_AVG_ARRAY"
   }
 };
 
@@ -527,68 +522,68 @@ export const maIndicatorMapping: IndicatorMapping = {
 export const klinePatternIndicatorMapping: IndicatorMapping = {
   upperLargeVolume: {
     type: "boolean",
-    value: "UPPER_LARGE_VOLUME",
-    label: "连涨放量"
+    cn: "连涨放量",
+    map: "UPPER_LARGE_VOLUME"
   },
   downNarrowVolume: {
     type: "boolean",
-    value: "DOWN_NARROW_VOLUME",
-    label: "下跌无量"
+    cn: "下跌无量",
+    map: "DOWN_NARROW_VOLUME"
   },
   oneDayangLine: {
     type: "boolean",
-    value: "ONE_DAYANG_LINE",
-    label: "一根大阳线"
+    cn: "一根大阳线",
+    map: "ONE_DAYANG_LINE"
   },
   twoDayangLines: {
     type: "boolean",
-    value: "TWO_DAYANG_LINES",
-    label: "两根大阳线"
+    cn: "两根大阳线",
+    map: "TWO_DAYANG_LINES"
   },
   riseSun: {
     type: "boolean",
-    value: "RISE_SUN",
-    label: "旭日东升"
+    cn: "旭日东升",
+    map: "RISE_SUN"
   },
   powerFulgun: {
     type: "boolean",
-    value: "POWER_FULGUN",
-    label: "强势多方炮"
+    cn: "强势多方炮",
+    map: "POWER_FULGUN"
   },
   restoreJustice: {
     type: "boolean",
-    value: "RESTORE_JUSTICE",
-    label: "拨云见日"
+    cn: "拨云见日",
+    map: "RESTORE_JUSTICE"
   },
   down7days: {
     type: "boolean",
-    value: "DOWN_7DAYS",
-    label: "七仙女下凡(七连阴)"
+    cn: "七仙女下凡(七连阴)",
+    map: "DOWN_7DAYS"
   },
   upper8days: {
     type: "boolean",
-    value: "UPPER_8DAYS",
-    label: "八仙过海(八连阳)"
+    cn: "八仙过海(八连阳)",
+    map: "UPPER_8DAYS"
   },
   upper9days: {
     type: "boolean",
-    value: "UPPER_9DAYS",
-    label: "九阳神功(九连阳)"
+    cn: "九阳神功(九连阳)",
+    map: "UPPER_9DAYS"
   },
   upper4days: {
     type: "boolean",
-    value: "UPPER_4DAYS",
-    label: "四串阳"
+    cn: "四串阳",
+    map: "UPPER_4DAYS"
   },
   heavenRule: {
     type: "boolean",
-    value: "HEAVEN_RULE",
-    label: "天��法则"
+    cn: "天量法则",
+    map: "HEAVEN_RULE"
   },
   upsideVolume: {
     type: "boolean",
-    value: "UPSIDE_VOLUME",
-    label: "放量上攻"
+    cn: "放量上攻",
+    map: "UPSIDE_VOLUME"
   }
 };
 
@@ -596,73 +591,73 @@ export const klinePatternIndicatorMapping: IndicatorMapping = {
 export const institutionalHoldingIndicatorMapping: IndicatorMapping = {
   allcorpNum: {
     type: "number",
-    value: "ALLCORP_NUM",
-    label: "机构持股家数合计"
+    cn: "机构持股家数合计",
+    map: "ALLCORP_NUM"
   },
   allcorpFundNum: {
     type: "number",
-    value: "ALLCORP_FUND_NUM",
-    label: "基金持股家数"
+    cn: "基金持股家数",
+    map: "ALLCORP_FUND_NUM"
   },
   allcorpQsNum: {
     type: "number",
-    value: "ALLCORP_QS_NUM",
-    label: "券商持股家数"
+    cn: "券商持股家数",
+    map: "ALLCORP_QS_NUM"
   },
   allcorpQfiiNum: {
     type: "number",
-    value: "ALLCORP_QFII_NUM",
-    label: "QFII持股家数"
+    cn: "QFII持股家数",
+    map: "ALLCORP_QFII_NUM"
   },
   allcorpBxNum: {
     type: "number",
-    value: "ALLCORP_BX_NUM",
-    label: "保险公司持股家数"
+    cn: "保险公司持股家数",
+    map: "ALLCORP_BX_NUM"
   },
   allcorpSbNum: {
     type: "number",
-    value: "ALLCORP_SB_NUM",
-    label: "社保持股家数"
+    cn: "社保持股家数",
+    map: "ALLCORP_SB_NUM"
   },
   allcorpXtNum: {
     type: "number",
-    value: "ALLCORP_XT_NUM",
-    label: "信托公司持股家数"
+    cn: "信托公司持股家数",
+    map: "ALLCORP_XT_NUM"
   },
   allcorpRatio: {
     type: "number",
-    value: "ALLCORP_RATIO",
-    label: "机构持股比例合计"
+    cn: "机构持股比例合计",
+    map: "ALLCORP_RATIO"
   },
   allcorpFundRatio: {
     type: "number",
-    value: "ALLCORP_FUND_RATIO",
-    label: "基金持股比例"
+    cn: "基金持股比例",
+    map: "ALLCORP_FUND_RATIO"
   },
   allcorpQsRatio: {
     type: "number",
-    value: "ALLCORP_QS_RATIO",
-    label: "券商持股比例"
+    cn: "券商持股比例",
+    map: "ALLCORP_QS_RATIO"
   },
   allcorpQfiiRatio: {
     type: "number",
-    value: "ALLCORP_QFII_RATIO",
-    label: "QFII持股比例"
+    cn: "QFII持股比例",
+    map: "ALLCORP_QFII_RATIO"
   },
   allcorpBxRatio: {
     type: "number",
-    value: "ALLCORP_BX_RATIO",
-    label: "保险公司持股比例"
+    cn: "保险公司持股比例",
+    map: "ALLCORP_BX_RATIO"
   },
   allcorpSbRatio: {
     type: "number",
-    value: "ALLCORP_SB_RATIO",
-    label: "社保持股比例"
+    cn: "社保持股比例",
+    map: "ALLCORP_SB_RATIO"
   },
   allcorpXtRatio: {
     type: "number",
-    value: "ALLCORP_XT_RATIO",
-    label: "信托公司持股比例"
+    cn: "信托公司持股比例",
+    map: "ALLCORP_XT_RATIO"
   }
 };
 
@@ -670,53 +665,53 @@ export const institutionalHoldingIndicatorMapping: IndicatorMapping = {
 export const capitalFlowIndicatorMapping: IndicatorMapping = {
   netInflow: {
     type: "number",
-    value: "NET_INFLOW",
-    label: "当日净流入额"
+    cn: "当日净流入额",
+    map: "NET_INFLOW"
   },
   netinflow3days: {
     type: "number",
-    value: "NETINFLOW_3DAYS",
-    label: "3日主力净流入"
+    cn: "3日主力净流入",
+    map: "NETINFLOW_3DAYS"
   },
   netinflow5days: {
     type: "number",
-    value: "NETINFLOW_5DAYS",
-    label: "5日主力净流入"
+    cn: "5日主力净流入",
+    map: "NETINFLOW_5DAYS"
   },
   nowinterstRatio: {
     type: "number",
-    value: "NOWINTERST_RATIO",
-    label: "当日增仓占比"
+    cn: "当日增仓占比",
+    map: "NOWINTERST_RATIO"
   },
   nowinterstRatio3d: {
     type: "number",
-    value: "NOWINTERST_RATIO_3D",
-    label: "3日增仓占比"
+    cn: "3日增仓占比",
+    map: "NOWINTERST_RATIO_3D"
   },
   nowinterstRatio5d: {
     type: "number",
-    value: "NOWINTERST_RATIO_5D",
-    label: "5日增仓占比"
+    cn: "5日增仓占比",
+    map: "NOWINTERST_RATIO_5D"
   },
   ddx: {
     type: "number",
-    value: "DDX",
-    label: "当日DDX"
+    cn: "当日DDX",
+    map: "DDX"
   },
   ddx3d: {
     type: "number",
-    value: "DDX_3D",
-    label: "3日DDX"
+    cn: "3日DDX",
+    map: "DDX_3D"
   },
   ddx5d: {
     type: "number",
-    value: "DDX_5D",
-    label: "5日DDX"
+    cn: "5日DDX",
+    map: "DDX_5D"
   },
   ddxRed10d: {
     type: "number",
-    value: "DDX_RED_10D",
-    label: "10日内DDX飘红天数"
+    cn: "10日内DDX飘红天数",
+    map: "DDX_RED_10D"
   }
 };
 
@@ -724,33 +719,33 @@ export const capitalFlowIndicatorMapping: IndicatorMapping = {
 export const priceChangeIndicatorMapping: IndicatorMapping = {
   changerate3days: {
     type: "number",
-    value: "CHANGERATE_3DAYS",
-    label: "3日涨跌幅"
+    cn: "3日涨跌幅",
+    map: "CHANGERATE_3DAYS"
   },
   changerate5days: {
     type: "number",
-    value: "CHANGERATE_5DAYS",
-    label: "5日涨跌幅"
+    cn: "5日涨跌幅",
+    map: "CHANGERATE_5DAYS"
   },
   changerate10days: {
     type: "number",
-    value: "CHANGERATE_10DAYS",
-    label: "10日涨跌幅"
+    cn: "10日涨跌幅",
+    map: "CHANGERATE_10DAYS"
   },
   changerateTy: {
     type: "number",
-    value: "CHANGERATE_TY",
-    label: "今年以来涨跌幅"
+    cn: "今年以来涨跌幅",
+    map: "CHANGERATE_TY"
   },
   upnday: {
     type: "number",
-    value: "UPNDAY",
-    label: "连涨天数"
+    cn: "连涨天数",
+    map: "UPNDAY"
   },
   downnday: {
     type: "number",
-    value: "DOWNNDAY",
-    label: "连跌天数"
+    cn: "连跌天数",
+    map: "DOWNNDAY"
   }
 };
 
@@ -758,18 +753,18 @@ export const priceChangeIndicatorMapping: IndicatorMapping = {
 export const hkConnectIndicatorMapping: IndicatorMapping = {
   mutualNetbuyAmt: {
     type: "number",
-    value: "MUTUAL_NETBUY_AMT",
-    label: "沪深股通净买入金额"
+    cn: "沪深股通净买入金额",
+    map: "MUTUAL_NETBUY_AMT"
   },
   holdRatio: {
     type: "number",
-    value: "HOLD_RATIO",
-    label: "沪深股通持股比例"
+    cn: "沪深股通持股比例",
+    map: "HOLD_RATIO"
   }
 };
 
 // 合并所有指标
-export const indicatorMapping: IndicatorMapping = {
+export const selectionIndicatorMapping: IndicatorMapping = {
   ...basicIndicatorMapping,
   ...tradeIndicatorMapping,
   ...companyIndicatorMapping,
