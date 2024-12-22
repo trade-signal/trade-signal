@@ -290,7 +290,9 @@ const transformClsNews = (data: Map<string, ClsNews[]>) => {
 export const seedClsNews = async () => {
   try {
     const newsData = await getNews();
+
     const transformedNews = transformClsNews(newsData);
+    print(`获取到 ${transformedNews.length} 条新闻`);
 
     print(`开始写入数据库`);
     await prisma.news.createMany({
@@ -303,3 +305,5 @@ export const seedClsNews = async () => {
     print(`处理新闻数据失败: ${error}`);
   }
 };
+
+seedClsNews();
