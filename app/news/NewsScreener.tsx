@@ -40,6 +40,7 @@ const NewsScreener = () => {
 
     if (response.success) {
       setSourceFilters(response.data);
+      setSinaCategories(response.data.sina);
     }
   };
 
@@ -47,9 +48,31 @@ const NewsScreener = () => {
     getFilter();
   }, []);
 
-  useEffect(() => {
-    handleSourceChange(filters.source || "sina");
-  }, [sourceFilters]);
+  const setSinaCategories = (sourceFilter: SourceFilter) => {
+    setCategories([
+      {
+        label: "全部",
+        value: ""
+      },
+      ...sourceFilter.categories.map(item => ({
+        label: item,
+        value: item
+      }))
+    ]);
+  };
+
+  const setClsCategories = (sourceFilter: SourceFilter) => {
+    setCategories([
+      {
+        label: "全部",
+        value: ""
+      },
+      ...sourceFilter.categories.map(item => ({
+        label: getCategoryName(item) as string,
+        value: item
+      }))
+    ]);
+  };
 
   const handleSourceChange = (source: string | null) => {
     if (source) {
@@ -57,28 +80,10 @@ const NewsScreener = () => {
 
       switch (source) {
         case "sina": // 新浪财经
-          setCategories([
-            {
-              label: "全部",
-              value: ""
-            },
-            ...sourceFilter.categories.map(item => ({
-              label: item,
-              value: item
-            }))
-          ]);
+          setSinaCategories(sourceFilter);
           break;
         case "cls": // 财联社
-          setCategories([
-            {
-              label: "全部",
-              value: ""
-            },
-            ...sourceFilter.categories.map(item => ({
-              label: getCategoryName(item) as string,
-              value: item
-            }))
-          ]);
+          setClsCategories(sourceFilter);
           break;
         default:
           break;
@@ -99,7 +104,7 @@ const NewsScreener = () => {
     <Stack mt={10} mb={10}>
       <Title order={5}>新闻筛选器</Title>
 
-      <Group>
+      <Group mih={45}>
         <ScreenerSelect
           title="来源"
           value={filters.source}

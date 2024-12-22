@@ -105,7 +105,7 @@ export const getNews = async () => {
       try {
         const data = await fetchNews(category.value, lastTime);
 
-        if (!data || !Array.isArray(data)) {
+        if (!data || !Array.isArray(data) || data.length === 0) {
           throw new Error(`${category.label} 分类数据获取失败: 数据为空`);
         }
 

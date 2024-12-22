@@ -16,6 +16,7 @@ interface DataTableProps<T> {
 
   height?: string;
   statisticsDate?: string;
+  refreshTime?: string;
 
   orderBy?: string;
   order?: string;
@@ -36,6 +37,7 @@ const DataTable = <T extends Record<string, any>>({
   firstLoading,
   height,
   statisticsDate,
+  refreshTime,
   orderBy,
   order,
   getOrderBy,
@@ -72,6 +74,7 @@ const DataTable = <T extends Record<string, any>>({
       total={total}
       dataLength={data.length}
       statisticsDate={statisticsDate}
+      refreshTime={refreshTime}
       orderBy={orderBy}
       order={order}
       getOrderBy={getOrderBy}

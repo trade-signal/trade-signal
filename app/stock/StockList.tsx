@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dayjs from "dayjs";
 import { get } from "@/shared/request";
 import { StockSelection } from "@prisma/client";
 import { Tabs } from "@mantine/core";
@@ -18,6 +19,8 @@ const StockList = () => {
 
   const [stockList, setStockList] = useState<StockSelection[]>([]);
   const [statistics, setStatistics] = useState<{ date: string }>({ date: "" });
+
+  const [refreshTime, setRefreshTime] = useState<string | undefined>();
 
   const [loading, { open, close }] = useDisclosure(false);
   const [isFirstLoading, setIsFirstLoading] = useState(true);
@@ -106,6 +109,20 @@ const StockList = () => {
     }
   }, [page]);
 
+  const getBatchInfo = async () => {
+    const response = await get("/api/batch", {});
+
+    if (response.success) {
+      setRefreshTime(
+        dayjs(response.data["eastmoney"].batchTime).format("YYYY-MM-DD HH:mm")
+      );
+    }
+  };
+
+  useEffect(() => {
+    getBatchInfo();
+  }, []);
+
   return (
     <Tabs defaultValue="overview">
       <Tabs.List>
@@ -125,6 +142,7 @@ const StockList = () => {
             loading={loading}
             total={total}
             statisticsDate={statistics.date}
+            refreshTime={refreshTime}
             orderBy={filters.orderBy}
             order={filters.order}
             search={searchValue}

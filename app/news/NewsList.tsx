@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dayjs from "dayjs";
 import { get } from "@/shared/request";
-import { News } from "@prisma/client";
+import { BatchUpdate, News } from "@prisma/client";
 import { useDisclosure } from "@mantine/hooks";
 import DataTable from "@/app/components/tables/DataTable";
 
@@ -13,6 +14,11 @@ const NewsList = () => {
   const { filters } = useNewsContext();
 
   const [newsList, setNewsList] = useState<News[]>([]);
+
+  const [refreshTimeMap, setRefreshTimeMap] = useState<
+    Record<string, Partial<BatchUpdate>>
+  >({});
+  const [refreshTime, setRefreshTime] = useState<string | undefined>();
 
   const [loading, { open, close }] = useDisclosure(false);
   const [isFirstLoading, setIsFirstLoading] = useState(true);
@@ -72,11 +78,37 @@ const NewsList = () => {
     }
   }, [page]);
 
+  const getBatchInfo = async () => {
+    const response = await get("/api/batch", {});
+
+    if (response.success) {
+      setRefreshTimeMap(response.data);
+      setRefreshTime(
+        dayjs(response.data.sina.batchTime).format("YYYY-MM-DD HH:mm")
+      );
+    }
+  };
+
+  useEffect(() => {
+    getBatchInfo();
+  }, []);
+
+  useEffect(() => {
+    if (filters.source) {
+      setRefreshTime(
+        dayjs(refreshTimeMap[filters.source]?.batchTime).format(
+          "YYYY-MM-DD HH:mm"
+        )
+      );
+    }
+  }, [filters.source]);
+
   return (
     <DataTable
       height="calc(100vh - 215px)"
       columns={COLUMNS}
       data={newsList}
+      refreshTime={refreshTime}
       firstLoading={isFirstLoading}
       loading={loading}
       total={total}
