@@ -110,10 +110,6 @@ export const GET = async (request: NextRequest) => {
   if (newPrice) {
     where.newPrice = getPriceRange(newPrice as StockPriceRange);
   }
-  console.log(
-    totalMarketValue,
-    getMarketValueRange(totalMarketValue as StockMarketValue)
-  );
   if (totalMarketValue) {
     where.totalMarketCap = getMarketValueRange(
       totalMarketValue as StockMarketValue
