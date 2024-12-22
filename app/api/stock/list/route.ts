@@ -8,6 +8,7 @@ import {
 } from "@/app/stock/StockScreenerConfig";
 import { getFilteredParams } from "@/shared/util";
 
+// 价格范围
 const getPriceRange = (price: StockPriceRange) => {
   const maps = {
     ">=200": { gt: 200 },
@@ -20,18 +21,22 @@ const getPriceRange = (price: StockPriceRange) => {
   };
   return maps[price];
 };
+
+// 市值范围
 const getMarketValueRange = (marketValue: StockMarketValue) => {
   const maps = {
-    ">=5000": { gt: 5000 },
-    ">=1000 && <=5000": { gt: 1000, lte: 5000 },
-    ">=300 && <=1000": { gt: 300, lte: 1000 },
-    ">=100 && <=300": { gt: 100, lte: 300 },
-    ">=30 && <=100": { gt: 30, lte: 100 },
-    ">=10 && <=30": { gt: 10, lte: 30 },
+    ">=5000": { gt: 5000 * 100000000 },
+    ">=1000 && <=5000": { gt: 1000 * 100000000, lte: 5000 * 100000000 },
+    ">=300 && <=1000": { gt: 300 * 100000000, lte: 1000 * 100000000 },
+    ">=100 && <=300": { gt: 100 * 100000000, lte: 300 * 100000000 },
+    ">=30 && <=100": { gt: 30 * 100000000, lte: 100 * 100000000 },
+    ">=10 && <=30": { gt: 10 * 100000000, lte: 30 * 100000000 },
     "<10": { lt: 10 }
   };
   return maps[marketValue];
 };
+
+// 市盈率范围
 const getPeRatioRange = (peRatio: StockPeRatio) => {
   const maps = {
     ">100": { gt: 100 },
@@ -105,6 +110,10 @@ export const GET = async (request: NextRequest) => {
   if (newPrice) {
     where.newPrice = getPriceRange(newPrice as StockPriceRange);
   }
+  console.log(
+    totalMarketValue,
+    getMarketValueRange(totalMarketValue as StockMarketValue)
+  );
   if (totalMarketValue) {
     where.totalMarketCap = getMarketValueRange(
       totalMarketValue as StockMarketValue
