@@ -268,9 +268,9 @@ model StockQuotesRealTime {
   id String @id @default(cuid())
 
   // 基本信息
-  date DateTime // 日期
-  code String   @db.VarChar(6) // 股票代码
-  name String   @db.VarChar(20) // 股票名称
+  date String @db.VarChar(10) // 交易日期
+  code String @db.VarChar(6) // 股票代码
+  name String @db.VarChar(20) // 股票名称
 
   // 价格相关
   newPrice   Float // 最新价

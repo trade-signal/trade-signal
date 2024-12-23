@@ -29,14 +29,12 @@ const fetchNews = async (page: number, pageSize: number) => {
     });
 
     if (!response.result) {
-      throw new Error(
-        `获取全球财经快讯失败: ${response.message || "未知错误"}`
-      );
+      throw new Error(`getNews error: ${response.message || "unknown error"}`);
     }
 
     return response.result;
   } catch (error) {
-    print(`获取全球财经快讯失败: ${error}`);
+    print(`getNews error: ${error}`);
     return [];
   }
 };
@@ -47,7 +45,7 @@ export const getNews = async () => {
   let page = 1;
   let pageSize = 100;
 
-  print(`开始获取全球财经快讯`);
+  print(`start getNews`);
 
   while (true) {
     try {
@@ -55,13 +53,13 @@ export const getNews = async () => {
 
       if (!response.status || response.status.code !== 0) {
         print(JSON.stringify(response));
-        throw new Error(`获取全球财经快讯失败: ${response.msg || "未知错误"}`);
+        throw new Error(`getNews error: ${response.msg || "unknown error"}`);
       }
 
       const { page_info, list } = (response.data && response.data.feed) || {};
 
       if (!page_info || !list || !Array.isArray(list)) {
-        throw new Error(`获取全球财经快讯失败: 数据为空`);
+        throw new Error(`getNews error: data is empty`);
       }
 
       news.push(...list);
@@ -71,12 +69,12 @@ export const getNews = async () => {
 
       page++;
     } catch (error) {
-      print(`获取全球财经快讯失败: ${error}`);
+      print(`getNews error: ${error}`);
       break;
     }
   }
 
-  print(`获取全球财经快讯完成`);
+  print(`getNews end`);
 
   return news;
 };
@@ -175,12 +173,12 @@ export const seedSinaNews = async () => {
   try {
     await updateBatchStatus(batch.id, "fetching");
     const newsData = await getNews();
-    print(`获取到 ${newsData.length} 条新闻`);
+    print(`get ${newsData.length} news`);
 
     await updateBatchStatus(batch.id, "transforming");
     const transformedNews = transformSinaNews(newsData);
 
-    print(`已转换 ${transformedNews.length} 条新闻`);
+    print(`transformed ${transformedNews.length} news`);
 
     print(`开始写入数据库`);
 
@@ -190,9 +188,9 @@ export const seedSinaNews = async () => {
     });
     await updateBatchStatus(batch.id, "completed", transformedNews.length);
 
-    print(`写入数据库完成`);
+    print(`write news success`);
   } catch (error) {
     await updateBatchStatus(batch.id, "failed");
-    print(`处理新闻数据失败: ${error}`);
+    print(`getNews error: ${error}`);
   }
 };

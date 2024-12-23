@@ -9,7 +9,7 @@ const print = createLogger(spider_name);
 
 // 清除超过7天的数据
 const clearOldNews = async () => {
-  print("检测是否存在超过7天的数据");
+  print("check if there is data older than 7 days");
 
   const result = await prisma.news.deleteMany({
     where: {
@@ -20,9 +20,9 @@ const clearOldNews = async () => {
   });
 
   if (result.count === 0) {
-    print("没有超过7天的数据需要清理");
+    print("no data older than 7 days");
   } else {
-    print(`已清理 ${result.count} 条超过7天的数据`);
+    print(`clean ${result.count} data older than 7 days`);
   }
 };
 
@@ -43,7 +43,7 @@ export const checkNews = async (date?: string) => {
 // 获取新闻
 export const seedNews = async () => {
   try {
-    print(`开始获取新闻数据`);
+    print(`start get news`);
 
     // 清理历史数据
     await clearOldNews();
@@ -51,9 +51,9 @@ export const seedNews = async () => {
     // 获取新闻数据
     await Promise.all([seedSinaNews(), seedClsNews()]);
 
-    print(`新闻数据获取成功`);
+    print(`get news success`);
   } catch (error) {
-    print(`新闻数据获取失败: ${error}`);
+    print(`get news error: ${error}`);
   }
 };
 
@@ -61,7 +61,7 @@ export const initNewsData = async (runDate: string) => {
   const hasNews = await checkNews(runDate);
 
   if (hasNews) {
-    print("News available! No need to seed.");
+    print("news available! No need to seed.");
     return;
   }
 

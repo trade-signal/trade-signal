@@ -317,7 +317,7 @@ const getTradeDate = async () => {
 
     return transformTradeDate(decode);
   } catch (error) {
-    console.log(`获取交易日历失败: ${error}`);
+    console.log(`getTradeDate error: ${error}`);
     return [];
   }
 };

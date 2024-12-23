@@ -247,7 +247,7 @@ interface ClsNews {
 const transformClsNews = (data: Map<string, ClsNews[]>) => {
   const result = [];
 
-  print(`开始转换财联社新闻数据`);
+  print(`start transform cls news`);
 
   for (const [category, news] of data) {
     for (const item of news) {
@@ -283,7 +283,7 @@ const transformClsNews = (data: Map<string, ClsNews[]>) => {
     }
   }
 
-  print(`财联社新闻数据转换完成`);
+  print(`cls news transform end`);
 
   return result;
 };
@@ -298,9 +298,9 @@ export const seedClsNews = async () => {
     await updateBatchStatus(batch.id, "transforming");
     const transformedNews = transformClsNews(newsData);
 
-    print(`已转换 ${transformedNews.length} 条新闻`);
+    print(`transformed ${transformedNews.length} news`);
 
-    print(`开始写入数据库`);
+    print(`start write news`);
 
     await prisma.news.createMany({
       data: transformedNews,
@@ -308,9 +308,9 @@ export const seedClsNews = async () => {
     });
     await updateBatchStatus(batch.id, "completed", transformedNews.length);
 
-    print(`写入数据库完成`);
+    print(`write news success`);
   } catch (error) {
     await updateBatchStatus(batch.id, "failed");
-    print(`处理新闻数据失败: ${error}`);
+    print(`getNews error: ${error}`);
   }
 };

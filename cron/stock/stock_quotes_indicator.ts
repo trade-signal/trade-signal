@@ -1,7 +1,7 @@
 import { IndicatorMapping } from "../type";
 
 // 交易指标
-export const tradeStocksIndicatorMapping: IndicatorMapping = {
+export const quotesIndicatorMapping: IndicatorMapping = {
   // 基本信息
   date: {
     type: "date",

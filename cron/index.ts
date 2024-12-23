@@ -56,9 +56,9 @@ async function main() {
 
   const runDate = getRunDate();
 
-  console.log(`当前时间: ${dayjs().format("YYYY-MM-DD HH:mm:ss")}`);
-  console.log(`运行日期: ${runDate}`);
-  console.log(`运行环境: ${process.env.NODE_ENV || "development"}`);
+  console.log(`current time: ${dayjs().format("YYYY-MM-DD HH:mm:ss")}`);
+  console.log(`run date: ${runDate}`);
+  console.log(`run environment: ${process.env.NODE_ENV || "development"}`);
 
   await runSeedJobs(runDate);
 

@@ -1,9 +1,10 @@
 import { get } from "@/shared/request";
 import prisma from "@/prisma/db";
-import { createLogger } from "../util";
+import { createLogger, transformStockData } from "../util";
 import dayjs from "dayjs";
 import { updateBatchStatus } from "../batch";
 import { initBatch } from "../batch";
+import { quotesIndicatorMapping } from "./stock_quotes_indicator";
 
 const spider_name = "stock_quotes";
 const print = createLogger(spider_name, "stock");
@@ -38,10 +39,10 @@ const getRealtimeStockQuotes = async () => {
     }
 
     throw new Error(
-      `获取 A 股-实时行情失败: ${response.message || "未知错误"}`
+      `getRealtimeStockQuotes error: ${response.message || "unknown error"}`
     );
   } catch (error) {
-    print(`获取 A 股-实时行情失败: ${error}`);
+    print(`getRealtimeStockQuotes error: ${error}`);
     return [];
   }
 };
@@ -53,31 +54,50 @@ export const checkStockQuotes = async (date?: string) => {
   return quotes.length > 0;
 };
 
-const transformStockQuotes = async (stocks: any[]) => {
-  const list = stocks.map(item => ({
-    ...item
-  }));
-
-  return list;
-};
-
 export const seedStockQuotes = async (date?: string) => {
   const batch = await initBatch("stock_quotes", "eastmoney");
 
   try {
+    print(`start get realtimeStockQuotes`);
+
     await updateBatchStatus(batch.id, "fetching");
 
     const stocks = await getRealtimeStockQuotes();
 
+    print(`get ${stocks.length} stocks`);
+
     if (stocks.length === 0) {
-      print(`A 股-实时行情为空`);
+      print(`realtimeStockQuotes is empty`);
       return;
     }
 
     await updateBatchStatus(batch.id, "transforming");
+    const list = transformStockData(stocks, quotesIndicatorMapping);
 
-    print(`开始写入 A 股-实时行情`);
+    print(`start write realtimeStockQuotes`);
+
+    await prisma.stockQuotesRealTime.createMany({
+      data: list as any,
+      skipDuplicates: true
+    });
+
+    await updateBatchStatus(batch.id, "completed", list.length);
+    print(`write realtimeStockQuotes success`);
   } catch (error) {
-    print(`获取 A 股-实时行情失败: ${error}`);
+    await updateBatchStatus(batch.id, "failed");
+    print(`getRealtimeStockQuotes error: ${error}`);
   }
 };
+
+export const initStockQuotesData = async (date?: string) => {
+  const hasQuotes = await checkStockQuotes(date);
+
+  if (hasQuotes) {
+    print("realtimeStockQuotes available! No need to seed.");
+    return;
+  }
+
+  await seedStockQuotes(date);
+};
+
+initStockQuotesData();

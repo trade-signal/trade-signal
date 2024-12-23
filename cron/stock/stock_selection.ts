@@ -4,7 +4,12 @@ import { StockSelection } from "@prisma/client";
 import dayjs from "dayjs";
 import { initBatch, updateBatchStatus } from "../batch";
 import { selectionIndicatorMapping } from "./stock_selection_indicator";
-import { arrayToObject, createLogger, normalizeValue } from "../util";
+import {
+  arrayToObject,
+  createLogger,
+  normalizeValue,
+  transformStockData
+} from "../util";
 
 const spider_name = "stock_selection";
 const print = createLogger(spider_name, "stock");
@@ -42,7 +47,7 @@ const getStockSelection = async (page: number, pageSize: number) => {
 
     return response;
   } catch (error) {
-    print(`获取选股指标失败: ${error}`);
+    print(`getStockSelection error: ${error}`);
     return [];
   }
 };
@@ -53,31 +58,21 @@ const getStocks = async (): Promise<Partial<StockSelection>[]> => {
 
   const stocks = [];
 
-  const keys = Object.keys(selectionIndicatorMapping);
-
-  print(`开始获取选股指标`);
+  print(`getStocks start`);
 
   while (true) {
     try {
       const response = await getStockSelection(page, pageSize);
 
       if (!response.success) {
-        throw new Error(`获取选股指标失败: ${response.message || "未知错误"}`);
+        throw new Error(
+          `getStockSelection error: ${response.message || "unknown error"}`
+        );
       }
 
       const { count, data } = response.result;
 
-      const list = data.map((item: any) =>
-        arrayToObject(
-          keys.map(key => {
-            const { type, map } = selectionIndicatorMapping[key];
-
-            return {
-              [key]: normalizeValue(type, item[map as string])
-            };
-          })
-        )
-      );
+      const list = transformStockData(data, selectionIndicatorMapping);
 
       stocks.push(...list);
 
@@ -85,12 +80,12 @@ const getStocks = async (): Promise<Partial<StockSelection>[]> => {
 
       page++;
     } catch (error) {
-      print(`获取选股指标失败: ${error}`);
+      print(`getStocks error: ${error}`);
       break;
     }
   }
 
-  print(`获取选股指标完成`);
+  print(`getStocks end`);
 
   return stocks;
 };
@@ -115,7 +110,7 @@ export const seedStockSelection = async (date?: string) => {
           }
         }
       });
-      print(`删除选股指标: ${deleted.count}`);
+      print(`deleteStockSelection: ${deleted.count}`);
     }
 
     await updateBatchStatus(batch.id, "fetching");
@@ -124,14 +119,14 @@ export const seedStockSelection = async (date?: string) => {
     const stocks = await getStocks();
 
     if (stocks.length === 0) {
-      print(`选股指标为空`);
+      print(`stockSelection is empty`);
       return;
     }
 
-    print(`选股指标数量: ${stocks.length}`);
+    print(`stockSelection count: ${stocks.length}`);
     await updateBatchStatus(batch.id, "transforming");
 
-    print(`开始写入选股指标`);
+    print(`start write stockSelection`);
 
     const total = stocks.length;
 
@@ -147,10 +142,10 @@ export const seedStockSelection = async (date?: string) => {
 
     await updateBatchStatus(batch.id, "completed", total);
 
-    print(`写入选股指标成功`);
+    print(`write stockSelection success`);
   } catch (error) {
     await updateBatchStatus(batch.id, "failed");
-    print(`获取选股指标失败: ${error}`);
+    print(`getStockSelection error: ${error}`);
   }
 };
 
@@ -158,7 +153,7 @@ export const initStockSelectionData = async (runDate: string) => {
   const hasStocks = await checkStocks(runDate);
 
   if (hasStocks) {
-    print("Stocks available! No need to seed.");
+    print("stockSelection available! No need to seed.");
     return;
   }
 
