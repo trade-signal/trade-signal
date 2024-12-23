@@ -54,7 +54,7 @@ const normalizeValue = (type: IndicatorType, value: string) => {
     return dayjs(value).format("YYYY-MM-DD");
   }
   if (type === "number") {
-    return Number(value);
+    return Number(value) || 0;
   }
   if (type === "boolean") {
     return value === "1";
@@ -160,12 +160,6 @@ export const seedStockSelection = async (date?: string) => {
     // 写入选股指标
     while (stocks.length > 0) {
       let list = stocks.splice(0, 1000);
-
-      list = list.map(item => ({
-        ...item,
-        // fix: 量比为空时，取0
-        volumeRatio: item.volumeRatio || 0
-      }));
 
       await prisma.stockSelection.createMany({
         data: list as any,
