@@ -3,7 +3,10 @@ import "dotenv/config";
 import { CronJob } from "cron";
 import dayjs from "dayjs";
 import { getRunDate } from "@/shared/date";
-import { initStockSelectionData, seedStockSelection } from "./stock/selection";
+import {
+  initStockSelectionData,
+  seedStockSelection
+} from "./stock/stock_selection";
 import { initTradeDates } from "./stock/trade_date";
 import { initNewsData, seedNews } from "./news";
 

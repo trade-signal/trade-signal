@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import prisma from "@/prisma/db";
-import { createLogger } from "@/cron/util/logger";
+import { createLogger } from "../util";
 import { seedSinaNews } from "./sina";
 import { seedClsNews } from "./cls";
 

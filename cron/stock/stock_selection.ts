@@ -3,13 +3,11 @@ import prisma from "@/prisma/db";
 import { StockSelection } from "@prisma/client";
 import dayjs from "dayjs";
 import { initBatch, updateBatchStatus } from "../batch";
-import { indicatorMapping, IndicatorType } from "./indicator";
+import { selectionIndicatorMapping } from "./stock_selection_indicator";
+import { arrayToObject, createLogger, normalizeValue } from "../util";
 
 const spider_name = "stock_selection";
-
-const print = (message: string) => {
-  console.log(`[${spider_name}] ${message}`);
-};
+const print = createLogger(spider_name, "stock");
 
 /**
  * 选股指标
@@ -25,8 +23,8 @@ const getStockSelection = async (page: number, pageSize: number) => {
     const url = `https://data.eastmoney.com/dataapi/xuangu/list`;
 
     // 选股指标 初始值 "SECUCODE,SECURITY_CODE,SECURITY_NAME_ABBR,CHANGE_RATE"
-    const sty = Object.values(indicatorMapping)
-      .map(item => item.value)
+    const sty = Object.values(selectionIndicatorMapping)
+      .map(item => item.map)
       .join(",");
 
     // 过滤条件
@@ -49,33 +47,13 @@ const getStockSelection = async (page: number, pageSize: number) => {
   }
 };
 
-const normalizeValue = (type: IndicatorType, value: string) => {
-  if (type === "date") {
-    return dayjs(value).format("YYYY-MM-DD");
-  }
-  if (type === "number") {
-    return Number(value) || 0;
-  }
-  if (type === "boolean") {
-    return value === "1";
-  }
-  if (type === "array") {
-    return Array.isArray(value) ? value.join(",") : value;
-  }
-  return value || "";
-};
-
-const arrayToObject = (array: any[]) => {
-  return array.reduce((acc, cur) => ({ ...acc, ...cur }), {});
-};
-
 const getStocks = async (): Promise<Partial<StockSelection>[]> => {
   let page = 1;
   let pageSize = 1000;
 
   const stocks = [];
 
-  const keys = Object.keys(indicatorMapping);
+  const keys = Object.keys(selectionIndicatorMapping);
 
   print(`开始获取选股指标`);
 
@@ -92,10 +70,10 @@ const getStocks = async (): Promise<Partial<StockSelection>[]> => {
       const list = data.map((item: any) =>
         arrayToObject(
           keys.map(key => {
-            const { type, value } = indicatorMapping[key];
+            const { type, map } = selectionIndicatorMapping[key];
 
             return {
-              [key]: normalizeValue(type, item[value])
+              [key]: normalizeValue(type, item[map as string])
             };
           })
         )
@@ -159,7 +137,7 @@ export const seedStockSelection = async (date?: string) => {
 
     // 写入选股指标
     while (stocks.length > 0) {
-      let list = stocks.splice(0, 1000);
+      const list = stocks.splice(0, 1000);
 
       await prisma.stockSelection.createMany({
         data: list as any,

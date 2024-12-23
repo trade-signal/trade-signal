@@ -76,6 +76,7 @@ model VerificationToken {
   @@map("verification_token")
 }
 
+// 股票选股
 model StockSelection {
   // 基本信息
   date     String @db.VarChar(10) // 交易日期
@@ -260,6 +261,76 @@ model StockSelection {
   @@index([concept]) // 概念索引
   @@index([style]) // 风格索引
   @@map("stock_selection")
+}
+
+// 股票实时行情
+model StockQuotesRealTime {
+  id String @id @default(cuid())
+
+  // 基本信息
+  date DateTime // 日期
+  code String   @db.VarChar(6) // 股票代码
+  name String   @db.VarChar(20) // 股票名称
+
+  // 价格相关
+  newPrice   Float // 最新价
+  changeRate Float // 涨跌幅
+  upsDowns   Float // 涨跌额
+
+  // 交易指标
+  volume        Float // 成交量
+  dealAmount    Float // 成交额
+  amplitude     Float // 振幅
+  turnoverRate  Float // 换手率
+  volumeRatio   Float // 量比
+  openPrice     Float // 今开
+  highPrice     Float // 最高
+  lowPrice      Float // 最低
+  preClosePrice Float // 昨收
+
+  // 涨跌速度指标
+  speedIncrease    Float // 涨速
+  speedIncrease5   Float // 5分钟涨跌
+  speedIncrease60  Float // 60日涨跌幅
+  speedIncreaseAll Float // 年初至今涨跌幅
+
+  // 估值指标
+  dtsyl             Float // 市盈率动
+  pe9               Float // 市盈率TTM
+  pe                Float // 市盈率静
+  pbnewmrq          Float // 市净率
+  basicEps          Float // 每股收益
+  bvps              Float // 每股净资产
+  perCapitalReserve Float // 每股公积金
+  perUnassignProfit Float // 每股未分配利润
+
+  // 财务指标
+  roeWeight          Float // 加权净资产收益率
+  saleGpr            Float // 毛利率
+  debtAssetRatio     Float // 资产负债率
+  totalOperateIncome Float // 营业总收入
+  toiYoyRatio        Float // 营业收入同比增长
+  parentNetprofit    Float // 归属净利润
+  netprofitYoyRatio  Float // 归属净利润同比增长
+
+  // 股本及市值
+  totalShares    Float // 总股本
+  freeShares     Float // 已流通股份
+  totalMarketCap Float // 总市值
+  freeCap        Float // 流通市值
+
+  // 其他
+  industry    String @db.VarChar(50) // 所处行业
+  listingDate String @db.VarChar(10) // 上市时间
+  reportDate  String @db.VarChar(10) // 报告期
+
+  // 系统字段
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([date]) // 日期索引
+  @@index([code]) // 代码索引
+  @@map("stock_real_time")
 }
 
 model News {

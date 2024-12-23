@@ -1,7 +1,7 @@
 import { get } from "@/shared/request";
-import { createLogger } from "@/cron/util/logger";
 import prisma from "@/prisma/db";
 import { initBatch, updateBatchStatus } from "../batch";
+import { createLogger } from "../util";
 
 const spider_name = "sina";
 const print = createLogger(spider_name, "news");
