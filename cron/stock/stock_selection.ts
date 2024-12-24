@@ -4,15 +4,10 @@ import { StockSelection } from "@prisma/client";
 import dayjs from "dayjs";
 import { initBatch, updateBatchStatus } from "../batch";
 import { selectionIndicatorMapping } from "./stock_selection_indicator";
-import {
-  arrayToObject,
-  createLogger,
-  normalizeValue,
-  transformStockData
-} from "../util";
+import { createLogger, transformStockData } from "../util";
 
 const spider_name = "stock_selection";
-const print = createLogger(spider_name, "stock");
+const print = createLogger(spider_name);
 
 /**
  * 选股指标

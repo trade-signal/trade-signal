@@ -55,6 +55,8 @@ export const checkStockQuotes = async (date?: string) => {
 };
 
 export const seedStockQuotes = async (date?: string) => {
+  const currentDate = dayjs(date).format("YYYY-MM-DD");
+
   const batch = await initBatch("stock_quotes", "eastmoney");
 
   try {
@@ -72,7 +74,12 @@ export const seedStockQuotes = async (date?: string) => {
     }
 
     await updateBatchStatus(batch.id, "transforming");
-    const list = transformStockData(stocks, quotesIndicatorMapping);
+
+    let list = transformStockData(stocks, quotesIndicatorMapping);
+    // newPrice > 0, 过滤掉停牌的股票
+    list = list.filter(item => Number(item.newPrice) > 0);
+    // 添加日期
+    list = list.map(item => ({ ...item, date: currentDate }));
 
     print(`start write realtimeStockQuotes`);
 
@@ -99,5 +106,3 @@ export const initStockQuotesData = async (date?: string) => {
 
   await seedStockQuotes(date);
 };
-
-initStockQuotesData();

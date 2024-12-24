@@ -3,11 +3,6 @@ import { IndicatorMapping } from "../type";
 // 交易指标
 export const quotesIndicatorMapping: IndicatorMapping = {
   // 基本信息
-  date: {
-    type: "date",
-    cn: "日期",
-    map: "221"
-  },
   code: {
     type: "string",
     cn: "代码",
