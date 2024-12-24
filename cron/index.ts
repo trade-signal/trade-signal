@@ -7,22 +7,37 @@ import {
   initStockSelectionData,
   seedStockSelection
 } from "./stock/stock_selection";
-// import { initTradeDates } from "./stock/trade_date";
 import { initNewsData, seedNews } from "./news";
+import { initStockQuotesData, seedStockQuotes } from "./stock/stock_quotes";
 
 const print = (message: string) => {
   console.log(`[cron] [${dayjs().format("YYYY-MM-DD HH:mm:ss")}] ${message}`);
 };
 
 const runSchedulerJobs = () => {
+  // 工作日运行:
+  // - 早盘前: 9:00
+  // - 早盘中: 10:00
+  // - 午间: 11:00
+  // - 午盘中: 13:00
+  // - 收盘后: 14:00
+  // - 晚间: 15:00
+  new CronJob("*/30 9,10,11,13,14,15 * * 1-5", async () => {
+    print("Running seedStockQuotes job...");
+    await seedStockQuotes();
+    print("Running seedStockQuotes job completed...");
+  }).start();
+
   // 工作日运行：16:00
   new CronJob("0 16 * * 1-5", async () => {
+    print("Running seedStockQuotes job...");
+    await seedStockQuotes();
+    print("Running seedStockQuotes job completed...");
+
     print("Running seedStockSelection job...");
     await seedStockSelection();
     print("Running seedStockSelection job completed...");
   }).start();
-
-  // 工作日运行:
 
   // 工作日运行:
   // - 早盘前: 8:30
@@ -49,8 +64,11 @@ const runSchedulerJobs = () => {
 };
 
 const runSeedJobs = async (runDate: string) => {
-  // await initTradeDates();
-  await Promise.all([initNewsData(runDate), initStockSelectionData(runDate)]);
+  await Promise.all([
+    initNewsData(runDate),
+    initStockSelectionData(runDate),
+    initStockQuotesData(runDate)
+  ]);
 };
 
 async function main() {
@@ -62,10 +80,10 @@ async function main() {
   console.log(`run date: ${runDate}`);
   console.log(`run environment: ${process.env.NODE_ENV || "development"}`);
 
-  await runSeedJobs(runDate);
-
   if (process.env.NODE_ENV === "production") {
     runSchedulerJobs();
+  } else {
+    await runSeedJobs(runDate);
   }
 
   console.log("Cron job completed.");
