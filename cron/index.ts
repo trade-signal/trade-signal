@@ -7,7 +7,7 @@ import {
   initStockSelectionData,
   seedStockSelection
 } from "./stock/stock_selection";
-import { initTradeDates } from "./stock/trade_date";
+// import { initTradeDates } from "./stock/trade_date";
 import { initNewsData, seedNews } from "./news";
 
 const print = (message: string) => {
@@ -21,6 +21,8 @@ const runSchedulerJobs = () => {
     await seedStockSelection();
     print("Running seedStockSelection job completed...");
   }).start();
+
+  // 工作日运行:
 
   // 工作日运行:
   // - 早盘前: 8:30
@@ -47,7 +49,7 @@ const runSchedulerJobs = () => {
 };
 
 const runSeedJobs = async (runDate: string) => {
-  await initTradeDates();
+  // await initTradeDates();
   await Promise.all([initNewsData(runDate), initStockSelectionData(runDate)]);
 };
 
