@@ -376,3 +376,42 @@ model BatchUpdate {
   @@index([type, status]) // 类型和状态复合索引
   @@map("batch_update")
 }
+
+// 自选分组
+model Watchlist {
+  id          String  @id @default(cuid())
+  userId      String // 用户ID
+  name        String // 分组名称
+  description String? // 分组描述
+  order       Int     @default(0) // 排序
+  isDefault   Boolean @default(false) // 是否为默认分组
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, name]) // 同一用户不能创建同名分组
+  @@index([userId]) // 用户ID索引
+  @@map("watchlist")
+}
+
+// 自选股票
+model Watch {
+  id          String  @id @default(cuid())
+  watchlistId String // 自选分组ID
+  userId      String // 用户ID
+  type        String // 产品类型：stock(股票)、fund(基金)、future(期货)等
+  code        String // 产品代码
+  name        String // 产品名称
+  note        String? // 用户备注
+  order       Int     @default(0) // 排序
+  isTop       Boolean @default(false) // 是否置顶
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([watchlistId, type, code]) // 同一分组内不能重复添加相同产品
+  @@index([userId]) // 用户ID索引
+  @@index([watchlistId]) // 分组ID索引
+  @@index([type, code]) // 产品类型和代码复合索引
+  @@map("watch")
+}
