@@ -72,8 +72,6 @@ const runSeedJobs = async (runDate: string) => {
 };
 
 async function main() {
-  console.log("Starting cron job...");
-
   const runDate = getRunDate();
 
   console.log(`current time: ${dayjs().format("YYYY-MM-DD HH:mm:ss")}`);
@@ -81,12 +79,14 @@ async function main() {
   console.log(`run environment: ${process.env.NODE_ENV || "development"}`);
 
   if (process.env.NODE_ENV === "production") {
+    console.log("Running scheduler jobs...");
     runSchedulerJobs();
-  } else {
-    await runSeedJobs(runDate);
+    return;
   }
 
-  console.log("Cron job completed.");
+  console.log("Running seed jobs...");
+  await runSeedJobs(runDate);
+  console.log("Running seed jobs completed...");
 }
 
 main();
