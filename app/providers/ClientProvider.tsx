@@ -15,30 +15,38 @@ import { LoginProvider, useLogin } from "@/app/providers/LoginProvider";
 import SpotlightModal from "@/app/components/modals/SpotlightModal";
 
 function AppContent({ children }: { children: React.ReactNode }) {
-  // const { isLoggedIn } = useLogin();
-  // const [showRightAside, { open, close }] = useDisclosure(false);
+  const { isLoggedIn } = useLogin();
+  const [collapsed, { open, close }] = useDisclosure(false);
 
-  // useEffect(() => {
-  //   isLoggedIn ? open() : close();
-  // }, [isLoggedIn]);
+  useEffect(() => {
+    if (isLoggedIn) {
+      close();
+    } else {
+      open();
+    }
+  }, [isLoggedIn]);
 
   return (
     <AppShell
       header={{ height: 56 }}
-      // aside={{
-      //   width: 300,
-      //   breakpoint: "sm",
-      //   collapsed: { desktop: !showRightAside }
-      // }}
+      aside={{
+        width: collapsed ? 0 : 280,
+        breakpoint: "sm",
+        collapsed: {
+          desktop: collapsed
+        }
+      }}
       visibleFrom="xs"
     >
-      <AppShell.Header visibleFrom="xs">
+      <AppShell.Header visibleFrom="xs" pr={collapsed ? 0 : 280}>
         <Header />
       </AppShell.Header>
 
       <AppShell.Main>{children}</AppShell.Main>
 
-      {/* <AppShell.Aside>{showRightAside && <RightAside />}</AppShell.Aside> */}
+      <AppShell.Aside top={collapsed ? 56 : 0} h="100%">
+        <RightAside />
+      </AppShell.Aside>
     </AppShell>
   );
 }
