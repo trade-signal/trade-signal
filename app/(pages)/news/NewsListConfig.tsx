@@ -1,8 +1,8 @@
 import { News } from "@prisma/client";
 import Link from "next/link";
-import { HoverCard, Pill, ScrollArea, Spoiler, Text } from "@mantine/core";
-import { Column } from "../components/tables/DataTable/types";
-import { formatDateDiff } from "../components/tables/DataTable/util";
+import { HoverCard, Pill, ScrollArea, Text } from "@mantine/core";
+import { Column } from "@/app/components/tables/DataTable/types";
+import { formatDateDiff } from "@/app/components/tables/DataTable/util";
 
 // 定时来源类型
 enum SourceType {

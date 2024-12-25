@@ -5,7 +5,7 @@ import {
   StockPriceRange,
   StockMarketValue,
   StockPeRatio
-} from "@/app/stock/StockScreenerConfig";
+} from "@/app/(pages)/stock/StockScreenerConfig";
 import { getFilteredParams } from "@/shared/util";
 
 // 价格范围

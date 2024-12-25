@@ -30,7 +30,7 @@ function AppContent({ children }: { children: React.ReactNode }) {
     <AppShell
       header={{ height: 56 }}
       aside={{
-        width: collapsed ? 0 : 280,
+        width: collapsed ? 0 : 300,
         breakpoint: "sm",
         collapsed: {
           desktop: collapsed
@@ -38,7 +38,7 @@ function AppContent({ children }: { children: React.ReactNode }) {
       }}
       visibleFrom="xs"
     >
-      <AppShell.Header visibleFrom="xs" pr={collapsed ? 0 : 280}>
+      <AppShell.Header visibleFrom="xs" pr={collapsed ? 0 : 300}>
         <Header />
       </AppShell.Header>
 

@@ -1,13 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Stack, Group, Title, SegmentedControl, Text } from "@mantine/core";
+import { Stack, Group, Title, SegmentedControl } from "@mantine/core";
 import { get } from "@/shared/request";
 
-import ScreenerSelect from "@/app/components/ScreenerSelect";
-import StockScreenerMultiSelect, {
-  DataItem
-} from "@/app/components/ScreenerMultiSelect";
+import ScreenerSelect, { DataItem } from "@/app/components/ScreenerSelect";
 import { getCategoryName } from "@/cron/news/cls";
 import { NewsFilters, useNewsContext } from "./NewsContext";
 import { SOURCE_MAP } from "./NewsListConfig";

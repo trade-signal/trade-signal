@@ -1,26 +1,34 @@
 import { useState } from "react";
-import {
-  IconAlarm,
-  IconCalendarStats,
-  IconDeviceDesktopAnalytics,
-  IconFingerprint,
-  IconGauge,
-  IconHome2,
-  IconSettings,
-  IconArticle,
-  IconUser
-} from "@tabler/icons-react";
-import { Box, Stack, Title, Tooltip, UnstyledButton } from "@mantine/core";
+import { IconAlarm, IconSettings, IconArticle } from "@tabler/icons-react";
+import { Box, SimpleGrid, Stack, Tooltip, UnstyledButton } from "@mantine/core";
+
+import WatchList from "@/app/components/WatchList";
+import InstrumentDetail from "@/app/components/InstrumentDetail";
+
 import classes from "./index.module.css";
 
 const mainLinksMockdata = [
-  { icon: IconArticle, label: "自选表、详情", value: "table" },
-  { icon: IconAlarm, label: "警告", value: "alarm", disabled: true },
-  { icon: IconSettings, label: "设置", value: "settings", disabled: true }
+  {
+    icon: <IconArticle size={28} />,
+    label: "自选表、详情",
+    value: "watchlist"
+  },
+  {
+    icon: <IconAlarm size={32} />,
+    label: "警告",
+    value: "alarm",
+    disabled: true
+  },
+  {
+    icon: <IconSettings size={28} />,
+    label: "设置",
+    value: "settings",
+    disabled: true
+  }
 ];
 
 const RightAside = () => {
-  const [active, setActive] = useState("");
+  const [active, setActive] = useState("watchlist");
 
   const mainLinks = mainLinksMockdata.map(link => (
     <Tooltip
@@ -29,21 +37,26 @@ const RightAside = () => {
       withArrow
       transitionProps={{ duration: 0 }}
       key={link.label}
+      style={{}}
     >
       <UnstyledButton
         onClick={() => {
           if (link.disabled) return;
-          if (link.value === active) return setActive("");
+          // TODO: hidden
+          // if (link.value === active) return setActive("");
           setActive(link.value);
         }}
         className={classes.mainLink}
         data-active={link.value === active || undefined}
         disabled={link.disabled}
         style={{
-          opacity: link.disabled ? 0.5 : 1
+          width: 36,
+          height: 36,
+          opacity: link.disabled ? 0.5 : 1,
+          cursor: link.disabled ? "default" : "pointer"
         }}
       >
-        <link.icon size={24} stroke={1.5} />
+        {link.icon}
       </UnstyledButton>
     </Tooltip>
   ));
@@ -51,7 +64,24 @@ const RightAside = () => {
   return (
     <nav className={classes.navbar}>
       <Box className={classes.wrapper}>
-        <Stack className={classes.main}>Todo</Stack>
+        <Stack className={classes.main}>
+          <SimpleGrid
+            h={"100%"}
+            cols={1}
+            verticalSpacing="xs"
+            style={{
+              borderRight:
+                "1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5))"
+            }}
+          >
+            <Box bg="white">
+              <WatchList />
+            </Box>
+            <Box bg="white">
+              <InstrumentDetail />
+            </Box>
+          </SimpleGrid>
+        </Stack>
         <Stack gap="xs" className={classes.aside}>
           {mainLinks}
         </Stack>
