@@ -1,4 +1,4 @@
-export const getFilteredParams = (
+export const parseCommaSeparatedParam = (
   searchParams: URLSearchParams,
   paramName: string
 ) => {

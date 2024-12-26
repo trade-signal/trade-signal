@@ -6,7 +6,7 @@ import {
   StockMarketValue,
   StockPeRatio
 } from "@/app/(pages)/stock/StockScreenerConfig";
-import { getFilteredParams } from "@/shared/util";
+import { parseCommaSeparatedParam } from "@/shared/util";
 
 // 价格范围
 const getPriceRange = (price: StockPriceRange) => {
@@ -61,9 +61,9 @@ const generateWhereOR = (params: string[], field: string) => {
 export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;
 
-  const industries = getFilteredParams(searchParams, "industries");
-  const concepts = getFilteredParams(searchParams, "concepts");
-  const styles = getFilteredParams(searchParams, "styles");
+  const industries = parseCommaSeparatedParam(searchParams, "industries");
+  const concepts = parseCommaSeparatedParam(searchParams, "concepts");
+  const styles = parseCommaSeparatedParam(searchParams, "styles");
 
   const newPrice = searchParams.get("newPrice");
   const totalMarketValue = searchParams.get("totalMarketValue");
@@ -72,7 +72,7 @@ export const GET = async (request: NextRequest) => {
   const orderBy = searchParams.get("orderBy") || "newPrice";
   const order = searchParams.get("order") || "desc";
 
-  const search = searchParams.get("search");
+  const search = searchParams.get("search")?.trim();
 
   const page = Number(searchParams.get("page")) || 1;
   const pageSize = Number(searchParams.get("pageSize")) || 20;
@@ -120,9 +120,9 @@ export const GET = async (request: NextRequest) => {
   }
 
   if (search) {
-    where.code = {
-      contains: search.trim()
-    };
+    whereOR.push(
+      ...[{ code: { contains: search } }, { name: { contains: search } }]
+    );
   }
 
   const data = await prisma.stockSelection.findMany({

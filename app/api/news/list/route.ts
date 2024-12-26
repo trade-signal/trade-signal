@@ -1,13 +1,13 @@
 import { type NextRequest } from "next/server";
 import { Prisma } from "@prisma/client";
 import prisma from "@/prisma/db";
-import { getFilteredParams } from "@/shared/util";
+import { parseCommaSeparatedParam } from "@/shared/util";
 
 export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;
 
   const source = searchParams.get("source");
-  const categories = getFilteredParams(searchParams, "categories");
+  const categories = parseCommaSeparatedParam(searchParams, "categories");
 
   const page = Number(searchParams.get("page")) || 1;
   const pageSize = Number(searchParams.get("pageSize")) || 20;
