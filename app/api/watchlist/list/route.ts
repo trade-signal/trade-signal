@@ -1,6 +1,11 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/lib/auth";
 import prisma from "@/prisma/db";
+import { Watch, Watchlist } from "@prisma/client";
+
+export type WatchlistWithStocks = Watchlist & {
+  stocks: Watch[];
+};
 
 export const GET = async () => {
   const session = await getServerSession(authOptions);
@@ -66,7 +71,7 @@ export const GET = async () => {
     order: list.order,
     isDefault: list.isDefault,
     stocks: stocksByWatchlist[list.id] || []
-  }));
+  })) as WatchlistWithStocks[];
 
   return Response.json({
     success: true,

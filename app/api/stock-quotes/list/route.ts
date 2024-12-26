@@ -7,6 +7,7 @@ export const GET = async (request: NextRequest) => {
   const { searchParams } = new URL(request.url);
 
   const industries = parseCommaSeparatedParam(searchParams, "industries");
+  const fields = parseCommaSeparatedParam(searchParams, "fields");
 
   const search = searchParams.get("search")?.trim();
 
@@ -37,6 +38,16 @@ export const GET = async (request: NextRequest) => {
     where,
     skip: offset,
     take: limit,
+    select: {
+      code: true,
+      name: true,
+      ...(fields.length
+        ? fields.reduce((acc, field) => {
+            acc[field] = true;
+            return acc;
+          }, {})
+        : {})
+    },
     orderBy: { code: "asc" }
   });
 
