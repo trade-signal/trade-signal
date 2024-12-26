@@ -35,7 +35,7 @@ const StockList = () => {
       open();
     }
 
-    const response = await get("/api/stock/list", {
+    const response = await get("/api/stock-selection/list", {
       ...filters,
       page: currentPage,
       pageSize: filters.pageSize || 20,
