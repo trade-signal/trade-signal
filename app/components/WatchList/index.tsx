@@ -18,7 +18,7 @@ const WatchList = () => {
   const [watchList, setWatchList] = useState<WatchlistWithStocks[]>([]);
 
   const getFilter = async () => {
-    const response = await get("/api/stock-quotes/filter");
+    const response = await get("/api/stock-quotes/filter", {});
     if (response.success) {
       setFilter(response.data);
     }
@@ -26,7 +26,7 @@ const WatchList = () => {
 
   const getStocks = async () => {
     try {
-      const response = await get("/api/stock-quotes/list");
+      const response = await get("/api/stock-quotes/list", {});
 
       if (response.success) {
         setStocks(response.data);
@@ -37,7 +37,7 @@ const WatchList = () => {
   };
 
   const getWatchList = async () => {
-    const response = await get("/api/watchlist/list");
+    const response = await get("/api/watchlist/list", {});
     if (response.success) {
       setWatchList(response.data);
     }
@@ -48,6 +48,14 @@ const WatchList = () => {
     getFilter();
     getStocks();
   }, []);
+
+  const handleSearch = (value: string) => {
+    console.log(value);
+  };
+
+  const handleSelect = (value: string) => {
+    console.log(value);
+  };
 
   return (
     <Stack>
@@ -64,6 +72,8 @@ const WatchList = () => {
         filter={filter}
         stocks={stocks}
         open={opened}
+        onSearch={handleSearch}
+        onSelect={handleSelect}
         onClose={close}
       />
     </Stack>

@@ -1,4 +1,5 @@
 import { Modal, rem, ScrollArea, Stack, Text, TextInput } from "@mantine/core";
+import { StockQuotesRealTime } from "@prisma/client";
 import { IconSearch } from "@tabler/icons-react";
 
 interface InstrumentSelectorModalProps {
@@ -26,7 +27,6 @@ const InstrumentSelectorModal = ({
       opened={open}
       onClose={handleClose}
       title="添加自选"
-      size="md"
       centered
       size="lg"
       padding="md"
