@@ -113,9 +113,10 @@ const StockList = () => {
     const response = await get("/api/batch", {});
 
     if (response.success) {
-      setRefreshTime(
-        dayjs(response.data["eastmoney"].batchTime).format("YYYY-MM-DD HH:mm")
+      const batch = response.data.find(
+        (item: any) => item.type === "stock_selection"
       );
+      setRefreshTime(dayjs(batch.batchTime).format("YYYY-MM-DD HH:mm"));
     }
   };
 

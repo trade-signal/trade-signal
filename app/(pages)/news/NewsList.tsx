@@ -78,14 +78,21 @@ const NewsList = () => {
     }
   }, [page]);
 
+  const transformBatch = (batch: BatchUpdate[]) => {
+    return batch.reduce((acc, curr) => {
+      acc[curr.source] = curr;
+      return acc;
+    }, {} as Record<string, Partial<BatchUpdate>>);
+  };
+
   const getBatchInfo = async () => {
     const response = await get("/api/batch", {});
 
     if (response.success) {
-      setRefreshTimeMap(response.data);
-      setRefreshTime(
-        dayjs(response.data.sina.batchTime).format("YYYY-MM-DD HH:mm")
-      );
+      const batchMap = transformBatch(response.data);
+
+      setRefreshTimeMap(batchMap);
+      setRefreshTime(dayjs(batchMap.sina.batchTime).format("YYYY-MM-DD HH:mm"));
     }
   };
 
