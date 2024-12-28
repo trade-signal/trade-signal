@@ -25,14 +25,14 @@ export const GET = async () => {
     });
   }
 
-  // 1. 判断用户是否存在分组，不存在则创建默认分组
+  // 1. 判断用户是否存在分组，不存在则创建默认 "自选表" 分组
   const defaultWatchlist = await prisma.watchlist.findFirst({
     where: { userId, isDefault: true }
   });
 
   if (!defaultWatchlist) {
     await prisma.watchlist.create({
-      data: { userId, name: "默认分组", isDefault: true }
+      data: { userId, name: "自选表", isDefault: true }
     });
   }
 

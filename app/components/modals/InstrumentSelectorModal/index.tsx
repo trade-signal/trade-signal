@@ -1,4 +1,4 @@
-import { isError, useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import {
   type UIEvent,
   useCallback,
@@ -14,13 +14,11 @@ import {
   Group,
   Modal,
   rem,
-  Stack,
   Text,
-  TextInput,
   Tooltip
 } from "@mantine/core";
 import { StockQuotesRealTime } from "@prisma/client";
-import { IconEdit, IconPlus, IconSearch, IconTrash } from "@tabler/icons-react";
+import { IconPlus } from "@tabler/icons-react";
 import {
   MantineReactTable,
   useMantineReactTable,
@@ -33,9 +31,9 @@ import { WatchlistWithStocks } from "@/app/api/watchlist/list/route";
 
 interface InstrumentSelectorModalProps {
   open: boolean;
-  watchlist?: WatchlistWithStocks[];
-  onAdd: (value: string) => void;
-  onDelete: (value: string) => void;
+  watchlist?: WatchlistWithStocks;
+  onAdd: (value: StockQuotesRealTime) => void;
+  onDelete: (value: StockQuotesRealTime) => void;
   onClose: () => void;
 }
 
@@ -49,6 +47,8 @@ const InstrumentSelectorModal = ({
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const rowVirtualizerInstanceRef = useRef<MRT_RowVirtualizer>(null);
 
+  const pageSize = 20;
+
   const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>(
     []
   );
@@ -58,6 +58,14 @@ const InstrumentSelectorModal = ({
   console.log(columnFilters);
   console.log(globalFilter);
   console.log(sorting);
+
+  const { data: filter } = useQuery({
+    queryKey: ["stock-quotes-filter"],
+    queryFn: () =>
+      clientGet("/api/stock-quotes/filter", {}) as Promise<{
+        industries: string[];
+      }>
+  });
 
   const columns: MRT_ColumnDef<StockQuotesRealTime>[] = [
     {
@@ -70,14 +78,14 @@ const InstrumentSelectorModal = ({
     },
     {
       accessorKey: "industry",
-      header: "行业"
+      header: "行业",
+      filterVariant: "multi-select",
+      mantineFilterSelectProps: {
+        data: filter?.industries ?? [],
+        checkIconPosition: "right"
+      }
     }
   ];
-
-  const { data: filter } = useQuery({
-    queryKey: ["stock-quotes-filter"],
-    queryFn: () => clientGet("/api/stock-quotes/filter", {})
-  });
 
   const {
     data: stocks,
@@ -87,11 +95,13 @@ const InstrumentSelectorModal = ({
     isError
   } = useInfiniteQuery({
     queryKey: ["stock-quotes-list", columnFilters, globalFilter, sorting],
-    queryFn: () =>
+    queryFn: ({ pageParam = 0 }) =>
       get("/api/stock-quotes/list", {
-        columnFilters,
-        globalFilter,
-        sorting
+        page: pageParam + 1,
+        pageSize,
+        columnFilters: JSON.stringify(columnFilters ?? []),
+        globalFilter: globalFilter ?? "",
+        sorting: JSON.stringify(sorting ?? [])
       }),
     getNextPageParam: (_lastGroup, groups) => groups.length,
     refetchOnWindowFocus: false
@@ -114,9 +124,7 @@ const InstrumentSelectorModal = ({
           !isFetching &&
           totalFetched < totalDBRowCount
         ) {
-          console.log("fetch more");
-
-          // fetchNextPage();
+          fetchNextPage();
         }
       }
     },
@@ -150,6 +158,7 @@ const InstrumentSelectorModal = ({
     enableRowVirtualization: true,
     enableRowActions: true,
     enableGlobalFilter: true, // 启用全局搜索
+    positionGlobalFilter: "left",
     initialState: {
       showGlobalFilter: true // 默认显示搜索框
     },
@@ -159,9 +168,9 @@ const InstrumentSelectorModal = ({
     enableDensityToggle: false,
     enableFullScreenToggle: false,
     enableRowNumbers: false,
-    enableFilters: false,
-    enableColumnFilters: false,
-    enableColumnActions: false,
+    enableFilters: true,
+    enableColumnFilters: true,
+    enableColumnActions: true,
 
     // 数据处理相关
     manualFiltering: true,
@@ -170,7 +179,7 @@ const InstrumentSelectorModal = ({
     // 虚拟滚动相关
     mantineTableContainerProps: {
       ref: tableContainerRef,
-      style: { maxHeight: "400px" },
+      style: { maxHeight: "500px" },
       onScroll: (event: UIEvent<HTMLDivElement>) =>
         fetchMoreOnBottomReached(event.target as HTMLDivElement)
     },
@@ -202,7 +211,7 @@ const InstrumentSelectorModal = ({
 
     // 本地化配置
     localization: {
-      search: "搜索内容",
+      search: "输入股票代码或名称",
       showHideSearch: "显示/隐藏搜索框",
       filterByColumn: "筛选{column}",
       clearFilter: "清除筛选条件",
@@ -223,11 +232,10 @@ const InstrumentSelectorModal = ({
       color: "red",
       children: "数据加载中..."
     },
-    renderTopToolbarCustomActions: ({ table }) => <Group></Group>,
     renderRowActions: ({ row }) => (
       <Flex gap="md">
         <Tooltip label="">
-          <ActionIcon onClick={() => onAdd(row.original.code)}>
+          <ActionIcon onClick={() => onAdd(row.original)}>
             <IconPlus size={rem(16)} />
           </ActionIcon>
         </Tooltip>
@@ -244,7 +252,8 @@ const InstrumentSelectorModal = ({
 
   return (
     <Modal
-      opened={open}
+      // opened={open}
+      opened
       onClose={handleClose}
       padding={0}
       closeButtonProps={{
@@ -252,7 +261,7 @@ const InstrumentSelectorModal = ({
       }}
       title={
         <Text size="lg" pl="md">
-          添加到 “{watchlist?.[0]?.name}”
+          添加到 “{watchlist?.name}”
         </Text>
       }
       centered

@@ -1,23 +1,22 @@
 import { type NextRequest } from "next/server";
 import { Prisma } from "@prisma/client";
 import prisma from "@/prisma/db";
-import { parseCommaSeparatedParam } from "@/shared/util";
+import { MRT_ColumnFiltersState, MRT_SortingState } from "mantine-react-table";
 
 export const GET = async (request: NextRequest) => {
-  const { searchParams } = new URL(request.url);
+  const searchParams = new URL(request.url).searchParams;
 
-  console.log(searchParams);
-
-  const industries = parseCommaSeparatedParam(searchParams, "industries");
-  const fields = parseCommaSeparatedParam(searchParams, "fields");
-
-  const search = searchParams.get("search")?.trim();
+  const columnFilters = searchParams.get("columnFilters") ?? "[]";
+  const globalFilter = searchParams.get("globalFilter") ?? "";
+  const sorting = searchParams.get("sorting") ?? "[]";
 
   const page = Number(searchParams.get("page")) || 1;
   const pageSize = Number(searchParams.get("pageSize")) || 20;
 
-  const offset = (page - 1) * pageSize;
-  const limit = pageSize;
+  const parsedColumnFilters = JSON.parse(
+    columnFilters
+  ) as MRT_ColumnFiltersState;
+  const parsedSorting = JSON.parse(sorting) as MRT_SortingState;
 
   const maxDate = await prisma.stockQuotesRealTime.findFirst({
     orderBy: { date: "desc" },
@@ -28,30 +27,55 @@ export const GET = async (request: NextRequest) => {
     date: { equals: maxDate?.date }
   };
 
-  if (industries && industries.length) {
-    where.industry = { in: industries };
+  if (parsedColumnFilters.length) {
+    parsedColumnFilters.forEach(filter => {
+      const { id, value } = filter;
+
+      if (Array.isArray(value)) {
+        if (value.length > 0) {
+          where[
+            id as keyof Prisma.StockQuotesRealTimeOrderByWithRelationInput
+          ] = {
+            in: value.map(v => v.toString())
+          };
+        }
+      } else if (value) {
+        where[id as keyof Prisma.StockQuotesRealTimeOrderByWithRelationInput] =
+          {
+            contains: value.toString()
+          };
+      }
+    });
   }
 
-  if (search) {
-    where.OR = [{ code: { contains: search } }, { name: { contains: search } }];
+  if (globalFilter) {
+    where.OR = [
+      { code: { contains: globalFilter } },
+      { name: { contains: globalFilter } }
+    ];
+  }
+
+  let orderBy: Prisma.StockQuotesRealTimeOrderByWithRelationInput = {};
+  if (parsedSorting.length) {
+    parsedSorting.forEach(sort => {
+      const { id, desc } = sort;
+      orderBy[id as keyof Prisma.StockQuotesRealTimeOrderByWithRelationInput] =
+        desc ? "desc" : "asc";
+    });
+  } else {
+    orderBy.newPrice = "desc";
   }
 
   const data = await prisma.stockQuotesRealTime.findMany({
     where,
-    skip: offset,
-    take: limit,
+    skip: (page - 1) * pageSize,
+    take: pageSize,
     select: {
       code: true,
       name: true,
-      industry: true,
-      ...(fields.length
-        ? fields.reduce((acc: any, field: string) => {
-            acc[field] = true;
-            return acc;
-          }, {})
-        : {})
+      industry: true
     },
-    orderBy: { code: "asc" }
+    orderBy
   });
 
   const total = await prisma.stockQuotesRealTime.count({
