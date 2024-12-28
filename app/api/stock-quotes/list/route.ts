@@ -6,6 +6,8 @@ import { parseCommaSeparatedParam } from "@/shared/util";
 export const GET = async (request: NextRequest) => {
   const { searchParams } = new URL(request.url);
 
+  console.log(searchParams);
+
   const industries = parseCommaSeparatedParam(searchParams, "industries");
   const fields = parseCommaSeparatedParam(searchParams, "fields");
 
@@ -41,8 +43,9 @@ export const GET = async (request: NextRequest) => {
     select: {
       code: true,
       name: true,
+      industry: true,
       ...(fields.length
-        ? fields.reduce((acc, field) => {
+        ? fields.reduce((acc: any, field: string) => {
             acc[field] = true;
             return acc;
           }, {})

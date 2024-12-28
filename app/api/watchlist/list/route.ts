@@ -25,7 +25,18 @@ export const GET = async () => {
     });
   }
 
-  // 1. 先获取用户的所有分组
+  // 1. 判断用户是否存在分组，不存在则创建默认分组
+  const defaultWatchlist = await prisma.watchlist.findFirst({
+    where: { userId, isDefault: true }
+  });
+
+  if (!defaultWatchlist) {
+    await prisma.watchlist.create({
+      data: { userId, name: "默认分组", isDefault: true }
+    });
+  }
+
+  // 2. 获取用户的所有分组
   const watchlists = await prisma.watchlist.findMany({
     where: { userId },
     select: {
@@ -38,7 +49,7 @@ export const GET = async () => {
     orderBy: { order: "asc" }
   });
 
-  // 2. 一次性获取该用户所有的股票
+  // 3. 一次性获取该用户所有的股票
   const stocks = await prisma.watch.findMany({
     where: { userId },
     select: {
@@ -54,7 +65,7 @@ export const GET = async () => {
     orderBy: [{ isTop: "desc" }, { order: "asc" }]
   });
 
-  // 3. 按 watchlistId 对股票进行分组
+  // 4. 按 watchlistId 对股票进行分组
   const stocksByWatchlist = stocks.reduce((acc, stock) => {
     if (!acc[stock.watchlistId]) {
       acc[stock.watchlistId] = [];
@@ -63,7 +74,7 @@ export const GET = async () => {
     return acc;
   }, {} as Record<string, typeof stocks>);
 
-  // 4. 组装最终数据
+  // 5. 组装最终数据
   const watchlistsWithStocks = watchlists.map(list => ({
     id: list.id,
     name: list.name,

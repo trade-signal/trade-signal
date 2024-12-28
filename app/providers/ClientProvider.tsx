@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { AppShell, Button, Center, MantineProvider, Text } from "@mantine/core";
-import { SessionProvider, useSession } from "next-auth/react";
-import { getServerSession, Session } from "next-auth";
+import { useEffect } from "react";
+import { AppShell, Center, MantineProvider, Text } from "@mantine/core";
+import { SessionProvider } from "next-auth/react";
+import { Session } from "next-auth";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Notifications } from "@mantine/notifications";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { IconDeviceLaptop } from "@tabler/icons-react";
@@ -59,6 +60,7 @@ export default function ClientProvider({
   session: Session;
 }) {
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const queryClient = new QueryClient();
 
   if (isMobile) {
     return (
@@ -81,11 +83,13 @@ export default function ClientProvider({
   return (
     <MantineProvider theme={theme}>
       <SessionProvider session={session}>
-        <LoginProvider>
-          <Notifications />
-          <SpotlightModal />
-          <AppContent>{children}</AppContent>
-        </LoginProvider>
+        <QueryClientProvider client={queryClient}>
+          <LoginProvider>
+            <Notifications />
+            <SpotlightModal />
+            <AppContent>{children}</AppContent>
+          </LoginProvider>
+        </QueryClientProvider>
       </SessionProvider>
     </MantineProvider>
   );
