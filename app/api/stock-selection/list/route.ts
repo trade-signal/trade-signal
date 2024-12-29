@@ -120,9 +120,8 @@ export const GET = async (request: NextRequest) => {
   }
 
   if (search) {
-    whereOR.push(
-      ...[{ code: { contains: search } }, { name: { contains: search } }]
-    );
+    // use search to filter code and name
+    where.OR = [{ code: { contains: search } }, { name: { contains: search } }];
   }
 
   const data = await prisma.stockSelection.findMany({
