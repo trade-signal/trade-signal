@@ -18,7 +18,7 @@ import { ActiveStockProvider } from "@/app/providers/ActiveStockContent";
 
 function AppContent({ children }: { children: React.ReactNode }) {
   const { isLoggedIn } = useLogin();
-  const [collapsed, { open, close }] = useDisclosure(false);
+  const [collapsed, { open, close }] = useDisclosure(true);
 
   useEffect(() => {
     if (isLoggedIn) {

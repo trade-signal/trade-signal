@@ -127,6 +127,9 @@ const AuthorizationModal = (props: AuthorizationModalProps) => {
     onClose();
   };
 
+  const isSignup = currentType === "signup";
+  const passwordAutoComplete = isSignup ? "new-password" : "current-password";
+
   return (
     <Modal
       opened={visible}
@@ -195,9 +198,7 @@ const AuthorizationModal = (props: AuthorizationModalProps) => {
               }
               error={form.errors.password && "密码至少6位"}
               radius="md"
-              autoComplete={
-                currentType === "signup" ? "new-password" : "current-password"
-              }
+              autoComplete={passwordAutoComplete}
             />
           </Stack>
 
@@ -209,10 +210,10 @@ const AuthorizationModal = (props: AuthorizationModalProps) => {
               onClick={toogle}
               size="xs"
             >
-              {currentType === "signup" ? "已有账号？登录" : "没有账号？注册"}
+              {isSignup ? "已有账号？登录" : "没有账号？注册"}
             </Anchor>
             <Button type="submit" radius="xl">
-              {currentType === "signup" ? "注册" : "登录"}
+              {isSignup ? "注册" : "登录"}
             </Button>
           </Group>
         </form>

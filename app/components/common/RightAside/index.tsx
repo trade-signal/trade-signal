@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { IconAlarm, IconSettings, IconArticle } from "@tabler/icons-react";
-import { Box, SimpleGrid, Stack, Tooltip, UnstyledButton } from "@mantine/core";
+import { Box, Stack, Tooltip, UnstyledButton } from "@mantine/core";
 
 import WatchList from "@/app/components/WatchList";
 import InstrumentDetail from "@/app/components/InstrumentDetail";
+import { useLoginContext } from "@/app/providers/LoginProvider";
 
 import classes from "./index.module.css";
 
@@ -29,6 +30,11 @@ const mainLinksMockdata = [
 
 const RightAside = () => {
   const [active, setActive] = useState("watchlist");
+  const { userInfo } = useLoginContext();
+
+  if (!userInfo) {
+    return null;
+  }
 
   const mainLinks = mainLinksMockdata.map(link => (
     <Tooltip

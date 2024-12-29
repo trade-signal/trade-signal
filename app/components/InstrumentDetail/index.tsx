@@ -38,14 +38,14 @@ const InstrumentDetail = () => {
 
   if (isLoading) {
     return (
-      <Stack h={"100%"} justify="center" align="center">
+      <Stack h={"48vh"} justify="center" align="center">
         <Loader size="xs" />
       </Stack>
     );
   }
 
   return (
-    <Stack gap={0} p="xs" style={{ background: "white" }} h={"100%"}>
+    <Stack gap={0} p="xs" style={{ background: "white" }} h={"48vh"}>
       <Stack gap={4}>
         <Text size="sm" fw={500}>
           {stock?.name} · {stock?.code}
