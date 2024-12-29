@@ -330,6 +330,9 @@ model StockQuotesRealTime {
 
   @@index([date]) // 日期索引
   @@index([code]) // 代码索引
+  @@index([industry]) // 行业索引
+  @@index([code, date]) // 代码和日期复合索引
+  @@index([code, date, industry]) // 代码、日期和行业复合索引
   @@map("stock_real_time")
 }
 
