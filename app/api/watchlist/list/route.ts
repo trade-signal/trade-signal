@@ -69,16 +69,23 @@ export const GET = async () => {
     orderBy: [{ isTop: "desc" }, { order: "asc" }]
   });
 
-  // 4. 获取股票的最新行情
-  const quotes = await prisma.stockQuotesRealTime.findMany({
-    where: {
-      code: { in: stocks.map(stock => stock.code) }
-    },
-    distinct: ["code"],
+  // 4. 获取最新的批次时间
+  const maxDate = await prisma.stockQuotesRealTime.findFirst({
+    select: { date: true },
     orderBy: { date: "desc" }
   });
 
-  // 5. 按 watchlistId 对股票进行分组
+  // 5. 获取股票的最新行情
+  const quotes = await prisma.stockQuotesRealTime.findMany({
+    where: {
+      date: maxDate?.date,
+      code: { in: stocks.map(stock => stock.code) }
+    },
+    distinct: ["code"],
+    orderBy: { newPrice: "desc" }
+  });
+
+  // 6. 按 watchlistId 对股票进行分组
   const stocksByWatchlist = stocks.reduce((acc, stock) => {
     if (!acc[stock.watchlistId]) {
       acc[stock.watchlistId] = [];
@@ -87,7 +94,7 @@ export const GET = async () => {
     return acc;
   }, {} as Record<string, typeof stocks>);
 
-  // 6. 组装最终数据
+  // 7. 组装最终数据
   const watchlistsWithStocks = watchlists.map(list => ({
     id: list.id,
     name: list.name,
