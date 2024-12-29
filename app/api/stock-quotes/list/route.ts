@@ -70,6 +70,7 @@ export const GET = async (request: NextRequest) => {
     where,
     skip: (page - 1) * pageSize,
     take: pageSize,
+    distinct: ["code"],
     select: {
       code: true,
       name: true,
@@ -78,9 +79,13 @@ export const GET = async (request: NextRequest) => {
     orderBy
   });
 
-  const total = await prisma.stockQuotesRealTime.count({
-    where
-  });
+  const total = await prisma.stockQuotesRealTime
+    .groupBy({
+      by: ["code"],
+      where,
+      _count: true
+    })
+    .then(result => result.length);
 
   return Response.json({
     success: true,
