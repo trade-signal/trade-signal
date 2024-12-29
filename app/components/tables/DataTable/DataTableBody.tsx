@@ -7,17 +7,23 @@ interface DataTableBodyProps<T> {
   data: T[];
   orderBy?: string;
   order?: string;
+  onRowClick?: (row: T) => void;
 }
 
 const DataTableBody = <T extends Record<string, any>>({
   columns,
   data,
   orderBy,
-  order
+  order,
+  onRowClick
 }: DataTableBodyProps<T>) => (
   <Table.Tbody>
     {data.map((item, index) => (
-      <Table.Tr key={generateRowKey(index, orderBy, order)}>
+      <Table.Tr
+        key={generateRowKey(index, orderBy, order)}
+        style={{ cursor: onRowClick ? "pointer" : "" }}
+        onClick={() => onRowClick?.(item)}
+      >
         {columns.map(column => (
           <Table.Td
             key={column.key as string}

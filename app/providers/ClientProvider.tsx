@@ -14,6 +14,7 @@ import Header from "@/app/components/common/Header";
 import RightAside from "@/app/components/common/RightAside";
 import { LoginProvider, useLogin } from "@/app/providers/LoginProvider";
 import SpotlightModal from "@/app/components/modals/SpotlightModal";
+import { ActiveStockProvider } from "@/app/providers/ActiveStockContent";
 
 function AppContent({ children }: { children: React.ReactNode }) {
   const { isLoggedIn } = useLogin();
@@ -83,13 +84,15 @@ export default function ClientProvider({
   return (
     <MantineProvider theme={theme}>
       <SessionProvider session={session}>
-        <QueryClientProvider client={queryClient}>
-          <LoginProvider>
-            <Notifications />
-            <SpotlightModal />
-            <AppContent>{children}</AppContent>
-          </LoginProvider>
-        </QueryClientProvider>
+        <ActiveStockProvider>
+          <QueryClientProvider client={queryClient}>
+            <LoginProvider>
+              <Notifications />
+              <SpotlightModal />
+              <AppContent>{children}</AppContent>
+            </LoginProvider>
+          </QueryClientProvider>
+        </ActiveStockProvider>
       </SessionProvider>
     </MantineProvider>
   );

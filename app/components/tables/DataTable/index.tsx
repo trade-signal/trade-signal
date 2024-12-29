@@ -23,7 +23,7 @@ interface DataTableProps<T> {
   getOrderBy?: (orderBy: string, order?: string) => string;
 
   search?: string;
-
+  onRowClick?: (row: T) => void;
   onLoadMore: () => void;
   onSort?: (key: string) => void;
   onSearch?: (value: string) => void;
@@ -44,7 +44,8 @@ const DataTable = <T extends Record<string, any>>({
   search,
   onLoadMore,
   onSort,
-  onSearch
+  onSearch,
+  onRowClick
 }: DataTableProps<T>) => (
   <Box>
     <DataTableContainer onLoadMore={onLoadMore} height={height}>
@@ -67,6 +68,7 @@ const DataTable = <T extends Record<string, any>>({
         data={data}
         orderBy={orderBy}
         order={order}
+        onRowClick={onRowClick}
       />
     </DataTableContainer>
     <DataTableFooter

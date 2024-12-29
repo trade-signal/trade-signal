@@ -7,6 +7,7 @@ import { StockSelection } from "@prisma/client";
 import { Tabs } from "@mantine/core";
 import { useDebouncedCallback, useDisclosure } from "@mantine/hooks";
 import DataTable from "@/app/components/tables/DataTable";
+import { useActiveStock } from "@/app/providers/ActiveStockContent";
 import { getOrderBy } from "./StockListConfig";
 
 import { StockFilters, useStockContext } from "./StockContext";
@@ -14,6 +15,7 @@ import { TAB_CONFIGS } from "./StockListConfig";
 
 const StockList = () => {
   const { filters, setFilters } = useStockContext();
+  const { setActiveStockCode } = useActiveStock();
 
   const [searchValue, setSearchValue] = useState(filters.search || "");
 
@@ -124,6 +126,10 @@ const StockList = () => {
     getBatchInfo();
   }, []);
 
+  const handleRowClick = (row: StockSelection) => {
+    setActiveStockCode(row.code);
+  };
+
   return (
     <Tabs defaultValue="overview">
       <Tabs.List>
@@ -148,6 +154,7 @@ const StockList = () => {
             order={filters.order}
             search={searchValue}
             onSort={handleSort}
+            onRowClick={handleRowClick}
             onSearch={handleSearchValueChange}
             onLoadMore={handleLoadMore}
             getOrderBy={getOrderBy}

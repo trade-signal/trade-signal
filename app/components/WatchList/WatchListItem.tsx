@@ -3,12 +3,15 @@ import { Divider, Group, Stack, Text, Button } from "@mantine/core";
 import { HoverCard } from "@mantine/core";
 import { StockQuotesRealTime } from "@prisma/client";
 import { IconTrash } from "@tabler/icons-react";
+import { useActiveStock } from "@/app/providers/ActiveStockContent";
 import {
   formatNumber,
   formatPercentPlain,
   formatYuan,
   getColor
 } from "../tables/DataTable/util";
+
+import styles from "./WatchListItem.module.css";
 
 const InfoItem = ({
   label,
@@ -35,12 +38,20 @@ interface WatchListItemProps {
 }
 
 const WatchListItem = ({ stock, onRemove }: WatchListItemProps) => {
+  const { activeStockCode, setActiveStockCode } = useActiveStock();
   const { quote } = stock;
 
   return (
     <HoverCard key={stock.code} position="left-start" offset={20}>
       <HoverCard.Target>
-        <Group key={stock.code} w="100%" justify="space-between">
+        <Group
+          key={stock.code}
+          w="100%"
+          justify="space-between"
+          className={styles.hoverCardItem}
+          data-active={stock.code === activeStockCode}
+          onClick={() => setActiveStockCode(stock.code)}
+        >
           <Stack gap={2}>
             <Text fw={500} size="sm">
               {stock.code}

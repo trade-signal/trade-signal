@@ -1,4 +1,12 @@
-import { Button, Group, ScrollArea, Stack, Text } from "@mantine/core";
+import {
+  Box,
+  Button,
+  Group,
+  Loader,
+  ScrollArea,
+  Stack,
+  Text
+} from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -15,7 +23,11 @@ const WatchList = () => {
   const [currentWatchlist, setCurrentWatchlist] =
     useState<WatchlistWithStocks>();
 
-  const { data: watchList, refetch } = useQuery({
+  const {
+    data: watchList,
+    isLoading,
+    refetch
+  } = useQuery({
     queryKey: ["watchlist-list"],
     queryFn: (): Promise<WatchlistWithStocks[]> =>
       clientGet("/api/watchlist/list", {}),
@@ -51,9 +63,17 @@ const WatchList = () => {
     }
   });
 
+  if (isLoading && !currentWatchlist) {
+    return (
+      <Stack h={"50vh"} justify="center" align="center">
+        <Loader size="xs" />
+      </Stack>
+    );
+  }
+
   return (
-    <Stack gap={0} style={{ background: "white" }}>
-      <Group h={56} p="xs" justify="space-between">
+    <Stack gap={0} h={"50vh"} style={{ background: "white" }}>
+      <Group h={59} p="xs" justify="space-between">
         <Text size="sm" fw={600}>
           {currentWatchlist?.name || "自选表"}
         </Text>
@@ -62,14 +82,11 @@ const WatchList = () => {
         </Button>
       </Group>
 
-      <ScrollArea
-        h={"50vh"}
-        p="xs"
-        offsetScrollbars
-        style={{ borderTop: "1px solid #e0e0e0", overflow: "hidden" }}
-      >
+      <ScrollArea h={"50vh"} py="xs" style={{ borderTop: "1px solid #e0e0e0" }}>
         {currentWatchlist?.stocks.map(stock => (
-          <WatchListItem stock={stock} onRemove={removeMutation.mutate} />
+          <Box key={stock.code} mb={2}>
+            <WatchListItem stock={stock} onRemove={removeMutation.mutate} />
+          </Box>
         ))}
         {currentWatchlist?.stocks.length === 0 && (
           <Text size="sm" c="dimmed">

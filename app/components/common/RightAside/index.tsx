@@ -64,7 +64,7 @@ const RightAside = () => {
   return (
     <nav className={classes.navbar}>
       <Box className={classes.wrapper}>
-        <Stack className={classes.main}>
+        <Stack gap="xs" className={classes.main}>
           <WatchList />
           <InstrumentDetail />
         </Stack>

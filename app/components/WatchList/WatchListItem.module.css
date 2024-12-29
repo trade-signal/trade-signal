@@ -1,0 +1,17 @@
+.hoverCardItem {
+  cursor: pointer;
+  padding-left: var(--mantine-spacing-md);
+  padding-right: var(--mantine-spacing-md);
+  border: 1px dashed transparent;
+
+  &:hover {
+    background-color: light-dark(
+      var(--mantine-color-gray-0),
+      var(--mantine-color-dark-5)
+    );
+  }
+
+  &[data-active="true"] {
+    border: 1px dashed var(--mantine-color-indigo-filled-hover);
+  }
+}
