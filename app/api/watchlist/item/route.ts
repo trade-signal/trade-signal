@@ -53,12 +53,15 @@ export const GET = async (req: NextRequest) => {
     });
   }
 
+  const maxDate = await prisma.stockQuotesRealTime.findFirst({
+    select: { date: true },
+    orderBy: { date: "desc" }
+  });
+
   const stock = await prisma.stockQuotesRealTime.findFirst({
-    where: { code },
+    where: { date: maxDate?.date, code },
     distinct: ["code"],
-    orderBy: {
-      date: "desc"
-    }
+    orderBy: [{ updatedAt: "desc" }, { newPrice: "desc" }]
   });
 
   return Response.json({

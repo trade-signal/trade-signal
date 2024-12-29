@@ -220,6 +220,7 @@ const InstrumentSelectorModal = ({
       hideColumn: "隐藏{column}",
       showAll: "全部显示",
       hideAll: "全部隐藏",
+      noResultsFound: "未找到相关记录",
       noRecordsToDisplay: "暂无数据"
     },
 

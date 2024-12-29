@@ -82,7 +82,7 @@ export const GET = async () => {
       code: { in: stocks.map(stock => stock.code) }
     },
     distinct: ["code"],
-    orderBy: { newPrice: "desc" }
+    orderBy: [{ updatedAt: "desc" }, { newPrice: "desc" }]
   });
 
   // 6. 按 watchlistId 对股票进行分组
