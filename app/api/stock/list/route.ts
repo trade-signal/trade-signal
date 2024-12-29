@@ -23,9 +23,7 @@ export const GET = async (request: NextRequest) => {
     select: { date: true }
   });
 
-  let where: Prisma.StockQuotesRealTimeWhereInput = {
-    date: { equals: maxDate?.date }
-  };
+  let where: Prisma.StockWhereInput = {};
 
   if (parsedColumnFilters.length) {
     parsedColumnFilters.forEach(filter => {
@@ -33,17 +31,14 @@ export const GET = async (request: NextRequest) => {
 
       if (Array.isArray(value)) {
         if (value.length > 0) {
-          where[
-            id as keyof Prisma.StockQuotesRealTimeOrderByWithRelationInput
-          ] = {
+          where[id as keyof Prisma.StockOrderByWithRelationInput] = {
             in: value.map(v => v.toString())
           };
         }
       } else if (value) {
-        where[id as keyof Prisma.StockQuotesRealTimeOrderByWithRelationInput] =
-          {
-            contains: value.toString()
-          };
+        where[id as keyof Prisma.StockOrderByWithRelationInput] = {
+          contains: value.toString()
+        };
       }
     });
   }
@@ -55,18 +50,19 @@ export const GET = async (request: NextRequest) => {
     ];
   }
 
-  let orderBy: Prisma.StockQuotesRealTimeOrderByWithRelationInput = {};
+  let orderBy: Prisma.StockOrderByWithRelationInput = {};
   if (parsedSorting.length) {
     parsedSorting.forEach(sort => {
       const { id, desc } = sort;
-      orderBy[id as keyof Prisma.StockQuotesRealTimeOrderByWithRelationInput] =
-        desc ? "desc" : "asc";
+      orderBy[id as keyof Prisma.StockOrderByWithRelationInput] = desc
+        ? "desc"
+        : "asc";
     });
   } else {
-    orderBy.newPrice = "desc";
+    orderBy.code = "asc";
   }
 
-  const data = await prisma.stockQuotesRealTime.findMany({
+  const data = await prisma.stock.findMany({
     where,
     skip: (page - 1) * pageSize,
     take: pageSize,
@@ -79,7 +75,7 @@ export const GET = async (request: NextRequest) => {
     orderBy
   });
 
-  const total = await prisma.stockQuotesRealTime
+  const total = await prisma.stock
     .groupBy({
       by: ["code"],
       where,

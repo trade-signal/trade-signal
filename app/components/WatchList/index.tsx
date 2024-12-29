@@ -15,7 +15,7 @@ import { WatchlistWithStocks } from "@/app/api/watchlist/list/route";
 import { useLoginContext } from "@/app/providers/LoginProvider";
 import { clientGet, post } from "@/shared/request";
 import { useState, useEffect } from "react";
-import { StockQuotesRealTime } from "@prisma/client";
+import { Stock, StockQuotesRealTime } from "@prisma/client";
 import WatchListItem from "./WatchListItem";
 
 const WatchList = () => {
@@ -41,7 +41,7 @@ const WatchList = () => {
   }, [userInfo]);
 
   const addMutation = useMutation({
-    mutationFn: (value: StockQuotesRealTime) =>
+    mutationFn: (value: Stock) =>
       post("/api/watchlist/add", {
         code: value.code,
         name: value.name,
@@ -55,7 +55,7 @@ const WatchList = () => {
   });
 
   const removeMutation = useMutation({
-    mutationFn: (value: StockQuotesRealTime) =>
+    mutationFn: (value: StockQuotesRealTime | Stock) =>
       post("/api/watchlist/remove", {
         code: value.code,
         watchlistId: currentWatchlist?.id,

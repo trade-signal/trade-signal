@@ -17,7 +17,7 @@ import {
   Text,
   Tooltip
 } from "@mantine/core";
-import { StockQuotesRealTime } from "@prisma/client";
+import { Stock } from "@prisma/client";
 import { IconMinus, IconPlus } from "@tabler/icons-react";
 import {
   MantineReactTable,
@@ -32,8 +32,8 @@ import { WatchlistWithStocks } from "@/app/api/watchlist/list/route";
 interface InstrumentSelectorModalProps {
   open: boolean;
   watchlist?: WatchlistWithStocks;
-  onAdd: (value: StockQuotesRealTime) => void;
-  onDelete: (value: StockQuotesRealTime) => void;
+  onAdd: (value: Stock) => void;
+  onDelete: (value: Stock) => void;
   onClose: () => void;
 }
 
@@ -56,14 +56,14 @@ const InstrumentSelectorModal = ({
   const [sorting, setSorting] = useState<MRT_SortingState>([]);
 
   const { data: filter } = useQuery({
-    queryKey: ["stock-quotes-filter"],
+    queryKey: ["stock-filter"],
     queryFn: () =>
-      clientGet("/api/stock-quotes/filter", {}) as Promise<{
+      clientGet("/api/stock/filter", {}) as Promise<{
         industries: string[];
       }>
   });
 
-  const columns: MRT_ColumnDef<StockQuotesRealTime>[] = [
+  const columns: MRT_ColumnDef<Stock>[] = [
     {
       accessorKey: "code",
       header: "代码"
@@ -90,9 +90,9 @@ const InstrumentSelectorModal = ({
     isLoading,
     isError
   } = useInfiniteQuery({
-    queryKey: ["stock-quotes-list", columnFilters, globalFilter, sorting],
+    queryKey: ["stock-list", columnFilters, globalFilter, sorting],
     queryFn: ({ pageParam = 0 }) =>
-      get("/api/stock-quotes/list", {
+      get("/api/stock/list", {
         page: pageParam + 1,
         pageSize,
         columnFilters: JSON.stringify(columnFilters ?? []),
@@ -145,7 +145,7 @@ const InstrumentSelectorModal = ({
     onClose();
   };
 
-  const table = useMantineReactTable<StockQuotesRealTime>({
+  const table = useMantineReactTable<Stock>({
     // 基础配置
     columns,
     data: flatData,

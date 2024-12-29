@@ -4,18 +4,9 @@ import prisma from "@/prisma/db";
 import { NextRequest } from "next/server";
 
 const getFirstStock = async () => {
-  const maxDate = await prisma.stockQuotesRealTime.findFirst({
-    select: { date: true },
-    orderBy: { date: "desc" }
-  });
-
-  if (!maxDate) return null;
-
-  const stock = await prisma.stockQuotesRealTime.findFirst({
+  const stock = await prisma.stock.findFirst({
     select: { code: true },
-    distinct: ["code"],
-    where: { date: maxDate?.date },
-    orderBy: { newPrice: "desc" }
+    orderBy: { code: "asc" }
   });
   return stock?.code ?? null;
 };
