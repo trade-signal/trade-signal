@@ -18,7 +18,7 @@ import {
   Tooltip
 } from "@mantine/core";
 import { StockQuotesRealTime } from "@prisma/client";
-import { IconPlus } from "@tabler/icons-react";
+import { IconMinus, IconPlus } from "@tabler/icons-react";
 import {
   MantineReactTable,
   useMantineReactTable,
@@ -54,10 +54,6 @@ const InstrumentSelectorModal = ({
   );
   const [globalFilter, setGlobalFilter] = useState<string>();
   const [sorting, setSorting] = useState<MRT_SortingState>([]);
-
-  console.log(columnFilters);
-  console.log(globalFilter);
-  console.log(sorting);
 
   const { data: filter } = useQuery({
     queryKey: ["stock-quotes-filter"],
@@ -234,11 +230,23 @@ const InstrumentSelectorModal = ({
     },
     renderRowActions: ({ row }) => (
       <Flex gap="md">
-        <Tooltip label="">
-          <ActionIcon onClick={() => onAdd(row.original)}>
-            <IconPlus size={rem(16)} />
-          </ActionIcon>
-        </Tooltip>
+        {watchlist?.stocks.some(stock => stock.code === row.original.code) ? (
+          <Tooltip label="移除自选">
+            <ActionIcon
+              variant="outline"
+              onClick={() => onDelete(row.original)}
+              color="red"
+            >
+              <IconMinus size={rem(16)} />
+            </ActionIcon>
+          </Tooltip>
+        ) : (
+          <Tooltip label="添加自选">
+            <ActionIcon variant="outline" onClick={() => onAdd(row.original)}>
+              <IconPlus size={rem(16)} />
+            </ActionIcon>
+          </Tooltip>
+        )}
       </Flex>
     ),
     renderBottomToolbarCustomActions: () => (
@@ -252,8 +260,8 @@ const InstrumentSelectorModal = ({
 
   return (
     <Modal
-      // opened={open}
-      opened
+      opened={open}
+      // opened
       onClose={handleClose}
       padding={0}
       closeButtonProps={{

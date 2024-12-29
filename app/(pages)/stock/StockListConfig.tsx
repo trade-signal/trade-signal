@@ -4,6 +4,7 @@ import {
   formatBillion,
   formatNumber,
   formatPercent,
+  formatYuan,
   renderSignal
 } from "@/app/components/tables/DataTable/util";
 
@@ -153,7 +154,7 @@ export const TAB_CONFIGS: TabConfig[] = [
         key: "dealAmount",
         title: "成交额",
         width: 120,
-        render: value => formatNumber(value),
+        render: value => formatYuan(value),
         sortable: true,
         align: "right"
       },

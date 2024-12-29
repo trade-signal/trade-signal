@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { HoverCard, Popover, Text, Tooltip } from "@mantine/core";
+import { HoverCard, Text } from "@mantine/core";
 import { ColumnAlign } from "./types";
 
 export const transformAlign = (align?: ColumnAlign) => {
@@ -15,7 +15,7 @@ export const generateRowKey = (
   order?: string
 ) => `row-${index}-${orderBy || ""}-${order || ""}`;
 
-const getColor = (value: number) => {
+export const getColor = (value: number) => {
   if (value > 0) return "red.7";
   if (value < 0) return "green.7";
   return "gray.7";
@@ -29,6 +29,7 @@ export const formatPercent = (value: number, decimals = 2) => {
     </Text>
   );
 };
+export const formatPercentPlain = (value: number) => value.toFixed(2);
 export const formatNumber = (value: number, decimals = 2) =>
   value.toFixed(decimals);
 export const formatBillion = (value: number) => (value / 100000000).toFixed(2);
@@ -45,6 +46,26 @@ export const renderSignal = (value: boolean) => {
       ✗
     </Text>
   );
+};
+export const formatYuan = (value: number) => {
+  if (!value && value !== 0) return "-";
+
+  const units = [
+    { value: 1e8, unit: "亿" },
+    { value: 1e4, unit: "万" },
+    { value: 1, unit: "" }
+  ];
+
+  for (const { value: unitValue, unit } of units) {
+    if (Math.abs(value) >= unitValue) {
+      const formatted = (value / unitValue).toFixed(2);
+      // 去除末尾的 .00
+      const display = formatted.replace(/\.00$/, "");
+      return `${display}${unit}`;
+    }
+  }
+
+  return "0";
 };
 
 export const formatDate = (value: string) => dayjs(value).format("YYYY-MM-DD");

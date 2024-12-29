@@ -1,10 +1,14 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/lib/auth";
 import prisma from "@/prisma/db";
-import { Watch, Watchlist } from "@prisma/client";
+import { Watch, Watchlist, StockQuotesRealTime } from "@prisma/client";
+
+export type WatchStock = Watch & {
+  quote: StockQuotesRealTime;
+};
 
 export type WatchlistWithStocks = Watchlist & {
-  stocks: Watch[];
+  stocks: WatchStock[];
 };
 
 export const GET = async () => {
@@ -65,7 +69,16 @@ export const GET = async () => {
     orderBy: [{ isTop: "desc" }, { order: "asc" }]
   });
 
-  // 4. 按 watchlistId 对股票进行分组
+  // 4. 获取股票的最新行情
+  const quotes = await prisma.stockQuotesRealTime.findMany({
+    where: {
+      code: { in: stocks.map(stock => stock.code) }
+    },
+    distinct: ["code"],
+    orderBy: { date: "desc" }
+  });
+
+  // 5. 按 watchlistId 对股票进行分组
   const stocksByWatchlist = stocks.reduce((acc, stock) => {
     if (!acc[stock.watchlistId]) {
       acc[stock.watchlistId] = [];
@@ -74,14 +87,17 @@ export const GET = async () => {
     return acc;
   }, {} as Record<string, typeof stocks>);
 
-  // 5. 组装最终数据
+  // 6. 组装最终数据
   const watchlistsWithStocks = watchlists.map(list => ({
     id: list.id,
     name: list.name,
     description: list.description,
     order: list.order,
     isDefault: list.isDefault,
-    stocks: stocksByWatchlist[list.id] || []
+    stocks: (stocksByWatchlist[list.id] || []).map(stock => ({
+      ...stock,
+      quote: quotes.find(quote => quote.code === stock.code)
+    }))
   })) as WatchlistWithStocks[];
 
   return Response.json({

@@ -65,22 +65,8 @@ const RightAside = () => {
     <nav className={classes.navbar}>
       <Box className={classes.wrapper}>
         <Stack className={classes.main}>
-          <SimpleGrid
-            h={"100%"}
-            cols={1}
-            verticalSpacing="xs"
-            style={{
-              borderRight:
-                "1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5))"
-            }}
-          >
-            <Box bg="white">
-              <WatchList />
-            </Box>
-            <Box bg="white">
-              <InstrumentDetail />
-            </Box>
-          </SimpleGrid>
+          <WatchList />
+          <InstrumentDetail />
         </Stack>
         <Stack gap="xs" className={classes.aside}>
           {mainLinks}
