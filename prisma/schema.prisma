@@ -263,6 +263,28 @@ model StockSelection {
   @@map("stock_selection")
 }
 
+// 股票基础信息表
+model Stock {
+  id String @id @default(cuid())
+
+  // 基本信息
+  code        String  @unique @db.VarChar(6) // 股票代码
+  name        String  @db.VarChar(20) // 股票名称
+  industry    String  @db.VarChar(50) // 所处行业
+  listingDate String  @db.VarChar(10) // 上市时间
+  status      String  @default("active") // 状态：active(正常)、suspended(停牌)、delisted(退市)
+  description String? @db.Text // 公司描述
+
+  // 系统字段
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([code]) // 代码索引
+  @@index([industry]) // 行业索引
+  @@index([status]) // 状态索引
+  @@map("stock")
+}
+
 // 股票实时行情
 model StockQuotesRealTime {
   id String @id @default(cuid())
