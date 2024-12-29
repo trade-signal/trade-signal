@@ -158,6 +158,7 @@ const AuthorizationModal = (props: AuthorizationModalProps) => {
             {currentType === "signup" && (
               <TextInput
                 required
+                name="name"
                 label="用户名"
                 placeholder="请输入用户名"
                 value={form.values.name}
@@ -165,33 +166,38 @@ const AuthorizationModal = (props: AuthorizationModalProps) => {
                   form.setFieldValue("name", event.currentTarget.value)
                 }
                 radius="md"
+                autoComplete="name"
+                error={form.errors.name && "用户名不能为空"}
               />
             )}
 
             <TextInput
               required
+              name="email"
               label="邮箱"
               placeholder="请输入邮箱"
               value={form.values.email}
               onChange={event =>
                 form.setFieldValue("email", event.currentTarget.value)
               }
-              error={form.errors.email && "Invalid email"}
+              error={form.errors.email && "邮箱格式错误"}
               radius="md"
+              autoComplete="email"
             />
             <PasswordInput
               required
+              name="password"
               label="密码"
               placeholder="请输入密码"
               value={form.values.password}
               onChange={event =>
                 form.setFieldValue("password", event.currentTarget.value)
               }
-              error={
-                form.errors.password &&
-                "Password should include at least 6 characters"
-              }
+              error={form.errors.password && "密码至少6位"}
               radius="md"
+              autoComplete={
+                currentType === "signup" ? "new-password" : "current-password"
+              }
             />
           </Stack>
 

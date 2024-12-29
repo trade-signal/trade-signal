@@ -1,15 +1,17 @@
-import { clientGet } from "@/shared/request";
-import { Group, Loader, rem, Stack, Text } from "@mantine/core";
-import { useActiveStock } from "@/app/providers/ActiveStockContent";
-import { StockQuotesRealTime } from "@prisma/client";
-import { useQuery } from "@tanstack/react-query";
-import { formatNumber, getColor } from "../tables/DataTable/util";
-import { formatPercentPlain } from "../tables/DataTable/util";
 import dayjs from "dayjs";
 import { useEffect } from "react";
+import { clientGet } from "@/shared/request";
+import { StockQuotesRealTime } from "@prisma/client";
+import { useQuery } from "@tanstack/react-query";
+import { Group, Loader, rem, Stack, Text } from "@mantine/core";
+import { useActiveStock } from "@/app/providers/ActiveStockContent";
+import { useLoginContext } from "@/app/providers/LoginProvider";
+import { formatNumber, getColor } from "../tables/DataTable/util";
+import { formatPercentPlain } from "../tables/DataTable/util";
 
 const InstrumentDetail = () => {
   const { activeStockCode } = useActiveStock();
+  const { userInfo } = useLoginContext();
 
   const {
     data: stock,
@@ -20,14 +22,19 @@ const InstrumentDetail = () => {
     queryFn: () =>
       clientGet("/api/watchlist/item", {
         code: activeStockCode || ""
-      }) as Promise<StockQuotesRealTime>
+      }) as Promise<StockQuotesRealTime>,
+    enabled: !!userInfo
   });
 
   useEffect(() => {
-    if (!activeStockCode) return;
+    if (!activeStockCode || !userInfo) return;
 
     refetch();
-  }, [activeStockCode]);
+  }, [activeStockCode, userInfo]);
+
+  if (!userInfo) {
+    return null;
+  }
 
   if (isLoading) {
     return (

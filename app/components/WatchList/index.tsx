@@ -12,29 +12,33 @@ import { useDisclosure } from "@mantine/hooks";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import InstrumentSelectorModal from "@/app/components/modals/InstrumentSelectorModal";
 import { WatchlistWithStocks } from "@/app/api/watchlist/list/route";
+import { useLoginContext } from "@/app/providers/LoginProvider";
 import { clientGet, post } from "@/shared/request";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { StockQuotesRealTime } from "@prisma/client";
 import WatchListItem from "./WatchListItem";
 
 const WatchList = () => {
+  const { userInfo } = useLoginContext();
   const [opened, { open, close }] = useDisclosure();
 
   const [currentWatchlist, setCurrentWatchlist] =
     useState<WatchlistWithStocks>();
 
-  const {
-    data: watchList,
-    isLoading,
-    refetch
-  } = useQuery({
+  const { isLoading, refetch } = useQuery({
     queryKey: ["watchlist-list"],
     queryFn: (): Promise<WatchlistWithStocks[]> =>
       clientGet("/api/watchlist/list", {}),
     onSuccess: data => {
       setCurrentWatchlist(data[0]);
-    }
+    },
+    enabled: !!userInfo
   });
+
+  useEffect(() => {
+    if (!userInfo) return;
+    refetch();
+  }, [userInfo]);
 
   const addMutation = useMutation({
     mutationFn: (value: StockQuotesRealTime) =>
@@ -62,6 +66,10 @@ const WatchList = () => {
       refetch();
     }
   });
+
+  if (!userInfo) {
+    return null;
+  }
 
   if (isLoading && !currentWatchlist) {
     return (
