@@ -12,7 +12,11 @@ const updateBatch = async (id: string, data: Partial<BatchUpdate>) => {
 };
 
 // 数据类型
-export type BatchType = "news" | "stock_selection" | "stock_quotes";
+export type BatchType =
+  | "news"
+  | "stock_base"
+  | "stock_selection"
+  | "stock_quotes";
 
 // 数据来源
 export type BatchSource = "sina" | "cls" | "eastmoney";
