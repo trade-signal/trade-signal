@@ -7,9 +7,7 @@ const getFirstStock = async () => {
   const stock = await prisma.stockQuotesRealTime.findFirst({
     select: { code: true },
     distinct: ["code"],
-    orderBy: {
-      date: "desc"
-    }
+    orderBy: [{ date: "desc" }, { newPrice: "desc" }]
   });
   return stock?.code ?? null;
 };
@@ -27,6 +25,8 @@ const getCode = async (session: Session | null, code: string | null) => {
       });
       if (stocks.length > 0) {
         code = stocks[0].code;
+      } else {
+        code = await getFirstStock();
       }
     } else {
       code = await getFirstStock();

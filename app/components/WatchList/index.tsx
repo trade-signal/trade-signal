@@ -97,7 +97,7 @@ const WatchList = () => {
           </Box>
         ))}
         {currentWatchlist?.stocks.length === 0 && (
-          <Text size="sm" c="dimmed">
+          <Text size="sm" c="dimmed" ml="xs">
             暂无自选股票
           </Text>
         )}

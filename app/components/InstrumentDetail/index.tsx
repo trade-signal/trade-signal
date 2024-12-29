@@ -10,7 +10,7 @@ import { formatNumber, getColor } from "../tables/DataTable/util";
 import { formatPercentPlain } from "../tables/DataTable/util";
 
 const InstrumentDetail = () => {
-  const { activeStockCode } = useActiveStock();
+  const { activeStockCode, setActiveStockCode } = useActiveStock();
   const { userInfo } = useLoginContext();
 
   const {
@@ -28,9 +28,18 @@ const InstrumentDetail = () => {
 
   useEffect(() => {
     if (!activeStockCode || !userInfo) return;
+    if (stock?.code === activeStockCode) return;
 
     refetch();
   }, [activeStockCode, userInfo]);
+
+  useEffect(() => {
+    if (!stock) return;
+
+    if (activeStockCode !== stock.code) {
+      setActiveStockCode(stock.code);
+    }
+  }, [stock]);
 
   if (!userInfo) {
     return null;
