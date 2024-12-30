@@ -29,7 +29,7 @@ docker-compose -p trade-signal -f docker/docker-compose.dev.yml up  -d
 
 将 `.env.example` 复制为 `.env`，并填写数据库连接信息(`DATABASE_URL` | `DIRECT_URL` 为必要的):
 
-```environment
+```properties
 # Connect to Supabase via connection pooling with Supavisor.
 DATABASE_URL=[Your Supabase Database URL]
 
