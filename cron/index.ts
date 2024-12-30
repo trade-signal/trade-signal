@@ -16,12 +16,13 @@ import {
 } from "./stock/stock_quotes";
 import { seedDailyStockQuotes } from "./stock/stock_quotes_daily";
 import { initStockBaseData } from "./stock/stock_base";
+import { clearTradeDates, isTradeDate } from "./stock/trade_date";
 
 const print = (message: string) => {
   console.log(`[cron] [${dayjs().format("YYYY-MM-DD HH:mm:ss")}] ${message}`);
 };
 
-const runSchedulerJobs = () => {
+const runStockScheduleJobs = () => {
   // 工作日运行:
   // - 早盘前: 9:00
   // - 早盘中: 10:00
@@ -30,6 +31,11 @@ const runSchedulerJobs = () => {
   // - 收盘后: 14:00
   // - 晚间: 15:00
   new CronJob("*/30 9,10,11,13,14,15 * * 1-5", () => {
+    if (!isTradeDate()) {
+      print("not trade date");
+      return;
+    }
+
     print("trigger seed stock quotes");
 
     seedStockQuotes();
@@ -37,13 +43,20 @@ const runSchedulerJobs = () => {
 
   // 工作日运行：16:00
   new CronJob("0 16 * * 1-5", () => {
+    if (!isTradeDate()) {
+      print("not trade date");
+      return;
+    }
+
     print("trigger seed stock base");
 
     seedStockQuotes();
     seedDailyStockQuotes();
     seedStockSelection();
   }).start();
+};
 
+const runNewsScheduleJobs = () => {
   // 工作日运行:
   // - 早盘前: 8:30
   // - 早盘中: 10:00
@@ -66,15 +79,19 @@ const runSchedulerJobs = () => {
 
     seedNews();
   }).start();
+};
 
+const runSchedulerJobs = () => {
   // 每天清晨 5:30 清理数据（在开盘前）
   new CronJob("30 5 * * *", () => {
-    print("trigger clean cron jobs");
-
+    clearTradeDates();
     cleanNews();
     cleanStockSelection();
     cleanStockQuotes();
   }).start();
+
+  runStockScheduleJobs();
+  runNewsScheduleJobs();
 };
 
 const runSeedJobs = async (runDate: string) => {

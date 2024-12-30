@@ -336,4 +336,9 @@ const initTradeDates = async () => {
   return tradeDates;
 };
 
+export const isTradeDate = (date?: string) => {
+  const tradeDate = dayjs(date).format("YYYY-MM-DD");
+  return tradeDates.includes(tradeDate);
+};
+
 export { tradeDates, initTradeDates, clearTradeDates };
