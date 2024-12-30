@@ -3,11 +3,26 @@ import { useEffect } from "react";
 import { clientGet } from "@/shared/request";
 import { StockQuotesRealTime } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
-import { Group, Loader, rem, Stack, Text } from "@mantine/core";
+import {
+  Group,
+  Loader,
+  rem,
+  Stack,
+  Text,
+  Divider,
+  ScrollArea,
+  Spoiler
+} from "@mantine/core";
 import { useActiveStock } from "@/app/providers/ActiveStockContent";
 import { useLoginContext } from "@/app/providers/LoginProvider";
-import { formatNumber, getColor } from "../tables/DataTable/util";
+import {
+  formatNumber,
+  formatVolume,
+  formatYuan,
+  getColor
+} from "../tables/DataTable/util";
 import { formatPercentPlain } from "../tables/DataTable/util";
+import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 
 const InstrumentDetail = () => {
   const { activeStockCode, setActiveStockCode } = useActiveStock();
@@ -54,30 +69,128 @@ const InstrumentDetail = () => {
   }
 
   return (
-    <Stack gap={0} p="xs" style={{ background: "white" }} h={"48vh"}>
-      <Stack gap={4}>
+    <ScrollArea
+      offsetScrollbars
+      p="xs"
+      style={{ background: "white" }}
+      h={"48vh"}
+    >
+      <Stack gap="xs">
         <Text size="sm" fw={500}>
-          {stock?.name} · {stock?.code}
+          {stock?.name} • {stock?.code}
         </Text>
         <Text size="xs" c="dimmed">
           {stock?.industry}
         </Text>
       </Stack>
-      <Group mt="md" align="flex-end">
+
+      <Group gap={4} mt="lg" align="flex-end">
         <Text size={rem(32)} fw={600}>
           {formatNumber(stock?.newPrice || 0)}
         </Text>
-        <Text size="sm" c={getColor(stock?.upsDowns || 0)}>
+        <Text ml="md" size="sm" c={getColor(stock?.upsDowns || 0)}>
           {formatNumber(stock?.upsDowns || 0)}
         </Text>
         <Text size="sm" c={getColor(stock?.changeRate || 0)}>
           {formatPercentPlain(stock?.changeRate || 0)}
         </Text>
       </Group>
+
       <Text mt="sm" size="xs" c="dimmed">
         最后更新时间：{dayjs(stock?.createdAt).format("YYYY-MM-DD HH:mm")}
       </Text>
-    </Stack>
+
+      <Stack mt="lg" gap="xs">
+        <Text size="sm" fw={600}>
+          关键统计
+        </Text>
+        <Spoiler
+          maxHeight={90}
+          showLabel={<IconChevronDown size={14} />}
+          hideLabel={<IconChevronUp size={14} />}
+          styles={{
+            control: {
+              padding: "4px 12px",
+              background: "var(--mantine-color-gray-0)",
+              borderRadius: "4px",
+              fontSize: rem(14),
+              transform: "translateX(100px)"
+            }
+          }}
+        >
+          <Group justify="space-between">
+            <Text size="xs">成交量</Text>
+            <Text size="xs" fw={600}>
+              {formatVolume(stock?.volume || 0)}
+            </Text>
+          </Group>
+          <Group justify="space-between">
+            <Text size="xs">成交额</Text>
+            <Text size="xs" fw={600}>
+              {formatYuan(stock?.dealAmount || 0)}
+            </Text>
+          </Group>
+          <Group justify="space-between">
+            <Text size="xs">换手率</Text>
+            <Text size="xs" fw={600}>
+              {formatPercentPlain(stock?.turnoverRate || 0)}
+            </Text>
+          </Group>
+          <Group justify="space-between">
+            <Text size="xs">量比</Text>
+            <Text size="xs" fw={600}>
+              {formatNumber(stock?.volumeRatio || 0)}
+            </Text>
+          </Group>
+          <Group justify="space-between">
+            <Text size="xs">振幅</Text>
+            <Text size="xs" fw={600}>
+              {formatPercentPlain(stock?.amplitude || 0)}
+            </Text>
+          </Group>
+
+          <Divider my="xs" />
+          <Group justify="space-between">
+            <Text size="xs">市盈率(TTM)</Text>
+            <Text size="xs" fw={600}>
+              {formatNumber(stock?.pe9 || 0)}
+            </Text>
+          </Group>
+          <Group justify="space-between">
+            <Text size="xs">市净率</Text>
+            <Text size="xs" fw={600}>
+              {formatNumber(stock?.pbnewmrq || 0)}
+            </Text>
+          </Group>
+          <Group justify="space-between">
+            <Text size="xs">基本每股收益(TTM)</Text>
+            <Text size="xs" fw={600}>
+              {formatYuan(stock?.basicEps || 0)}
+            </Text>
+          </Group>
+          <Group justify="space-between">
+            <Text size="xs">每股净资产（元）</Text>
+            <Text size="xs" fw={600}>
+              {formatYuan(stock?.bvps || 0)}
+            </Text>
+          </Group>
+
+          <Divider my="xs" />
+          <Group justify="space-between">
+            <Text size="xs">总市值</Text>
+            <Text size="xs" fw={600}>
+              {formatYuan(stock?.totalMarketCap || 0)}
+            </Text>
+          </Group>
+          <Group justify="space-between">
+            <Text size="xs">流通市值</Text>
+            <Text size="xs" fw={600}>
+              {formatYuan(stock?.freeCap || 0)}
+            </Text>
+          </Group>
+        </Spoiler>
+      </Stack>
+    </ScrollArea>
   );
 };
 
