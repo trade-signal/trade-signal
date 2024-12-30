@@ -105,11 +105,13 @@ const InstrumentDetail = () => {
           关键统计
         </Text>
         <Spoiler
-          maxHeight={90}
+          // maxHeight={100}
+          expanded={true}
           showLabel={<IconChevronDown size={14} />}
           hideLabel={<IconChevronUp size={14} />}
           styles={{
             control: {
+              display: "none",
               padding: "4px 12px",
               background: "var(--mantine-color-gray-0)",
               borderRadius: "4px",
