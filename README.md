@@ -25,9 +25,9 @@ _Fortune favors the bold, but risk management is key._
 
 ````bash
 docker-compose -p trade-signal -f docker/docker-compose.dev.yml up  -d
-```` 
+````
 
-在根目录下创建 .env 文件，并填写数据库连接信息:
+将 `.env.example` 复制为 `.env`，并填写数据库连接信息(`DATABASE_URL` | `DIRECT_URL` 为必要的):
 
 ```environment
 # Connect to Supabase via connection pooling with Supavisor.
@@ -46,7 +46,7 @@ GOOGLE_SECRET=[Your Google Secret]
 
 # NextAuth secret
 NEXTAUTH_SECRET=[Your NextAuth Secret]
-``` 
+```
 
 首次运行，需要生成 prisma 的 schema 并初始化数据库
 
@@ -59,7 +59,7 @@ npx prisma db push
 
 ````bash
 npm install && npm run dev
-```` 
+````
 
 
 ## 生产环境
