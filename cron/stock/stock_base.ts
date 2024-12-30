@@ -1,7 +1,6 @@
 import { get } from "@/shared/request";
 import prisma from "@/prisma/db";
 import { createLogger, transformStockData } from "../util";
-import dayjs from "dayjs";
 import { updateBatchStatus } from "../batch";
 import { initBatch } from "../batch";
 import { stockBaseIndicatorMapping } from "./stock_base_indicator";
@@ -51,9 +50,7 @@ export const checkStockBase = async () => {
   return stocks.length > 0;
 };
 
-export const seedStockBase = async (date?: string) => {
-  const currentDate = dayjs(date).format("YYYY-MM-DD");
-
+export const seedStockBase = async () => {
   const batch = await initBatch("stock_base", "eastmoney");
 
   try {

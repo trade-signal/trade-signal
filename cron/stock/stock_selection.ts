@@ -85,11 +85,17 @@ const getStocks = async (): Promise<Partial<StockSelection>[]> => {
   return stocks;
 };
 
-export const checkStocks = async (date?: string) => {
-  const stocks = await prisma.stockSelection.findMany({
-    where: { date: dayjs(date).format("YYYY-MM-DD") }
+// 清理历史数据，只保留最新一个交易日数据
+export const cleanStockSelection = async () => {
+  const lastDate = await prisma.stockSelection.findFirst({
+    orderBy: { date: "desc" },
+    select: { date: true }
   });
-  return stocks.length > 0;
+  if (lastDate) {
+    await prisma.stockSelection.deleteMany({
+      where: { date: { lt: lastDate.date } }
+    });
+  }
 };
 
 export const seedStockSelection = async (date?: string) => {
@@ -142,6 +148,13 @@ export const seedStockSelection = async (date?: string) => {
     await updateBatchStatus(batch.id, "failed");
     print(`getStockSelection error: ${error}`);
   }
+};
+
+export const checkStocks = async (date?: string) => {
+  const stocks = await prisma.stockSelection.findMany({
+    where: { date: dayjs(date).format("YYYY-MM-DD") }
+  });
+  return stocks.length > 0;
 };
 
 export const initStockSelectionData = async (runDate: string) => {

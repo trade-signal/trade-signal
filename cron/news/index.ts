@@ -8,7 +8,7 @@ const spider_name = "news";
 const print = createLogger(spider_name);
 
 // 清除超过7天的数据
-const clearOldNews = async () => {
+export const cleanNews = async () => {
   print("check if there is data older than 7 days");
 
   const result = await prisma.news.deleteMany({
@@ -44,9 +44,6 @@ export const checkNews = async (date?: string) => {
 export const seedNews = async () => {
   try {
     print(`start get news`);
-
-    // 清理历史数据
-    await clearOldNews();
 
     // 获取新闻数据
     await Promise.all([seedSinaNews(), seedClsNews()]);

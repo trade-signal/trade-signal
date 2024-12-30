@@ -4,12 +4,18 @@ import { CronJob } from "cron";
 import dayjs from "dayjs";
 import { getRunDate } from "@/shared/date";
 import {
+  cleanStockSelection,
   initStockSelectionData,
   seedStockSelection
 } from "./stock/stock_selection";
-import { initNewsData, seedNews } from "./news";
-import { initStockQuotesData, seedStockQuotes } from "./stock/stock_quotes";
-import { initStockBaseData, seedStockBase } from "./stock/stock_base";
+import { cleanNews, initNewsData, seedNews } from "./news";
+import {
+  cleanStockQuotes,
+  initStockQuotesData,
+  seedStockQuotes
+} from "./stock/stock_quotes";
+import { seedDailyStockQuotes } from "./stock/stock_quotes_daily";
+import { initStockBaseData } from "./stock/stock_base";
 
 const print = (message: string) => {
   console.log(`[cron] [${dayjs().format("YYYY-MM-DD HH:mm:ss")}] ${message}`);
@@ -24,13 +30,17 @@ const runSchedulerJobs = () => {
   // - 收盘后: 14:00
   // - 晚间: 15:00
   new CronJob("*/30 9,10,11,13,14,15 * * 1-5", () => {
+    print("trigger seed stock quotes");
+
     seedStockQuotes();
   }).start();
 
   // 工作日运行：16:00
   new CronJob("0 16 * * 1-5", () => {
-    seedStockBase();
+    print("trigger seed stock base");
+
     seedStockQuotes();
+    seedDailyStockQuotes();
     seedStockSelection();
   }).start();
 
@@ -42,6 +52,8 @@ const runSchedulerJobs = () => {
   // - 收盘后: 15:30
   // - 晚间: 19:30, 21:30
   new CronJob("30 8,10,12,14,15,19,21 * * 1-5", () => {
+    print("trigger seed news");
+
     seedNews();
   }).start();
 
@@ -50,16 +62,27 @@ const runSchedulerJobs = () => {
   // - 下午: 14:30, 16:30
   // - 晚间: 19:30, 21:30
   new CronJob("30 8,10,14,16,19,21 * * 0,6", () => {
+    print("trigger seed news");
+
     seedNews();
+  }).start();
+
+  // 每天清晨 5:30 清理数据（在开盘前）
+  new CronJob("30 5 * * *", () => {
+    print("trigger clean cron jobs");
+
+    cleanNews();
+    cleanStockSelection();
+    cleanStockQuotes();
   }).start();
 };
 
 const runSeedJobs = async (runDate: string) => {
   await Promise.all([
-    initNewsData(runDate),
     initStockBaseData(),
     initStockSelectionData(runDate),
-    initStockQuotesData(runDate)
+    initStockQuotesData(runDate),
+    initNewsData(runDate)
   ]);
 };
 

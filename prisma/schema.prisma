@@ -285,6 +285,36 @@ model Stock {
   @@map("stock")
 }
 
+// 股票历史行情 日线
+model StockQuotesDaily {
+  id String @id @default(cuid())
+
+  // 基础信息
+  date String @db.VarChar(10) // 交易日期
+  code String @db.VarChar(6) // 股票代码
+  name String @db.VarChar(20) // 股票名称
+
+  // 核心价格指标（OHLC）
+  openPrice     Float // 开盘价
+  highPrice     Float // 最高价
+  lowPrice      Float // 最低价
+  closePrice    Float // 收盘价
+  preClosePrice Float // 前收价
+
+  // 成交指标
+  volume     Float // 成交量
+  dealAmount Float // 成交额
+
+  // 系统字段
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([date, code])
+  @@index([date])
+  @@index([code])
+  @@map("stock_quotes_daily")
+}
+
 // 股票实时行情
 model StockQuotesRealTime {
   id String @id @default(cuid())

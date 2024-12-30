@@ -4,9 +4,9 @@ import { createLogger, transformStockData } from "../util";
 import dayjs from "dayjs";
 import { updateBatchStatus } from "../batch";
 import { initBatch } from "../batch";
-import { quotesIndicatorMapping } from "./stock_quotes_indicator";
+import { quotesDailyIndicatorMapping } from "./stock_quotes_daily_indicator";
 
-const spider_name = "stock_quotes";
+const spider_name = "stock_quotes_daily";
 const print = createLogger(spider_name, "stock");
 
 /**
@@ -30,8 +30,7 @@ const getRealtimeStockQuotes = async () => {
       invt: "2",
       fid: "f3",
       fs: "m:0 t:6,m:0 t:80,m:1 t:2,m:1 t:23,m:0 t:81 s:2048",
-      fields:
-        "f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f14,f15,f16,f17,f18,f20,f21,f22,f23,f24,f25,f26,f37,f38,f39,f40,f41,f45,f46,f48,f49,f57,f61,f100,f112,f113,f114,f115,f221"
+      fields: "f12,f14,f15,f16,f17,f18,f5,f6"
     });
 
     if (response.data && response.data.diff) {
@@ -47,31 +46,10 @@ const getRealtimeStockQuotes = async () => {
   }
 };
 
-// 清除超过7个交易日的数据，避免数据量过大
-export const cleanStockQuotes = async (date?: string) => {
-  // 获取最近的股票数据记录，按日期降序排列并去重
-  const tradingDays = await prisma.stockQuotesRealTime.findMany({
-    select: { date: true },
-    distinct: ["date"],
-    orderBy: { date: "desc" }
-  });
-
-  // 如果有超过7个交易日的数据
-  if (tradingDays.length > 7) {
-    // 获取第7个交易日的日期作为截止日期
-    const cutoffDate = tradingDays[6].date;
-
-    // 删除这个日期之前的所有数据
-    await prisma.stockQuotesRealTime.deleteMany({
-      where: { date: { lt: cutoffDate } }
-    });
-  }
-};
-
-export const seedStockQuotes = async (date?: string) => {
+export const seedDailyStockQuotes = async (date?: string) => {
   const currentDate = dayjs(date).format("YYYY-MM-DD");
 
-  const batch = await initBatch("stock_quotes", "eastmoney");
+  const batch = await initBatch("stock_quotes_daily", "eastmoney");
 
   try {
     print(`start get realtimeStockQuotes`);
@@ -82,22 +60,15 @@ export const seedStockQuotes = async (date?: string) => {
 
     print(`get ${stocks.length} stocks`);
 
-    if (stocks.length === 0) {
-      print(`realtimeStockQuotes is empty`);
-      return;
-    }
-
     await updateBatchStatus(batch.id, "transforming");
 
-    let list = transformStockData(stocks, quotesIndicatorMapping);
+    let list = transformStockData(stocks, quotesDailyIndicatorMapping);
     // newPrice > 0, 过滤掉停牌的股票
     list = list.filter(item => Number(item.newPrice) > 0);
     // 添加日期
     list = list.map(item => ({ ...item, date: currentDate }));
 
-    print(`start write realtimeStockQuotes`);
-
-    await prisma.stockQuotesRealTime.createMany({
+    await prisma.stockQuotesDaily.createMany({
       data: list as any,
       skipDuplicates: true
     });
@@ -108,22 +79,4 @@ export const seedStockQuotes = async (date?: string) => {
     await updateBatchStatus(batch.id, "failed");
     print(`getRealtimeStockQuotes error: ${error}`);
   }
-};
-
-export const checkStockQuotes = async (date?: string) => {
-  const quotes = await prisma.stockQuotesRealTime.findMany({
-    where: { date: dayjs(date).format("YYYY-MM-DD") }
-  });
-  return quotes.length > 0;
-};
-
-export const initStockQuotesData = async (date?: string) => {
-  const hasQuotes = await checkStockQuotes(date);
-
-  if (hasQuotes) {
-    print("realtimeStockQuotes available! No need to seed.");
-    return;
-  }
-
-  await seedStockQuotes(date);
 };
