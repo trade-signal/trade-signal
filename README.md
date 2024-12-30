@@ -47,11 +47,20 @@ GOOGLE_SECRET=[Your Google Secret]
 # NextAuth secret
 NEXTAUTH_SECRET=[Your NextAuth Secret]
 ``` 
+
+首次运行，需要生成 prisma 的 schema 并初始化数据库
+
+````bash
+npx prisma generate
+npx prisma db push
+````
+
 安装依赖并启动服务
 
 ````bash
 npm install && npm run dev
 ```` 
+
 
 ## 生产环境
 
