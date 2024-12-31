@@ -12,13 +12,6 @@ _Fortune favors the bold, but risk management is key._
 
 </div>
 
-## 功能特性
-
-* 技术分析：整合 MACD、KDJ、BOLL 等核心指标分析
-* 形态识别：自动检测头肩顶、双底等关键形态
-* 选股引擎：融合技术、基本面、资金面数据筛选标的
-* 策略回测：构建个性化选股策略并进行历史回测
-
 ## 开发环境
 
 使用 docker-compose 启动 postgres:
