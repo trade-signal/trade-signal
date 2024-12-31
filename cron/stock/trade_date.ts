@@ -328,7 +328,7 @@ const clearTradeDates = () => {
   tradeDates = [];
 };
 
-const initTradeDates = async () => {
+const getTradeDates = async () => {
   if (tradeDates.length === 0) {
     const dates = await getTradeDate();
     tradeDates = dates;
@@ -336,9 +336,12 @@ const initTradeDates = async () => {
   return tradeDates;
 };
 
+export const refreshTradeDates = async () => {
+  clearTradeDates();
+  await getTradeDates();
+};
+
 export const isTradeDate = (date?: string) => {
   const tradeDate = dayjs(date).format("YYYY-MM-DD");
   return tradeDates.includes(tradeDate);
 };
-
-export { tradeDates, initTradeDates, clearTradeDates };
