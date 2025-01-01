@@ -48,7 +48,9 @@ const getRealtimeStockQuotes = async () => {
 };
 
 // 清除超过7个交易日的数据，避免数据量过大
-export const cleanStockQuotes = async (date?: string) => {
+export const cleanStockQuotes = async () => {
+  print("clean stock quotes");
+
   // 获取最近的股票数据记录，按日期降序排列并去重
   const tradingDays = await prisma.stockQuotesRealTime.findMany({
     select: { date: true },
@@ -62,10 +64,13 @@ export const cleanStockQuotes = async (date?: string) => {
     const cutoffDate = tradingDays[6].date;
 
     // 删除这个日期之前的所有数据
-    await prisma.stockQuotesRealTime.deleteMany({
+    const result = await prisma.stockQuotesRealTime.deleteMany({
       where: { date: { lt: cutoffDate } }
     });
+    print(`clean ${result.count} data`);
+    return;
   }
+  print("no data to clean");
 };
 
 export const seedStockQuotes = async (date?: string) => {

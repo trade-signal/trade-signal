@@ -81,15 +81,20 @@ const runNewsScheduleJobs = () => {
   }).start();
 };
 
-const runSchedulerJobs = () => {
+const runClearScheduleJobs = () => {
   // 每天清晨 5:30 清理数据（在开盘前）
   new CronJob("30 5 * * *", () => {
+    print("trigger clear data");
+
     refreshTradeDates();
     cleanNews();
     cleanStockSelection();
     cleanStockQuotes();
   }).start();
+};
 
+const runSchedulerJobs = () => {
+  runClearScheduleJobs();
   runStockScheduleJobs();
   runNewsScheduleJobs();
 };

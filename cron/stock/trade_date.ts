@@ -1,4 +1,8 @@
 import dayjs from "dayjs";
+import { createLogger } from "../util";
+
+const spider_name = "trade_date";
+const print = createLogger(spider_name);
 
 // 解码
 const hk_js_decode = `
@@ -337,8 +341,10 @@ const getTradeDates = async () => {
 };
 
 export const refreshTradeDates = async () => {
+  print("refresh trade dates");
   clearTradeDates();
   await getTradeDates();
+  print("refresh trade dates success");
 };
 
 export const isTradeDate = (date?: string) => {

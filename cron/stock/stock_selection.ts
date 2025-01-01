@@ -87,15 +87,19 @@ const getStocks = async (): Promise<Partial<StockSelection>[]> => {
 
 // 清理历史数据，只保留最新一个交易日数据
 export const cleanStockSelection = async () => {
+  print("clean stock selection");
   const lastDate = await prisma.stockSelection.findFirst({
     orderBy: { date: "desc" },
     select: { date: true }
   });
   if (lastDate) {
-    await prisma.stockSelection.deleteMany({
+    const result = await prisma.stockSelection.deleteMany({
       where: { date: { lt: lastDate.date } }
     });
+    print(`clean ${result.count} data`);
+    return;
   }
+  print("no data to clean");
 };
 
 export const seedStockSelection = async (date?: string) => {
