@@ -29,10 +29,13 @@ export const formatPercent = (value: number, decimals = 2) => {
     </Text>
   );
 };
-export const formatPercentPlain = (value: number) => value.toFixed(2);
+export const formatPercentPlain = (value: number) => value.toFixed(2) + "%";
+
 export const formatNumber = (value: number, decimals = 2) =>
   value.toFixed(decimals);
+
 export const formatBillion = (value: number) => (value / 100000000).toFixed(2);
+
 export const renderSignal = (value: boolean) => {
   if (value) {
     return (
@@ -47,7 +50,8 @@ export const renderSignal = (value: boolean) => {
     </Text>
   );
 };
-export const formatYuan = (value: number) => {
+
+export const formatLargeNumber = (value: number) => {
   if (!value && value !== 0) return "-";
 
   const units = [
@@ -67,6 +71,8 @@ export const formatYuan = (value: number) => {
 
   return "0";
 };
+export const formatVolume = formatLargeNumber;
+export const formatYuan = formatLargeNumber;
 
 export const formatDate = (value: string) => dayjs(value).format("YYYY-MM-DD");
 export const formatDateE = (value: string) =>

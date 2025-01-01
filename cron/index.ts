@@ -16,7 +16,7 @@ import {
 } from "./stock/stock_quotes";
 import { seedDailyStockQuotes } from "./stock/stock_quotes_daily";
 import { initStockBaseData } from "./stock/stock_base";
-import { clearTradeDates, isTradeDate } from "./stock/trade_date";
+import { isTradeDate, refreshTradeDates } from "./stock/trade_date";
 
 const print = (message: string) => {
   console.log(`[cron] [${dayjs().format("YYYY-MM-DD HH:mm:ss")}] ${message}`);
@@ -84,7 +84,7 @@ const runNewsScheduleJobs = () => {
 const runSchedulerJobs = () => {
   // 每天清晨 5:30 清理数据（在开盘前）
   new CronJob("30 5 * * *", () => {
-    clearTradeDates();
+    refreshTradeDates();
     cleanNews();
     cleanStockSelection();
     cleanStockQuotes();
@@ -111,7 +111,9 @@ async function main() {
   console.log(`run environment: ${process.env.NODE_ENV || "development"}`);
 
   if (process.env.NODE_ENV === "production") {
-    console.log("Running scheduler jobs...");
+    console.log("refresh trade dates");
+    await refreshTradeDates();
+    console.log("run scheduler jobs");
     runSchedulerJobs();
     return;
   }
