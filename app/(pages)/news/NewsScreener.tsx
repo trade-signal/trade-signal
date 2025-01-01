@@ -99,7 +99,7 @@ const NewsScreener = () => {
 
   return (
     <Stack mt={10} mb={10}>
-      <Title order={5}>新闻筛选器</Title>
+      <Title order={5}>新闻流</Title>
 
       <Group mih={45}>
         <ScreenerSelect
