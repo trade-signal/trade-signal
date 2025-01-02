@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import { error } from "../../shared/logger";
 
 // 解码
 const hk_js_decode = `
@@ -316,8 +317,8 @@ const getTradeDate = async () => {
     const decode = decodeTradeDate(data);
 
     return transformTradeDate(decode);
-  } catch (error) {
-    console.log(`getTradeDate error: ${error}`);
+  } catch (err) {
+    error(`getTradeDate error: ${err}`);
     return [];
   }
 };
