@@ -110,7 +110,7 @@ export const quotesDailyIndicatorMapping = {
   ...tradingIndicators
 };
 
-// 股票指标 - 指数
+// 股票指标 - 指数 - 实时行情
 export const quotesIndexIndicatorMapping = {
   ...basicIndicators,
   ...priceIndicators,

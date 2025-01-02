@@ -17,7 +17,8 @@ export type BatchType =
   | "stock_base"
   | "stock_selection"
   | "stock_quotes"
-  | "stock_quotes_daily";
+  | "stock_quotes_daily"
+  | "stock_index";
 
 // 数据来源
 export type BatchSource = "sina" | "cls" | "eastmoney";

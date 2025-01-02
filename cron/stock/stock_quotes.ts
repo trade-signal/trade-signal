@@ -12,22 +12,18 @@ const print = createLogger(spider_name, "stock");
 export const cleanStockQuotes = async () => {
   print("clean stock quotes");
 
-  // 获取最近的股票数据记录，按日期降序排列并去重
   const tradingDays = await prisma.stockQuotesRealTime.findMany({
     select: { date: true },
     distinct: ["date"],
     orderBy: { date: "desc" }
   });
 
-  // 如果有超过7个交易日的数据
   if (tradingDays.length > 7) {
-    // 获取第7个交易日的日期作为截止日期
     const cutoffDate = tradingDays[6].date;
-
-    // 删除这个日期之前的所有数据
     const result = await prisma.stockQuotesRealTime.deleteMany({
       where: { date: { lt: cutoffDate } }
     });
+
     print(`clean ${result.count} data`);
     return;
   }

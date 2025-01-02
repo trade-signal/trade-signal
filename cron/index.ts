@@ -17,9 +17,24 @@ import {
 import { seedDailyStockQuotes } from "./stock/stock_quotes_daily";
 import { initStockBaseData } from "./stock/stock_base";
 import { isTradeDate, refreshTradeDates } from "./stock/trade_date";
+import { initStockIndexData, seedIndex } from "./stock/stock_index";
 
 const print = (message: string) => {
   console.log(`[cron] [${dayjs().format("YYYY-MM-DD HH:mm:ss")}] ${message}`);
+};
+
+// 是否是交易时段
+const isTradeTime = () => {
+  const now = dayjs();
+  const hour = now.hour();
+  const minute = now.minute();
+
+  return (
+    (hour === 9 && minute < 30) || // 9:30 前
+    (hour === 11 && minute >= 30) || // 11:30 后
+    hour === 12 || // 午休时间
+    (hour === 15 && minute > 0) // 15:00 后;
+  );
 };
 
 const runStockScheduleJobs = () => {
@@ -32,21 +47,14 @@ const runStockScheduleJobs = () => {
       return;
     }
 
-    const now = dayjs();
-    const hour = now.hour();
-    const minute = now.minute();
-
-    // 跳过非交易时段
-    if (
-      (hour === 9 && minute < 30) || // 9:30 前
-      (hour === 11 && minute >= 30) || // 11:30 后
-      hour === 12 || // 午休时间
-      (hour === 15 && minute > 0) // 15:00 后
-    ) {
+    if (!isTradeTime()) {
+      print("not trade time");
       return;
     }
 
-    print("trigger seed stock quotes");
+    print(`trigger seed stock quotes realtime`);
+
+    await seedIndex();
     await seedStockQuotes();
   }).start();
 
@@ -57,7 +65,7 @@ const runStockScheduleJobs = () => {
       return;
     }
 
-    print("trigger seed stock base");
+    print(`trigger seed stock quotes daily`);
 
     seedStockQuotes();
     seedDailyStockQuotes();
@@ -89,7 +97,7 @@ const runNewsScheduleJobs = () => {
 const runClearScheduleJobs = () => {
   // 每天清晨 5:30 清理数据（在开盘前）
   new CronJob("30 5 * * *", () => {
-    print("trigger clear data");
+    print("trigger clear data before trade");
 
     refreshTradeDates();
     cleanNews();
@@ -109,6 +117,7 @@ const runSeedJobs = async (runDate: string) => {
     initStockBaseData(),
     initStockSelectionData(runDate),
     initStockQuotesData(runDate),
+    initStockIndexData(runDate),
     initNewsData(runDate)
   ]);
 };
