@@ -1,8 +1,11 @@
 import prisma from "@/prisma/db";
-import { createLogger, getIndicatorFields, transformStockData } from "../util";
+import {
+  createLogger,
+  getIndicatorFields,
+  transformStockData
+} from "@/cron/util";
 import dayjs from "dayjs";
-import { updateBatchStatus } from "../batch";
-import { initBatch } from "../batch";
+import { updateBatchStatus, initBatch } from "@/cron/common/batch";
 import { getRealtimeStockQuotes, quotesIndicatorMapping } from "./api";
 
 const spider_name = "stock_quotes";

@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
+import { createLogger } from "@/cron/util";
 import { getTradeDate } from "./api";
-import { createLogger } from "../util";
 
 const spider_name = "trade_date";
 const print = createLogger(spider_name);

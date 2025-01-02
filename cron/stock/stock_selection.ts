@@ -1,8 +1,8 @@
 import prisma from "@/prisma/db";
 import { StockSelection } from "@prisma/client";
 import dayjs from "dayjs";
-import { initBatch, updateBatchStatus } from "../batch";
-import { createLogger, transformStockData } from "../util";
+import { initBatch, updateBatchStatus } from "@/cron/common/batch";
+import { createLogger, transformStockData } from "@/cron/util";
 import { getStockSelection, selectionIndicatorMapping } from "./api";
 
 const spider_name = "stock_selection";

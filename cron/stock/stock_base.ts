@@ -1,7 +1,10 @@
 import prisma from "@/prisma/db";
-import { createLogger, getIndicatorFields, transformStockData } from "../util";
-import { updateBatchStatus } from "../batch";
-import { initBatch } from "../batch";
+import {
+  createLogger,
+  getIndicatorFields,
+  transformStockData
+} from "@/cron/util";
+import { updateBatchStatus, initBatch } from "@/cron/common/batch";
 import { getRealtimeStockQuotes, quotesBaseIndicatorMapping } from "./api";
 
 const spider_name = "stock_base";

@@ -1,4 +1,4 @@
-import { IndicatorType } from "../../type";
+import { IndicatorType } from "@/cron/type";
 
 // 基本信息指标
 const basicIndicators = {

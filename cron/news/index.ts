@@ -1,8 +1,8 @@
 import dayjs from "dayjs";
 import prisma from "@/prisma/db";
-import { createLogger } from "../util";
-import { seedSinaNews } from "./sina";
-import { seedClsNews } from "./cls";
+import { createLogger } from "@/cron/util";
+import { seedSinaNews } from "@/cron/news/sina";
+import { seedClsNews } from "@/cron/news/cls";
 
 const spider_name = "news";
 const print = createLogger(spider_name);
