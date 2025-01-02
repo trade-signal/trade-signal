@@ -23,25 +23,34 @@ const print = (message: string) => {
 };
 
 const runStockScheduleJobs = () => {
-  // 工作日运行:
-  // - 早盘前: 9:00
-  // - 早盘中: 10:00
-  // - 午间: 11:00
-  // - 午盘中: 13:00
-  // - 收盘后: 14:00
-  // - 晚间: 15:00
-  new CronJob("*/30 9,10,11,13,14,15 * * 1-5", () => {
+  // 交易时段实时行情抓取
+  // 开盘期间 (9:30-11:30, 13:00-15:00) 每3分钟抓取一次
+  // 其他时段 (9:00-9:30, 11:30-13:00, 15:00-15:30) 每10分钟抓取一次
+  new CronJob("*/3 9-11,13-14 * * 1-5", async () => {
     if (!isTradeDate()) {
       print("not trade date");
       return;
     }
 
-    print("trigger seed stock quotes");
+    const now = dayjs();
+    const hour = now.hour();
+    const minute = now.minute();
 
-    seedStockQuotes();
+    // 跳过非交易时段
+    if (
+      (hour === 9 && minute < 30) || // 9:30 前
+      (hour === 11 && minute >= 30) || // 11:30 后
+      hour === 12 || // 午休时间
+      (hour === 15 && minute > 0) // 15:00 后
+    ) {
+      return;
+    }
+
+    print("trigger seed stock quotes");
+    await seedStockQuotes();
   }).start();
 
-  // 工作日运行：16:00
+  // 收盘后运行：16:00
   new CronJob("0 16 * * 1-5", () => {
     if (!isTradeDate()) {
       print("not trade date");
@@ -58,25 +67,21 @@ const runStockScheduleJobs = () => {
 
 const runNewsScheduleJobs = () => {
   // 工作日运行:
-  // - 早盘前: 8:30
-  // - 早盘中: 10:00
-  // - 午间: 12:00
-  // - 午盘中: 14:00
-  // - 收盘后: 15:30
-  // - 晚间: 19:30, 21:30
-  new CronJob("30 8,10,12,14,15,19,21 * * 1-5", () => {
+  // 交易时段 (9:00-11:30, 13:00-15:00) 每15分钟抓取一次
+  // 其他时段 (8:30-9:00, 11:30-13:00, 15:00-21:30) 每30分钟抓取一次
+  new CronJob("*/15 9-11,13-14 * * 1-5", () => {
     print("trigger seed news");
-
     seedNews();
   }).start();
 
-  // 非工作日运行:
-  // - 上午: 8:30, 10:30
-  // - 下午: 14:30, 16:30
-  // - 晚间: 19:30, 21:30
-  new CronJob("30 8,10,14,16,19,21 * * 0,6", () => {
+  new CronJob("*/30 8,12,15-21 * * 1-5", () => {
     print("trigger seed news");
+    seedNews();
+  }).start();
 
+  // 非工作日运行: 每小时抓取一次
+  new CronJob("0 9-21 * * 0,6", () => {
+    print("trigger seed news");
     seedNews();
   }).start();
 };
