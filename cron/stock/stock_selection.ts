@@ -1,51 +1,12 @@
-import { get } from "@/shared/request";
 import prisma from "@/prisma/db";
 import { StockSelection } from "@prisma/client";
 import dayjs from "dayjs";
 import { initBatch, updateBatchStatus } from "../batch";
-import { selectionIndicatorMapping } from "./stock_selection_indicator";
 import { createLogger, transformStockData } from "../util";
+import { getStockSelection, selectionIndicatorMapping } from "./api";
 
 const spider_name = "stock_selection";
 const print = createLogger(spider_name);
-
-/**
- * 选股指标
- *
- * 东方财富网-个股-选股器
- * https://data.eastmoney.com/xuangu/
- *
- * @param page 页码
- * @param pageSize 每页数量
- */
-const getStockSelection = async (page: number, pageSize: number) => {
-  try {
-    const url = `https://data.eastmoney.com/dataapi/xuangu/list`;
-
-    // 选股指标 初始值 "SECUCODE,SECURITY_CODE,SECURITY_NAME_ABBR,CHANGE_RATE"
-    const sty = Object.values(selectionIndicatorMapping)
-      .map(item => item.map)
-      .join(",");
-
-    // 过滤条件
-    // const filter = `(MARKET+in+("上交所主板","深交所主板","深交所创业板","上交所科创板","上交所风险警示板","深交所风险警示板","北京证券交易所"))(NEW_PRICE>0)`;
-    const filter = `(MARKET+in+("上交所主板","深交所主板","深交所创业板","上交所科创板"))(NEW_PRICE>0)`;
-
-    const response = await get(url, {
-      sty,
-      filter: filter,
-      p: page,
-      ps: pageSize,
-      source: "SELECT_SECURITIES",
-      client: "WEB"
-    });
-
-    return response;
-  } catch (error) {
-    print(`getStockSelection error: ${error}`);
-    return [];
-  }
-};
 
 const getStocks = async (): Promise<Partial<StockSelection>[]> => {
   let page = 1;
