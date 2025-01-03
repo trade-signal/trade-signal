@@ -100,7 +100,8 @@ const otherIndicators = {
 export const quotesBaseIndicatorMapping = {
   ...basicIndicators,
   newPrice: priceIndicators.newPrice,
-  ...otherIndicators
+  industry: otherIndicators.industry,
+  listingDate: otherIndicators.listingDate
 };
 
 // 股票指标 - 日线
