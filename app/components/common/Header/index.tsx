@@ -39,7 +39,7 @@ interface Link {
 }
 
 const links: Link[] = [
-  { link: "/market", label: "市场", disabled: true },
+  { link: "/market", label: "市场" },
   { link: "/news", label: "新闻" },
   { link: "/stock", label: "股票" },
   {
