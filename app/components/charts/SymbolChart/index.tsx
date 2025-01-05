@@ -30,13 +30,42 @@ interface SymbolChartProps {
 }
 
 const SymbolChart = ({ code, name, latest, trends }: SymbolChartProps) => {
-  const [chartType, setChartType] = useState<"line" | "candle">("candle");
+  const [chartType, setChartType] = useState<"line" | "candle">("line");
 
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<any, any>[]>([]);
 
-  const handleChartTypeChange = (chart: IChartApi, type: "line" | "candle") => {
+  const createSymbolChart = (chartContainerRef: HTMLDivElement) => {
+    const chartOptions: DeepPartial<ChartOptions> = {
+      layout: {
+        textColor: "black",
+        background: { type: "solid" as ColorType, color: "white" },
+        attributionLogo: false
+      },
+      autoSize: true,
+      localization: {
+        locale: "zh-CN",
+        priceFormatter: (price: number) => price && price.toFixed(2),
+        timeFormatter: (time: number) => {
+          return dayjs.unix(time).format("MM-DD HH:mm");
+        }
+      },
+      timeScale: {
+        timeVisible: true,
+        secondsVisible: false,
+        tickMarkFormatter: (time: number) => {
+          return dayjs.unix(time).format("HH:mm");
+        },
+        rightOffset: 5,
+        barSpacing: 5,
+        minBarSpacing: 2
+      }
+    };
+    return createChart(chartContainerRef, chartOptions);
+  };
+
+  const clearSeries = (chart: IChartApi) => {
     seriesRef.current.forEach(series => {
       try {
         series && chart.removeSeries(series);
@@ -45,7 +74,10 @@ const SymbolChart = ({ code, name, latest, trends }: SymbolChartProps) => {
       }
     });
     seriesRef.current = [];
+  };
 
+  const handleChartTypeChange = (chart: IChartApi, type: "line" | "candle") => {
+    clearSeries(chart);
     setChartType(type);
 
     switch (type) {
@@ -93,32 +125,7 @@ const SymbolChart = ({ code, name, latest, trends }: SymbolChartProps) => {
       }
     };
 
-    const chartOptions: DeepPartial<ChartOptions> = {
-      layout: {
-        textColor: "black",
-        background: { type: "solid" as ColorType, color: "white" },
-        attributionLogo: false
-      },
-      autoSize: true,
-      localization: {
-        locale: "zh-CN",
-        priceFormatter: (price: number) => price && price.toFixed(2),
-        timeFormatter: (time: number) => {
-          return dayjs.unix(time).format("MM-DD HH:mm");
-        }
-      },
-      timeScale: {
-        timeVisible: true,
-        secondsVisible: false,
-        tickMarkFormatter: (time: number) => {
-          return dayjs.unix(time).format("HH:mm");
-        },
-        rightOffset: 5,
-        barSpacing: 5,
-        minBarSpacing: 2
-      }
-    };
-    const chart = createChart(chartContainerRef.current!, chartOptions);
+    const chart = createSymbolChart(chartContainerRef.current);
 
     chartRef.current = chart;
 
