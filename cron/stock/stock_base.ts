@@ -42,7 +42,7 @@ export const seedStockBase = async () => {
 
     print(`start write stock base`);
 
-    await prisma.stock.createMany({
+    const result = await prisma.stock.createMany({
       data: list.map(item => {
         const { newPrice, ...rest } = item;
         return {
@@ -53,7 +53,7 @@ export const seedStockBase = async () => {
       skipDuplicates: true
     });
 
-    await updateBatchStatus(batch.id, "completed", list.length);
+    await updateBatchStatus(batch.id, "completed", result.count);
     print(`write stock base success`);
   } catch (error) {
     await updateBatchStatus(batch.id, "failed");

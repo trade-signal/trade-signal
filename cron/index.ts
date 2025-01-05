@@ -15,7 +15,7 @@ import {
   seedStockQuotes
 } from "./stock/stock_quotes";
 import { seedDailyStockQuotes } from "./stock/stock_quotes_daily";
-import { initStockBaseData } from "./stock/stock_base";
+import { initStockBaseData, seedStockBase } from "./stock/stock_base";
 import { isTradeDate, refreshTradeDates } from "./stock/trade_date";
 import { initStockIndexData, seedIndex } from "./stock/stock_index";
 
@@ -67,6 +67,7 @@ const runStockScheduleJobs = () => {
 
     print(`trigger seed stock quotes daily`);
 
+    seedStockBase();
     seedStockQuotes();
     seedDailyStockQuotes();
     seedStockSelection();

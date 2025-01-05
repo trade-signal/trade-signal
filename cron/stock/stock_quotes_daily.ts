@@ -39,12 +39,12 @@ export const seedDailyStockQuotes = async (date?: string) => {
       date: currentDate
     }));
 
-    await prisma.stockQuotesDaily.createMany({
+    const result = await prisma.stockQuotesDaily.createMany({
       data: list as any,
       skipDuplicates: true
     });
 
-    await updateBatchStatus(batch.id, "completed", list.length);
+    await updateBatchStatus(batch.id, "completed", result.count);
     print(`write realtimeStockQuotes success`);
   } catch (error) {
     await updateBatchStatus(batch.id, "failed");
