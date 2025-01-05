@@ -1,4 +1,11 @@
-import { Center, Container, rem, Stack, Title } from "@mantine/core";
+import {
+  Center,
+  Container,
+  rem,
+  ScrollArea,
+  Stack,
+  Title
+} from "@mantine/core";
 import { Metadata } from "next";
 import StockIndex from "./StockIndex";
 import StockQuotes from "./StockQuotes";
@@ -9,7 +16,17 @@ export const metadata: Metadata = {
 
 const Market = () => {
   return (
-    <Container fluid px="3vw" pt="xl">
+    <ScrollArea
+      px="4vw"
+      py="xl"
+      style={{
+        height: "calc(100vh - 60px)",
+        overflow: "scroll",
+        overflowX: "hidden",
+        scrollbarWidth: "thin",
+        scrollbarColor: "#000 #fff"
+      }}
+    >
       <Center my="xl">
         <Title order={1} size={rem(48)}>
           市场，无处不在
@@ -20,7 +37,7 @@ const Market = () => {
         <StockIndex />
         <StockQuotes />
       </Stack>
-    </Container>
+    </ScrollArea>
   );
 };
 

@@ -62,17 +62,17 @@ const StockIndex = () => {
         mt="lg"
         variant="pills"
         radius="lg"
-        defaultValue={activeTab}
+        value={activeTab}
         onChange={value => setActiveTab(value)}
       >
         <Tabs.List>
           {data?.map(item => (
             <Tabs.Tab
-              color="indigo.1"
+              color="gray.1"
               style={{
                 justifyContent: "space-between",
                 color: "#333",
-                padding: rem(10),
+                padding: "10px 20px",
                 marginRight: rem(60)
               }}
               value={item.code}

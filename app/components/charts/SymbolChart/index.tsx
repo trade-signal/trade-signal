@@ -61,6 +61,10 @@ const SymbolChart = ({ code, name, latest, trends }: SymbolChartProps) => {
         barSpacing: 5,
         minBarSpacing: 2
       },
+      // disable zoom
+      handleScale: false,
+      // disable scroll
+      handleScroll: false,
       // hide grid lines
       grid: {
         vertLines: {
