@@ -13,7 +13,7 @@ export type StockIndexOrder = {
 export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;
 
-  const limit = Number(searchParams.get("limit")) || 12;
+  const limit = Number(searchParams.get("limit")) || 6;
 
   const maxDate = await prisma.stockIndexRealTime.findFirst({
     orderBy: { date: "desc" },
@@ -74,6 +74,30 @@ export const GET = async (request: NextRequest) => {
     {
       code: "000001",
       name: "上证指数",
+      latest: mockStockIndexRealTimeData.at(-1),
+      trends: mockStockIndexRealTimeData
+    },
+    {
+      code: "399001",
+      name: "深证指数",
+      latest: mockStockIndexRealTimeData.at(-1),
+      trends: mockStockIndexRealTimeData
+    },
+    {
+      code: "399006",
+      name: "创业板指数",
+      latest: mockStockIndexRealTimeData.at(-1),
+      trends: mockStockIndexRealTimeData
+    },
+    {
+      code: "000300",
+      name: "沪深300",
+      latest: mockStockIndexRealTimeData.at(-1),
+      trends: mockStockIndexRealTimeData
+    },
+    {
+      code: "000016",
+      name: "上证50",
       latest: mockStockIndexRealTimeData.at(-1),
       trends: mockStockIndexRealTimeData
     }

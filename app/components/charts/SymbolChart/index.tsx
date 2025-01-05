@@ -9,25 +9,28 @@ import {
   DeepPartial
 } from "lightweight-charts";
 import dayjs from "dayjs";
-import { StockIndexRealTime } from "@prisma/client";
 import { Group, rem, SegmentedControl, Stack } from "@mantine/core";
 import { IconChartCandle } from "@tabler/icons-react";
 import { IconChartLine } from "@tabler/icons-react";
 
-interface StockIndexChartProps {
-  code: string;
-  name: string;
-  latest: StockIndexRealTime;
-  trends: StockIndexRealTime[];
+interface SymbolChartData {
+  date: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  preClose: number;
 }
 
-const StockIndexChart = ({
-  code,
-  name,
-  latest,
-  trends
-}: StockIndexChartProps) => {
-  const [chartType, setChartType] = useState<"line" | "candle">("line");
+interface SymbolChartProps {
+  code: string;
+  name: string;
+  latest: SymbolChartData;
+  trends: SymbolChartData[];
+}
+
+const SymbolChart = ({ code, name, latest, trends }: SymbolChartProps) => {
+  const [chartType, setChartType] = useState<"line" | "candle">("candle");
 
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
@@ -48,7 +51,7 @@ const StockIndexChart = ({
     switch (type) {
       case "line":
         const baselineSeries = chart.addBaselineSeries({
-          baseValue: { type: "price", price: latest.preClosePrice },
+          baseValue: { type: "price", price: latest.preClose },
           topLineColor: "rgba(46, 139, 87, 1)",
           topFillColor1: "rgba(46, 139, 87, 0.05)",
           topFillColor2: "rgba(46, 139, 87, 0.28)",
@@ -59,7 +62,7 @@ const StockIndexChart = ({
 
         const baselineData = trends.map(item => ({
           time: dayjs(item.date).unix() as UTCTimestamp,
-          value: item.newPrice
+          value: item.close
         }));
 
         baselineSeries.setData(baselineData);
@@ -70,10 +73,7 @@ const StockIndexChart = ({
 
         const candleData = trends.map(item => ({
           time: dayjs(item.date).unix() as UTCTimestamp,
-          open: item.openPrice,
-          high: item.highPrice,
-          low: item.lowPrice,
-          close: item.newPrice
+          ...item
         }));
 
         candleSeries.setData(candleData);
@@ -84,6 +84,14 @@ const StockIndexChart = ({
 
   useEffect(() => {
     if (!chartContainerRef.current) return;
+
+    const handleChartResize = () => {
+      if (chartRef.current) {
+        chartRef.current.applyOptions({
+          width: chartContainerRef.current!.clientWidth
+        });
+      }
+    };
 
     const chartOptions: DeepPartial<ChartOptions> = {
       layout: {
@@ -118,8 +126,11 @@ const StockIndexChart = ({
 
     handleChartTypeChange(chart, chartType);
 
+    window.addEventListener("resize", handleChartResize);
+
     return () => {
       chart.remove();
+      window.removeEventListener("resize", handleChartResize);
     };
   }, [code, trends]);
 
@@ -127,7 +138,7 @@ const StockIndexChart = ({
     <Stack>
       <div
         ref={chartContainerRef}
-        style={{ width: "100%", height: "300px" }}
+        style={{ position: "relative", width: "100%", height: "300px" }}
       ></div>
 
       <Group justify="flex-end">
@@ -147,4 +158,4 @@ const StockIndexChart = ({
   );
 };
 
-export default StockIndexChart;
+export default SymbolChart;

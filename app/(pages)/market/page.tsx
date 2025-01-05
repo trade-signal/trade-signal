@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 const Market = () => {
   return (
     <Container fluid px="3vw" pt="xl">
-      <Center>
+      <Center mt="xl">
         <Title order={1} size={rem(48)}>
           市场，无处不在
         </Title>
