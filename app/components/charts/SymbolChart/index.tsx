@@ -60,6 +60,15 @@ const SymbolChart = ({ code, name, latest, trends }: SymbolChartProps) => {
         rightOffset: 5,
         barSpacing: 5,
         minBarSpacing: 2
+      },
+      // hide grid lines
+      grid: {
+        vertLines: {
+          visible: false
+        },
+        horzLines: {
+          visible: false
+        }
       }
     };
     return createChart(chartContainerRef, chartOptions);
