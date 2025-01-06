@@ -11,7 +11,7 @@ import {
 import dayjs from "dayjs";
 import { Group, rem, SegmentedControl, Stack } from "@mantine/core";
 import { IconChartCandle } from "@tabler/icons-react";
-import { IconChartLine } from "@tabler/icons-react";
+import { IconChartArea } from "@tabler/icons-react";
 
 interface SymbolChartData {
   date: string;
@@ -29,8 +29,10 @@ interface SymbolChartProps {
   trends: SymbolChartData[];
 }
 
-const SymbolChart = ({ code, name, latest, trends }: SymbolChartProps) => {
-  const [chartType, setChartType] = useState<"line" | "candle">("line");
+const SymbolChart = (props: SymbolChartProps) => {
+  const { code, name, latest, trends } = props;
+
+  const [chartType, setChartType] = useState<"area" | "candle">("area");
 
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
@@ -89,32 +91,43 @@ const SymbolChart = ({ code, name, latest, trends }: SymbolChartProps) => {
     seriesRef.current = [];
   };
 
-  const handleChartTypeChange = (chart: IChartApi, type: "line" | "candle") => {
+  const handleChartTypeChange = (chart: IChartApi, type: "area" | "candle") => {
     clearSeries(chart);
     setChartType(type);
 
     switch (type) {
-      case "line":
-        const baselineSeries = chart.addBaselineSeries({
-          baseValue: { type: "price", price: latest.preClose },
-          topLineColor: "rgba(46, 139, 87, 1)",
-          topFillColor1: "rgba(46, 139, 87, 0.05)",
-          topFillColor2: "rgba(46, 139, 87, 0.28)",
-          bottomLineColor: "rgba(236, 64, 64, 1)",
-          bottomFillColor1: "rgba(236, 64, 64, 0.28)",
-          bottomFillColor2: "rgba(236, 64, 64, 0.05)"
+      case "area":
+        const areaSeries = chart.addAreaSeries({
+          lineColor:
+            latest.close > latest.preClose
+              ? "rgba(236, 64, 64, 1)"
+              : "rgba(46, 139, 87, 1)",
+          topColor:
+            latest.close > latest.preClose
+              ? "rgba(236, 64, 64, 0.28)"
+              : "rgba(46, 139, 87, 0.28)",
+          bottomColor:
+            latest.close > latest.preClose
+              ? "rgba(236, 64, 64, 0.05)"
+              : "rgba(46, 139, 87, 0.05)"
         });
 
-        const baselineData = trends.map(item => ({
+        const areaData = trends.map(item => ({
           time: dayjs(item.date).unix() as UTCTimestamp,
           value: item.close
         }));
 
-        baselineSeries.setData(baselineData);
-        seriesRef.current.push(baselineSeries);
+        areaSeries.setData(areaData);
+        seriesRef.current.push(areaSeries);
         break;
       case "candle":
-        const candleSeries = chart.addCandlestickSeries();
+        const candleSeries = chart.addCandlestickSeries({
+          upColor: "#26a69a",
+          downColor: "#ef5350",
+          borderVisible: false,
+          wickUpColor: "#26a69a",
+          wickDownColor: "#ef5350"
+        });
 
         const candleData = trends.map(item => ({
           time: dayjs(item.date).unix() as UTCTimestamp,
@@ -166,10 +179,10 @@ const SymbolChart = ({ code, name, latest, trends }: SymbolChartProps) => {
           w={rem(120)}
           value={chartType}
           onChange={value =>
-            handleChartTypeChange(chartRef.current!, value as "line" | "candle")
+            handleChartTypeChange(chartRef.current!, value as "area" | "candle")
           }
           data={[
-            { value: "line", label: <IconChartLine size={16} /> },
+            { value: "area", label: <IconChartArea size={16} /> },
             { value: "candle", label: <IconChartCandle size={16} /> }
           ]}
         />

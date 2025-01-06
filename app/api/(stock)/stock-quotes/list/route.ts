@@ -12,29 +12,40 @@ export type StockQuotesOrder = {
 export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;
 
-  const limit = Number(searchParams.get("limit")) || 6;
+  const limit = Number(searchParams.get("limit")) || 4;
 
   const maxDate = await prisma.stockQuotesRealTime.findFirst({
     orderBy: { date: "desc" },
     select: { date: true }
   });
 
+  const codes = await prisma.stockSelection.findMany({
+    where: {
+      date: { equals: maxDate?.date }
+    },
+    select: { code: true },
+    take: limit,
+    orderBy: { newPrice: "desc" }
+  });
+
   let where: Prisma.StockQuotesRealTimeWhereInput = {
+    code: { in: codes.map(item => item.code) },
     date: { equals: maxDate?.date }
   };
 
   const list = await prisma.stockQuotesRealTime.findMany({
     where,
-    skip: 0,
-    take: limit,
-    orderBy: { newPrice: "desc" }
+    orderBy: [{ code: "asc" }, { createdAt: "asc" }]
   });
 
   const groupData = list.reduce((acc, item) => {
     if (!acc.has(item.code)) {
       acc.set(item.code, []);
     }
-    acc.get(item.code)?.push(item);
+    acc.get(item.code)?.push({
+      ...item,
+      ts: Number(item.ts)
+    });
     return acc;
   }, new Map<string, StockQuotesRealTime[]>());
 

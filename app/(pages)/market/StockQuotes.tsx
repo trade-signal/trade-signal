@@ -1,5 +1,6 @@
 "use client";
 
+import dayjs from "dayjs";
 import {
   Paper,
   rem,
@@ -21,7 +22,7 @@ import { formatPercent } from "@/app/components/tables/DataTable/util";
 
 const transformSymbolChartData = (data: StockQuotesRealTime) => {
   return {
-    date: data.date,
+    date: dayjs(data.ts).format("YYYY-MM-DD HH:mm:ss"),
     open: data.openPrice,
     high: data.highPrice,
     low: data.lowPrice,
@@ -30,7 +31,7 @@ const transformSymbolChartData = (data: StockQuotesRealTime) => {
   };
 };
 
-const StockQuotes = () => {
+const StockQuotes = props => {
   const [activeTab, setActiveTab] = useState<string | null>(null);
 
   const { data, isLoading } = useQuery({
