@@ -24,7 +24,7 @@ import { StockIndexRealTime } from "@prisma/client";
 
 const transformSymbolChartData = (data: StockIndexRealTime) => {
   return {
-    date: dayjs(data.ts).format("YYYY-MM-DD HH:mm:ss"),
+    date: dayjs(Number(data.ts)).format("YYYY-MM-DD HH:mm:ss"),
     open: data.openPrice,
     high: data.highPrice,
     low: data.lowPrice,
@@ -33,7 +33,7 @@ const transformSymbolChartData = (data: StockIndexRealTime) => {
   };
 };
 
-const StockIndex = props => {
+const StockIndex = () => {
   const { data, isLoading } = useQuery({
     queryKey: ["stock-index"],
     queryFn: (): Promise<StockIndexOrder[]> =>
