@@ -15,43 +15,63 @@ import {
   seedStockQuotes
 } from "./stock/stock_quotes";
 import { seedDailyStockQuotes } from "./stock/stock_quotes_daily";
-import { initStockBaseData } from "./stock/stock_base";
-import { clearTradeDates, isTradeDate } from "./stock/trade_date";
-import { createLogger } from "../shared/logger";
+import { initStockBaseData, seedStockBase } from "./stock/stock_base";
+import { isTradeDate, refreshTradeDates } from "./stock/trade_date";
+import { initStockIndexData, seedIndex } from "./stock/stock_index";
+import { createLogger } from "@/shared/logger";
 
 const logger = createLogger('cron', '', false)
 const print = (message: string) => {
   logger.log(`[${dayjs().format("YYYY-MM-DD HH:mm:ss")}] ${message}`);
 };
 
+// 是否是非交易时段
+const isNonTradingTime = () => {
+  const now = dayjs();
+  const hour = now.hour();
+  const minute = now.minute();
+
+  return (
+    (hour === 9 && minute < 15) || // 9:15 前
+    (hour === 11 && minute >= 30) || // 11:30 后
+    hour === 12 || // 午休时间
+    (hour === 15 && minute > 0) // 15:00 后
+  );
+};
+
 const runStockScheduleJobs = () => {
-  // 工作日运行:
-  // - 早盘前: 9:00
-  // - 早盘中: 10:00
-  // - 午间: 11:00
-  // - 午盘中: 13:00
-  // - 收盘后: 14:00
-  // - 晚间: 15:00
-  new CronJob("*/30 9,10,11,13,14,15 * * 1-5", () => {
+  // 交易时段实时行情抓取
+  // 开盘期间每3分钟抓取一次:
+  // - 集合竞价: 9:15-9:25
+  // - 连续竞价: 9:30-11:30, 13:00-15:00
+  // 注意: 非交易时段(午休等)会被 isNonTradingTime() 函数过滤
+  new CronJob("*/3 9-11,13-14 * * 1-5", async () => {
     if (!isTradeDate()) {
       print("not trade date");
       return;
     }
 
-    print("trigger seed stock quotes");
+    if (isNonTradingTime()) {
+      print("not trade time");
+      return;
+    }
 
-    seedStockQuotes();
+    print(`trigger seed stock quotes realtime`);
+
+    await seedIndex();
+    await seedStockQuotes();
   }).start();
 
-  // 工作日运行：16:00
+  // 收盘后运行：16:00
   new CronJob("0 16 * * 1-5", () => {
     if (!isTradeDate()) {
       print("not trade date");
       return;
     }
 
-    print("trigger seed stock base");
+    print(`trigger seed stock quotes daily`);
 
+    seedStockBase();
     seedStockQuotes();
     seedDailyStockQuotes();
     seedStockSelection();
@@ -60,38 +80,39 @@ const runStockScheduleJobs = () => {
 
 const runNewsScheduleJobs = () => {
   // 工作日运行:
-  // - 早盘前: 8:30
-  // - 早盘中: 10:00
-  // - 午间: 12:00
-  // - 午盘中: 14:00
-  // - 收盘后: 15:30
-  // - 晚间: 19:30, 21:30
-  new CronJob("30 8,10,12,14,15,19,21 * * 1-5", () => {
+  // 交易时段 (9:00-11:30, 13:00-15:00) 每15分钟抓取一次
+  // 其他时段 (8:30-9:00, 11:30-13:00, 15:00-21:30) 每30分钟抓取一次
+  new CronJob("*/15 9-11,13-14 * * 1-5", () => {
     print("trigger seed news");
-
     seedNews();
   }).start();
 
-  // 非工作日运行:
-  // - 上午: 8:30, 10:30
-  // - 下午: 14:30, 16:30
-  // - 晚间: 19:30, 21:30
-  new CronJob("30 8,10,14,16,19,21 * * 0,6", () => {
+  new CronJob("*/30 8,12,15-21 * * 1-5", () => {
     print("trigger seed news");
+    seedNews();
+  }).start();
 
+  // 非工作日运行: 每小时抓取一次
+  new CronJob("0 9-21 * * 0,6", () => {
+    print("trigger seed news");
     seedNews();
   }).start();
 };
 
-const runSchedulerJobs = () => {
+const runClearScheduleJobs = () => {
   // 每天清晨 5:30 清理数据（在开盘前）
   new CronJob("30 5 * * *", () => {
-    clearTradeDates();
+    print("trigger clear data before trade");
+
+    refreshTradeDates();
     cleanNews();
     cleanStockSelection();
     cleanStockQuotes();
   }).start();
+};
 
+const runSchedulerJobs = () => {
+  runClearScheduleJobs();
   runStockScheduleJobs();
   runNewsScheduleJobs();
 };
@@ -101,6 +122,7 @@ const runSeedJobs = async (runDate: string) => {
     initStockBaseData(),
     initStockSelectionData(runDate),
     initStockQuotesData(runDate),
+    initStockIndexData(runDate),
     initNewsData(runDate)
   ]);
 };
@@ -113,7 +135,9 @@ async function main() {
   logger.info(`run environment: ${process.env.NODE_ENV || "development"}`);
 
   if (process.env.NODE_ENV === "production") {
-    logger.info("Running scheduler jobs...");
+    logger.info("refresh trade dates");
+    await refreshTradeDates();
+    logger.info("run scheduler jobs");
     runSchedulerJobs();
     return;
   }

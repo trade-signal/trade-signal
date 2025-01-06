@@ -294,7 +294,7 @@ model StockQuotesDaily {
   code String @db.VarChar(6) // 股票代码
   name String @db.VarChar(20) // 股票名称
 
-  // 核心价格指标（OHLC）
+  // 核心价格指标
   openPrice     Float // 开盘价
   highPrice     Float // 最高价
   lowPrice      Float // 最低价
@@ -302,8 +302,13 @@ model StockQuotesDaily {
   preClosePrice Float // 前收价
 
   // 成交指标
-  volume     Float // 成交量
-  dealAmount Float // 成交额
+  changeRate   Float // 涨跌幅
+  upsDowns     Float // 涨跌额
+  volume       Float // 成交量
+  dealAmount   Float // 成交额
+  amplitude    Float // 振幅
+  turnoverRate Float // 换手率
+  volumeRatio  Float // 量比
 
   // 系统字段
   createdAt DateTime @default(now())
@@ -376,18 +381,62 @@ model StockQuotesRealTime {
   listingDate String @db.VarChar(10) // 上市时间
   reportDate  String @db.VarChar(10) // 报告期
 
+  // 毫秒级时间戳
+  ts BigInt
+
   // 系统字段
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([ts, code]) // 复合唯一约束
+  @@index([ts]) // 时间戳索引
   @@index([date]) // 日期索引
   @@index([code]) // 代码索引
   @@index([industry]) // 行业索引
   @@index([code, date]) // 代码和日期复合索引
-  @@index([code, date, industry]) // 代码、日期和行业复合索引
   @@map("stock_real_time")
 }
 
+// 股票指数 实时行情
+model StockIndexRealTime {
+  id String @id @default(cuid())
+
+  // 基础信息
+  date String @db.VarChar(10) // 交易日期
+  code String @db.VarChar(6) // 指数代码
+  name String @db.VarChar(20) // 指数名称
+
+  // 核心价格指标
+  newPrice      Float // 最新价
+  openPrice     Float // 今开
+  highPrice     Float // 最高
+  lowPrice      Float // 最低
+  preClosePrice Float // 昨收
+
+  // 成交指标
+  changeRate   Float // 涨跌幅
+  upsDowns     Float // 涨跌额
+  volume       Float // 成交量
+  dealAmount   Float // 成交额
+  amplitude    Float // 振幅
+  turnoverRate Float // 换手率
+  volumeRatio  Float // 量比
+
+  // 毫秒级时间戳
+  ts BigInt
+
+  // 系统字段
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([ts, code]) // 复合唯一约束
+  @@index([ts]) // 时间戳索引
+  @@index([date]) // 日期索引
+  @@index([code]) // 代码索引
+  @@map("stock_index_real_time")
+}
+
+// 新闻
 model News {
   id String @id @default(cuid())
 

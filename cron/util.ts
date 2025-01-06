@@ -11,16 +11,16 @@ export const createLogger =
   };
 
 export const normalizeValue = (type: IndicatorType, value: string) => {
-  if (type === "date") {
+  if (type === IndicatorType.DATE) {
     return value ? dayjs(value).format("YYYY-MM-DD") : "";
   }
-  if (type === "number") {
+  if (type === IndicatorType.NUMBER) {
     return Number(value) || 0;
   }
-  if (type === "boolean") {
+  if (type === IndicatorType.BOOLEAN) {
     return value === "1";
   }
-  if (type === "array") {
+  if (type === IndicatorType.ARRAY) {
     return Array.isArray(value) ? value.join(",") : value;
   }
   return value || "";
@@ -28,6 +28,12 @@ export const normalizeValue = (type: IndicatorType, value: string) => {
 
 export const arrayToObject = (array: any[]) => {
   return array.reduce((acc, cur) => ({ ...acc, ...cur }), {});
+};
+
+export const getIndicatorFields = (indicatorMapping: IndicatorMapping) => {
+  return Object.values(indicatorMapping)
+    .map(item => item.map)
+    .join(",");
 };
 
 export const transformStockData = (
