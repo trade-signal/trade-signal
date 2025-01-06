@@ -60,7 +60,11 @@ export const seedStockQuotes = async (date?: string) => {
     // newPrice > 0, 过滤掉停牌的股票
     list = list.filter(item => Number(item.newPrice) > 0);
     // 添加日期
-    list = list.map(item => ({ ...item, date: currentDate }));
+    list = list.map(item => ({
+      ...item,
+      ts: Date.now(),
+      date: currentDate
+    }));
 
     print(`start write realtimeStockQuotes`);
 
