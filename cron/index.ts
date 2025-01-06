@@ -15,7 +15,7 @@ import {
   seedStockQuotes
 } from "./stock/stock_quotes";
 import { seedDailyStockQuotes } from "./stock/stock_quotes_daily";
-import { initStockBaseData } from "./stock/stock_base";
+import { initStockBaseData, seedStockBase } from "./stock/stock_base";
 import { isTradeDate, refreshTradeDates } from "./stock/trade_date";
 import { initStockIndexData, seedIndex } from "./stock/stock_index";
 
@@ -23,31 +23,33 @@ const print = (message: string) => {
   console.log(`[cron] [${dayjs().format("YYYY-MM-DD HH:mm:ss")}] ${message}`);
 };
 
-// 是否是交易时段
-const isTradeTime = () => {
+// 是否是非交易时段
+const isNonTradingTime = () => {
   const now = dayjs();
   const hour = now.hour();
   const minute = now.minute();
 
   return (
-    (hour === 9 && minute < 30) || // 9:30 前
+    (hour === 9 && minute < 15) || // 9:15 前
     (hour === 11 && minute >= 30) || // 11:30 后
     hour === 12 || // 午休时间
-    (hour === 15 && minute > 0) // 15:00 后;
+    (hour === 15 && minute > 0) // 15:00 后
   );
 };
 
 const runStockScheduleJobs = () => {
   // 交易时段实时行情抓取
-  // 开盘期间 (9:30-11:30, 13:00-15:00) 每3分钟抓取一次
-  // 其他时段 (9:00-9:30, 11:30-13:00, 15:00-15:30) 每10分钟抓取一次
+  // 开盘期间每3分钟抓取一次:
+  // - 集合竞价: 9:15-9:25
+  // - 连续竞价: 9:30-11:30, 13:00-15:00
+  // 注意: 非交易时段(午休等)会被 isNonTradingTime() 函数过滤
   new CronJob("*/3 9-11,13-14 * * 1-5", async () => {
     if (!isTradeDate()) {
       print("not trade date");
       return;
     }
 
-    if (!isTradeTime()) {
+    if (isNonTradingTime()) {
       print("not trade time");
       return;
     }
@@ -67,6 +69,7 @@ const runStockScheduleJobs = () => {
 
     print(`trigger seed stock quotes daily`);
 
+    seedStockBase();
     seedStockQuotes();
     seedDailyStockQuotes();
     seedStockSelection();

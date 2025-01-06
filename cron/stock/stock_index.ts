@@ -57,12 +57,12 @@ export const seedIndex = async (date?: string) => {
 
     print(`start write realtimeIndexQuotes`);
 
-    await prisma.stockIndexRealTime.createMany({
+    const result = await prisma.stockIndexRealTime.createMany({
       data: list as any,
       skipDuplicates: true
     });
 
-    await updateBatchStatus(batch.id, "completed", list.length);
+    await updateBatchStatus(batch.id, "completed", result.count);
   } catch (error) {
     await updateBatchStatus(batch.id, "failed");
     print(`error: ${error}`);

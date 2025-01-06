@@ -18,11 +18,6 @@ export const GET = async (request: NextRequest) => {
   ) as MRT_ColumnFiltersState;
   const parsedSorting = JSON.parse(sorting) as MRT_SortingState;
 
-  const maxDate = await prisma.stockQuotesRealTime.findFirst({
-    orderBy: { date: "desc" },
-    select: { date: true }
-  });
-
   let where: Prisma.StockWhereInput = {};
 
   if (parsedColumnFilters.length) {
@@ -86,9 +81,6 @@ export const GET = async (request: NextRequest) => {
   return Response.json({
     success: true,
     data,
-    statistics: {
-      date: maxDate?.date
-    },
     pagination: {
       page,
       pageSize,
