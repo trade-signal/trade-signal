@@ -196,19 +196,184 @@ CREATE TABLE "stock_selection" (
 );
 
 -- CreateTable
+CREATE TABLE "stock" (
+    "id" TEXT NOT NULL,
+    "code" VARCHAR(6) NOT NULL,
+    "name" VARCHAR(20) NOT NULL,
+    "industry" VARCHAR(50) NOT NULL,
+    "listingDate" VARCHAR(10) NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'active',
+    "description" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "stock_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "stock_quotes_daily" (
+    "id" TEXT NOT NULL,
+    "date" VARCHAR(10) NOT NULL,
+    "code" VARCHAR(6) NOT NULL,
+    "name" VARCHAR(20) NOT NULL,
+    "openPrice" DOUBLE PRECISION NOT NULL,
+    "highPrice" DOUBLE PRECISION NOT NULL,
+    "lowPrice" DOUBLE PRECISION NOT NULL,
+    "closePrice" DOUBLE PRECISION NOT NULL,
+    "preClosePrice" DOUBLE PRECISION NOT NULL,
+    "changeRate" DOUBLE PRECISION NOT NULL,
+    "upsDowns" DOUBLE PRECISION NOT NULL,
+    "volume" DOUBLE PRECISION NOT NULL,
+    "dealAmount" DOUBLE PRECISION NOT NULL,
+    "amplitude" DOUBLE PRECISION NOT NULL,
+    "turnoverRate" DOUBLE PRECISION NOT NULL,
+    "volumeRatio" DOUBLE PRECISION NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "stock_quotes_daily_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "stock_real_time" (
+    "id" TEXT NOT NULL,
+    "date" VARCHAR(10) NOT NULL,
+    "code" VARCHAR(6) NOT NULL,
+    "name" VARCHAR(20) NOT NULL,
+    "newPrice" DOUBLE PRECISION NOT NULL,
+    "changeRate" DOUBLE PRECISION NOT NULL,
+    "upsDowns" DOUBLE PRECISION NOT NULL,
+    "volume" DOUBLE PRECISION NOT NULL,
+    "dealAmount" DOUBLE PRECISION NOT NULL,
+    "amplitude" DOUBLE PRECISION NOT NULL,
+    "turnoverRate" DOUBLE PRECISION NOT NULL,
+    "volumeRatio" DOUBLE PRECISION NOT NULL,
+    "openPrice" DOUBLE PRECISION NOT NULL,
+    "highPrice" DOUBLE PRECISION NOT NULL,
+    "lowPrice" DOUBLE PRECISION NOT NULL,
+    "preClosePrice" DOUBLE PRECISION NOT NULL,
+    "speedIncrease" DOUBLE PRECISION NOT NULL,
+    "speedIncrease5" DOUBLE PRECISION NOT NULL,
+    "speedIncrease60" DOUBLE PRECISION NOT NULL,
+    "speedIncreaseAll" DOUBLE PRECISION NOT NULL,
+    "dtsyl" DOUBLE PRECISION NOT NULL,
+    "pe9" DOUBLE PRECISION NOT NULL,
+    "pe" DOUBLE PRECISION NOT NULL,
+    "pbnewmrq" DOUBLE PRECISION NOT NULL,
+    "basicEps" DOUBLE PRECISION NOT NULL,
+    "bvps" DOUBLE PRECISION NOT NULL,
+    "perCapitalReserve" DOUBLE PRECISION NOT NULL,
+    "perUnassignProfit" DOUBLE PRECISION NOT NULL,
+    "roeWeight" DOUBLE PRECISION NOT NULL,
+    "saleGpr" DOUBLE PRECISION NOT NULL,
+    "debtAssetRatio" DOUBLE PRECISION NOT NULL,
+    "totalOperateIncome" DOUBLE PRECISION NOT NULL,
+    "toiYoyRatio" DOUBLE PRECISION NOT NULL,
+    "parentNetprofit" DOUBLE PRECISION NOT NULL,
+    "netprofitYoyRatio" DOUBLE PRECISION NOT NULL,
+    "totalShares" DOUBLE PRECISION NOT NULL,
+    "freeShares" DOUBLE PRECISION NOT NULL,
+    "totalMarketCap" DOUBLE PRECISION NOT NULL,
+    "freeCap" DOUBLE PRECISION NOT NULL,
+    "industry" VARCHAR(50) NOT NULL,
+    "listingDate" VARCHAR(10) NOT NULL,
+    "reportDate" VARCHAR(10) NOT NULL,
+    "ts" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "stock_real_time_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "stock_index_real_time" (
+    "id" TEXT NOT NULL,
+    "date" VARCHAR(10) NOT NULL,
+    "code" VARCHAR(6) NOT NULL,
+    "name" VARCHAR(20) NOT NULL,
+    "newPrice" DOUBLE PRECISION NOT NULL,
+    "openPrice" DOUBLE PRECISION NOT NULL,
+    "highPrice" DOUBLE PRECISION NOT NULL,
+    "lowPrice" DOUBLE PRECISION NOT NULL,
+    "preClosePrice" DOUBLE PRECISION NOT NULL,
+    "changeRate" DOUBLE PRECISION NOT NULL,
+    "upsDowns" DOUBLE PRECISION NOT NULL,
+    "volume" DOUBLE PRECISION NOT NULL,
+    "dealAmount" DOUBLE PRECISION NOT NULL,
+    "amplitude" DOUBLE PRECISION NOT NULL,
+    "turnoverRate" DOUBLE PRECISION NOT NULL,
+    "volumeRatio" DOUBLE PRECISION NOT NULL,
+    "ts" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "stock_index_real_time_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "news" (
     "id" TEXT NOT NULL,
-    "source" VARCHAR(255) NOT NULL,
-    "sourceId" VARCHAR(255) NOT NULL,
-    "sourceUrl" VARCHAR(1000),
-    "content" TEXT NOT NULL,
-    "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "tags" VARCHAR(1000) NOT NULL,
-    "stocks" VARCHAR(2000) NOT NULL,
+    "source" TEXT NOT NULL,
+    "sourceId" TEXT NOT NULL,
+    "sourceUrl" TEXT NOT NULL,
+    "title" TEXT NOT NULL DEFAULT '',
+    "summary" TEXT NOT NULL DEFAULT '',
+    "content" TEXT NOT NULL DEFAULT '',
+    "date" TIMESTAMP(3) NOT NULL,
+    "tags" TEXT[],
+    "stocks" JSONB NOT NULL,
+    "categories" TEXT[],
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "news_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "batch_update" (
+    "id" TEXT NOT NULL,
+    "type" TEXT NOT NULL,
+    "source" TEXT NOT NULL,
+    "batchTime" TIMESTAMP(3) NOT NULL,
+    "count" INTEGER NOT NULL,
+    "error" TEXT,
+    "status" TEXT NOT NULL,
+    "extra" JSONB,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "batch_update_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "watchlist" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT,
+    "order" INTEGER NOT NULL DEFAULT 0,
+    "isDefault" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "watchlist_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "watch" (
+    "id" TEXT NOT NULL,
+    "watchlistId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "type" TEXT NOT NULL,
+    "code" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "note" TEXT,
+    "order" INTEGER NOT NULL DEFAULT 0,
+    "isTop" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "watch_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -239,6 +404,57 @@ CREATE INDEX "stock_selection_concept_idx" ON "stock_selection"("concept");
 CREATE INDEX "stock_selection_style_idx" ON "stock_selection"("style");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "stock_code_key" ON "stock"("code");
+
+-- CreateIndex
+CREATE INDEX "stock_code_idx" ON "stock"("code");
+
+-- CreateIndex
+CREATE INDEX "stock_industry_idx" ON "stock"("industry");
+
+-- CreateIndex
+CREATE INDEX "stock_status_idx" ON "stock"("status");
+
+-- CreateIndex
+CREATE INDEX "stock_quotes_daily_date_idx" ON "stock_quotes_daily"("date");
+
+-- CreateIndex
+CREATE INDEX "stock_quotes_daily_code_idx" ON "stock_quotes_daily"("code");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "stock_quotes_daily_date_code_key" ON "stock_quotes_daily"("date", "code");
+
+-- CreateIndex
+CREATE INDEX "stock_real_time_ts_idx" ON "stock_real_time"("ts");
+
+-- CreateIndex
+CREATE INDEX "stock_real_time_date_idx" ON "stock_real_time"("date");
+
+-- CreateIndex
+CREATE INDEX "stock_real_time_code_idx" ON "stock_real_time"("code");
+
+-- CreateIndex
+CREATE INDEX "stock_real_time_industry_idx" ON "stock_real_time"("industry");
+
+-- CreateIndex
+CREATE INDEX "stock_real_time_code_date_idx" ON "stock_real_time"("code", "date");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "stock_real_time_ts_code_key" ON "stock_real_time"("ts", "code");
+
+-- CreateIndex
+CREATE INDEX "stock_index_real_time_ts_idx" ON "stock_index_real_time"("ts");
+
+-- CreateIndex
+CREATE INDEX "stock_index_real_time_date_idx" ON "stock_index_real_time"("date");
+
+-- CreateIndex
+CREATE INDEX "stock_index_real_time_code_idx" ON "stock_index_real_time"("code");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "stock_index_real_time_ts_code_key" ON "stock_index_real_time"("ts", "code");
+
+-- CreateIndex
 CREATE INDEX "news_date_idx" ON "news"("date");
 
 -- CreateIndex
@@ -246,6 +462,30 @@ CREATE INDEX "news_source_sourceId_idx" ON "news"("source", "sourceId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "news_source_sourceId_key" ON "news"("source", "sourceId");
+
+-- CreateIndex
+CREATE INDEX "batch_update_type_batchTime_idx" ON "batch_update"("type", "batchTime");
+
+-- CreateIndex
+CREATE INDEX "batch_update_type_status_idx" ON "batch_update"("type", "status");
+
+-- CreateIndex
+CREATE INDEX "watchlist_userId_idx" ON "watchlist"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "watchlist_userId_name_key" ON "watchlist"("userId", "name");
+
+-- CreateIndex
+CREATE INDEX "watch_userId_idx" ON "watch"("userId");
+
+-- CreateIndex
+CREATE INDEX "watch_watchlistId_idx" ON "watch"("watchlistId");
+
+-- CreateIndex
+CREATE INDEX "watch_type_code_idx" ON "watch"("type", "code");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "watch_watchlistId_type_code_key" ON "watch"("watchlistId", "type", "code");
 
 -- AddForeignKey
 ALTER TABLE "account" ADD CONSTRAINT "account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
