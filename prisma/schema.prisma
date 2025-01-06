@@ -382,7 +382,7 @@ model StockQuotesRealTime {
   reportDate  String @db.VarChar(10) // 报告期
 
   // 毫秒级时间戳
-  ts Int
+  ts BigInt
 
   // 系统字段
   createdAt DateTime @default(now())
@@ -423,7 +423,7 @@ model StockIndexRealTime {
   volumeRatio  Float // 量比
 
   // 毫秒级时间戳
-  ts Int
+  ts BigInt
 
   // 系统字段
   createdAt DateTime @default(now())
