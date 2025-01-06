@@ -42,10 +42,7 @@ export const GET = async (request: NextRequest) => {
     if (!acc.has(item.code)) {
       acc.set(item.code, []);
     }
-    acc.get(item.code)?.push({
-      ...item,
-      ts: Number(item.ts)
-    });
+    acc.get(item.code)?.push(item);
     return acc;
   }, new Map<string, StockQuotesRealTime[]>());
 
