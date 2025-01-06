@@ -35,6 +35,7 @@ export const seedDailyStockQuotes = async (date?: string) => {
     // 添加日期
     list = list.map(item => ({
       ...item,
+      ts: Date.now(),
       closePrice: item.newPrice,
       date: currentDate
     }));
@@ -45,7 +46,8 @@ export const seedDailyStockQuotes = async (date?: string) => {
     });
 
     await updateBatchStatus(batch.id, "completed", result.count);
-    print(`write realtimeStockQuotes success`);
+
+    print(`write realtimeStockQuotes success ${result.count}`);
   } catch (error) {
     await updateBatchStatus(batch.id, "failed");
     print(`getRealtimeStockQuotes error: ${error}`);

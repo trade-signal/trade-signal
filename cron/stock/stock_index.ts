@@ -53,7 +53,11 @@ export const seedIndex = async (date?: string) => {
 
     let list = transformStockData(stocks, quotesIndexIndicatorMapping);
     // 添加日期
-    list = list.map(item => ({ ...item, date: currentDate }));
+    list = list.map(item => ({
+      ...item,
+      ts: Date.now(),
+      date: currentDate
+    }));
 
     print(`start write realtimeIndexQuotes`);
 
@@ -63,6 +67,8 @@ export const seedIndex = async (date?: string) => {
     });
 
     await updateBatchStatus(batch.id, "completed", result.count);
+
+    print(`write realtimeIndexQuotes success ${result.count}`);
   } catch (error) {
     await updateBatchStatus(batch.id, "failed");
     print(`error: ${error}`);

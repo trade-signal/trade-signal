@@ -381,15 +381,19 @@ model StockQuotesRealTime {
   listingDate String @db.VarChar(10) // 上市时间
   reportDate  String @db.VarChar(10) // 报告期
 
+  // 毫秒级时间戳
+  ts Int
+
   // 系统字段
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([ts, code]) // 复合唯一约束
+  @@index([ts]) // 时间戳索引
   @@index([date]) // 日期索引
   @@index([code]) // 代码索引
   @@index([industry]) // 行业索引
   @@index([code, date]) // 代码和日期复合索引
-  @@index([code, date, industry]) // 代码、日期和行业复合索引
   @@map("stock_real_time")
 }
 
@@ -418,13 +422,17 @@ model StockIndexRealTime {
   turnoverRate Float // 换手率
   volumeRatio  Float // 量比
 
+  // 毫秒级时间戳
+  ts Int
+
   // 系统字段
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([date, code])
-  @@index([date])
-  @@index([code])
+  @@unique([ts, code]) // 复合唯一约束
+  @@index([ts]) // 时间戳索引
+  @@index([date]) // 日期索引
+  @@index([code]) // 代码索引
   @@map("stock_index_real_time")
 }
 

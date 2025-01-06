@@ -70,7 +70,8 @@ export const seedStockQuotes = async (date?: string) => {
     });
 
     await updateBatchStatus(batch.id, "completed", result.count);
-    print(`write realtimeStockQuotes success`);
+
+    print(`write realtimeStockQuotes success ${result.count}`);
   } catch (error) {
     await updateBatchStatus(batch.id, "failed");
     print(`getRealtimeStockQuotes error: ${error}`);
