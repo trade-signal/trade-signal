@@ -16,21 +16,21 @@ import { useState, useEffect } from "react";
 import { ColorWheelIcon } from "./ColorWheelIcon";
 import classes from "./ThemeMenu.module.css";
 import { readLocalStorageValue } from "@mantine/hooks";
-import { SetTheme } from "@/app/hooks/useThemeSetting";
+import { SetTheme, THEME_SETTING_KEY } from "@/app/hooks/useThemeSetting";
 
 export const ThemeMenu = ({ setTheme }: { setTheme: SetTheme }) => {
   const theme = useMantineTheme();
   const { colorScheme, setColorScheme } = useMantineColorScheme();
   const [opened, setOpened] = useState(false);
 
-  const themeSetting: any = readLocalStorageValue({ key: 'trade-signal-theme-setting' });
+  const themeSetting: any = readLocalStorageValue({ key: THEME_SETTING_KEY });
   useEffect(() => {
     if (themeSetting?.colorScheme) {
       setColorScheme(themeSetting?.colorScheme);
     }
 
     if (themeSetting?.primaryColor) {
-      setTheme({ primaryColor: themeSetting?.primaryColor });
+      setTheme({ primaryColor: themeSetting.primaryColor });
     }
   }, [])
 

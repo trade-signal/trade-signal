@@ -25,7 +25,7 @@ export const useThemeSetting = () => {
 
   const _setTheme: SetTheme = (newTheme, newColorScheme) => {
     if (newTheme) { 
-      setTheme(mergeMantineTheme(DEFAULT_THEME, newTheme));
+      setTheme(mergeMantineTheme(theme, newTheme));
     }
     setThemeSetting({
       primaryColor: newTheme?.primaryColor || themeSetting.primaryColor,
