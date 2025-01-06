@@ -108,7 +108,7 @@ export const seedStockSelection = async (date?: string) => {
 
     await updateBatchStatus(batch.id, "completed", total);
 
-    print(`write stockSelection success`);
+    print(`write stockSelection success ${total}`);
   } catch (error) {
     await updateBatchStatus(batch.id, "failed");
     print(`getStockSelection error: ${error}`);

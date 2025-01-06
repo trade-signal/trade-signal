@@ -4,6 +4,12 @@
 
 import { PrismaClient } from "@prisma/client";
 
+// Fix: BigInt type is not supported by Prisma
+// @ts-ignore
+BigInt.prototype.toJSON = function () {
+  return this.toString(); // Convert to string for serialization
+};
+
 // PrismaClient is attached to the `global` object in development to prevent
 // exhausting your database connection limit.
 //

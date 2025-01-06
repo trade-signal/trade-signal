@@ -23,18 +23,27 @@ const print = (message: string) => {
   console.log(`[cron] [${dayjs().format("YYYY-MM-DD HH:mm:ss")}] ${message}`);
 };
 
-// 是否是非交易时段
-const isNonTradingTime = () => {
+// 是否是交易时间
+const isTradingTime = () => {
   const now = dayjs();
   const hour = now.hour();
   const minute = now.minute();
 
-  return (
-    (hour === 9 && minute < 15) || // 9:15 前
-    (hour === 11 && minute >= 30) || // 11:30 后
-    hour === 12 || // 午休时间
-    (hour === 15 && minute > 0) // 15:00 后
-  );
+  // 开盘集合竞价：9:15 - 9:25
+  const isOpenAuction = hour === 9 && minute >= 15 && minute <= 25;
+
+  // 上午连续交易：9:30 - 11:30
+  const isMorningTrading =
+    (hour === 9 && minute >= 30) || // 9:30 及以后
+    hour === 10 || // 10点整
+    (hour === 11 && minute < 30); // 11:30 之前
+
+  // 下午连续交易：13:00 - 15:00
+  const isAfternoonTrading =
+    (hour >= 13 && hour < 15) || // 13:00 - 14:59
+    (hour === 15 && minute === 0); // 15:00
+
+  return isOpenAuction || isMorningTrading || isAfternoonTrading;
 };
 
 const runStockScheduleJobs = () => {
@@ -42,14 +51,13 @@ const runStockScheduleJobs = () => {
   // 开盘期间每3分钟抓取一次:
   // - 集合竞价: 9:15-9:25
   // - 连续竞价: 9:30-11:30, 13:00-15:00
-  // 注意: 非交易时段(午休等)会被 isNonTradingTime() 函数过滤
   new CronJob("*/3 9-11,13-14 * * 1-5", async () => {
     if (!isTradeDate()) {
       print("not trade date");
       return;
     }
 
-    if (isNonTradingTime()) {
+    if (!isTradingTime()) {
       print("not trade time");
       return;
     }

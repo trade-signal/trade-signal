@@ -54,7 +54,8 @@ export const seedStockBase = async () => {
     });
 
     await updateBatchStatus(batch.id, "completed", result.count);
-    print(`write stock base success`);
+
+    print(`write stock base success ${result.count}`);
   } catch (error) {
     await updateBatchStatus(batch.id, "failed");
     print(`getStockBase error: ${error}`);
