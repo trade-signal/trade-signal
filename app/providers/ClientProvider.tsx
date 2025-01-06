@@ -9,14 +9,14 @@ import { Notifications } from "@mantine/notifications";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { IconDeviceLaptop } from "@tabler/icons-react";
 
-import { theme } from "@/theme";
 import Header from "@/app/components/common/Header";
 import RightAside from "@/app/components/common/RightAside";
 import { LoginProvider, useLogin } from "@/app/providers/LoginProvider";
 import SpotlightModal from "@/app/components/modals/SpotlightModal";
 import { ActiveStockProvider } from "@/app/providers/ActiveStockContent";
+import { SetTheme, useThemeSetting } from "../hooks/useThemeSetting";
 
-function AppContent({ children }: { children: React.ReactNode }) {
+function AppContent({ children, setTheme }: { children: React.ReactNode; setTheme: SetTheme }) {
   const { isLoggedIn } = useLogin();
   const [collapsed, { open, close }] = useDisclosure(true);
 
@@ -41,7 +41,7 @@ function AppContent({ children }: { children: React.ReactNode }) {
       visibleFrom="xs"
     >
       <AppShell.Header visibleFrom="xs" pr={collapsed ? 0 : 300}>
-        <Header />
+        <Header setTheme={setTheme} />
       </AppShell.Header>
 
       <AppShell.Main>{children}</AppShell.Main>
@@ -62,6 +62,12 @@ export default function ClientProvider({
 }) {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const queryClient = new QueryClient();
+
+  const { theme, setTheme, isThemeLoaded } = useThemeSetting();
+
+  if (!isThemeLoaded) {
+    return null;
+  }
 
   if (isMobile) {
     return (
@@ -84,14 +90,14 @@ export default function ClientProvider({
   return (
     <MantineProvider theme={theme}>
       <SessionProvider session={session}>
-        <ActiveStockProvider>
-          <QueryClientProvider client={queryClient}>
-            <LoginProvider>
-              <Notifications />
-              <SpotlightModal />
-              <AppContent>{children}</AppContent>
-            </LoginProvider>
-          </QueryClientProvider>
+      <ActiveStockProvider>
+        <QueryClientProvider client={queryClient}>
+          <LoginProvider>
+            <Notifications />
+            <SpotlightModal />
+            <AppContent setTheme={setTheme}>{children}</AppContent>
+          </LoginProvider>
+        </QueryClientProvider>
         </ActiveStockProvider>
       </SessionProvider>
     </MantineProvider>
