@@ -17,6 +17,7 @@ import {
   IconBrandGithub,
   IconBrandTelegram,
   IconLanguage,
+  IconLock,
   IconMessageCircle,
   IconMoon,
   IconUser
@@ -47,16 +48,25 @@ const links: Link[] = [
     label: "更多",
     children: [
       {
+        link: "privacy/privacy.html",
+        label: "隐私政策",
+        icon: <IconLock style={{ width: rem(14), height: rem(14) }} />,
+        target: "_blank",
+        group: "隐私政策"
+      },
+      {
         link: "https://github.com/trade-signal",
         label: "Github",
         icon: <IconBrandGithub style={{ width: rem(14), height: rem(14) }} />,
-        target: "_blank"
+        target: "_blank",
+        group: "联系我们"
       },
       {
         link: "https://t.me/+25mzy3YRvbA4ODM1",
         label: "Telegram",
         icon: <IconBrandTelegram style={{ width: rem(14), height: rem(14) }} />,
-        target: "_blank"
+        target: "_blank",
+        group: "联系我们"
       }
     ]
   }
@@ -79,9 +89,9 @@ const LinkMenu = (link: Omit<Link, "children"> & { children: Link[] }) => {
           const lastGroup = link.children[index - 1]?.group;
 
           return (
-            <Stack key={child.label}>
+            <Stack key={child.label} gap={0}>
               {child.group && child.group !== lastGroup && (
-                <Menu.Label>{child.group}</Menu.Label>
+                <Menu.Label mb={0}>{child.group}</Menu.Label>
               )}
 
               <Menu.Item
