@@ -3,7 +3,6 @@
   flex-direction: column;
   justify-content: flex-start;
   padding-top: 25vh;
-  height: calc(100vh - 90px);
   background-color: light-dark(
     var(--mantine-color-white),
     var(--mantine-color-dark-8)
