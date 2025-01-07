@@ -29,9 +29,6 @@ const isTradingTime = () => {
   const hour = now.hour();
   const minute = now.minute();
 
-  // 开盘集合竞价：9:15 - 9:25
-  const isOpenAuction = hour === 9 && minute >= 15 && minute <= 25;
-
   // 上午连续交易：9:30 - 11:30
   const isMorningTrading =
     (hour === 9 && minute >= 30) || // 9:30 及以后
@@ -43,15 +40,14 @@ const isTradingTime = () => {
     (hour >= 13 && hour < 15) || // 13:00 - 14:59
     (hour === 15 && minute === 0); // 15:00
 
-  return isOpenAuction || isMorningTrading || isAfternoonTrading;
+  return isMorningTrading || isAfternoonTrading;
 };
 
 const runStockScheduleJobs = () => {
   // 交易时段实时行情抓取
-  // 开盘期间每5分钟抓取一次:
-  // - 集合竞价: 9:15-9:25
-  // - 连续竞价: 9:30-11:30, 13:00-15:00
-  new CronJob("*/5 9-11,13-14 * * 1-5", async () => {
+  // 交易时段每3分钟抓取一次:
+  // - 9:30-11:30, 13:00-15:00
+  new CronJob("*/3 9-11,13-14 * * 1-5", async () => {
     if (!isTradeDate()) {
       print("not trade date");
       return;

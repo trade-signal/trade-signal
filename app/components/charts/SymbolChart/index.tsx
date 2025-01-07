@@ -255,8 +255,6 @@ const SymbolChart = (props: SymbolChartProps) => {
               item.close !== 0
           );
 
-        console.log(candleData);
-
         candleSeries.setData(candleData);
         seriesRef.current.push(candleSeries);
         break;
