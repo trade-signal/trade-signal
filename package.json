@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "serve": "npm run cron:serve && npm run frontend:serve",
     "dev": "npm run cron:dev && npm run frontend:dev",
     "frontend:dev": "next dev --turbopack",
     "cron:dev": "tsx cron/index.ts",
