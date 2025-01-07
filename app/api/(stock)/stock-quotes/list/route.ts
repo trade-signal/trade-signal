@@ -12,7 +12,7 @@ export type StockQuotesOrder = {
 export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;
 
-  const limit = Number(searchParams.get("limit")) || 4;
+  const limit = Number(searchParams.get("limit")) || 5;
 
   const maxDate = await prisma.stockQuotesRealTime.findFirst({
     orderBy: { date: "desc" },
@@ -20,10 +20,8 @@ export const GET = async (request: NextRequest) => {
   });
 
   const codes = await prisma.stockSelection.findMany({
-    where: {
-      date: { equals: maxDate?.date }
-    },
     select: { code: true },
+    distinct: ["code"],
     take: limit,
     orderBy: { newPrice: "desc" }
   });

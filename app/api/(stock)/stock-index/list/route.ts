@@ -12,7 +12,7 @@ export type StockIndexOrder = {
 export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;
 
-  const limit = Number(searchParams.get("limit")) || 4;
+  const limit = Number(searchParams.get("limit")) || 5;
 
   const maxDate = await prisma.stockIndexRealTime.findFirst({
     orderBy: { date: "desc" },
