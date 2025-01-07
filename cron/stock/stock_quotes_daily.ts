@@ -33,12 +33,15 @@ export const seedDailyStockQuotes = async (date?: string) => {
     // newPrice > 0, 过滤掉停牌的股票
     list = list.filter(item => Number(item.newPrice) > 0);
     // 添加日期
-    list = list.map(item => ({
-      ...item,
-      ts: Date.now(),
-      closePrice: item.newPrice,
-      date: currentDate
-    }));
+    list = list.map(item => {
+      const closePrice = Number(item.newPrice);
+      delete item.newPrice;
+      return {
+        ...item,
+        closePrice,
+        date: currentDate
+      };
+    });
 
     const result = await prisma.stockQuotesDaily.createMany({
       data: list as any,

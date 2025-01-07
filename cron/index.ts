@@ -69,7 +69,7 @@ const runStockScheduleJobs = () => {
   }).start();
 
   // 收盘后运行：16:00
-  new CronJob("0 16 * * 1-5", () => {
+  new CronJob("0 16 * * 1-5", async () => {
     if (!isTradeDate()) {
       print("not trade date");
       return;
@@ -77,10 +77,10 @@ const runStockScheduleJobs = () => {
 
     print(`trigger seed stock quotes daily`);
 
-    seedStockBase();
-    seedStockQuotes();
-    seedDailyStockQuotes();
-    seedStockSelection();
+    await seedStockBase();
+    await seedStockQuotes();
+    await seedDailyStockQuotes();
+    await seedStockSelection();
   }).start();
 };
 
