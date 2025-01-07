@@ -6,7 +6,11 @@ import {
   ISeriesApi,
   UTCTimestamp,
   ColorType,
-  DeepPartial
+  DeepPartial,
+  MouseEventParams,
+  SeriesType,
+  BarData,
+  Time
 } from "lightweight-charts";
 import dayjs from "dayjs";
 import { Group, rem, SegmentedControl, Stack, Tooltip } from "@mantine/core";
@@ -28,6 +32,97 @@ interface SymbolChartProps {
   latest: SymbolChartData;
   trends: SymbolChartData[];
 }
+
+const createTooltip = (
+  chart: IChartApi,
+  container: HTMLDivElement,
+  name: string
+) => {
+  const toolTip = document.createElement("div");
+
+  const toolTipWidth = 80;
+  const toolTipHeight = 80;
+  const toolTipMargin = 15;
+
+  toolTip.style.cssText = `
+    width: 200px;
+    height: 150px;
+    position: absolute;
+    display: none;
+    padding: 8px;
+    box-sizing: border-box;
+    font-size: 12px;
+    text-align: left;
+    z-index: 1000;
+    top: 12px;
+    left: 12px;
+    pointer-events: none;
+    border: 1px solid;
+    border-radius: 2px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: black;
+    color: white;
+    border-color: rgba(38, 166, 154, 1);
+  `;
+
+  container.appendChild(toolTip);
+
+  chart.subscribeCrosshairMove((param: MouseEventParams) => {
+    if (
+      param.point === undefined ||
+      !param.time ||
+      param.point.x < 0 ||
+      param.point.x > container.clientWidth ||
+      param.point.y < 0 ||
+      param.point.y > container.clientHeight
+    ) {
+      toolTip.style.display = "none";
+      return;
+    }
+
+    const series = Array.from(param.seriesData.values())[0];
+    if (!series) return;
+
+    // TODO
+    // @ts-ignore
+    const price = series.value ?? series.close;
+    if (typeof price !== "number") return;
+
+    const dateStr = dayjs
+      .unix(param.time as number)
+      .format("YYYY-MM-DD HH:mm:ss");
+
+    toolTip.style.display = "block";
+    toolTip.innerHTML = `
+      <div style="color: rgba(38, 166, 154, 1)">${name}</div>
+      <div style="font-size: 24px; margin: 4px 0px; color: white">
+        ${Math.round(100 * price) / 100}
+      </div>
+      <div style="color: white">
+        ${dateStr}
+      </div>
+    `;
+
+    const y = param.point.y;
+
+    let left = param.point.x + toolTipMargin;
+    if (left > container.clientWidth - toolTipWidth) {
+      left = param.point.x - toolTipMargin - toolTipWidth;
+    }
+
+    let top = y + toolTipMargin;
+    if (top > container.clientHeight - toolTipHeight) {
+      top = y - toolTipHeight - toolTipMargin;
+    }
+
+    toolTip.style.left = `${left}px`;
+    toolTip.style.top = `${top}px`;
+  });
+
+  return toolTip;
+};
 
 const SymbolChart = (props: SymbolChartProps) => {
   const { code, name, latest, trends } = props;
@@ -153,6 +248,8 @@ const SymbolChart = (props: SymbolChartProps) => {
 
     const chart = createSymbolChart(chartContainerRef.current);
 
+    createTooltip(chart, chartContainerRef.current, name);
+
     chartRef.current = chart;
 
     chart.timeScale().fitContent();
@@ -165,7 +262,7 @@ const SymbolChart = (props: SymbolChartProps) => {
       chart.remove();
       window.removeEventListener("resize", handleChartResize);
     };
-  }, [code, trends]);
+  }, [code, trends, name]);
 
   return (
     <Stack>
@@ -186,19 +283,15 @@ const SymbolChart = (props: SymbolChartProps) => {
               value: "area",
               label: (
                 <Tooltip label="面积图" position="top" withArrow>
-                  <div>
-                    <IconChartArea size={16} />
-                  </div>
+                  <IconChartArea size={16} />
                 </Tooltip>
               )
             },
             {
               value: "candle",
               label: (
-                <Tooltip label="蜡烛图" position="top" withArrow>
-                  <div>
-                    <IconChartCandle size={16} />
-                  </div>
+                <Tooltip label="k 线图" position="top" withArrow>
+                  <IconChartCandle size={16} />
                 </Tooltip>
               )
             }
