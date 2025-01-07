@@ -9,7 +9,7 @@ import {
   DeepPartial
 } from "lightweight-charts";
 import dayjs from "dayjs";
-import { Group, rem, SegmentedControl, Stack, Tooltip } from "@mantine/core";
+import { Group, rem, SegmentedControl, Stack } from "@mantine/core";
 import { IconChartCandle } from "@tabler/icons-react";
 import { IconChartArea } from "@tabler/icons-react";
 
@@ -182,26 +182,8 @@ const SymbolChart = (props: SymbolChartProps) => {
             handleChartTypeChange(chartRef.current!, value as "area" | "candle")
           }
           data={[
-            {
-              value: "area",
-              label: (
-                <Tooltip label="面积图" position="top" withArrow>
-                  <div>
-                    <IconChartArea size={16} />
-                  </div>
-                </Tooltip>
-              )
-            },
-            {
-              value: "candle",
-              label: (
-                <Tooltip label="蜡烛图" position="top" withArrow>
-                  <div>
-                    <IconChartCandle size={16} />
-                  </div>
-                </Tooltip>
-              )
-            }
+            { value: "area", label: <IconChartArea size={16} /> },
+            { value: "candle", label: <IconChartCandle size={16} /> }
           ]}
         />
       </Group>
