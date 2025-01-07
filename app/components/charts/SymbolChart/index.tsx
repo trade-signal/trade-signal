@@ -33,10 +33,26 @@ interface SymbolChartProps {
   trends: SymbolChartData[];
 }
 
+const getChartColor = (
+  price: number,
+  latest: SymbolChartData,
+  chartType: "area" | "candle"
+) => {
+  if (chartType === "area") {
+    return latest.close > latest.preClose
+      ? "rgba(236, 64, 64, 1)"
+      : "rgba(46, 139, 87, 1)";
+  } else {
+    return price > latest.preClose ? "#ec4040" : "#2e8b57";
+  }
+};
+
 const createTooltip = (
   chart: IChartApi,
   container: HTMLDivElement,
-  name: string
+  name: string,
+  latest: SymbolChartData,
+  chartType: "area" | "candle"
 ) => {
   const toolTip = document.createElement("div");
 
@@ -45,8 +61,6 @@ const createTooltip = (
   const toolTipMargin = 15;
 
   toolTip.style.cssText = `
-    width: 200px;
-    height: 150px;
     position: absolute;
     display: none;
     padding: 8px;
@@ -64,7 +78,7 @@ const createTooltip = (
     -moz-osx-font-smoothing: grayscale;
     background: black;
     color: white;
-    border-color: rgba(38, 166, 154, 1);
+    border-color: transparent;
   `;
 
   container.appendChild(toolTip);
@@ -90,13 +104,15 @@ const createTooltip = (
     const price = series.value ?? series.close;
     if (typeof price !== "number") return;
 
+    const color = getChartColor(price, latest, chartType);
+
     const dateStr = dayjs
       .unix(param.time as number)
       .format("YYYY-MM-DD HH:mm:ss");
 
     toolTip.style.display = "block";
     toolTip.innerHTML = `
-      <div style="color: rgba(38, 166, 154, 1)">${name}</div>
+      <div style="color: ${color}">${name}</div>
       <div style="font-size: 24px; margin: 4px 0px; color: white">
         ${Math.round(100 * price) / 100}
       </div>
@@ -207,27 +223,39 @@ const SymbolChart = (props: SymbolChartProps) => {
               : "rgba(46, 139, 87, 0.05)"
         });
 
-        const areaData = trends.map(item => ({
-          time: dayjs(item.date).unix() as UTCTimestamp,
-          value: item.close
-        }));
+        const areaData = trends
+          .map(item => ({
+            time: dayjs(item.date).unix() as UTCTimestamp,
+            value: item.close
+          }))
+          .filter(item => item.value !== 0);
 
         areaSeries.setData(areaData);
         seriesRef.current.push(areaSeries);
         break;
       case "candle":
         const candleSeries = chart.addCandlestickSeries({
-          upColor: "#26a69a",
-          downColor: "#ef5350",
+          upColor: "#ec4040",
+          downColor: "#2e8b57",
           borderVisible: false,
-          wickUpColor: "#26a69a",
-          wickDownColor: "#ef5350"
+          wickUpColor: "#ec4040",
+          wickDownColor: "#2e8b57"
         });
 
-        const candleData = trends.map(item => ({
-          time: dayjs(item.date).unix() as UTCTimestamp,
-          ...item
-        }));
+        const candleData = trends
+          .map(item => ({
+            time: dayjs(item.date).unix() as UTCTimestamp,
+            ...item
+          }))
+          .filter(
+            item =>
+              item.open !== 0 &&
+              item.high !== 0 &&
+              item.low !== 0 &&
+              item.close !== 0
+          );
+
+        console.log(candleData);
 
         candleSeries.setData(candleData);
         seriesRef.current.push(candleSeries);
@@ -248,7 +276,7 @@ const SymbolChart = (props: SymbolChartProps) => {
 
     const chart = createSymbolChart(chartContainerRef.current);
 
-    createTooltip(chart, chartContainerRef.current, name);
+    createTooltip(chart, chartContainerRef.current, name, latest, chartType);
 
     chartRef.current = chart;
 
@@ -262,7 +290,7 @@ const SymbolChart = (props: SymbolChartProps) => {
       chart.remove();
       window.removeEventListener("resize", handleChartResize);
     };
-  }, [code, trends, name]);
+  }, [code, trends, name, chartType]);
 
   return (
     <Stack>
