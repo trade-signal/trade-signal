@@ -1,10 +1,10 @@
 "use client";
 
-import { AppShell, Box, Button, Container, Group, Text } from "@mantine/core";
+import { Button, Container, Group, Text } from "@mantine/core";
 import { IconBrandGithubFilled } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
-import FooterLinks from "./components/common/Footer";
+import Footer from "./components/common/Footer";
 
 export default function Home() {
   const router = useRouter();
@@ -58,7 +58,7 @@ export default function Home() {
         </Group>
       </Container>
 
-      <FooterLinks />
+      <Footer />
     </>
   );
 }

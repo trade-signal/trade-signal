@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import {
   IconBrandGithub,
   IconBrandTelegram,
@@ -33,7 +34,7 @@ const data = [
   }
 ];
 
-const FooterLinks = () => {
+const Footer = () => {
   const groups = data.map(group => {
     const links = group.links.map((link, index) => (
       <Text<"a">
@@ -41,7 +42,7 @@ const FooterLinks = () => {
         className={classes.link}
         component="a"
         href={link.link}
-        onClick={event => event.preventDefault()}
+        target="_blank"
       >
         {link.label}
       </Text>
@@ -61,7 +62,7 @@ const FooterLinks = () => {
         <div className={classes.logo}>
           <Group gap={5}>
             <Image
-              style={{ width: rem(26), height: rem(26) }}
+              style={{ width: rem(24), height: rem(24) }}
               src="/icon.svg"
               alt="TradeSignal logo"
             />
@@ -71,15 +72,15 @@ const FooterLinks = () => {
               </Text>
             </Title>
           </Group>
-          <Text size="sm" c="dimmed" className={classes.description}>
+          <Text size="xs" c="dimmed" className={classes.description}>
             整合多维度市场数据，提供专业的投资分析工具。
           </Text>
         </div>
         <div className={classes.groups}>{groups}</div>
       </Container>
       <Container className={classes.afterFooter}>
-        <Text c="dimmed" size="sm">
-          © 2025 TradeSignal. All rights reserved.
+        <Text c="dimmed" size="xs">
+          © {dayjs().year()} TradeSignal • AGPL v3.0
         </Text>
 
         <Group
@@ -121,4 +122,4 @@ const FooterLinks = () => {
   );
 };
 
-export default FooterLinks;
+export default Footer;
