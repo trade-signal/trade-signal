@@ -1,7 +1,7 @@
 import {
-  IconBrandInstagram,
-  IconBrandTwitter,
-  IconBrandYoutube
+  IconBrandGithub,
+  IconBrandTelegram,
+  IconBrandTwitter
 } from "@tabler/icons-react";
 import {
   ActionIcon,
@@ -12,34 +12,23 @@ import {
   Text,
   Title
 } from "@mantine/core";
+import Link from "next/link";
+
 import classes from "./index.module.css";
 
 const data = [
   {
-    title: "About",
+    title: "关于我们",
     links: [
-      { label: "Features", link: "#" },
-      { label: "Pricing", link: "#" },
-      { label: "Support", link: "#" },
-      { label: "Forums", link: "#" }
+      { label: "隐私条款", link: "/privacy/privacy.html" },
+      { label: "GitHub 组织", link: "https://github.com/trade-signal" }
     ]
   },
   {
-    title: "Project",
+    title: "社交媒体",
     links: [
-      { label: "Contribute", link: "#" },
-      { label: "Media assets", link: "#" },
-      { label: "Changelog", link: "#" },
-      { label: "Releases", link: "#" }
-    ]
-  },
-  {
-    title: "Community",
-    links: [
-      { label: "Join Discord", link: "#" },
-      { label: "Follow on Twitter", link: "#" },
-      { label: "Email newsletter", link: "#" },
-      { label: "GitHub discussions", link: "#" }
+      { label: "Telegram 群组", link: "https://t.me/+25mzy3YRvbA4ODM1" },
+      { label: "Twitter 官方", link: "https://x.com/yangzhi40338736" }
     ]
   }
 ];
@@ -82,8 +71,8 @@ const FooterLinks = () => {
               </Text>
             </Title>
           </Group>
-          <Text size="xs" c="dimmed" className={classes.description}>
-            富贵险中求，也在险中丢；求时十之一，丢时十之九。
+          <Text size="sm" c="dimmed" className={classes.description}>
+            整合多维度市场数据，提供专业的投资分析工具。
           </Text>
         </div>
         <div className={classes.groups}>{groups}</div>
@@ -100,13 +89,31 @@ const FooterLinks = () => {
           wrap="nowrap"
         >
           <ActionIcon size="lg" color="gray" variant="subtle">
-            <IconBrandTwitter size={18} stroke={1.5} />
+            <Link
+              target="_blank"
+              className={classes.socialLink}
+              href="https://github.com/trade-signal"
+            >
+              <IconBrandGithub size={18} stroke={1.5} />
+            </Link>
           </ActionIcon>
           <ActionIcon size="lg" color="gray" variant="subtle">
-            <IconBrandYoutube size={18} stroke={1.5} />
+            <Link
+              target="_blank"
+              className={classes.socialLink}
+              href="https://t.me/+25mzy3YRvbA4ODM1"
+            >
+              <IconBrandTelegram size={18} stroke={1.5} />
+            </Link>
           </ActionIcon>
           <ActionIcon size="lg" color="gray" variant="subtle">
-            <IconBrandInstagram size={18} stroke={1.5} />
+            <Link
+              target="_blank"
+              className={classes.socialLink}
+              href="https://x.com/yangzhi40338736"
+            >
+              <IconBrandTwitter size={18} stroke={1.5} />
+            </Link>
           </ActionIcon>
         </Group>
       </Container>

@@ -12,7 +12,7 @@
 }
 
 .logo {
-  max-width: 200px;
+  max-width: 24 0px;
 
   @media (max-width: $mantine-breakpoint-sm) {
     display: flex;
@@ -91,5 +91,25 @@
 .social {
   @media (max-width: $mantine-breakpoint-sm) {
     margin-top: var(--mantine-spacing-xs);
+  }
+}
+
+.socialLink {
+  display: block;
+  line-height: 1;
+  padding: 8px 12px;
+  border-radius: var(--mantine-radius-sm);
+  text-decoration: none;
+  font-size: var(--mantine-font-size-sm);
+
+  @mixin hover {
+    background-color: light-dark(
+      var(--mantine-color-gray-0),
+      var(--mantine-color-dark-6)
+    );
+  }
+
+  [data-mantine-color-scheme] &[data-active] {
+    color: var(--mantine-color-indigo-filled);
   }
 }
