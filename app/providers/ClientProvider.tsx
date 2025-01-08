@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { AppShell, Center, MantineProvider, Text } from "@mantine/core";
+import { AppShell, Center, MantineProvider, rem, Text } from "@mantine/core";
 import { SessionProvider } from "next-auth/react";
 import { Session } from "next-auth";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -28,11 +28,14 @@ function AppContent({ children, setTheme }: { children: React.ReactNode; setThem
     }
   }, [isLoggedIn]);
 
+  const headerHeight = rem('64px');
+  const asideWidth = rem('300px');
+
   return (
     <AppShell
-      header={{ height: 56 }}
+      header={{ height: headerHeight }}
       aside={{
-        width: collapsed ? 0 : 300,
+        width: collapsed ? 0 : asideWidth,
         breakpoint: "sm",
         collapsed: {
           desktop: collapsed
@@ -40,13 +43,13 @@ function AppContent({ children, setTheme }: { children: React.ReactNode; setThem
       }}
       visibleFrom="xs"
     >
-      <AppShell.Header visibleFrom="xs" pr={collapsed ? 0 : 300}>
+      <AppShell.Header visibleFrom="xs" pr={collapsed ? 0 : asideWidth}>
         <Header setTheme={setTheme} />
       </AppShell.Header>
 
       <AppShell.Main>{children}</AppShell.Main>
 
-      <AppShell.Aside top={collapsed ? 56 : 0} h="100%">
+      <AppShell.Aside top={collapsed ? headerHeight : 0} h="100%">
         <RightAside />
       </AppShell.Aside>
     </AppShell>

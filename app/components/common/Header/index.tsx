@@ -179,7 +179,7 @@ const Header = ({ setTheme }: { setTheme: SetTheme }) => {
         {items}
       </Group>
 
-      <Group style={{ minWidth: '280px' }} justify="flex-end">
+      <Group justify="flex-end">
         {isLoggedIn ? (
           <Menu shadow="md">
             <Menu.Target>
