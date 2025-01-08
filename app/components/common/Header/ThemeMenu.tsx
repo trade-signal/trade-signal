@@ -11,7 +11,8 @@ import {
   ColorSwatch,
   useMantineTheme,
   NumberInput,
-  Box
+  Box,
+  ColorInput
 } from "@mantine/core";
 import { useState, useEffect } from "react";
 import { ColorWheelIcon } from "./ColorWheelIcon";
@@ -38,6 +39,14 @@ export const ThemeMenu = ({ setTheme }: { setTheme: SetTheme }) => {
     if (themeSetting?.fontSize) {
       setTheme('fontSize', themeSetting.fontSize);
     }
+
+    if (themeSetting?.upColor) {
+      setTheme('upColor', themeSetting.upColor);
+    }
+
+    if (themeSetting?.downColor) {
+      setTheme('downColor', themeSetting.downColor);
+    }
   }, [])
 
   const [fontSize, setFontSize] = useState<string | number>(themeSetting.fontSize);
@@ -48,6 +57,8 @@ export const ThemeMenu = ({ setTheme }: { setTheme: SetTheme }) => {
     setFontSize(value);
     setThemeFontSize(value);
   }
+
+  console.log(DEFAULT_THEME.colors)
 
   return (
     <>
@@ -116,6 +127,27 @@ export const ThemeMenu = ({ setTheme }: { setTheme: SetTheme }) => {
             suffix="px"
             allowDecimal={false}
             onChange={handleFontSizeChange}
+          />
+        </Box>
+
+        <Box>
+          <Divider my="md" labelPosition="left" label="自定义" />
+          <ColorInput
+            value={themeSetting.upColor}
+            format="hex"
+            description="上涨"
+            placeholder="请选择颜色"
+            swatches={Object.values(DEFAULT_THEME.colors).map(color => color[7])}
+            onChange={value => setTheme('upColor', value)}
+          />
+          <ColorInput
+            mt="md"
+            value={themeSetting.downColor}
+            format="hex"
+            description="下跌"
+            placeholder="请选择颜色"
+            swatches={Object.values(DEFAULT_THEME.colors).map(color => color[7])}
+            onChange={value => setTheme('downColor', value)}
           />
         </Box>
       </Drawer>

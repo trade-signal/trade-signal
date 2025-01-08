@@ -3,12 +3,12 @@ import { useLocalStorage } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import { themeOverride } from "@/theme";
 
-export type SetThemeType = 'theme' | 'colorScheme' | 'fontSize';
+export type SetThemeType = 'theme' | 'colorScheme' | 'fontSize' | 'upColor' | 'downColor';
 export type SetThemeValue<T extends SetThemeType> = T extends 'theme'
   ? Partial<MantineTheme> & { primaryColor: string }
   : T extends 'colorScheme'
     ? MantineColorScheme
-    : T extends 'fontSize'
+    : T extends 'fontSize' | 'upColor' | 'downColor'
       ? string | number
       : never;
 
@@ -20,6 +20,8 @@ export const DEFAULT_THEME_SETTING: Record<SetThemeType, any> = {
   },
   colorScheme: "light",
   fontSize: 16,
+  upColor: "#f03e3e",
+  downColor: "#37b24d",
 }
 
 export const THEME_SETTING_KEY = "trade-signal-theme-setting";
@@ -36,10 +38,17 @@ export const useThemeSetting = () => {
   const [theme, setTheme] = useState(mergeMantineTheme(DEFAULT_THEME, themeOverride));
 
   const _setTheme: SetTheme = (type, value) => {
-    if (type === 'theme') {
-      setTheme(mergeMantineTheme(theme, value as Partial<MantineTheme>));
-    } else if (type === 'fontSize') {
-      document.documentElement.style.fontSize = `${value}px`;
+    switch (type) {
+      case 'theme':
+        setTheme(mergeMantineTheme(theme, value as Partial<MantineTheme>));
+        break;
+      case 'fontSize':
+        document.documentElement.style.fontSize = `${value}px`;
+        break
+      case 'upColor':
+      case 'downColor':
+        document.documentElement.style.setProperty(`--${type}`, `${value}`);
+        break
     }
     setThemeSetting({
       ...themeSetting,

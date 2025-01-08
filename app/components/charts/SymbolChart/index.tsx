@@ -16,6 +16,9 @@ import dayjs from "dayjs";
 import { Group, rem, SegmentedControl, Stack, Tooltip } from "@mantine/core";
 import { IconChartCandle } from "@tabler/icons-react";
 import { IconChartArea } from "@tabler/icons-react";
+import { readLocalStorageValue } from "@mantine/hooks";
+import { THEME_SETTING_KEY } from "@/app/hooks/useThemeSetting";
+import { hex2rgba } from "@/shared/util";
 
 interface SymbolChartData {
   date: string;
@@ -37,13 +40,17 @@ const getChartColor = (
   price: number,
   latest: SymbolChartData,
   chartType: "area" | "candle"
-) => {
+) => {  
+  const themeSetting: any = readLocalStorageValue({ key: THEME_SETTING_KEY });
+
   if (chartType === "area") {
     return latest.close > latest.preClose
-      ? "rgba(236, 64, 64, 1)"
-      : "rgba(46, 139, 87, 1)";
+      ? themeSetting.upColor ?? "rgba(236, 64, 64, 1)"
+      : themeSetting.downColor ?? "rgba(46, 139, 87, 1)";
   } else {
-    return price > latest.preClose ? "#ec4040" : "#2e8b57";
+    return price > latest.preClose
+      ? themeSetting.upColor ?? "#ec4040"
+      : themeSetting.downColor ?? "#2e8b57";
   }
 };
 
@@ -206,21 +213,23 @@ const SymbolChart = (props: SymbolChartProps) => {
     clearSeries(chart);
     setChartType(type);
 
+    const themeSetting: any = readLocalStorageValue({ key: THEME_SETTING_KEY });
+
     switch (type) {
       case "area":
         const areaSeries = chart.addAreaSeries({
           lineColor:
             latest.close > latest.preClose
-              ? "rgba(236, 64, 64, 1)"
-              : "rgba(46, 139, 87, 1)",
+              ? hex2rgba(themeSetting.upColor ?? "#ec4040")
+              : hex2rgba(themeSetting.downColor ?? "#2e8b57"),
           topColor:
             latest.close > latest.preClose
-              ? "rgba(236, 64, 64, 0.28)"
-              : "rgba(46, 139, 87, 0.28)",
+              ? hex2rgba(themeSetting.upColor ?? "#ec4040", 0.28)
+              : hex2rgba(themeSetting.downColor ?? "#2e8b57", 0.28),
           bottomColor:
             latest.close > latest.preClose
-              ? "rgba(236, 64, 64, 0.05)"
-              : "rgba(46, 139, 87, 0.05)"
+              ? hex2rgba(themeSetting.upColor ?? "#ec4040", 0.05)
+              : hex2rgba(themeSetting.downColor ?? "#2e8b57", 0.05)
         });
 
         const areaData = trends
@@ -235,11 +244,11 @@ const SymbolChart = (props: SymbolChartProps) => {
         break;
       case "candle":
         const candleSeries = chart.addCandlestickSeries({
-          upColor: "#ec4040",
-          downColor: "#2e8b57",
+          upColor: themeSetting.upColor ?? "#ec4040",
+          downColor: themeSetting.downColor ?? "#2e8b57",
           borderVisible: false,
-          wickUpColor: "#ec4040",
-          wickDownColor: "#2e8b57"
+          wickUpColor: themeSetting.upColor ?? "#ec4040",
+          wickDownColor: themeSetting.downColor ?? "#2e8b57"
         });
 
         const candleData = trends
