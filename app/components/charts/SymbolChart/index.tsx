@@ -16,6 +16,7 @@ import dayjs from "dayjs";
 import { Group, rem, SegmentedControl, Stack, Tooltip } from "@mantine/core";
 import { IconChartCandle } from "@tabler/icons-react";
 import { IconChartArea } from "@tabler/icons-react";
+import { useCharts } from "@/hooks/useCharts";
 
 interface SymbolChartData {
   date: string;
@@ -47,99 +48,6 @@ const getChartColor = (
   }
 };
 
-const createTooltip = (
-  chart: IChartApi,
-  container: HTMLDivElement,
-  name: string,
-  latest: SymbolChartData,
-  chartType: "area" | "candle"
-) => {
-  const toolTip = document.createElement("div");
-
-  const toolTipWidth = 80;
-  const toolTipHeight = 80;
-  const toolTipMargin = 15;
-
-  toolTip.style.cssText = `
-    position: absolute;
-    display: none;
-    padding: 8px;
-    box-sizing: border-box;
-    font-size: 12px;
-    text-align: left;
-    z-index: 1000;
-    top: 12px;
-    left: 12px;
-    pointer-events: none;
-    border: 1px solid;
-    border-radius: 2px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    background: black;
-    color: white;
-    border-color: transparent;
-  `;
-
-  container.appendChild(toolTip);
-
-  chart.subscribeCrosshairMove((param: MouseEventParams) => {
-    if (
-      param.point === undefined ||
-      !param.time ||
-      param.point.x < 0 ||
-      param.point.x > container.clientWidth ||
-      param.point.y < 0 ||
-      param.point.y > container.clientHeight
-    ) {
-      toolTip.style.display = "none";
-      return;
-    }
-
-    const series = Array.from(param.seriesData.values())[0];
-    if (!series) return;
-
-    // TODO
-    // @ts-ignore
-    const price = series.value ?? series.close;
-    if (typeof price !== "number") return;
-
-    const color = getChartColor(price, latest, chartType);
-
-    const dateStr = dayjs
-      .unix(param.time as number)
-      .format("YYYY-MM-DD HH:mm:ss");
-
-    toolTip.style.display = "block";
-    toolTip.innerHTML = `
-      <div style="color: ${color}">${name}</div>
-      <div style="font-size: 24px; margin: 4px 0px; color: white">
-        ${Math.round(100 * price) / 100}
-      </div>
-      <div style="color: white">
-        ${dateStr}
-      </div>
-    `;
-
-    const y = param.point.y;
-
-    let left = param.point.x + toolTipMargin;
-    if (left > container.clientWidth - toolTipWidth) {
-      left = param.point.x - toolTipMargin - toolTipWidth;
-    }
-
-    let top = y + toolTipMargin;
-    if (top > container.clientHeight - toolTipHeight) {
-      top = y - toolTipHeight - toolTipMargin;
-    }
-
-    toolTip.style.left = `${left}px`;
-    toolTip.style.top = `${top}px`;
-  });
-
-  return toolTip;
-};
-
 const SymbolChart = (props: SymbolChartProps) => {
   const { code, name, latest, trends } = props;
 
@@ -147,49 +55,8 @@ const SymbolChart = (props: SymbolChartProps) => {
 
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
-  const seriesRef = useRef<ISeriesApi<any, any>[]>([]);
+  const seriesRef = useRef<ISeriesApi<any, any>[]>([]);  
 
-  const createSymbolChart = (chartContainerRef: HTMLDivElement) => {
-    const chartOptions: DeepPartial<ChartOptions> = {
-      layout: {
-        textColor: "black",
-        background: { type: "solid" as ColorType, color: "white" },
-        attributionLogo: false
-      },
-      autoSize: true,
-      localization: {
-        locale: "zh-CN",
-        priceFormatter: (price: number) => price && price.toFixed(2),
-        timeFormatter: (time: number) => {
-          return dayjs.unix(time).format("MM-DD HH:mm");
-        }
-      },
-      timeScale: {
-        timeVisible: true,
-        secondsVisible: false,
-        tickMarkFormatter: (time: number) => {
-          return dayjs.unix(time).format("HH:mm");
-        },
-        rightOffset: 5,
-        barSpacing: 5,
-        minBarSpacing: 2
-      },
-      // disable zoom
-      handleScale: false,
-      // disable scroll
-      handleScroll: false,
-      // hide grid lines
-      grid: {
-        vertLines: {
-          visible: false
-        },
-        horzLines: {
-          visible: false
-        }
-      }
-    };
-    return createChart(chartContainerRef, chartOptions);
-  };
 
   const clearSeries = (chart: IChartApi) => {
     seriesRef.current.forEach(series => {
@@ -264,30 +131,29 @@ const SymbolChart = (props: SymbolChartProps) => {
   useEffect(() => {
     if (!chartContainerRef.current) return;
 
-    const handleChartResize = () => {
-      if (chartRef.current) {
-        chartRef.current.applyOptions({
-          width: chartContainerRef.current!.clientWidth
-        });
-      }
-    };
+    const { createToolTip, chartInstance, unmount } = useCharts(chartContainerRef.current);
 
-    const chart = createSymbolChart(chartContainerRef.current);
+    if (chartInstance) {
+      chartRef.current = chartInstance;
 
-    createTooltip(chart, chartContainerRef.current, name, latest, chartType);
+      createToolTip({
+        name,
+        latest,
+        chartType
+      });
 
-    chartRef.current = chart;
+      // createTooltip(chartInstance, chartContainerRef.current, name, latest, chartType);
+    
+      chartInstance.timeScale().fitContent();
 
-    chart.timeScale().fitContent();
+      handleChartTypeChange(chartInstance, chartType);
 
-    handleChartTypeChange(chart, chartType);
+      return () => {
+        chartInstance.remove();
+        window.removeEventListener("resize", unmount);
+      };
 
-    window.addEventListener("resize", handleChartResize);
-
-    return () => {
-      chart.remove();
-      window.removeEventListener("resize", handleChartResize);
-    };
+    }
   }, [code, trends, name, chartType]);
 
   return (
