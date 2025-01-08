@@ -25,33 +25,37 @@ const print = (message: string) => {
   logger.log(`[${dayjs().format("YYYY-MM-DD HH:mm:ss")}] ${message}`);
 };
 
-// 是否是非交易时段
-const isNonTradingTime = () => {
+// 是否是交易时间
+const isTradingTime = () => {
   const now = dayjs();
   const hour = now.hour();
   const minute = now.minute();
 
-  return (
-    (hour === 9 && minute < 15) || // 9:15 前
-    (hour === 11 && minute >= 30) || // 11:30 后
-    hour === 12 || // 午休时间
-    (hour === 15 && minute > 0) // 15:00 后
-  );
+  // 上午连续交易：9:30 - 11:30
+  const isMorningTrading =
+    (hour === 9 && minute >= 30) || // 9:30 及以后
+    hour === 10 || // 10点整
+    (hour === 11 && minute < 30); // 11:30 之前
+
+  // 下午连续交易：13:00 - 15:00
+  const isAfternoonTrading =
+    (hour >= 13 && hour < 15) || // 13:00 - 14:59
+    (hour === 15 && minute === 0); // 15:00
+
+  return isMorningTrading || isAfternoonTrading;
 };
 
 const runStockScheduleJobs = () => {
   // 交易时段实时行情抓取
-  // 开盘期间每3分钟抓取一次:
-  // - 集合竞价: 9:15-9:25
-  // - 连续竞价: 9:30-11:30, 13:00-15:00
-  // 注意: 非交易时段(午休等)会被 isNonTradingTime() 函数过滤
+  // 交易时段每3分钟抓取一次:
+  // - 9:30-11:30, 13:00-15:00
   new CronJob("*/3 9-11,13-14 * * 1-5", async () => {
     if (!isTradeDate()) {
       print("not trade date");
       return;
     }
 
-    if (isNonTradingTime()) {
+    if (!isTradingTime()) {
       print("not trade time");
       return;
     }
@@ -63,7 +67,7 @@ const runStockScheduleJobs = () => {
   }).start();
 
   // 收盘后运行：16:00
-  new CronJob("0 16 * * 1-5", () => {
+  new CronJob("0 16 * * 1-5", async () => {
     if (!isTradeDate()) {
       print("not trade date");
       return;
@@ -71,10 +75,10 @@ const runStockScheduleJobs = () => {
 
     print(`trigger seed stock quotes daily`);
 
-    seedStockBase();
-    seedStockQuotes();
-    seedDailyStockQuotes();
-    seedStockSelection();
+    await seedStockBase();
+    await seedStockQuotes();
+    await seedDailyStockQuotes();
+    await seedStockSelection();
   }).start();
 };
 

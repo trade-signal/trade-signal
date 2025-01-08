@@ -14,15 +14,13 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { clientGet } from "@/shared/request";
 import { useState } from "react";
-import { StockIndexOrder } from "@/app/api/(stock)/stock-index/list/route";
+import { StockQuotesOrder } from "@/app/api/(stock)/stock-quotes/list/route";
 import SymbolChart from "@/app/components/charts/SymbolChart";
-import {
-  formatNumber,
-  formatPercent
-} from "@/app/components/tables/DataTable/util";
-import { StockIndexRealTime } from "@prisma/client";
+import { StockQuotesRealTime } from "@prisma/client";
+import { formatNumber } from "@/app/components/tables/DataTable/util";
+import { formatPercent } from "@/app/components/tables/DataTable/util";
 
-const transformSymbolChartData = (data: StockIndexRealTime) => {
+const transformSymbolChartData = (data: StockQuotesRealTime) => {
   return {
     date: dayjs(Number(data.ts)).format("YYYY-MM-DD HH:mm:ss"),
     open: data.openPrice,
@@ -33,14 +31,19 @@ const transformSymbolChartData = (data: StockIndexRealTime) => {
   };
 };
 
-const StockIndex = () => {
-  const { data, isLoading } = useQuery({
-    queryKey: ["stock-index"],
-    queryFn: (): Promise<StockIndexOrder[]> =>
-      clientGet("/api/stock-index/list", {})
-  });
+const StockQuotes = () => {
+  const [activeTab, setActiveTab] = useState<string | null>(null);
 
-  const [activeTab, setActiveTab] = useState<string | null>("000001");
+  const { data, isLoading } = useQuery({
+    queryKey: ["stock-quotes"],
+    queryFn: (): Promise<StockQuotesOrder[]> =>
+      clientGet("/api/stock-quotes/list", {}),
+    onSuccess(data) {
+      if (data) {
+        setActiveTab(data[0].code);
+      }
+    }
+  });
 
   const symbolChartData = data?.map(item => ({
     code: item.code,
@@ -53,7 +56,7 @@ const StockIndex = () => {
     <Paper>
       <Group align="center">
         <Title order={2} size={rem(32)}>
-          指数
+          股票
         </Title>
 
         {isLoading ? <Loader size="sm" values="bars" /> : null}
@@ -100,4 +103,4 @@ const StockIndex = () => {
   );
 };
 
-export default StockIndex;
+export default StockQuotes;
