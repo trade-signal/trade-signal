@@ -47,14 +47,15 @@ const DataTable = <T extends Record<string, any>>({
   onSearch,
   onRowClick
 }: DataTableProps<T>) => (
-  <Box>
+  <Box pos="relative">
+    <LoadingOverlay
+      visible={firstLoading || loading}
+      loaderProps={{ size: "sm", type: firstLoading ? "bars" : "oval" }}
+      zIndex={1000}
+      overlayProps={{ radius: "sm", blur: firstLoading ? 2 : 0 }}
+    />
+
     <DataTableContainer onLoadMore={onLoadMore} height={height}>
-      <LoadingOverlay
-        visible={firstLoading || loading}
-        loaderProps={{ size: "sm", type: firstLoading ? "bars" : "oval" }}
-        zIndex={1000}
-        overlayProps={{ radius: "sm", blur: firstLoading ? 2 : 0 }}
-      />
       <DataTableHeader
         columns={columns}
         orderBy={orderBy}
@@ -71,6 +72,7 @@ const DataTable = <T extends Record<string, any>>({
         onRowClick={onRowClick}
       />
     </DataTableContainer>
+
     <DataTableFooter
       firstLoading={firstLoading}
       total={total}

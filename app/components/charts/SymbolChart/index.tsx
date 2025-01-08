@@ -7,10 +7,7 @@ import {
   UTCTimestamp,
   ColorType,
   DeepPartial,
-  MouseEventParams,
-  SeriesType,
-  BarData,
-  Time
+  MouseEventParams
 } from "lightweight-charts";
 import dayjs from "dayjs";
 import { Group, rem, SegmentedControl, Stack, Tooltip } from "@mantine/core";
