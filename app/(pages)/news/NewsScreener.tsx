@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Stack, Group, Title, SegmentedControl } from "@mantine/core";
+import { Stack, Group, Title, SegmentedControl, useMantineTheme } from "@mantine/core";
 import { get } from "@/shared/request";
 
 import ScreenerSelect, { DataItem } from "@/app/components/ScreenerSelect";
@@ -22,6 +22,7 @@ const SOURCE_OPTIONS = [
 
 const NewsScreener = () => {
   const { filters, setFilters } = useNewsContext();
+  const theme = useMantineTheme();
 
   const handleFilterChange = (newFilters: Partial<NewsFilters>) => {
     setFilters({ ...filters, ...newFilters, page: 1 });
@@ -113,7 +114,7 @@ const NewsScreener = () => {
           withItemsBorders={false}
           size="md"
           radius="md"
-          color="indigo"
+          color={theme.primaryColor}
           styles={{
             root: {
               background: "transparent"

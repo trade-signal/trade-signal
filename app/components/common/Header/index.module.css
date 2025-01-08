@@ -44,6 +44,6 @@
   }
 
   [data-mantine-color-scheme] &[data-active] {
-    color: var(--mantine-color-indigo-filled);
+    color: var(--mantine-primary-color-filled);
   }
 }

@@ -6,7 +6,6 @@ import {
   Radio,
   useMantineColorScheme,
   Divider,
-  Input,
   MantineColorScheme,
   CheckIcon,
   ColorSwatch,
@@ -32,8 +31,8 @@ export const ThemeMenu = ({ setTheme }: { setTheme: SetTheme }) => {
       setColorScheme(themeSetting?.colorScheme);
     }
 
-    if (themeSetting?.primaryColor) {
-      setTheme('theme', { primaryColor: themeSetting.primaryColor });
+    if (themeSetting?.theme) {
+      setTheme('theme', themeSetting.theme);
     }
 
     if (themeSetting?.fontSize) {
