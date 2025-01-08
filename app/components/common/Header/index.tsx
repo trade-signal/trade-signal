@@ -9,7 +9,8 @@ import {
   Stack,
   Text,
   TextInput,
-  Title
+  Title,
+  useMantineColorScheme,
 } from "@mantine/core";
 import { spotlight } from "@mantine/spotlight";
 import {
@@ -18,15 +19,17 @@ import {
   IconBrandTelegram,
   IconLanguage,
   IconMessageCircle,
-  IconMoon,
   IconUser
 } from "@tabler/icons-react";
 import Link from "next/link";
+import { ThemeMenu } from "./ThemeMenu";
 import { usePathname, useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useLoginContext } from "@/app/providers/LoginProvider";
 
 import styles from "./index.module.css";
+import { useEffect, useState } from "react";
+import { SetTheme } from "@/app/hooks/useThemeSetting";
 
 interface Link {
   link: string;
@@ -102,9 +105,16 @@ const LinkMenu = (link: Omit<Link, "children"> & { children: Link[] }) => {
   );
 };
 
-const Header = () => {
+const Header = ({ setTheme }: { setTheme: SetTheme }) => {
   const router = useRouter();
   const pathname = usePathname();
+
+  const { colorScheme } = useMantineColorScheme();
+  const [logo, setLogo] = useState("/icon.svg");
+
+  useEffect(() => {
+    setLogo(colorScheme === "dark" ? "/icon-dark.svg" : "/icon.svg");
+  }, [colorScheme]);
 
   const { showLoginModal, isLoggedIn, userInfo } = useLoginContext();
 
@@ -128,7 +138,7 @@ const Header = () => {
   );
 
   return (
-    <Group justify="space-between" className={styles.header}>
+    <Group justify="space-between" align="center" className={styles.header}>
       <Group
         gap={5}
         style={{ cursor: "pointer" }}
@@ -136,7 +146,7 @@ const Header = () => {
       >
         <Image
           style={{ width: rem(32), height: rem(32) }}
-          src="/icon.svg"
+          src={logo}
           alt="TradeSignal logo"
         />
         <Title order={3} visibleFrom="xl">
@@ -159,7 +169,7 @@ const Header = () => {
         {items}
       </Group>
 
-      <Group style={{ width: 180 }} grow>
+      <Group justify="flex-end">
         {isLoggedIn ? (
           <Menu shadow="md">
             <Menu.Target>
@@ -202,27 +212,6 @@ const Header = () => {
               <Menu.Divider />
 
               <Menu.Item
-                disabled
-                leftSection={
-                  <IconMoon style={{ width: rem(14), height: rem(14) }} />
-                }
-                onClick={() => signOut()}
-              >
-                暗色模式
-              </Menu.Item>
-
-              <Menu.Item
-                disabled
-                leftSection={
-                  <IconLanguage style={{ width: rem(14), height: rem(14) }} />
-                }
-              >
-                语言
-              </Menu.Item>
-
-              <Menu.Divider />
-
-              <Menu.Item
                 leftSection={
                   <IconArrowsLeftRight
                     style={{ width: rem(14), height: rem(14) }}
@@ -248,6 +237,17 @@ const Header = () => {
             </Button>
           </>
         )}
+
+        <ThemeMenu setTheme={setTheme} />
+
+        {/* <Button
+          disabled
+          leftSection={
+            <IconLanguage style={{ width: rem(14), height: rem(14) }} />
+          }
+        >
+          语言
+        </Button> */}
       </Group>
     </Group>
   );

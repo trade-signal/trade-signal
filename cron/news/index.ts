@@ -1,15 +1,15 @@
 import dayjs from "dayjs";
 import prisma from "@/prisma/db";
-import { createLogger } from "@/cron/util";
+import { createLogger } from "@/shared/logger";
 import { seedSinaNews } from "@/cron/news/sina";
 import { seedClsNews } from "@/cron/news/cls";
 
 const spider_name = "news";
-const print = createLogger(spider_name);
+const logger = createLogger(spider_name, '', false);
 
 // 清除超过7天的数据
 export const cleanNews = async () => {
-  print("check if there is data older than 7 days");
+  logger.log("check if there is data older than 7 days");
 
   const result = await prisma.news.deleteMany({
     where: {
@@ -20,9 +20,9 @@ export const cleanNews = async () => {
   });
 
   if (result.count === 0) {
-    print("no data older than 7 days");
+    logger.log("no data older than 7 days");
   } else {
-    print(`clean ${result.count} data older than 7 days`);
+    logger.log(`clean ${result.count} data older than 7 days`);
   }
 };
 
@@ -43,14 +43,14 @@ export const checkNews = async (date?: string) => {
 // 获取新闻
 export const seedNews = async () => {
   try {
-    print(`start get news`);
+    logger.log(`start get news`);
 
     // 获取新闻数据
     await Promise.all([seedSinaNews(), seedClsNews()]);
 
-    print(`get news success`);
+    logger.log(`get news success`);
   } catch (error) {
-    print(`get news error: ${error}`);
+    logger.log(`get news error: ${error}`);
   }
 };
 
@@ -58,7 +58,7 @@ export const initNewsData = async (runDate: string) => {
   const hasNews = await checkNews(runDate);
 
   if (hasNews) {
-    print("news available! No need to seed.");
+    logger.log("news available! No need to seed.");
     return;
   }
 

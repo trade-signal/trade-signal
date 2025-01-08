@@ -1,6 +1,8 @@
 import dayjs from "dayjs";
 import { HoverCard, Text } from "@mantine/core";
 import { ColumnAlign } from "./types";
+import { readLocalStorageValue } from "@mantine/hooks";
+import { THEME_SETTING_KEY } from "@/app/hooks/useThemeSetting";
 
 export const transformAlign = (align?: ColumnAlign) => {
   if (align === "left") return "flex-start";
@@ -16,8 +18,9 @@ export const generateRowKey = (
 ) => `row-${index}-${orderBy || ""}-${order || ""}`;
 
 export const getColor = (value: number) => {
-  if (value > 0) return "red.7";
-  if (value < 0) return "green.7";
+  const themeSetting: any = readLocalStorageValue({ key: THEME_SETTING_KEY });
+  if (value > 0) return themeSetting.upColor ?? "red.7";
+  if (value < 0) return themeSetting.downColor ?? "green.7";
   return "gray.7";
 };
 
@@ -37,15 +40,16 @@ export const formatNumber = (value: number, decimals = 2) =>
 export const formatBillion = (value: number) => (value / 100000000).toFixed(2);
 
 export const renderSignal = (value: boolean) => {
+  const themeSetting: any = readLocalStorageValue({ key: THEME_SETTING_KEY });
   if (value) {
     return (
-      <Text span c="green.7" fw={700}>
+      <Text span c={themeSetting.upColor ?? "green.7"} fw={700}>
         ✓
       </Text>
     );
   }
   return (
-    <Text span c="red.7" fw={700}>
+    <Text span c={themeSetting.downColor ?? "red.7"} fw={700}>
       ✗
     </Text>
   );

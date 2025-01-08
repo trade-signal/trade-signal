@@ -9,6 +9,7 @@ import {
 import { Metadata } from "next";
 import StockIndex from "./StockIndex";
 import StockQuotes from "./StockQuotes";
+import classes from "./page.module.css";
 
 export const metadata: Metadata = {
   title: "市场行情：实时股票和指数行情 - TradeSignal"
@@ -19,13 +20,7 @@ const Market = () => {
     <ScrollArea
       px="4vw"
       py="xl"
-      style={{
-        height: "calc(100vh - 60px)",
-        overflow: "scroll",
-        overflowX: "hidden",
-        scrollbarWidth: "thin",
-        scrollbarColor: "#000 #fff"
-      }}
+      className={classes.scrollArea}
     >
       <Center my="xl">
         <Title order={1} size={rem(48)}>

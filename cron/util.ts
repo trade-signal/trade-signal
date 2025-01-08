@@ -1,9 +1,13 @@
 import dayjs from "dayjs";
 import { IndicatorMapping, IndicatorType } from "./type";
+import * as Logger from "../shared/logger";
 
 export const createLogger =
-  (name: string, prefix?: string) => (message: string) => {
-    console.log(`${prefix ? `[${prefix}]` : ""}[${name}] ${message}`);
+  (name: string, prefix?: string) => {
+    const logger = Logger.createLogger(name, prefix, false)
+    return (message: string) => {
+      logger.log(`${message}`);
+    };
   };
 
 export const normalizeValue = (type: IndicatorType, value: string) => {
