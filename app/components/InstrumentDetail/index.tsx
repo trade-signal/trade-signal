@@ -62,7 +62,7 @@ const InstrumentDetail = () => {
 
   if (isLoading) {
     return (
-      <Stack h={"48vh"} justify="center" align="center">
+      <Stack h={"49vh"} justify="center" align="center">
         <Loader size="xs" />
       </Stack>
     );
@@ -73,7 +73,7 @@ const InstrumentDetail = () => {
       offsetScrollbars
       p="xs"
       style={{ background: "white" }}
-      h={"48vh"}
+      h={"49vh"}
     >
       <Stack gap="xs">
         <Text size="sm" fw={500}>
