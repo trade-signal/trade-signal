@@ -1,4 +1,4 @@
-import { rem } from '@mantine/core';
+import { rem } from "@mantine/core";
 
 export function ColorWheelIcon() {
   return (
@@ -8,7 +8,10 @@ export function ColorWheelIcon() {
       viewBox="0 0 200 200"
       style={{ width: rem(18), height: rem(18) }}
     >
-      <path fill="#FF5178" d="M100 0a100 100 0 00-50 13.398l30 51.961A40 40 0 01100 60V0z" />
+      <path
+        fill="#FF5178"
+        d="M100 0a100 100 0 00-50 13.398l30 51.961A40 40 0 01100 60V0z"
+      />
       <path
         fill="#FF9259"
         d="M49.982 13.408a99.999 99.999 0 00-36.595 36.61l51.968 29.99a40 40 0 0114.638-14.645l-30.01-51.955z"

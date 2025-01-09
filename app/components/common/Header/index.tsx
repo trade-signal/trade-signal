@@ -10,7 +10,7 @@ import {
   Text,
   TextInput,
   Title,
-  useMantineColorScheme,
+  useMantineColorScheme
 } from "@mantine/core";
 import { spotlight } from "@mantine/spotlight";
 import {
@@ -19,7 +19,9 @@ import {
   IconBrandTelegram,
   IconLanguage,
   IconMessageCircle,
-  IconUser
+  IconPalette,
+  IconUser,
+  IconUserCircle
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { ThemeMenu } from "./ThemeMenu";
@@ -30,6 +32,7 @@ import { useLoginContext } from "@/app/providers/LoginProvider";
 import styles from "./index.module.css";
 import { useEffect, useState } from "react";
 import { SetTheme } from "@/app/hooks/useThemeSetting";
+import { useDisclosure, useToggle } from "@mantine/hooks";
 
 interface Link {
   link: string;
@@ -109,6 +112,8 @@ const Header = ({ setTheme }: { setTheme: SetTheme }) => {
   const router = useRouter();
   const pathname = usePathname();
 
+  const [visible, { open, close }] = useDisclosure();
+
   const { colorScheme } = useMantineColorScheme();
   const [logo, setLogo] = useState("/icon.svg");
 
@@ -136,6 +141,21 @@ const Header = ({ setTheme }: { setTheme: SetTheme }) => {
       </Link>
     )
   );
+
+  const commonMenuItems = [
+    <Menu.Item
+      leftSection={<IconPalette style={{ width: rem(14), height: rem(14) }} />}
+      onClick={open}
+    >
+      主题设置
+    </Menu.Item>,
+    <Menu.Item
+      disabled
+      leftSection={<IconLanguage style={{ width: rem(14), height: rem(14) }} />}
+    >
+      切换语言
+    </Menu.Item>
+  ];
 
   return (
     <Group justify="space-between" align="center" className={styles.header}>
@@ -170,84 +190,91 @@ const Header = ({ setTheme }: { setTheme: SetTheme }) => {
       </Group>
 
       <Group justify="flex-end">
-        {isLoggedIn ? (
-          <Menu shadow="md">
-            <Menu.Target>
-              {userInfo?.image ? (
+        <Menu shadow="md">
+          {isLoggedIn ? (
+            <>
+              <Menu.Target>
+                {userInfo?.image ? (
+                  <Box className={styles.avatarWrapper}>
+                    <Avatar
+                      src={userInfo?.image || ""}
+                      size={rem(32)}
+                      alt={userInfo?.name || ""}
+                    />
+                  </Box>
+                ) : (
+                  <Text size="sm" className={styles.username}>
+                    {userInfo?.name}
+                  </Text>
+                )}
+              </Menu.Target>
+
+              <Menu.Dropdown style={{ width: rem(200) }}>
+                <Menu.Item
+                  disabled
+                  leftSection={
+                    <IconUser style={{ width: rem(14), height: rem(14) }} />
+                  }
+                >
+                  个人资料
+                </Menu.Item>
+
+                <Menu.Item
+                  disabled
+                  leftSection={
+                    <IconMessageCircle
+                      style={{ width: rem(14), height: rem(14) }}
+                    />
+                  }
+                >
+                  最新消息
+                </Menu.Item>
+
+                <Menu.Divider />
+
+                {commonMenuItems}
+
+                <Menu.Divider />
+
+                <Menu.Item
+                  leftSection={
+                    <IconArrowsLeftRight
+                      style={{ width: rem(14), height: rem(14) }}
+                    />
+                  }
+                  onClick={() => signOut()}
+                >
+                  退出登录
+                </Menu.Item>
+              </Menu.Dropdown>
+            </>
+          ) : (
+            <>
+              <Menu.Target>
                 <Box className={styles.avatarWrapper}>
-                  <Avatar
-                    src={userInfo?.image || ""}
-                    size={rem(32)}
-                    alt={userInfo?.name || ""}
-                  />
+                  <IconUserCircle style={{ width: rem(28), height: rem(28) }} />
                 </Box>
-              ) : (
-                <Text size="sm" className={styles.username}>
-                  {userInfo?.name}
-                </Text>
-              )}
-            </Menu.Target>
+              </Menu.Target>
 
-            <Menu.Dropdown style={{ width: rem(200) }}>
-              <Menu.Item
-                disabled
-                leftSection={
-                  <IconUser style={{ width: rem(14), height: rem(14) }} />
-                }
-              >
-                个人资料
-              </Menu.Item>
+              <Menu.Dropdown style={{ width: rem(200) }}>
+                <Menu.Item
+                  leftSection={
+                    <IconUser style={{ width: rem(14), height: rem(14) }} />
+                  }
+                  onClick={() => showLoginModal("signin")}
+                >
+                  登录
+                </Menu.Item>
 
-              <Menu.Item
-                disabled
-                leftSection={
-                  <IconMessageCircle
-                    style={{ width: rem(14), height: rem(14) }}
-                  />
-                }
-              >
-                最新消息
-              </Menu.Item>
+                <Menu.Divider />
 
-              <Menu.Divider />
+                {commonMenuItems}
+              </Menu.Dropdown>
+            </>
+          )}
+        </Menu>
 
-              <Menu.Item
-                leftSection={
-                  <IconArrowsLeftRight
-                    style={{ width: rem(14), height: rem(14) }}
-                  />
-                }
-                onClick={() => signOut()}
-              >
-                退出登录
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
-        ) : (
-          <>
-            <Button
-              size="sm"
-              variant="default"
-              onClick={() => showLoginModal("signin")}
-            >
-              登录
-            </Button>
-            <Button size="sm" onClick={() => showLoginModal("signup")}>
-              注册
-            </Button>
-          </>
-        )}
-
-        <ThemeMenu setTheme={setTheme} />
-
-        {/* <Button
-          disabled
-          leftSection={
-            <IconLanguage style={{ width: rem(14), height: rem(14) }} />
-          }
-        >
-          语言
-        </Button> */}
+        <ThemeMenu setTheme={setTheme} visible={visible} onClose={close} />
       </Group>
     </Group>
   );
