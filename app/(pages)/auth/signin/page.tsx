@@ -1,8 +1,19 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import AuthorizationModal from "@/app/components/modals/AuthorizationModal";
+import { useLogin } from "@/app/providers/LoginProvider";
 
 const SignIn = () => {
+  const { isLoggedIn } = useLogin()
+  const router = useRouter()
+
+  if (isLoggedIn) {
+    // 如果已经登录，则重定向到首页
+    router.replace("/")
+    return null
+  }
+
   return (
     <AuthorizationModal
       type="signin"
