@@ -5,10 +5,10 @@
 
 .indicator {
   border-radius: var(--mantine-radius-md);
-  background-color: var(--mantine-color-dark-6);
+  background-color: var(--mantine-color-gray-1);
 
   @mixin dark {
-    background-color: var(--mantine-color-gray-1);
+    background-color: var(--mantine-color-dark-5);
   }
 }
 
@@ -18,13 +18,10 @@
   padding: rem(8) rem(16);
   color: var(--mantine-color-dark-6);
   border-radius: var(--mantine-radius-md);
-  background-color: var(--mantine-color-gray-1);
+
   transition: color 100ms ease;
 
   &[data-active] {
-    color: var(--mantine-color-white);
-    background-color: transparent;
-
     .tabName {
       font-weight: 900;
     }
@@ -32,11 +29,5 @@
 
   @mixin dark {
     color: var(--mantine-color-white);
-    background-color: var(--mantine-color-dark-6);
-
-    &[data-active] {
-      color: var(--mantine-color-dark-6);
-      background-color: transparent;
-    }
   }
 }

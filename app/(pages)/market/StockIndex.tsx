@@ -45,7 +45,9 @@ const StockIndex = () => {
 
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const [rootRef, setRootRef] = useState<HTMLDivElement | null>(null);
-  const [controlsRefs, setControlsRefs] = useState<Record<string, HTMLButtonElement | null>>({});
+  const [controlsRefs, setControlsRefs] = useState<
+    Record<string, HTMLButtonElement | null>
+  >({});
   const setControlRef = (val: string) => (node: HTMLButtonElement) => {
     controlsRefs[val] = node;
     setControlsRefs(controlsRefs);

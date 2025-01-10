@@ -20,8 +20,7 @@ import {
   IconLanguage,
   IconMessageCircle,
   IconPalette,
-  IconUser,
-  IconUserCircle
+  IconUser
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { ThemeMenu } from "./ThemeMenu";
@@ -30,7 +29,7 @@ import { signOut } from "next-auth/react";
 import { useLoginContext } from "@/app/providers/LoginProvider";
 
 import styles from "./index.module.css";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SetTheme } from "@/app/hooks/useThemeSetting";
 import { useDisclosure, useToggle } from "@mantine/hooks";
 
@@ -115,16 +114,15 @@ const Header = ({ setTheme }: { setTheme: SetTheme }) => {
   const [visible, { open, close }] = useDisclosure();
 
   const { colorScheme } = useMantineColorScheme();
+  const isDark = useMemo(() => colorScheme === "dark", [colorScheme]);
 
-  const [logo, setLogo] = useState("/icon.svg");
-  const [userIcon, setUserIcon] = useState("/icon-user.svg");
-
-  useEffect(() => {
-    const isDark = colorScheme === "dark";
-
-    setLogo(isDark ? "/icon-dark.svg" : "/icon.svg");
-    setUserIcon(isDark ? "/icon-user-dark.svg" : "/icon-user.svg");
-  }, [colorScheme]);
+  const [logo, userIcon] = useMemo(
+    () => [
+      isDark ? "/icon-dark.svg" : "/icon.svg",
+      isDark ? "/icon-user-dark.svg" : "/icon-user.svg"
+    ],
+    [isDark]
+  );
 
   const { showLoginModal, isLoggedIn, userInfo } = useLoginContext();
 
