@@ -29,7 +29,8 @@ const TableContainer = ({
         height: height || "calc(100vh - 240px)",
         width: "100%",
         overflow: "auto",
-        borderBottom: "1px solid #eee"
+        borderBottom:
+          "1px solid light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-5))"
       }}
     >
       <Table stickyHeader highlightOnHover verticalSpacing="xs">

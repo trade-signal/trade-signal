@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { IconAlarm, IconSettings, IconArticle } from "@tabler/icons-react";
+import {
+  IconAlarm,
+  IconSettings,
+  IconArticle,
+  IconPalette
+} from "@tabler/icons-react";
 import { Box, Stack, Tooltip, UnstyledButton } from "@mantine/core";
 
 import WatchList from "@/app/components/WatchList";
@@ -21,8 +26,13 @@ const mainLinksMockdata = [
     disabled: true
   },
   {
+    icon: <IconPalette size={28} />,
+    label: "主题设置",
+    value: "theme"
+  },
+  {
     icon: <IconSettings size={28} />,
-    label: "设置",
+    label: "系统设置",
     value: "settings",
     disabled: true
   }
@@ -36,6 +46,19 @@ const RightAside = () => {
     return null;
   }
 
+  const handleClick = (link: (typeof mainLinksMockdata)[0]) => {
+    if (link.value === "theme") {
+      return;
+    }
+
+    if (link.disabled) return;
+
+    // TODO: hidden
+    // if (link.value === active) return setActive("");
+
+    setActive(link.value);
+  };
+
   const mainLinks = mainLinksMockdata.map(link => (
     <Tooltip
       label={link.label}
@@ -46,12 +69,7 @@ const RightAside = () => {
       style={{}}
     >
       <UnstyledButton
-        onClick={() => {
-          if (link.disabled) return;
-          // TODO: hidden
-          // if (link.value === active) return setActive("");
-          setActive(link.value);
-        }}
+        onClick={() => handleClick(link)}
         className={classes.mainLink}
         data-active={link.value === active || undefined}
         disabled={link.disabled}

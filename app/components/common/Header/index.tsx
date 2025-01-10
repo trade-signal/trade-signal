@@ -115,10 +115,15 @@ const Header = ({ setTheme }: { setTheme: SetTheme }) => {
   const [visible, { open, close }] = useDisclosure();
 
   const { colorScheme } = useMantineColorScheme();
+
   const [logo, setLogo] = useState("/icon.svg");
+  const [userIcon, setUserIcon] = useState("/icon-user.svg");
 
   useEffect(() => {
-    setLogo(colorScheme === "dark" ? "/icon-dark.svg" : "/icon.svg");
+    const isDark = colorScheme === "dark";
+
+    setLogo(isDark ? "/icon-dark.svg" : "/icon.svg");
+    setUserIcon(isDark ? "/icon-user-dark.svg" : "/icon-user.svg");
   }, [colorScheme]);
 
   const { showLoginModal, isLoggedIn, userInfo } = useLoginContext();
@@ -144,12 +149,14 @@ const Header = ({ setTheme }: { setTheme: SetTheme }) => {
 
   const commonMenuItems = [
     <Menu.Item
+      key="theme"
       leftSection={<IconPalette style={{ width: rem(14), height: rem(14) }} />}
       onClick={open}
     >
       主题设置
     </Menu.Item>,
     <Menu.Item
+      key="language"
       disabled
       leftSection={<IconLanguage style={{ width: rem(14), height: rem(14) }} />}
     >
@@ -211,6 +218,7 @@ const Header = ({ setTheme }: { setTheme: SetTheme }) => {
 
               <Menu.Dropdown style={{ width: rem(200) }}>
                 <Menu.Item
+                  key="profile"
                   disabled
                   leftSection={
                     <IconUser style={{ width: rem(14), height: rem(14) }} />
@@ -220,6 +228,7 @@ const Header = ({ setTheme }: { setTheme: SetTheme }) => {
                 </Menu.Item>
 
                 <Menu.Item
+                  key="message"
                   disabled
                   leftSection={
                     <IconMessageCircle
@@ -237,6 +246,7 @@ const Header = ({ setTheme }: { setTheme: SetTheme }) => {
                 <Menu.Divider />
 
                 <Menu.Item
+                  key="logout"
                   leftSection={
                     <IconArrowsLeftRight
                       style={{ width: rem(14), height: rem(14) }}
@@ -252,12 +262,17 @@ const Header = ({ setTheme }: { setTheme: SetTheme }) => {
             <>
               <Menu.Target>
                 <Box className={styles.avatarWrapper}>
-                  <IconUserCircle style={{ width: rem(28), height: rem(28) }} />
+                  <Image
+                    src={userIcon}
+                    alt="user"
+                    style={{ width: rem(24), height: rem(24) }}
+                  />
                 </Box>
               </Menu.Target>
 
               <Menu.Dropdown style={{ width: rem(200) }}>
                 <Menu.Item
+                  key="login"
                   leftSection={
                     <IconUser style={{ width: rem(14), height: rem(14) }} />
                   }

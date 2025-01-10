@@ -16,7 +16,13 @@ import SpotlightModal from "@/app/components/modals/SpotlightModal";
 import { ActiveStockProvider } from "@/app/providers/ActiveStockContent";
 import { SetTheme, useThemeSetting } from "../hooks/useThemeSetting";
 
-function AppContent({ children, setTheme }: { children: React.ReactNode; setTheme: SetTheme }) {
+function AppContent({
+  children,
+  setTheme
+}: {
+  children: React.ReactNode;
+  setTheme: SetTheme;
+}) {
   const { isLoggedIn } = useLogin();
   const [collapsed, { open, close }] = useDisclosure(true);
 
@@ -28,8 +34,8 @@ function AppContent({ children, setTheme }: { children: React.ReactNode; setThem
     }
   }, [isLoggedIn]);
 
-  const headerHeight = rem('64px');
-  const asideWidth = rem('300px');
+  const headerHeight = rem("56px");
+  const asideWidth = rem("300px");
 
   return (
     <AppShell
@@ -93,14 +99,14 @@ export default function ClientProvider({
   return (
     <MantineProvider theme={theme}>
       <SessionProvider session={session}>
-      <ActiveStockProvider>
-        <QueryClientProvider client={queryClient}>
-          <LoginProvider>
-            <Notifications />
-            <SpotlightModal />
-            <AppContent setTheme={setTheme}>{children}</AppContent>
-          </LoginProvider>
-        </QueryClientProvider>
+        <ActiveStockProvider>
+          <QueryClientProvider client={queryClient}>
+            <LoginProvider>
+              <Notifications />
+              <SpotlightModal />
+              <AppContent setTheme={setTheme}>{children}</AppContent>
+            </LoginProvider>
+          </QueryClientProvider>
         </ActiveStockProvider>
       </SessionProvider>
     </MantineProvider>

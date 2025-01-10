@@ -15,6 +15,8 @@ import {
 } from "@mantine/core";
 import { useActiveStock } from "@/app/providers/ActiveStockContent";
 import { useLoginContext } from "@/app/providers/LoginProvider";
+import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
+
 import {
   formatNumber,
   formatVolume,
@@ -22,7 +24,8 @@ import {
   getColor
 } from "../tables/DataTable/util";
 import { formatPercentPlain } from "../tables/DataTable/util";
-import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
+
+import styles from "./index.module.css";
 
 const InstrumentDetail = () => {
   const { activeStockCode, setActiveStockCode } = useActiveStock();
@@ -72,7 +75,7 @@ const InstrumentDetail = () => {
     <ScrollArea
       offsetScrollbars
       p="xs"
-      style={{ background: "white" }}
+      className={styles.instrumentDetailScrollArea}
       h={"49vh"}
     >
       <Stack gap="xs">

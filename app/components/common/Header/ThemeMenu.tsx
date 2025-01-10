@@ -50,8 +50,6 @@ export const ThemeMenu = ({
     }
   }, []);
 
-  console.log(DEFAULT_THEME.colors);
-
   return (
     <Drawer
       position="left"
