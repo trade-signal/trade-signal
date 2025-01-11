@@ -2,6 +2,7 @@ import { getServerSession, Session } from "next-auth";
 import { authOptions } from "@/app/lib/auth";
 import prisma from "@/prisma/db";
 import { NextRequest } from "next/server";
+import { errorResponse } from "@/middleware";
 
 const getFirstStock = async () => {
   const stock = await prisma.stock.findFirst({
@@ -11,12 +12,12 @@ const getFirstStock = async () => {
   return stock?.code ?? null;
 };
 
-const getCode = async (session: Session | null, code: string | null) => {
+const getCode = async (userId: string, code: string | null) => {
   if (code) return code;
 
-  if (session) {
+  if (userId) {
     const watchlist = await prisma.watchlist.findFirst({
-      where: { userId: session.user.id, isDefault: true }
+      where: { userId, isDefault: true }
     });
     if (watchlist) {
       const stocks = await prisma.watch.findMany({
@@ -40,10 +41,16 @@ const getCode = async (session: Session | null, code: string | null) => {
 export const GET = async (req: NextRequest) => {
   const session = await getServerSession(authOptions);
 
+  const userId = session?.user?.id;
+
+  if (!userId) {
+    return errorResponse("未授权访问", 401);
+  }
+
   let code = req.nextUrl.searchParams.get("code");
 
   if (!code) {
-    code = await getCode(session, code);
+    code = await getCode(userId, code);
   }
 
   if (!code) {

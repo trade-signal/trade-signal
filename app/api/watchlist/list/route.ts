@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/lib/auth";
 import prisma from "@/prisma/db";
 import { Watch, Watchlist, StockQuotesRealTime } from "@prisma/client";
+import { errorResponse } from "@/middleware";
 
 export type WatchStock = Watch & {
   quote: StockQuotesRealTime;
@@ -14,19 +15,10 @@ export type WatchlistWithStocks = Watchlist & {
 export const GET = async () => {
   const session = await getServerSession(authOptions);
 
-  if (!session) {
-    return Response.json({
-      success: false,
-      message: "Unauthorized"
-    });
-  }
+  const userId = session?.user?.id;
 
-  const userId = session.user.id;
   if (!userId) {
-    return Response.json({
-      success: false,
-      message: "Unauthorized"
-    });
+    return errorResponse("未授权访问", 401);
   }
 
   // 1. 判断用户是否存在分组，不存在则创建默认 "自选表" 分组

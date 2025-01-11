@@ -1,15 +1,14 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/lib/auth";
 import prisma from "@/prisma/db";
+import { errorResponse } from "@/middleware";
 
 export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
+  const userId = session?.user?.id;
 
-  if (!session?.user?.id) {
-    return Response.json({
-      success: false,
-      message: "未授权访问"
-    });
+  if (!userId) {
+    return errorResponse("未授权访问", 401);
   }
 
   try {
