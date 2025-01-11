@@ -1,7 +1,6 @@
 import {
   Avatar,
   Box,
-  Button,
   Group,
   Image,
   Menu,
@@ -9,8 +8,7 @@ import {
   Stack,
   Text,
   TextInput,
-  Title,
-  useMantineColorScheme
+  Title
 } from "@mantine/core";
 import { spotlight } from "@mantine/spotlight";
 import {
@@ -27,9 +25,9 @@ import { usePathname, useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useLoginContext } from "@/app/providers/LoginProvider";
 import { useThemeSettingContext } from "@/app/providers/ThemeSettingProvider";
+import { useThemeIcon } from "@/app/hooks/useThemeIcon";
 
 import styles from "./index.module.css";
-import { useMemo } from "react";
 
 interface Link {
   link: string;
@@ -109,18 +107,8 @@ const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const { colorScheme } = useMantineColorScheme();
-  const isDark = useMemo(() => colorScheme === "dark", [colorScheme]);
-
   const { openThemeMenu } = useThemeSettingContext();
-
-  const [logo, userIcon] = useMemo(
-    () => [
-      isDark ? "/icon-dark.svg" : "/icon.svg",
-      isDark ? "/icon-user-dark.svg" : "/icon-user.svg"
-    ],
-    [isDark]
-  );
+  const { logo, userIcon } = useThemeIcon();
 
   const { showLoginModal, isLoggedIn, userInfo } = useLoginContext();
 

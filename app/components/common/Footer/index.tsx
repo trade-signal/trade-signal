@@ -14,6 +14,7 @@ import {
   Title
 } from "@mantine/core";
 import Link from "next/link";
+import { useThemeIcon } from "@/app/hooks/useThemeIcon";
 
 import styles from "./index.module.css";
 
@@ -35,6 +36,8 @@ const data = [
 ];
 
 const Footer = () => {
+  const { logo } = useThemeIcon();
+
   const groups = data.map(group => {
     const links = group.links.map((link, index) => (
       <Text<"a">
@@ -63,7 +66,7 @@ const Footer = () => {
           <Group gap={5}>
             <Image
               style={{ width: rem(24), height: rem(24) }}
-              src="/icon.svg"
+              src={logo}
               alt="TradeSignal logo"
             />
             <Title order={3} visibleFrom="xl">
