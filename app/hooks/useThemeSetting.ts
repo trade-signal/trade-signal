@@ -1,36 +1,24 @@
+"use client";
+
+import { themeOverride } from "@/theme";
 import {
   DEFAULT_THEME,
   MantineColorScheme,
-  MantineTheme,
   mergeMantineTheme
 } from "@mantine/core";
-import { useLocalStorage } from "@mantine/hooks";
-import { useEffect, useState } from "react";
-import { themeOverride } from "@/theme";
+import { readLocalStorageValue, useLocalStorage } from "@mantine/hooks";
+import { useEffect, useMemo, useState } from "react";
 
-export type SetThemeType =
-  | "theme"
-  | "colorScheme"
-  | "fontSize"
-  | "upColor"
-  | "downColor";
-export type SetThemeValue<T extends SetThemeType> = T extends "theme"
-  ? Partial<MantineTheme> & { primaryColor: string }
-  : T extends "colorScheme"
-  ? MantineColorScheme
-  : T extends "fontSize" | "upColor" | "downColor"
-  ? string | number
-  : never;
+export type SetThemeType = "colorScheme" | "fontSize" | "upColor" | "downColor";
 
-export type SetTheme = (
-  type: SetThemeType,
-  value: SetThemeValue<SetThemeType>
-) => void;
+export interface ThemeSetting {
+  colorScheme: MantineColorScheme;
+  fontSize: number;
+  upColor: string;
+  downColor: string;
+}
 
-export const DEFAULT_THEME_SETTING: Record<SetThemeType, any> = {
-  theme: {
-    primaryColor: "custom"
-  },
+export const DEFAULT_THEME_SETTING: ThemeSetting = {
   colorScheme: "light",
   fontSize: 16,
   upColor: "#f03e3e",
@@ -38,25 +26,23 @@ export const DEFAULT_THEME_SETTING: Record<SetThemeType, any> = {
 };
 
 export const THEME_SETTING_KEY = "trade-signal-theme-setting";
-export const useThemeSetting = () => {
-  let defaultValue = DEFAULT_THEME_SETTING;
 
-  const [themeSetting, setThemeSetting] = useLocalStorage({
+export const useThemeSetting = () => {
+  const [themeSetting, setThemeSetting] = useLocalStorage<ThemeSetting>({
     key: THEME_SETTING_KEY,
-    defaultValue,
+    defaultValue: DEFAULT_THEME_SETTING,
     serialize: value => JSON.stringify(value),
     deserialize: value => JSON.parse(value || "{}")
   });
 
-  const [theme, setTheme] = useState(
-    mergeMantineTheme(DEFAULT_THEME, themeOverride)
-  );
+  const colorScheme = useMemo(() => {
+    return mergeMantineTheme(DEFAULT_THEME, themeOverride);
+  }, [themeSetting.colorScheme]);
 
-  const _setTheme: SetTheme = (type, value) => {
+  const [themeLoaded, setThemeLoaded] = useState(false);
+
+  const _setThemeSetting = (type: SetThemeType, value: any) => {
     switch (type) {
-      case "theme":
-        setTheme(mergeMantineTheme(theme, value as Partial<MantineTheme>));
-        break;
       case "fontSize":
         document.documentElement.style.fontSize = `${value}px`;
         break;
@@ -65,22 +51,21 @@ export const useThemeSetting = () => {
         document.documentElement.style.setProperty(`--${type}`, `${value}`);
         break;
     }
+
     setThemeSetting({
       ...themeSetting,
       [type]: value
     });
   };
 
-  const [isThemeLoaded, setIsThemeLoaded] = useState(false);
   useEffect(() => {
-    setIsThemeLoaded(true);
+    let defaultValue = DEFAULT_THEME_SETTING;
+
     try {
-      defaultValue = JSON.parse(
-        localStorage.getItem(THEME_SETTING_KEY) || "{}"
-      );
-      if (!defaultValue.theme) {
-        defaultValue.theme = DEFAULT_THEME_SETTING.theme;
-      }
+      defaultValue = readLocalStorageValue({
+        key: THEME_SETTING_KEY
+      }) as ThemeSetting;
+
       if (!defaultValue.colorScheme) {
         defaultValue.colorScheme = DEFAULT_THEME_SETTING.colorScheme;
       }
@@ -89,11 +74,13 @@ export const useThemeSetting = () => {
     }
 
     setThemeSetting(defaultValue);
+    setThemeLoaded(true);
   }, []);
 
   return {
-    theme,
-    setTheme: _setTheme,
-    isThemeLoaded
+    colorScheme,
+    themeSetting,
+    themeLoaded,
+    setThemeSetting: _setThemeSetting
   };
 };

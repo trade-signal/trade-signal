@@ -1,7 +1,6 @@
 import { createContext, ReactNode, useContext } from "react";
 import { useDisclosure } from "@mantine/hooks";
 
-import { useThemeSetting } from "@/app/hooks/useThemeSetting";
 import { ThemeMenu } from "@/app/components/common/ThemeMenu";
 
 interface ThemeSettingContextType {
@@ -15,7 +14,6 @@ const ThemeSettingContext = createContext<ThemeSettingContextType | undefined>(
 );
 
 export const ThemeSettingProvider = ({ children }: { children: ReactNode }) => {
-  const { setTheme } = useThemeSetting();
   const [visible, { open, close }] = useDisclosure();
 
   return (
@@ -24,7 +22,7 @@ export const ThemeSettingProvider = ({ children }: { children: ReactNode }) => {
     >
       {children}
 
-      <ThemeMenu setTheme={setTheme} visible={visible} onClose={close} />
+      <ThemeMenu visible={visible} onClose={close} />
     </ThemeSettingContext.Provider>
   );
 };

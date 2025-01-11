@@ -68,15 +68,15 @@ export default function ClientProvider({
   const isMobile = useMediaQuery("(max-width: 768px)");
   const queryClient = new QueryClient();
 
-  const { theme, isThemeLoaded } = useThemeSetting();
+  const { colorScheme, themeLoaded } = useThemeSetting();
 
-  if (!isThemeLoaded) {
+  if (!themeLoaded) {
     return null;
   }
 
   if (isMobile) {
     return (
-      <MantineProvider theme={theme}>
+      <MantineProvider theme={colorScheme}>
         <Center h="100vh" p="md">
           <div style={{ textAlign: "center" }}>
             <IconDeviceLaptop size={48} style={{ marginBottom: 20 }} />
@@ -93,7 +93,7 @@ export default function ClientProvider({
   }
 
   return (
-    <MantineProvider theme={theme}>
+    <MantineProvider theme={colorScheme}>
       <SessionProvider session={session}>
         <ActiveStockProvider>
           <QueryClientProvider client={queryClient}>

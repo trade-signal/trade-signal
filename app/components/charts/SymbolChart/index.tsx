@@ -21,7 +21,7 @@ import {
 import { IconChartCandle } from "@tabler/icons-react";
 import { IconChartArea } from "@tabler/icons-react";
 import { readLocalStorageValue } from "@mantine/hooks";
-import { THEME_SETTING_KEY } from "@/app/hooks/useThemeSetting";
+import { THEME_SETTING_KEY, ThemeSetting } from "@/app/hooks/useThemeSetting";
 import { hex2rgba } from "@/shared/util";
 
 interface SymbolChartData {
@@ -45,7 +45,9 @@ const getChartColor = (
   latest: SymbolChartData,
   chartType: "area" | "candle"
 ) => {
-  const themeSetting: any = readLocalStorageValue({ key: THEME_SETTING_KEY });
+  const themeSetting: ThemeSetting = readLocalStorageValue({
+    key: THEME_SETTING_KEY
+  });
 
   if (chartType === "area") {
     return latest.close > latest.preClose

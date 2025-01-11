@@ -1,54 +1,32 @@
 import {
   DEFAULT_THEME,
-  ActionIcon,
   Drawer,
   Group,
   Radio,
-  useMantineColorScheme,
   Divider,
   MantineColorScheme,
   Box,
-  ColorInput
+  ColorInput,
+  useMantineColorScheme
 } from "@mantine/core";
+import { useThemeSetting } from "@/app/hooks/useThemeSetting";
 import { useEffect } from "react";
-import { readLocalStorageValue } from "@mantine/hooks";
-import { SetTheme, THEME_SETTING_KEY } from "@/app/hooks/useThemeSetting";
 
 export const ThemeMenu = ({
-  setTheme,
   visible,
   onClose
 }: {
-  setTheme: SetTheme;
   visible: boolean;
   onClose: () => void;
 }) => {
+  const { themeSetting, setThemeSetting } = useThemeSetting();
+
   const { colorScheme, setColorScheme } = useMantineColorScheme();
 
-  const themeSetting: any = readLocalStorageValue({ key: THEME_SETTING_KEY });
-
-  // initialize
   useEffect(() => {
-    if (themeSetting?.colorScheme) {
-      setColorScheme(themeSetting?.colorScheme);
-    }
-
-    if (themeSetting?.theme) {
-      setTheme("theme", themeSetting.theme);
-    }
-
-    if (themeSetting?.fontSize) {
-      setTheme("fontSize", themeSetting.fontSize);
-    }
-
-    if (themeSetting?.upColor) {
-      setTheme("upColor", themeSetting.upColor);
-    }
-
-    if (themeSetting?.downColor) {
-      setTheme("downColor", themeSetting.downColor);
-    }
-  }, []);
+    if (colorScheme === themeSetting.colorScheme) return;
+    setColorScheme(themeSetting.colorScheme);
+  }, [themeSetting.colorScheme]);
 
   return (
     <Drawer
@@ -61,10 +39,9 @@ export const ThemeMenu = ({
       <Box>
         <Divider my="md" labelPosition="left" label="模式" />
         <Radio.Group
-          value={colorScheme}
+          value={themeSetting.colorScheme}
           onChange={value => {
-            setColorScheme(value as MantineColorScheme);
-            setTheme("colorScheme", value as MantineColorScheme);
+            setThemeSetting("colorScheme", value as MantineColorScheme);
           }}
         >
           <Group>
@@ -83,7 +60,7 @@ export const ThemeMenu = ({
           description="上涨"
           placeholder="请选择颜色"
           swatches={Object.values(DEFAULT_THEME.colors).map(color => color[7])}
-          onChange={value => setTheme("upColor", value)}
+          onChange={value => setThemeSetting("upColor", value)}
         />
         <ColorInput
           mt="md"
@@ -92,7 +69,7 @@ export const ThemeMenu = ({
           description="下跌"
           placeholder="请选择颜色"
           swatches={Object.values(DEFAULT_THEME.colors).map(color => color[7])}
-          onChange={value => setTheme("downColor", value)}
+          onChange={value => setThemeSetting("downColor", value)}
         />
       </Box>
     </Drawer>
