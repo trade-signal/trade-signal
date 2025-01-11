@@ -15,10 +15,10 @@ import { useForm } from "@mantine/form";
 import { signIn } from "next-auth/react";
 import { notifications } from "@mantine/notifications";
 import { post } from "@/shared/request";
-import { AuthType } from "@/app/providers/LoginProvider";
 
 import { GoogleButton } from "./GoogleButton";
 import { GithubButton } from "./GithubButton";
+import { AuthType } from "@/app/hooks/useLogin";
 
 type FormValues = {
   email: string;
