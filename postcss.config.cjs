@@ -1,7 +1,10 @@
 /** @type {import('postcss-load-config').Config} */
 const config = {
   plugins: {
-    "postcss-preset-mantine": {},
+    "postcss-preset-mantine": {
+      scale: 1,
+      autoRem: true,
+    },
     "postcss-simple-vars": {
       variables: {
         "mantine-breakpoint-xs": "36em",

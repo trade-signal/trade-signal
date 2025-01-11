@@ -18,6 +18,8 @@ import { useState, useEffect } from "react";
 import { Stock, StockQuotesRealTime } from "@prisma/client";
 import WatchListItem from "./WatchListItem";
 
+import styles from "./index.module.css";
+
 const WatchList = () => {
   const { userInfo } = useLoginContext();
   const [opened, { open, close }] = useDisclosure();
@@ -80,8 +82,8 @@ const WatchList = () => {
   }
 
   return (
-    <Stack gap={0} h={"50vh"} style={{ background: "white" }}>
-      <Group h={59} p="xs" justify="space-between">
+    <Stack gap={0} h={"50vh"} className={styles.watchList}>
+      <Group p="xs" justify="space-between" className={styles.watchListHeader}>
         <Text size="sm" fw={600}>
           {currentWatchlist?.name || "自选表"}
         </Text>
@@ -90,7 +92,7 @@ const WatchList = () => {
         </Button>
       </Group>
 
-      <ScrollArea h={"50vh"} py="xs" style={{ borderTop: "1px solid #e0e0e0" }}>
+      <ScrollArea h={"50vh"} py="xs" className={styles.watchListScrollArea}>
         {currentWatchlist?.stocks.map(stock => (
           <Box key={stock.code} mb={2}>
             <WatchListItem stock={stock} onRemove={removeMutation.mutate} />

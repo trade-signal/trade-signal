@@ -1,0 +1,6 @@
+.scrollArea {
+  height: calc(100vh - 64px);
+  overflow: scroll;
+  overflow-x: hidden;
+  scrollbar-width: none;
+}

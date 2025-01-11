@@ -18,9 +18,11 @@ import { seedDailyStockQuotes } from "./stock/stock_quotes_daily";
 import { initStockBaseData, seedStockBase } from "./stock/stock_base";
 import { isTradeDate, refreshTradeDates } from "./stock/trade_date";
 import { initStockIndexData, seedIndex } from "./stock/stock_index";
+import { createLogger } from "@/shared/logger";
 
+const logger = createLogger('cron', '', false)
 const print = (message: string) => {
-  console.log(`[cron] [${dayjs().format("YYYY-MM-DD HH:mm:ss")}] ${message}`);
+  logger.log(`[${dayjs().format("YYYY-MM-DD HH:mm:ss")}] ${message}`);
 };
 
 // 是否是交易时间
@@ -132,21 +134,21 @@ const runSeedJobs = async (runDate: string) => {
 async function main() {
   const runDate = getRunDate();
 
-  console.log(`current time: ${dayjs().format("YYYY-MM-DD HH:mm:ss")}`);
-  console.log(`run date: ${runDate}`);
-  console.log(`run environment: ${process.env.NODE_ENV || "development"}`);
+  logger.info(`current time: ${dayjs().format("YYYY-MM-DD HH:mm:ss")}`);
+  logger.info(`run date: ${runDate}`);
+  logger.info(`run environment: ${process.env.NODE_ENV || "development"}`);
 
   if (process.env.NODE_ENV === "production") {
-    console.log("refresh trade dates");
+    logger.info("refresh trade dates");
     await refreshTradeDates();
-    console.log("run scheduler jobs");
+    logger.info("run scheduler jobs");
     runSchedulerJobs();
     return;
   }
 
-  console.log("Running seed jobs...");
+  logger.info("Running seed jobs...");
   await runSeedJobs(runDate);
-  console.log("Running seed jobs completed...");
+  logger.info("Running seed jobs completed...");
 }
 
 main();

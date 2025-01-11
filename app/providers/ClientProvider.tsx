@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { AppShell, Center, MantineProvider, Text } from "@mantine/core";
+import { AppShell, Center, MantineProvider, rem, Text } from "@mantine/core";
 import { SessionProvider } from "next-auth/react";
 import { Session } from "next-auth";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -9,12 +9,14 @@ import { Notifications } from "@mantine/notifications";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { IconDeviceLaptop } from "@tabler/icons-react";
 
-import { theme } from "@/theme";
 import Header from "@/app/components/common/Header";
 import RightAside from "@/app/components/common/RightAside";
-import { LoginProvider, useLogin } from "@/app/providers/LoginProvider";
+import { LoginProvider } from "@/app/providers/LoginProvider";
 import SpotlightModal from "@/app/components/modals/SpotlightModal";
-import { ActiveStockProvider } from "@/app/providers/ActiveStockContent";
+import { ActiveStockProvider } from "@/app/providers/ActiveStockProvider";
+import { ThemeSettingProvider } from "@/app/providers/ThemeSettingProvider";
+import { useThemeSetting } from "@/app/hooks/useThemeSetting";
+import { useLogin } from "@/app/hooks/useLogin";
 
 function AppContent({ children }: { children: React.ReactNode }) {
   const { isLoggedIn } = useLogin();
@@ -28,11 +30,14 @@ function AppContent({ children }: { children: React.ReactNode }) {
     }
   }, [isLoggedIn]);
 
+  const headerHeight = rem("56px");
+  const asideWidth = rem("300px");
+
   return (
     <AppShell
-      header={{ height: 56 }}
+      header={{ height: headerHeight }}
       aside={{
-        width: collapsed ? 0 : 300,
+        width: collapsed ? 0 : asideWidth,
         breakpoint: "sm",
         collapsed: {
           desktop: collapsed
@@ -40,13 +45,13 @@ function AppContent({ children }: { children: React.ReactNode }) {
       }}
       visibleFrom="xs"
     >
-      <AppShell.Header visibleFrom="xs" pr={collapsed ? 0 : 300}>
+      <AppShell.Header visibleFrom="xs" pr={collapsed ? 0 : asideWidth}>
         <Header />
       </AppShell.Header>
 
       <AppShell.Main>{children}</AppShell.Main>
 
-      <AppShell.Aside top={collapsed ? 56 : 0} h="100%">
+      <AppShell.Aside top={collapsed ? headerHeight : 0} h="100%">
         <RightAside />
       </AppShell.Aside>
     </AppShell>
@@ -62,6 +67,12 @@ export default function ClientProvider({
 }) {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const queryClient = new QueryClient();
+
+  const { theme, isThemeLoaded } = useThemeSetting();
+
+  if (!isThemeLoaded) {
+    return null;
+  }
 
   if (isMobile) {
     return (
@@ -86,11 +97,13 @@ export default function ClientProvider({
       <SessionProvider session={session}>
         <ActiveStockProvider>
           <QueryClientProvider client={queryClient}>
-            <LoginProvider>
-              <Notifications />
-              <SpotlightModal />
-              <AppContent>{children}</AppContent>
-            </LoginProvider>
+            <ThemeSettingProvider>
+              <LoginProvider>
+                <Notifications />
+                <SpotlightModal />
+                <AppContent>{children}</AppContent>
+              </LoginProvider>
+            </ThemeSettingProvider>
           </QueryClientProvider>
         </ActiveStockProvider>
       </SessionProvider>

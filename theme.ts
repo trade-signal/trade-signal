@@ -2,12 +2,12 @@
 
 import { createTheme, virtualColor } from "@mantine/core";
 
-export const theme = createTheme({
+export const themeOverride = createTheme({
   primaryColor: "custom",
   colors: {
     custom: virtualColor({
       name: "custom",
-      dark: "cyan",
+      dark: "teal",
       light: "indigo"
     })
   }

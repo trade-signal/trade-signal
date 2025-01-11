@@ -3,15 +3,14 @@
   flex-direction: column;
   justify-content: flex-start;
   padding-top: 25vh;
-  background-color: light-dark(
-    var(--mantine-color-white),
-    var(--mantine-color-dark-8)
-  );
 }
 
 .title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   font-family: Greycliff CF, var(--mantine-font-family);
-  font-size: 62px;
+  font-size: rem(62px);
   font-weight: 900;
   line-height: 1.1;
   margin: 0;
@@ -19,17 +18,17 @@
   color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
 
   @media (max-width: $mantine-breakpoint-sm) {
-    font-size: 42px;
+    font-size: rem(42px);
     line-height: 1.2;
   }
 }
 
 .description {
   margin-top: var(--mantine-spacing-xl);
-  font-size: 24px;
+  font-size: rem(24px);
 
   @media (max-width: $mantine-breakpoint-sm) {
-    font-size: 18px;
+    font-size: rem(18px);
   }
 }
 
@@ -42,14 +41,14 @@
 }
 
 .control {
-  height: 54px;
-  padding-left: 38px;
-  padding-right: 38px;
+  height: rem(54px);
+  padding-left: rem(38px);
+  padding-right: rem(38px);
 
   @media (max-width: $mantine-breakpoint-sm) {
-    height: 54px;
-    padding-left: 18px;
-    padding-right: 18px;
+    height: rem(54px);
+    padding-left: rem(18px);
+    padding-right: rem(18px);
     flex: 1;
   }
 }

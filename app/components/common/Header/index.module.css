@@ -1,13 +1,15 @@
 .header {
+  display: flex;
+  align-items: center;
   width: 100%;
-  height: 56px;
+  height: rem(56px);
   background-color: var(--mantine-color-body);
   border-bottom: 1px solid
-    light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
-  padding: 0 40px;
-  font-size: 24px;
+    light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-5));
+  padding: 0 var(--mantine-spacing-md);
+  font-size: var(--mantine-font-size-xl);
   font-weight: bold;
-  box-sizing: border-box;
+  box-sizing: border-box !important;
 }
 
 .avatarWrapper {
@@ -27,7 +29,7 @@
 .link {
   display: block;
   line-height: 1;
-  padding: 8px 12px;
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
   border-radius: var(--mantine-radius-sm);
   text-decoration: none;
   color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-0));
@@ -42,6 +44,6 @@
   }
 
   [data-mantine-color-scheme] &[data-active] {
-    color: var(--mantine-color-indigo-filled);
+    color: var(--mantine-primary-color-filled);
   }
 }

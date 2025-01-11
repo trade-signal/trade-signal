@@ -7,7 +7,7 @@ import { StockSelection } from "@prisma/client";
 import { Tabs } from "@mantine/core";
 import { useDebouncedCallback, useDisclosure } from "@mantine/hooks";
 import DataTable from "@/app/components/tables/DataTable";
-import { useActiveStock } from "@/app/providers/ActiveStockContent";
+import { useActiveStock } from "@/app/providers/ActiveStockProvider";
 import { getOrderBy } from "./StockListConfig";
 
 import { StockFilters, useStockContext } from "./StockContext";

@@ -9,11 +9,12 @@ import {
   Text,
   Stack,
   Group,
-  Loader
+  Loader,
+  FloatingIndicator
 } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { clientGet } from "@/shared/request";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StockIndexOrder } from "@/app/api/(stock)/stock-index/list/route";
 import SymbolChart from "@/app/components/charts/SymbolChart";
 import {
@@ -21,6 +22,8 @@ import {
   formatPercent
 } from "@/app/components/tables/DataTable/util";
 import { StockIndexRealTime } from "@prisma/client";
+
+import styles from "./StockIndex.module.css";
 
 const transformSymbolChartData = (data: StockIndexRealTime) => {
   return {
@@ -40,7 +43,21 @@ const StockIndex = () => {
       clientGet("/api/stock-index/list", {})
   });
 
-  const [activeTab, setActiveTab] = useState<string | null>("000001");
+  const [activeTab, setActiveTab] = useState<string | null>(null);
+  const [rootRef, setRootRef] = useState<HTMLDivElement | null>(null);
+  const [controlsRefs, setControlsRefs] = useState<
+    Record<string, HTMLButtonElement | null>
+  >({});
+  const setControlRef = (val: string) => (node: HTMLButtonElement) => {
+    controlsRefs[val] = node;
+    setControlsRefs(controlsRefs);
+  };
+
+  useEffect(() => {
+    if (data) {
+      setActiveTab(data[0].code);
+    }
+  }, [data]);
 
   const symbolChartData = data?.map(item => ({
     code: item.code,
@@ -61,26 +78,21 @@ const StockIndex = () => {
 
       <Tabs
         mt="lg"
-        variant="pills"
-        radius="lg"
+        variant="none"
+        radius="md"
         value={activeTab}
         onChange={value => setActiveTab(value)}
       >
-        <Tabs.List>
+        <Tabs.List ref={setRootRef} className={styles.list}>
           {data?.map(item => (
             <Tabs.Tab
-              color="gray.1"
-              style={{
-                justifyContent: "space-between",
-                color: "#333",
-                padding: "10px 20px",
-                marginRight: rem(60)
-              }}
               value={item.code}
               key={item.code}
+              ref={setControlRef(item.code)}
+              className={styles.tab}
             >
               <Stack gap={0} miw={rem(160)}>
-                <Text>{item.name}</Text>
+                <Text className={styles.tabName}>{item.name}</Text>
                 <Group m={0} gap="xs" justify="space-between">
                   <Text>{formatNumber(item.latest?.newPrice)}</Text>
                   <Text>{formatPercent(item.latest?.changeRate || 0)}</Text>
@@ -88,6 +100,12 @@ const StockIndex = () => {
               </Stack>
             </Tabs.Tab>
           ))}
+
+          <FloatingIndicator
+            target={activeTab ? controlsRefs[activeTab] : null}
+            parent={rootRef}
+            className={styles.indicator}
+          />
         </Tabs.List>
 
         {symbolChartData?.map(item => (

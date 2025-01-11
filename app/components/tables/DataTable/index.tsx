@@ -52,7 +52,10 @@ const DataTable = <T extends Record<string, any>>({
       visible={firstLoading || loading}
       loaderProps={{ size: "sm", type: firstLoading ? "bars" : "oval" }}
       zIndex={1000}
-      overlayProps={{ radius: "sm", blur: firstLoading ? 2 : 0 }}
+      overlayProps={{
+        radius: "sm",
+        blur: firstLoading ? 2 : 0
+      }}
     />
 
     <DataTableContainer onLoadMore={onLoadMore} height={height}>

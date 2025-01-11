@@ -1,12 +1,18 @@
 import { useState } from "react";
-import { IconAlarm, IconSettings, IconArticle } from "@tabler/icons-react";
+import {
+  IconAlarm,
+  IconSettings,
+  IconArticle,
+  IconPalette
+} from "@tabler/icons-react";
 import { Box, Stack, Tooltip, UnstyledButton } from "@mantine/core";
 
 import WatchList from "@/app/components/WatchList";
 import InstrumentDetail from "@/app/components/InstrumentDetail";
 import { useLoginContext } from "@/app/providers/LoginProvider";
+import { useThemeSettingContext } from "@/app/providers/ThemeSettingProvider";
 
-import classes from "./index.module.css";
+import styles from "./index.module.css";
 
 const mainLinksMockdata = [
   {
@@ -21,8 +27,13 @@ const mainLinksMockdata = [
     disabled: true
   },
   {
+    icon: <IconPalette size={28} />,
+    label: "主题设置",
+    value: "theme"
+  },
+  {
     icon: <IconSettings size={28} />,
-    label: "设置",
+    label: "系统设置",
     value: "settings",
     disabled: true
   }
@@ -31,10 +42,25 @@ const mainLinksMockdata = [
 const RightAside = () => {
   const [active, setActive] = useState("watchlist");
   const { userInfo } = useLoginContext();
+  const { openThemeMenu } = useThemeSettingContext();
 
   if (!userInfo) {
     return null;
   }
+
+  const handleClick = (link: (typeof mainLinksMockdata)[0]) => {
+    if (link.value === "theme") {
+      openThemeMenu();
+      return;
+    }
+
+    if (link.disabled) return;
+
+    // TODO: hidden
+    // if (link.value === active) return setActive("");
+
+    setActive(link.value);
+  };
 
   const mainLinks = mainLinksMockdata.map(link => (
     <Tooltip
@@ -46,13 +72,8 @@ const RightAside = () => {
       style={{}}
     >
       <UnstyledButton
-        onClick={() => {
-          if (link.disabled) return;
-          // TODO: hidden
-          // if (link.value === active) return setActive("");
-          setActive(link.value);
-        }}
-        className={classes.mainLink}
+        onClick={() => handleClick(link)}
+        className={styles.mainLink}
         data-active={link.value === active || undefined}
         disabled={link.disabled}
         style={{
@@ -68,13 +89,13 @@ const RightAside = () => {
   ));
 
   return (
-    <nav className={classes.navbar}>
-      <Box className={classes.wrapper}>
-        <Stack gap="xs" className={classes.main}>
+    <nav className={styles.navbar}>
+      <Box className={styles.wrapper}>
+        <Stack gap="xs" className={styles.main}>
           <WatchList />
           <InstrumentDetail />
         </Stack>
-        <Stack gap="xs" className={classes.aside}>
+        <Stack gap="xs" className={styles.aside}>
           {mainLinks}
         </Stack>
       </Box>

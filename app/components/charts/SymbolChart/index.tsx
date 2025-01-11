@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ChartOptions,
   createChart,
@@ -10,9 +10,19 @@ import {
   MouseEventParams
 } from "lightweight-charts";
 import dayjs from "dayjs";
-import { Group, rem, SegmentedControl, Stack, Tooltip } from "@mantine/core";
+import {
+  Group,
+  rem,
+  SegmentedControl,
+  Stack,
+  Tooltip,
+  useMantineColorScheme
+} from "@mantine/core";
 import { IconChartCandle } from "@tabler/icons-react";
 import { IconChartArea } from "@tabler/icons-react";
+import { readLocalStorageValue } from "@mantine/hooks";
+import { THEME_SETTING_KEY } from "@/app/hooks/useThemeSetting";
+import { hex2rgba } from "@/shared/util";
 
 interface SymbolChartData {
   date: string;
@@ -35,27 +45,39 @@ const getChartColor = (
   latest: SymbolChartData,
   chartType: "area" | "candle"
 ) => {
+  const themeSetting: any = readLocalStorageValue({ key: THEME_SETTING_KEY });
+
   if (chartType === "area") {
     return latest.close > latest.preClose
-      ? "rgba(236, 64, 64, 1)"
-      : "rgba(46, 139, 87, 1)";
+      ? themeSetting.upColor ?? "rgba(236, 64, 64, 1)"
+      : themeSetting.downColor ?? "rgba(46, 139, 87, 1)";
   } else {
-    return price > latest.preClose ? "#ec4040" : "#2e8b57";
+    return price > latest.preClose
+      ? themeSetting.upColor ?? "#ec4040"
+      : themeSetting.downColor ?? "#2e8b57";
   }
 };
 
-const createTooltip = (
-  chart: IChartApi,
-  container: HTMLDivElement,
-  name: string,
-  latest: SymbolChartData,
-  chartType: "area" | "candle"
-) => {
+interface TooltipProps {
+  chart: IChartApi;
+  container: HTMLDivElement;
+  name: string;
+  latest: SymbolChartData;
+  chartType: "area" | "candle";
+  isDark: boolean;
+}
+
+const createTooltip = (props: TooltipProps) => {
+  const { chart, container, name, latest, chartType, isDark } = props;
+
   const toolTip = document.createElement("div");
 
   const toolTipWidth = 80;
   const toolTipHeight = 80;
   const toolTipMargin = 15;
+
+  const bgColor = isDark ? "white" : "black";
+  const textColor = isDark ? "black" : "white";
 
   toolTip.style.cssText = `
     position: absolute;
@@ -73,8 +95,8 @@ const createTooltip = (
     font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background: black;
-    color: white;
+    background: ${bgColor};
+    color: ${textColor};
     border-color: transparent;
   `;
 
@@ -107,15 +129,15 @@ const createTooltip = (
       .unix(param.time as number)
       .format("YYYY-MM-DD HH:mm:ss");
 
+    console.log(textColor, "2222222222", isDark);
+
     toolTip.style.display = "block";
     toolTip.innerHTML = `
       <div style="color: ${color}">${name}</div>
-      <div style="font-size: 24px; margin: 4px 0px; color: white">
+      <div style="font-size: 24px; margin: 4px 0px; color: ${textColor}">
         ${Math.round(100 * price) / 100}
       </div>
-      <div style="color: white">
-        ${dateStr}
-      </div>
+      <div style="color: ${textColor}">${dateStr}</div>
     `;
 
     const y = param.point.y;
@@ -140,6 +162,9 @@ const createTooltip = (
 const SymbolChart = (props: SymbolChartProps) => {
   const { code, name, latest, trends } = props;
 
+  const { colorScheme } = useMantineColorScheme();
+  const isDark = useMemo(() => colorScheme === "dark", [colorScheme]);
+
   const [chartType, setChartType] = useState<"area" | "candle">("area");
 
   const chartContainerRef = useRef<HTMLDivElement>(null);
@@ -149,8 +174,11 @@ const SymbolChart = (props: SymbolChartProps) => {
   const createSymbolChart = (chartContainerRef: HTMLDivElement) => {
     const chartOptions: DeepPartial<ChartOptions> = {
       layout: {
-        textColor: "black",
-        background: { type: "solid" as ColorType, color: "white" },
+        textColor: isDark ? "white" : "black",
+        background: {
+          type: "solid" as ColorType,
+          color: isDark ? "black" : "white"
+        },
         attributionLogo: false
       },
       autoSize: true,
@@ -203,21 +231,23 @@ const SymbolChart = (props: SymbolChartProps) => {
     clearSeries(chart);
     setChartType(type);
 
+    const themeSetting: any = readLocalStorageValue({ key: THEME_SETTING_KEY });
+
     switch (type) {
       case "area":
         const areaSeries = chart.addAreaSeries({
           lineColor:
             latest.close > latest.preClose
-              ? "rgba(236, 64, 64, 1)"
-              : "rgba(46, 139, 87, 1)",
+              ? hex2rgba(themeSetting.upColor ?? "#ec4040")
+              : hex2rgba(themeSetting.downColor ?? "#2e8b57"),
           topColor:
             latest.close > latest.preClose
-              ? "rgba(236, 64, 64, 0.28)"
-              : "rgba(46, 139, 87, 0.28)",
+              ? hex2rgba(themeSetting.upColor ?? "#ec4040", 0.28)
+              : hex2rgba(themeSetting.downColor ?? "#2e8b57", 0.28),
           bottomColor:
             latest.close > latest.preClose
-              ? "rgba(236, 64, 64, 0.05)"
-              : "rgba(46, 139, 87, 0.05)"
+              ? hex2rgba(themeSetting.upColor ?? "#ec4040", 0.05)
+              : hex2rgba(themeSetting.downColor ?? "#2e8b57", 0.05)
         });
 
         const areaData = trends
@@ -232,11 +262,11 @@ const SymbolChart = (props: SymbolChartProps) => {
         break;
       case "candle":
         const candleSeries = chart.addCandlestickSeries({
-          upColor: "#ec4040",
-          downColor: "#2e8b57",
+          upColor: themeSetting.upColor ?? "#ec4040",
+          downColor: themeSetting.downColor ?? "#2e8b57",
           borderVisible: false,
-          wickUpColor: "#ec4040",
-          wickDownColor: "#2e8b57"
+          wickUpColor: themeSetting.upColor ?? "#ec4040",
+          wickDownColor: themeSetting.downColor ?? "#2e8b57"
         });
 
         const candleData = trends
@@ -271,7 +301,14 @@ const SymbolChart = (props: SymbolChartProps) => {
 
     const chart = createSymbolChart(chartContainerRef.current);
 
-    createTooltip(chart, chartContainerRef.current, name, latest, chartType);
+    createTooltip({
+      chart,
+      container: chartContainerRef.current,
+      name,
+      latest,
+      chartType,
+      isDark
+    });
 
     chartRef.current = chart;
 
@@ -285,7 +322,7 @@ const SymbolChart = (props: SymbolChartProps) => {
       chart.remove();
       window.removeEventListener("resize", handleChartResize);
     };
-  }, [code, trends, name, chartType]);
+  }, [code, trends, name, chartType, isDark]);
 
   return (
     <Stack>

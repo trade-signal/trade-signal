@@ -3,8 +3,9 @@
 import { Button, Container, Group, Text } from "@mantine/core";
 import { IconBrandGithubFilled } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
-import styles from "./page.module.css";
 import Footer from "./components/common/Footer";
+
+import styles from "./page.module.css";
 
 export default function Home() {
   const router = useRouter();

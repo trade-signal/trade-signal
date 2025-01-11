@@ -9,7 +9,8 @@ import {
   Stack,
   Text,
   TextInput,
-  Title
+  Title,
+  useMantineColorScheme
 } from "@mantine/core";
 import { spotlight } from "@mantine/spotlight";
 import {
@@ -18,15 +19,17 @@ import {
   IconBrandTelegram,
   IconLanguage,
   IconMessageCircle,
-  IconMoon,
+  IconPalette,
   IconUser
 } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useLoginContext } from "@/app/providers/LoginProvider";
+import { useThemeSettingContext } from "@/app/providers/ThemeSettingProvider";
 
 import styles from "./index.module.css";
+import { useMemo } from "react";
 
 interface Link {
   link: string;
@@ -106,6 +109,19 @@ const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
 
+  const { colorScheme } = useMantineColorScheme();
+  const isDark = useMemo(() => colorScheme === "dark", [colorScheme]);
+
+  const { openThemeMenu } = useThemeSettingContext();
+
+  const [logo, userIcon] = useMemo(
+    () => [
+      isDark ? "/icon-dark.svg" : "/icon.svg",
+      isDark ? "/icon-user-dark.svg" : "/icon-user.svg"
+    ],
+    [isDark]
+  );
+
   const { showLoginModal, isLoggedIn, userInfo } = useLoginContext();
 
   const items = links.map(link =>
@@ -127,8 +143,25 @@ const Header = () => {
     )
   );
 
+  const commonMenuItems = [
+    <Menu.Item
+      key="theme"
+      leftSection={<IconPalette style={{ width: rem(14), height: rem(14) }} />}
+      onClick={openThemeMenu}
+    >
+      主题设置
+    </Menu.Item>,
+    <Menu.Item
+      key="language"
+      disabled
+      leftSection={<IconLanguage style={{ width: rem(14), height: rem(14) }} />}
+    >
+      切换语言
+    </Menu.Item>
+  ];
+
   return (
-    <Group justify="space-between" className={styles.header}>
+    <Group justify="space-between" align="center" className={styles.header}>
       <Group
         gap={5}
         style={{ cursor: "pointer" }}
@@ -136,7 +169,7 @@ const Header = () => {
       >
         <Image
           style={{ width: rem(32), height: rem(32) }}
-          src="/icon.svg"
+          src={logo}
           alt="TradeSignal logo"
         />
         <Title order={3} visibleFrom="xl">
@@ -159,95 +192,98 @@ const Header = () => {
         {items}
       </Group>
 
-      <Group style={{ width: 180 }} grow>
-        {isLoggedIn ? (
-          <Menu shadow="md">
-            <Menu.Target>
-              {userInfo?.image ? (
+      <Group justify="flex-end">
+        <Menu shadow="md">
+          {isLoggedIn ? (
+            <>
+              <Menu.Target>
+                {userInfo?.image ? (
+                  <Box className={styles.avatarWrapper}>
+                    <Avatar
+                      src={userInfo?.image || ""}
+                      size={rem(32)}
+                      alt={userInfo?.name || ""}
+                    />
+                  </Box>
+                ) : (
+                  <Text size="sm" className={styles.username}>
+                    {userInfo?.name}
+                  </Text>
+                )}
+              </Menu.Target>
+
+              <Menu.Dropdown style={{ width: rem(200) }}>
+                <Menu.Item
+                  key="profile"
+                  disabled
+                  leftSection={
+                    <IconUser style={{ width: rem(14), height: rem(14) }} />
+                  }
+                >
+                  个人资料
+                </Menu.Item>
+
+                <Menu.Item
+                  key="message"
+                  disabled
+                  leftSection={
+                    <IconMessageCircle
+                      style={{ width: rem(14), height: rem(14) }}
+                    />
+                  }
+                >
+                  最新消息
+                </Menu.Item>
+
+                <Menu.Divider />
+
+                {commonMenuItems}
+
+                <Menu.Divider />
+
+                <Menu.Item
+                  key="logout"
+                  leftSection={
+                    <IconArrowsLeftRight
+                      style={{ width: rem(14), height: rem(14) }}
+                    />
+                  }
+                  onClick={() => signOut()}
+                >
+                  退出登录
+                </Menu.Item>
+              </Menu.Dropdown>
+            </>
+          ) : (
+            <>
+              <Menu.Target>
                 <Box className={styles.avatarWrapper}>
-                  <Avatar
-                    src={userInfo?.image || ""}
-                    size={rem(32)}
-                    alt={userInfo?.name || ""}
+                  <Image
+                    src={userIcon}
+                    alt="user"
+                    style={{ width: rem(24), height: rem(24) }}
                   />
                 </Box>
-              ) : (
-                <Text size="sm" className={styles.username}>
-                  {userInfo?.name}
-                </Text>
-              )}
-            </Menu.Target>
+              </Menu.Target>
 
-            <Menu.Dropdown style={{ width: rem(200) }}>
-              <Menu.Item
-                disabled
-                leftSection={
-                  <IconUser style={{ width: rem(14), height: rem(14) }} />
-                }
-              >
-                个人资料
-              </Menu.Item>
+              <Menu.Dropdown style={{ width: rem(200) }}>
+                <Menu.Item
+                  key="login"
+                  leftSection={
+                    <IconUser style={{ width: rem(14), height: rem(14) }} />
+                  }
+                  onClick={() => showLoginModal("signin")}
+                >
+                  登录
+                </Menu.Item>
 
-              <Menu.Item
-                disabled
-                leftSection={
-                  <IconMessageCircle
-                    style={{ width: rem(14), height: rem(14) }}
-                  />
-                }
-              >
-                最新消息
-              </Menu.Item>
+                <Menu.Divider />
 
-              <Menu.Divider />
-
-              <Menu.Item
-                disabled
-                leftSection={
-                  <IconMoon style={{ width: rem(14), height: rem(14) }} />
-                }
-                onClick={() => signOut()}
-              >
-                暗色模式
-              </Menu.Item>
-
-              <Menu.Item
-                disabled
-                leftSection={
-                  <IconLanguage style={{ width: rem(14), height: rem(14) }} />
-                }
-              >
-                语言
-              </Menu.Item>
-
-              <Menu.Divider />
-
-              <Menu.Item
-                leftSection={
-                  <IconArrowsLeftRight
-                    style={{ width: rem(14), height: rem(14) }}
-                  />
-                }
-                onClick={() => signOut()}
-              >
-                退出登录
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
-        ) : (
-          <>
-            <Button
-              size="sm"
-              variant="default"
-              onClick={() => showLoginModal("signin")}
-            >
-              登录
-            </Button>
-            <Button size="sm" onClick={() => showLoginModal("signup")}>
-              注册
-            </Button>
-          </>
-        )}
+                {commonMenuItems}
+              </Menu.Dropdown>
+            </>
+          )}
+        </Menu>
       </Group>
     </Group>
   );

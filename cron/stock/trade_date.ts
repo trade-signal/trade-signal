@@ -1,9 +1,9 @@
 import dayjs from "dayjs";
-import { createLogger } from "@/cron/util";
+import { createLogger } from "@/shared/logger";
 import { getTradeDate } from "./api";
 
 const spider_name = "trade_date";
-const print = createLogger(spider_name);
+const logger = createLogger(spider_name);
 
 let tradeDates: string[] = [];
 
@@ -20,10 +20,10 @@ const getTradeDates = async () => {
 };
 
 export const refreshTradeDates = async () => {
-  print("refresh trade dates");
+  logger.info("refresh trade dates");
   clearTradeDates();
   await getTradeDates();
-  print("refresh trade dates success");
+  logger.info("refresh trade dates success");
 };
 
 export const isTradeDate = (date?: string) => {
