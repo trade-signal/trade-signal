@@ -20,7 +20,7 @@ import SymbolChart from "@/app/components/charts/SymbolChart";
 import { StockQuotesRealTime } from "@prisma/client";
 import { formatNumber } from "@/app/components/tables/DataTable/util";
 import { formatPercent } from "@/app/components/tables/DataTable/util";
-import classes from "./StockQuotes.module.css";
+import styles from "./StockQuotes.module.css";
 
 const transformSymbolChartData = (data: StockQuotesRealTime) => {
   return {
@@ -80,16 +80,16 @@ const StockQuotes = () => {
         value={activeTab}
         onChange={value => setActiveTab(value)}
       >
-        <Tabs.List ref={setRootRef} className={classes.list}>
+        <Tabs.List ref={setRootRef} className={styles.list}>
           {data?.map(item => (
             <Tabs.Tab
               value={item.code}
               key={item.code}
               ref={setControlRef(item.code)}
-              className={classes.tab}
+              className={styles.tab}
             >
               <Stack gap={0} miw={rem(160)}>
-                <Text className={classes.tabName}>{item.name}</Text>
+                <Text className={styles.tabName}>{item.name}</Text>
                 <Group m={0} gap="xs" justify="space-between">
                   <Text>{formatNumber(item.latest?.newPrice)}</Text>
                   <Text>{formatPercent(item.latest?.changeRate || 0)}</Text>
@@ -101,7 +101,7 @@ const StockQuotes = () => {
           <FloatingIndicator
             target={activeTab ? controlsRefs[activeTab] : null}
             parent={rootRef}
-            className={classes.indicator}
+            className={styles.indicator}
           />
         </Tabs.List>
 

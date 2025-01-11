@@ -3,7 +3,7 @@ import { Divider, Group, Stack, Text, Button } from "@mantine/core";
 import { HoverCard } from "@mantine/core";
 import { StockQuotesRealTime } from "@prisma/client";
 import { IconTrash } from "@tabler/icons-react";
-import { useActiveStock } from "@/app/providers/ActiveStockContent";
+import { useActiveStock } from "@/app/providers/ActiveStockProvider";
 import {
   formatNumber,
   formatPercentPlain,

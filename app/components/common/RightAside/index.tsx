@@ -10,8 +10,9 @@ import { Box, Stack, Tooltip, UnstyledButton } from "@mantine/core";
 import WatchList from "@/app/components/WatchList";
 import InstrumentDetail from "@/app/components/InstrumentDetail";
 import { useLoginContext } from "@/app/providers/LoginProvider";
+import { useThemeSettingContext } from "@/app/providers/ThemeSettingProvider";
 
-import classes from "./index.module.css";
+import styles from "./index.module.css";
 
 const mainLinksMockdata = [
   {
@@ -41,6 +42,7 @@ const mainLinksMockdata = [
 const RightAside = () => {
   const [active, setActive] = useState("watchlist");
   const { userInfo } = useLoginContext();
+  const { openThemeMenu } = useThemeSettingContext();
 
   if (!userInfo) {
     return null;
@@ -48,6 +50,7 @@ const RightAside = () => {
 
   const handleClick = (link: (typeof mainLinksMockdata)[0]) => {
     if (link.value === "theme") {
+      openThemeMenu();
       return;
     }
 
@@ -70,7 +73,7 @@ const RightAside = () => {
     >
       <UnstyledButton
         onClick={() => handleClick(link)}
-        className={classes.mainLink}
+        className={styles.mainLink}
         data-active={link.value === active || undefined}
         disabled={link.disabled}
         style={{
@@ -86,13 +89,13 @@ const RightAside = () => {
   ));
 
   return (
-    <nav className={classes.navbar}>
-      <Box className={classes.wrapper}>
-        <Stack gap="xs" className={classes.main}>
+    <nav className={styles.navbar}>
+      <Box className={styles.wrapper}>
+        <Stack gap="xs" className={styles.main}>
           <WatchList />
           <InstrumentDetail />
         </Stack>
-        <Stack gap="xs" className={classes.aside}>
+        <Stack gap="xs" className={styles.aside}>
           {mainLinks}
         </Stack>
       </Box>

@@ -23,7 +23,7 @@ import {
 } from "@/app/components/tables/DataTable/util";
 import { StockIndexRealTime } from "@prisma/client";
 
-import classes from "./StockIndex.module.css";
+import styles from "./StockIndex.module.css";
 
 const transformSymbolChartData = (data: StockIndexRealTime) => {
   return {
@@ -83,16 +83,16 @@ const StockIndex = () => {
         value={activeTab}
         onChange={value => setActiveTab(value)}
       >
-        <Tabs.List ref={setRootRef} className={classes.list}>
+        <Tabs.List ref={setRootRef} className={styles.list}>
           {data?.map(item => (
             <Tabs.Tab
               value={item.code}
               key={item.code}
               ref={setControlRef(item.code)}
-              className={classes.tab}
+              className={styles.tab}
             >
               <Stack gap={0} miw={rem(160)}>
-                <Text className={classes.tabName}>{item.name}</Text>
+                <Text className={styles.tabName}>{item.name}</Text>
                 <Group m={0} gap="xs" justify="space-between">
                   <Text>{formatNumber(item.latest?.newPrice)}</Text>
                   <Text>{formatPercent(item.latest?.changeRate || 0)}</Text>
@@ -104,7 +104,7 @@ const StockIndex = () => {
           <FloatingIndicator
             target={activeTab ? controlsRefs[activeTab] : null}
             parent={rootRef}
-            className={classes.indicator}
+            className={styles.indicator}
           />
         </Tabs.List>
 

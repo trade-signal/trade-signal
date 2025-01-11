@@ -10,7 +10,7 @@ import {
   Box,
   ColorInput
 } from "@mantine/core";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { readLocalStorageValue } from "@mantine/hooks";
 import { SetTheme, THEME_SETTING_KEY } from "@/app/hooks/useThemeSetting";
 

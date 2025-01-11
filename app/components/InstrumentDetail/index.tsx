@@ -13,7 +13,7 @@ import {
   ScrollArea,
   Spoiler
 } from "@mantine/core";
-import { useActiveStock } from "@/app/providers/ActiveStockContent";
+import { useActiveStock } from "@/app/providers/ActiveStockProvider";
 import { useLoginContext } from "@/app/providers/LoginProvider";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 

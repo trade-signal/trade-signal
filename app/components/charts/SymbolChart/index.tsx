@@ -165,8 +165,6 @@ const SymbolChart = (props: SymbolChartProps) => {
   const { colorScheme } = useMantineColorScheme();
   const isDark = useMemo(() => colorScheme === "dark", [colorScheme]);
 
-  console.log(isDark, "111111111111");
-
   const [chartType, setChartType] = useState<"area" | "candle">("area");
 
   const chartContainerRef = useRef<HTMLDivElement>(null);

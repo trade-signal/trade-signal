@@ -11,18 +11,14 @@ import { IconDeviceLaptop } from "@tabler/icons-react";
 
 import Header from "@/app/components/common/Header";
 import RightAside from "@/app/components/common/RightAside";
-import { LoginProvider, useLogin } from "@/app/providers/LoginProvider";
+import { LoginProvider } from "@/app/providers/LoginProvider";
 import SpotlightModal from "@/app/components/modals/SpotlightModal";
-import { ActiveStockProvider } from "@/app/providers/ActiveStockContent";
-import { SetTheme, useThemeSetting } from "../hooks/useThemeSetting";
+import { ActiveStockProvider } from "@/app/providers/ActiveStockProvider";
+import { ThemeSettingProvider } from "@/app/providers/ThemeSettingProvider";
+import { useThemeSetting } from "@/app/hooks/useThemeSetting";
+import { useLogin } from "@/app/hooks/useLogin";
 
-function AppContent({
-  children,
-  setTheme
-}: {
-  children: React.ReactNode;
-  setTheme: SetTheme;
-}) {
+function AppContent({ children }: { children: React.ReactNode }) {
   const { isLoggedIn } = useLogin();
   const [collapsed, { open, close }] = useDisclosure(true);
 
@@ -50,7 +46,7 @@ function AppContent({
       visibleFrom="xs"
     >
       <AppShell.Header visibleFrom="xs" pr={collapsed ? 0 : asideWidth}>
-        <Header setTheme={setTheme} />
+        <Header />
       </AppShell.Header>
 
       <AppShell.Main>{children}</AppShell.Main>
@@ -72,7 +68,7 @@ export default function ClientProvider({
   const isMobile = useMediaQuery("(max-width: 768px)");
   const queryClient = new QueryClient();
 
-  const { theme, setTheme, isThemeLoaded } = useThemeSetting();
+  const { theme, isThemeLoaded } = useThemeSetting();
 
   if (!isThemeLoaded) {
     return null;
@@ -101,11 +97,13 @@ export default function ClientProvider({
       <SessionProvider session={session}>
         <ActiveStockProvider>
           <QueryClientProvider client={queryClient}>
-            <LoginProvider>
-              <Notifications />
-              <SpotlightModal />
-              <AppContent setTheme={setTheme}>{children}</AppContent>
-            </LoginProvider>
+            <ThemeSettingProvider>
+              <LoginProvider>
+                <Notifications />
+                <SpotlightModal />
+                <AppContent>{children}</AppContent>
+              </LoginProvider>
+            </ThemeSettingProvider>
           </QueryClientProvider>
         </ActiveStockProvider>
       </SessionProvider>

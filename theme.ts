@@ -7,7 +7,7 @@ export const themeOverride = createTheme({
   colors: {
     custom: virtualColor({
       name: "custom",
-      dark: "cyan",
+      dark: "teal",
       light: "indigo"
     })
   }

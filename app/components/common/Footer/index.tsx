@@ -15,7 +15,7 @@ import {
 } from "@mantine/core";
 import Link from "next/link";
 
-import classes from "./index.module.css";
+import styles from "./index.module.css";
 
 const data = [
   {
@@ -39,7 +39,7 @@ const Footer = () => {
     const links = group.links.map((link, index) => (
       <Text<"a">
         key={index}
-        className={classes.link}
+        className={styles.link}
         component="a"
         href={link.link}
         target="_blank"
@@ -49,17 +49,17 @@ const Footer = () => {
     ));
 
     return (
-      <div className={classes.wrapper} key={group.title}>
-        <Text className={classes.title}>{group.title}</Text>
+      <div className={styles.wrapper} key={group.title}>
+        <Text className={styles.title}>{group.title}</Text>
         {links}
       </div>
     );
   });
 
   return (
-    <footer className={classes.footer}>
-      <Container className={classes.inner}>
-        <div className={classes.logo}>
+    <footer className={styles.footer}>
+      <Container className={styles.inner}>
+        <div className={styles.logo}>
           <Group gap={5}>
             <Image
               style={{ width: rem(24), height: rem(24) }}
@@ -72,27 +72,27 @@ const Footer = () => {
               </Text>
             </Title>
           </Group>
-          <Text size="xs" c="dimmed" className={classes.description}>
+          <Text size="xs" c="dimmed" className={styles.description}>
             整合多维度市场数据，提供专业的投资分析工具。
           </Text>
         </div>
-        <div className={classes.groups}>{groups}</div>
+        <div className={styles.groups}>{groups}</div>
       </Container>
-      <Container className={classes.afterFooter}>
+      <Container className={styles.afterFooter}>
         <Text c="dimmed" size="xs">
           © {dayjs().year()} TradeSignal • AGPL v3.0
         </Text>
 
         <Group
           gap={0}
-          className={classes.social}
+          className={styles.social}
           justify="flex-end"
           wrap="nowrap"
         >
           <ActionIcon size="lg" color="gray" variant="subtle">
             <Link
               target="_blank"
-              className={classes.socialLink}
+              className={styles.socialLink}
               href="https://github.com/trade-signal"
             >
               <IconBrandGithub size={18} stroke={1.5} />
@@ -101,7 +101,7 @@ const Footer = () => {
           <ActionIcon size="lg" color="gray" variant="subtle">
             <Link
               target="_blank"
-              className={classes.socialLink}
+              className={styles.socialLink}
               href="https://t.me/+25mzy3YRvbA4ODM1"
             >
               <IconBrandTelegram size={18} stroke={1.5} />
@@ -110,7 +110,7 @@ const Footer = () => {
           <ActionIcon size="lg" color="gray" variant="subtle">
             <Link
               target="_blank"
-              className={classes.socialLink}
+              className={styles.socialLink}
               href="https://x.com/yangzhi40338736"
             >
               <IconBrandTwitter size={18} stroke={1.5} />

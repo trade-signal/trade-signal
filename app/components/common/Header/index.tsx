@@ -23,15 +23,13 @@ import {
   IconUser
 } from "@tabler/icons-react";
 import Link from "next/link";
-import { ThemeMenu } from "./ThemeMenu";
 import { usePathname, useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useLoginContext } from "@/app/providers/LoginProvider";
+import { useThemeSettingContext } from "@/app/providers/ThemeSettingProvider";
 
 import styles from "./index.module.css";
-import { useEffect, useMemo, useState } from "react";
-import { SetTheme } from "@/app/hooks/useThemeSetting";
-import { useDisclosure, useToggle } from "@mantine/hooks";
+import { useMemo } from "react";
 
 interface Link {
   link: string;
@@ -107,14 +105,14 @@ const LinkMenu = (link: Omit<Link, "children"> & { children: Link[] }) => {
   );
 };
 
-const Header = ({ setTheme }: { setTheme: SetTheme }) => {
+const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const [visible, { open, close }] = useDisclosure();
-
   const { colorScheme } = useMantineColorScheme();
   const isDark = useMemo(() => colorScheme === "dark", [colorScheme]);
+
+  const { openThemeMenu } = useThemeSettingContext();
 
   const [logo, userIcon] = useMemo(
     () => [
@@ -149,7 +147,7 @@ const Header = ({ setTheme }: { setTheme: SetTheme }) => {
     <Menu.Item
       key="theme"
       leftSection={<IconPalette style={{ width: rem(14), height: rem(14) }} />}
-      onClick={open}
+      onClick={openThemeMenu}
     >
       主题设置
     </Menu.Item>,
@@ -286,8 +284,6 @@ const Header = ({ setTheme }: { setTheme: SetTheme }) => {
             </>
           )}
         </Menu>
-
-        <ThemeMenu setTheme={setTheme} visible={visible} onClose={close} />
       </Group>
     </Group>
   );
