@@ -19,5 +19,5 @@ export const useThemeIcon = () => {
     [isDark]
   );
 
-  return { logo, userIcon };
+  return { isDark, logo, userIcon };
 };

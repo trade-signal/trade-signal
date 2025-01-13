@@ -7,22 +7,17 @@ import {
   UTCTimestamp,
   ColorType,
   DeepPartial,
-  MouseEventParams
+  MouseEventParams,
+  PriceScaleMode
 } from "lightweight-charts";
 import dayjs from "dayjs";
-import {
-  Group,
-  rem,
-  SegmentedControl,
-  Stack,
-  Tooltip,
-  useMantineColorScheme
-} from "@mantine/core";
+import { Group, rem, SegmentedControl, Stack, Tooltip } from "@mantine/core";
 import { IconChartCandle } from "@tabler/icons-react";
 import { IconChartArea } from "@tabler/icons-react";
 import { readLocalStorageValue } from "@mantine/hooks";
 import { THEME_SETTING_KEY, ThemeSetting } from "@/app/hooks/useThemeSetting";
 import { hex2rgba } from "@/shared/util";
+import { useThemeIcon } from "@/app/hooks/useThemeIcon";
 
 interface SymbolChartData {
   date: string;
@@ -131,8 +126,6 @@ const createTooltip = (props: TooltipProps) => {
       .unix(param.time as number)
       .format("YYYY-MM-DD HH:mm:ss");
 
-    console.log(textColor, "2222222222", isDark);
-
     toolTip.style.display = "block";
     toolTip.innerHTML = `
       <div style="color: ${color}">${name}</div>
@@ -164,8 +157,7 @@ const createTooltip = (props: TooltipProps) => {
 const SymbolChart = (props: SymbolChartProps) => {
   const { code, name, latest, trends } = props;
 
-  const { colorScheme } = useMantineColorScheme();
-  const isDark = useMemo(() => colorScheme === "dark", [colorScheme]);
+  const { isDark } = useThemeIcon();
 
   const [chartType, setChartType] = useState<"area" | "candle">("area");
 
@@ -197,7 +189,6 @@ const SymbolChart = (props: SymbolChartProps) => {
         tickMarkFormatter: (time: number) => {
           return dayjs.unix(time).format("HH:mm");
         },
-        rightOffset: 5,
         barSpacing: 5,
         minBarSpacing: 2
       },
@@ -267,6 +258,7 @@ const SymbolChart = (props: SymbolChartProps) => {
           upColor: themeSetting.upColor ?? "#ec4040",
           downColor: themeSetting.downColor ?? "#2e8b57",
           borderVisible: false,
+          wickVisible: false, // temp: 隐藏蜡烛图的线
           wickUpColor: themeSetting.upColor ?? "#ec4040",
           wickDownColor: themeSetting.downColor ?? "#2e8b57"
         });
@@ -274,7 +266,14 @@ const SymbolChart = (props: SymbolChartProps) => {
         const candleData = trends
           .map(item => ({
             time: dayjs(item.date).unix() as UTCTimestamp,
-            ...item
+            open: item.open,
+            high: item.high,
+            low: item.low,
+            close: item.close,
+            color:
+              item.close > item.preClose
+                ? themeSetting.upColor ?? "#ec4040"
+                : themeSetting.downColor ?? "#2e8b57"
           }))
           .filter(
             item =>
@@ -285,6 +284,7 @@ const SymbolChart = (props: SymbolChartProps) => {
           );
 
         candleSeries.setData(candleData);
+
         seriesRef.current.push(candleSeries);
         break;
     }
