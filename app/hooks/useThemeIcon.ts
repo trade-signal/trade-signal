@@ -3,7 +3,13 @@ import { useMemo } from "react";
 
 export const useThemeIcon = () => {
   const { colorScheme } = useMantineColorScheme();
-  const isDark = useMemo(() => colorScheme === "dark", [colorScheme]);
+
+  const isDark = useMemo(() => {
+    const isAuto = colorScheme === "auto";
+    return isAuto
+      ? window.matchMedia("(prefers-color-scheme: dark)").matches
+      : colorScheme === "dark";
+  }, [colorScheme]);
 
   const [logo, userIcon] = useMemo(
     () => [

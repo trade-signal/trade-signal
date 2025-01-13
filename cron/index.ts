@@ -20,7 +20,7 @@ import { isTradeDate, refreshTradeDates } from "./stock/trade_date";
 import { initStockIndexData, seedIndex } from "./stock/stock_index";
 import { createLogger } from "@/shared/logger";
 
-const logger = createLogger('cron', '', false)
+const logger = createLogger("cron", "", false);
 const print = (message: string) => {
   logger.log(`[${dayjs().format("YYYY-MM-DD HH:mm:ss")}] ${message}`);
 };

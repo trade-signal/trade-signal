@@ -5,7 +5,7 @@ import { seedSinaNews } from "@/cron/news/sina";
 import { seedClsNews } from "@/cron/news/cls";
 
 const spider_name = "news";
-const logger = createLogger(spider_name, '', false);
+const logger = createLogger(spider_name, "", false);
 
 // 清除超过7天的数据
 export const cleanNews = async () => {
