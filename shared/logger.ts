@@ -1,61 +1,75 @@
-const getColor = (foregroundColor: string = '', backgroundColor: string = '') => {
+
+const isSuppers256Color = process.env.TERM && process.env.TERM.includes('256color')
+
+const friendlyColors = {
+  fgc: {
+    red: '\x1b[31m',
+    green: '\x1b[32m',
+    yellow: '\x1b[33m',
+    blue: '\x1b[34m',
+    magenta: '\x1b[35m',
+    cyan: '\x1b[36m',
+  },
+  brightFgc: {
+    red: '\x1b[38;5;196m',
+    green: '\x1b[38;5;10m',
+    yellow: '\x1b[38;5;220m',
+    blue: '\x1b[38;5;21m',
+    magenta: '\x1b[38;5;201m',
+    cyan: '\x1b[38;5;44m',
+  },
+}
+
+const getColor = (foregroundColor: string = '', backgroundColor: string = '', bold = false) => {
   let fgc = '\x1b[30m'
-  switch (foregroundColor.trim().toLowerCase()) {
+  const fgcKey = foregroundColor.trim().toLowerCase()
+  switch (fgcKey) {
     case 'black':
-      fgc = '\x1b[30m'
-      break;
-    case 'red':
-      fgc = '\x1b[31m'
-      break;
-    case 'green':
-      fgc = '\x1b[32m'
-      break;
-    case 'yellow':
-      fgc = '\x1b[33m'
-      break;
-    case 'blue':
-      fgc = '\x1b[34m'
-      break;
-    case 'magenta':
-      fgc = '\x1b[35m'
-      break;
-    case 'cyan':
-      fgc = '\x1b[36m'
+      fgc = isSuppers256Color ? '\x1b[90m' : '\x1b[30m'  
       break;
     case 'white':
-      fgc = '\x1b[37m'
+      fgc = isSuppers256Color ? '\x1b[97m' : '\x1b[37m'
+      break;
+    case 'red':
+    case 'green':
+    case 'yellow':
+    case 'blue':
+    case 'magenta':
+    case 'cyan':
+      fgc = isSuppers256Color ? friendlyColors.brightFgc[fgcKey] : friendlyColors.fgc[fgcKey]
       break;
   }
 
   let bgc = ''
+  const base = isSuppers256Color ? 100 : 40
   switch (backgroundColor.trim().toLowerCase()) {
     case 'black':
-      bgc = '\x1b[40m'
+      bgc = `\x1b[${base}m`
       break;
     case 'red':
-      bgc = '\x1b[41m'
+      bgc = `\x1b[${base + 1}m`
       break;
     case 'green':
-      bgc = '\x1b[42m'
+      bgc = `\x1b[${base + 2}m`
       break;
     case 'yellow':
-      bgc = '\x1b[43m'
+      bgc = `\x1b[${base + 3}m`
       break;
     case 'blue':
-      bgc = '\x1b[44m'
+      bgc = `\x1b[${base + 4}m`
       break;
     case 'magenta':
-      bgc = '\x1b[45m'
+      bgc = `\x1b[${base + 5}m`
       break;
     case 'cyan':
-      bgc = '\x1b[46m'
+      bgc = `\x1b[${base + 6}m`
       break;
     case 'white':
-      bgc = '\x1b[47m'
+      bgc = `\x1b[${base + 7}m`
       break;
   }
 
-  return `${fgc}${bgc}`
+  return `${bold ? '\x1b[1m' : ''}${fgc}${bgc}`
 }
 const getColorReset = () => {
   return '\x1b[0m'
@@ -63,24 +77,25 @@ const getColorReset = () => {
 
 const scoped = new Map<string, number>()
 const nameScopedList = [
-  getColor('cyan', ''),
-  getColor('magenta', ''),
-  getColor('red', ''),
-  getColor('blue', ''),
-  getColor('yellow', ''),
-  getColor('green', ''),
+  getColor('cyan', '', true),
+  getColor('magenta', '', true),
+  getColor('red', '', true),
+  getColor('blue', '', true),
+  getColor('yellow', '', true),
+  getColor('green', '', true),
 ]
 const prefixScopedList = [
-  getColor('red', 'cyan'),
-  getColor('white', 'magenta'),
-  getColor('cyan', 'red'),
-  getColor('white', 'blue'),
-  getColor('magenta', 'yellow'),
-  getColor('blue', 'green'),
+  getColor('white', 'black', true),
+  getColor('black', 'cyan', true),
+  getColor('white', 'magenta', true),
+  getColor('white', 'red', true),
+  getColor('white', 'blue', true),
+  getColor('black', 'yellow', true),
+  getColor('black', 'green', true),
+  getColor('black', 'white', true),
 ]
 let nameIndex = 0
 let prefixIndex = 0
-const scopedMax = nameScopedList.length
 
 const PREFIX = 'PREFIX_'
 const NAME = 'NAME_'
@@ -102,22 +117,21 @@ class Logger {
     this.#useIcon = useIcon
 
     if (!scoped.has(`${PREFIX}${prefix}`)) {
-      scoped.set(`${PREFIX}${prefix}`, prefixIndex % scopedMax)
+      scoped.set(`${PREFIX}${prefix}`, prefixIndex % prefixScopedList.length)
       prefixIndex++
     }
     if (!scoped.has(`${NAME}${name}`)) {
-      scoped.set(`${NAME}${name}`, nameIndex % scopedMax)
+      scoped.set(`${NAME}${name}`, nameIndex % nameScopedList.length)
       nameIndex++
     }
   }
 
   print(foregroundColor: string = 'black', backgroundColor: string = 'white', icon = '', ...strings: any[]) {
-
     if (this.#prefix || this.#name) {
-      const prefixStr = this.#prefix ? ` ${getScoped(this.#prefix, true)}[${this.#prefix}]${getColorReset()}` : ''
+      const prefixStr = this.#prefix ? ` ${getScoped(this.#prefix, true)} ${this.#prefix} ${getColorReset()}` : ''
       const nameStr = this.#name ? `${getScoped(this.#name)} [${this.#name}] ${getColorReset()}` : ''
       const message = strings.join('')
-      console.log(`${icon}${prefixStr}${nameStr}${getColor(foregroundColor, backgroundColor)}${message}${getColorReset()}`)
+      console.log(`${icon}${prefixStr}${nameStr}${getScoped(this.#name) === getColor(foregroundColor, '', true) ? getColor('blue', backgroundColor) : getColor(foregroundColor, backgroundColor)}${message}${getColorReset()}`)
       return
     }
 
@@ -135,7 +149,7 @@ class Logger {
         ? '\u25ce '
         : ''
   
-    this.print('black', '', icon, message)
+    this.print('magenta', '', icon, message)
   }
   
   warn(message: string, useIcon?: boolean) {
