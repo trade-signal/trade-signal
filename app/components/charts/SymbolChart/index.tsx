@@ -204,10 +204,6 @@ const SymbolChart = (props: SymbolChartProps) => {
         horzLines: {
           visible: false
         }
-      },
-      // hide x axis
-      xAxis: {
-        visible: false
       }
     };
     return createChart(chartContainerRef, chartOptions);
