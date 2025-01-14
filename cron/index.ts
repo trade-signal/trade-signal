@@ -109,9 +109,10 @@ const runClearScheduleJobs = () => {
     print("trigger clear data before trade");
 
     refreshTradeDates();
-    cleanNews();
+
     cleanStockSelection();
-    cleanStockQuotes();
+    cleanNews(3);
+    cleanStockQuotes(3);
   }).start();
 };
 

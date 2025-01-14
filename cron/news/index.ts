@@ -7,22 +7,22 @@ import { seedClsNews } from "@/cron/news/cls";
 const spider_name = "news";
 const logger = createLogger(spider_name, "", false);
 
-// 清除超过7天的数据
-export const cleanNews = async () => {
-  logger.log("check if there is data older than 7 days");
+// 清除超过指定天数的数据
+export const cleanNews = async (days: number = 7) => {
+  logger.log(`check if there is data older than ${days} days`);
 
   const result = await prisma.news.deleteMany({
     where: {
       date: {
-        lt: dayjs().subtract(7, "day").toDate()
+        lt: dayjs().subtract(days, "day").toDate()
       }
     }
   });
 
   if (result.count === 0) {
-    logger.log("no data older than 7 days");
+    logger.log(`no data older than ${days} days`);
   } else {
-    logger.log(`clean ${result.count} data older than 7 days`);
+    logger.log(`clean ${result.count} data older than ${days} days`);
   }
 };
 

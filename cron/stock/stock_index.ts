@@ -11,9 +11,9 @@ import { getRealTimeIndexQuotes, quotesIndexIndicatorMapping } from "./api";
 const spider_name = "stock_index";
 const print = createLogger(spider_name, "stock");
 
-// 清除超过7个交易日的数据，避免数据量过大
-export const cleanStockIndex = async () => {
-  print("clean stock index");
+// 清除超过指定天数的数据
+export const cleanStockIndex = async (days: number = 7) => {
+  print(`clean stock index older than ${days} days`);
 
   const tradingDays = await prisma.stockIndexRealTime.findMany({
     select: { date: true },
@@ -21,8 +21,8 @@ export const cleanStockIndex = async () => {
     orderBy: { date: "desc" }
   });
 
-  if (tradingDays.length > 7) {
-    const cutoffDate = tradingDays[6].date;
+  if (tradingDays.length > days) {
+    const cutoffDate = tradingDays[days - 1].date;
     const result = await prisma.stockIndexRealTime.deleteMany({
       where: { date: { lt: cutoffDate } }
     });
