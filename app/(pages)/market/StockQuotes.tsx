@@ -17,24 +17,17 @@ import { clientGet } from "@/shared/request";
 import { useEffect, useState } from "react";
 import { StockQuotesOrder } from "@/app/api/(stock)/stock-quotes/list/route";
 import SymbolChart from "@/app/components/charts/SymbolChart";
-import { StockQuotesRealTime } from "@prisma/client";
 import { formatNumber } from "@/app/components/tables/DataTable/util";
 import { formatPercent } from "@/app/components/tables/DataTable/util";
-import styles from "./StockQuotes.module.css";
+import { SymbolChartData } from "@/app/types/chart.type";
+import { transformSymbolChartData } from "@/shared/chart";
 
-const transformSymbolChartData = (data: StockQuotesRealTime) => {
-  return {
-    date: dayjs(Number(data.ts)).format("YYYY-MM-DD HH:mm:ss"),
-    open: data.openPrice,
-    high: data.highPrice,
-    low: data.lowPrice,
-    close: data.newPrice,
-    preClose: data.preClosePrice
-  };
-};
+import styles from "./StockQuotes.module.css";
 
 const StockQuotes = () => {
   const [activeTab, setActiveTab] = useState<string | null>(null);
+  const [symbolChartData, setSymbolChartData] = useState<SymbolChartData[]>([]);
+
   const [rootRef, setRootRef] = useState<HTMLDivElement | null>(null);
   const [controlsRefs, setControlsRefs] = useState<
     Record<string, HTMLButtonElement | null>
@@ -47,21 +40,25 @@ const StockQuotes = () => {
   const { data, isLoading } = useQuery({
     queryKey: ["stock-quotes"],
     queryFn: (): Promise<StockQuotesOrder[]> =>
-      clientGet("/api/stock-quotes/list", {})
+      clientGet("/api/stock-quotes/list", {}),
+    refetchInterval: 1000 * 60, // 每分钟刷新一次
+    onSuccess: data => {
+      setSymbolChartData(
+        data?.map(item => ({
+          code: item.code,
+          name: item.name,
+          latest: transformSymbolChartData(item.latest),
+          trends: item.trends.map(trend => transformSymbolChartData(trend))
+        }))
+      );
+    }
   });
 
   useEffect(() => {
-    if (data) {
+    if (data && !activeTab) {
       setActiveTab(data[0].code);
     }
   }, [data]);
-
-  const symbolChartData = data?.map(item => ({
-    code: item.code,
-    name: item.name,
-    latest: transformSymbolChartData(item.latest),
-    trends: item.trends.map(trend => transformSymbolChartData(trend))
-  }));
 
   return (
     <Paper>

@@ -12,6 +12,9 @@ export type StockQuotesOrder = {
 export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;
 
+  const orderBy = searchParams.get("orderBy") || "newPrice";
+  const order = searchParams.get("order") || "desc";
+
   const limit = Number(searchParams.get("limit")) || 5;
 
   const maxDate = await prisma.stockQuotesRealTime.findFirst({
@@ -23,7 +26,7 @@ export const GET = async (request: NextRequest) => {
     select: { code: true },
     distinct: ["code"],
     take: limit,
-    orderBy: { newPrice: "desc" }
+    orderBy: { [orderBy]: order }
   });
 
   let where: Prisma.StockQuotesRealTimeWhereInput = {

@@ -6,12 +6,14 @@ import { get } from "@/shared/request";
 import { BatchUpdate, News } from "@prisma/client";
 import { useDisclosure } from "@mantine/hooks";
 import DataTable from "@/app/components/tables/DataTable";
+import { useBatchContext } from "@/app/providers/BatchProvider";
 
 import { useNewsContext } from "./NewsContext";
 import { COLUMNS } from "./NewsListConfig";
 
 const NewsList = () => {
   const { filters } = useNewsContext();
+  const { batch } = useBatchContext();
 
   const [newsList, setNewsList] = useState<News[]>([]);
 
@@ -85,20 +87,13 @@ const NewsList = () => {
     }, {} as Record<string, Partial<BatchUpdate>>);
   };
 
-  const getBatchInfo = async () => {
-    const response = await get("/api/batch", {});
-
-    if (response.success) {
-      const batchMap = transformBatch(response.data);
-
+  useEffect(() => {
+    if (batch.length > 0) {
+      const batchMap = transformBatch(batch);
       setRefreshTimeMap(batchMap);
       setRefreshTime(dayjs(batchMap.sina.batchTime).format("YYYY-MM-DD HH:mm"));
     }
-  };
-
-  useEffect(() => {
-    getBatchInfo();
-  }, []);
+  }, [batch]);
 
   useEffect(() => {
     if (filters.source) {

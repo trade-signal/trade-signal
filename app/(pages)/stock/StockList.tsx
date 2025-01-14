@@ -8,6 +8,7 @@ import { Tabs } from "@mantine/core";
 import { useDebouncedCallback, useDisclosure } from "@mantine/hooks";
 import DataTable from "@/app/components/tables/DataTable";
 import { useActiveStock } from "@/app/providers/ActiveStockProvider";
+import { useBatchContext } from "@/app/providers/BatchProvider";
 import { getOrderBy } from "./StockListConfig";
 
 import { StockFilters, useStockContext } from "./StockContext";
@@ -16,7 +17,7 @@ import { TAB_CONFIGS } from "./StockListConfig";
 const StockList = () => {
   const { filters, setFilters } = useStockContext();
   const { setActiveStockCode } = useActiveStock();
-
+  const { batch } = useBatchContext();
   const [searchValue, setSearchValue] = useState(filters.search || "");
 
   const [stockList, setStockList] = useState<StockSelection[]>([]);
@@ -111,20 +112,15 @@ const StockList = () => {
     }
   }, [page]);
 
-  const getBatchInfo = async () => {
-    const response = await get("/api/batch", {});
-
-    if (response.success) {
-      const batch = response.data.find(
+  useEffect(() => {
+    if (batch.length > 0) {
+      const currentBatch = batch.find(
         (item: any) => item.type === "stock_selection"
       );
-      setRefreshTime(dayjs(batch.batchTime).format("YYYY-MM-DD HH:mm"));
+      if (!currentBatch) return;
+      setRefreshTime(dayjs(currentBatch.batchTime).format("YYYY-MM-DD HH:mm"));
     }
-  };
-
-  useEffect(() => {
-    getBatchInfo();
-  }, []);
+  }, [batch]);
 
   const handleRowClick = (row: StockSelection) => {
     setActiveStockCode(row.code);

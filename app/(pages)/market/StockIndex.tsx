@@ -21,29 +21,15 @@ import {
   formatNumber,
   formatPercent
 } from "@/app/components/tables/DataTable/util";
-import { StockIndexRealTime } from "@prisma/client";
+import { SymbolChartData } from "@/app/types/chart.type";
+import { transformSymbolChartData } from "@/shared/chart";
 
 import styles from "./StockIndex.module.css";
 
-const transformSymbolChartData = (data: StockIndexRealTime) => {
-  return {
-    date: dayjs(Number(data.ts)).format("YYYY-MM-DD HH:mm:ss"),
-    open: data.openPrice,
-    high: data.highPrice,
-    low: data.lowPrice,
-    close: data.newPrice,
-    preClose: data.preClosePrice
-  };
-};
-
 const StockIndex = () => {
-  const { data, isLoading } = useQuery({
-    queryKey: ["stock-index"],
-    queryFn: (): Promise<StockIndexOrder[]> =>
-      clientGet("/api/stock-index/list", {})
-  });
-
   const [activeTab, setActiveTab] = useState<string | null>(null);
+  const [symbolChartData, setSymbolChartData] = useState<SymbolChartData[]>([]);
+
   const [rootRef, setRootRef] = useState<HTMLDivElement | null>(null);
   const [controlsRefs, setControlsRefs] = useState<
     Record<string, HTMLButtonElement | null>
@@ -53,18 +39,28 @@ const StockIndex = () => {
     setControlsRefs(controlsRefs);
   };
 
+  const { data, isLoading } = useQuery({
+    queryKey: ["stock-index"],
+    queryFn: (): Promise<StockIndexOrder[]> =>
+      clientGet("/api/stock-index/list", {}),
+    refetchInterval: 1000 * 60, // 每分钟刷新一次,
+    onSuccess: data => {
+      setSymbolChartData(
+        data?.map(item => ({
+          code: item.code,
+          name: item.name,
+          latest: transformSymbolChartData(item.latest),
+          trends: item.trends.map(trend => transformSymbolChartData(trend))
+        }))
+      );
+    }
+  });
+
   useEffect(() => {
-    if (data) {
+    if (data && !activeTab) {
       setActiveTab(data[0].code);
     }
   }, [data]);
-
-  const symbolChartData = data?.map(item => ({
-    code: item.code,
-    name: item.name,
-    latest: transformSymbolChartData(item.latest),
-    trends: item.trends.map(trend => transformSymbolChartData(trend))
-  }));
 
   return (
     <Paper>

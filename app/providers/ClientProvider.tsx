@@ -15,6 +15,7 @@ import { LoginProvider } from "@/app/providers/LoginProvider";
 import SpotlightModal from "@/app/components/modals/SpotlightModal";
 import { ActiveStockProvider } from "@/app/providers/ActiveStockProvider";
 import { ThemeSettingProvider } from "@/app/providers/ThemeSettingProvider";
+import { BatchProvider } from "@/app/providers/BatchProvider";
 import { useThemeSetting } from "@/app/hooks/useThemeSetting";
 import { useLogin } from "@/app/hooks/useLogin";
 
@@ -99,9 +100,11 @@ export default function ClientProvider({
           <QueryClientProvider client={queryClient}>
             <ThemeSettingProvider>
               <LoginProvider>
-                <Notifications />
-                <SpotlightModal />
-                <AppContent>{children}</AppContent>
+                <BatchProvider>
+                  <Notifications />
+                  <SpotlightModal />
+                  <AppContent>{children}</AppContent>
+                </BatchProvider>
               </LoginProvider>
             </ThemeSettingProvider>
           </QueryClientProvider>
