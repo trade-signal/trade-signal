@@ -204,6 +204,10 @@ const SymbolChart = (props: SymbolChartProps) => {
         horzLines: {
           visible: false
         }
+      },
+      // hide x axis
+      xAxis: {
+        visible: false
       }
     };
     return createChart(chartContainerRef, chartOptions);
@@ -330,10 +334,10 @@ const SymbolChart = (props: SymbolChartProps) => {
     <Stack>
       <div
         ref={chartContainerRef}
-        style={{ position: "relative", width: "100%", height: "300px" }}
+        style={{ position: "relative", width: "100%", height: "320px" }}
       ></div>
 
-      <Group justify="flex-end">
+      {/* <Group justify="flex-end">
         <SegmentedControl
           w={rem(120)}
           value={chartType}
@@ -359,7 +363,7 @@ const SymbolChart = (props: SymbolChartProps) => {
             }
           ]}
         />
-      </Group>
+      </Group> */}
     </Stack>
   );
 };
