@@ -10,7 +10,8 @@ import {
   Stack,
   Group,
   Loader,
-  FloatingIndicator
+  FloatingIndicator,
+  Skeleton
 } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { clientGet } from "@/shared/request";
@@ -78,7 +79,14 @@ const StockQuotes = () => {
         onChange={value => setActiveTab(value)}
       >
         <Tabs.List ref={setRootRef} className={styles.list}>
-          {data?.map(item => (
+          {isLoading ? (
+            <>
+              <Skeleton height={64} width="20%" radius="sm" />
+              <Skeleton height={64} width="20%" radius="sm" />
+              <Skeleton height={64} width="20%" radius="sm" />
+              <Skeleton height={64} width="20%" radius="sm" />
+            </>
+          ) : data?.map(item => (
             <Tabs.Tab
               value={item.code}
               key={item.code}
@@ -102,7 +110,9 @@ const StockQuotes = () => {
           />
         </Tabs.List>
 
-        {symbolChartData?.map(item => (
+        {isLoading ? (
+          <Skeleton height={300} mt="lg" />
+        ) : symbolChartData?.map(item => (
           <Tabs.Panel value={item.code} key={item.code} pt="lg">
             {item.code === activeTab ? <SymbolChart {...item} /> : null}
           </Tabs.Panel>

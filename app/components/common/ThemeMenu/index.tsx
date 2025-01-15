@@ -9,8 +9,9 @@ import {
   ColorInput,
   useMantineColorScheme
 } from "@mantine/core";
-import { useThemeSetting } from "@/app/hooks/useThemeSetting";
-import { useEffect } from "react";
+import { SetThemeType, useThemeSetting } from "@/app/hooks/useThemeSetting";
+import { useEffect, useState } from "react";
+import { type ColorArray, hex2rgbArray, isTextReadable, rgbArray2hex } from "@/shared/color";
 
 export const ThemeMenu = ({
   visible,
@@ -23,14 +24,36 @@ export const ThemeMenu = ({
 
   const { colorScheme, setColorScheme } = useMantineColorScheme();
 
+  const _setTheme = (type: SetThemeType, value: any) => {
+    setThemeSetting(type, value);
+  };
+
   useEffect(() => {
     if (colorScheme === themeSetting.colorScheme) return;
     setColorScheme(themeSetting.colorScheme);
   }, [themeSetting.colorScheme]);
 
+  const [colorTips, setColorTips] = useState<{
+    upColor?: string;
+    downColor?: string;
+  }>({
+    upColor: undefined,
+    downColor: undefined
+  });
+  useEffect(() => {
+    const scheme = themeSetting.colorScheme === 'auto' ? window.matchMedia("(prefers-color-scheme: dark)").matches ? 'dark' : 'light' : themeSetting.colorScheme;
+    const bgColor: ColorArray = scheme === 'dark' ? [0, 0, 0] : [255, 255, 255];
+
+    // 检测字体颜色是否清晰
+    setColorTips({
+      upColor: isTextReadable(bgColor, hex2rgbArray(themeSetting.upColor), 3) ? undefined : '当前颜色对比度过低，建议调整',
+      downColor: isTextReadable(bgColor, hex2rgbArray(themeSetting.downColor), 3) ? undefined : '当前颜色对比度过低，建议调整'
+    })
+  }, [themeSetting.upColor, themeSetting.downColor, themeSetting.colorScheme])
+
   return (
     <Drawer
-      position="left"
+      position="right"
       opened={visible}
       onClose={onClose}
       title="主题设置"
@@ -40,9 +63,7 @@ export const ThemeMenu = ({
         <Divider my="md" labelPosition="left" label="模式" />
         <Radio.Group
           value={themeSetting.colorScheme}
-          onChange={value => {
-            setThemeSetting("colorScheme", value as MantineColorScheme);
-          }}
+          onChange={value => _setTheme("colorScheme", value as MantineColorScheme)}
         >
           <Group>
             <Radio value="light" label="亮色" />
@@ -59,8 +80,9 @@ export const ThemeMenu = ({
           format="hex"
           description="上涨"
           placeholder="请选择颜色"
+          error={colorTips.upColor}
           swatches={Object.values(DEFAULT_THEME.colors).map(color => color[7])}
-          onChange={value => setThemeSetting("upColor", value)}
+          onChange={value => _setTheme("upColor", value)}
         />
         <ColorInput
           mt="md"
@@ -68,8 +90,9 @@ export const ThemeMenu = ({
           format="hex"
           description="下跌"
           placeholder="请选择颜色"
+          error={colorTips.downColor}
           swatches={Object.values(DEFAULT_THEME.colors).map(color => color[7])}
-          onChange={value => setThemeSetting("downColor", value)}
+          onChange={value => _setTheme("downColor", value)}
         />
       </Box>
     </Drawer>
