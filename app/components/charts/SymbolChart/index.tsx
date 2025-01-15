@@ -220,11 +220,11 @@ const SymbolChart = (props: SymbolChartProps) => {
     seriesRef.current = [];
   };
 
+  const themeSetting = readLocalStorageValue<ThemeSetting>({ key: THEME_SETTING_KEY });
+
   const handleChartTypeChange = (chart: IChartApi, type: "area" | "candle") => {
     clearSeries(chart);
     setChartType(type);
-
-    const themeSetting: any = readLocalStorageValue({ key: THEME_SETTING_KEY });
 
     switch (type) {
       case "area":
@@ -324,7 +324,7 @@ const SymbolChart = (props: SymbolChartProps) => {
       chart.remove();
       window.removeEventListener("resize", handleChartResize);
     };
-  }, [code, trends, name, chartType, isDark]);
+  }, [code, trends, name, chartType, isDark, themeSetting]);
 
   return (
     <Stack>
