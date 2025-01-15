@@ -13,24 +13,28 @@ const print = createLogger(spider_name, "stock");
 
 // 清除超过指定天数的数据
 export const cleanStockQuotes = async (days: number = 7) => {
-  print(`clean stock quotes older than ${days} days`);
+  try {
+    print(`clean stock quotes older than ${days} days`);
 
-  const tradingDays = await prisma.stockQuotesRealTime.findMany({
-    select: { date: true },
-    distinct: ["date"],
-    orderBy: { date: "desc" }
-  });
-
-  if (tradingDays.length > days) {
-    const cutoffDate = tradingDays[days - 1].date;
-    const result = await prisma.stockQuotesRealTime.deleteMany({
-      where: { date: { lt: cutoffDate } }
+    const tradingDays = await prisma.stockQuotesRealTime.findMany({
+      select: { date: true },
+      distinct: ["date"],
+      orderBy: { date: "desc" }
     });
 
-    print(`clean ${result.count} data`);
-    return;
+    if (tradingDays.length > days) {
+      const cutoffDate = tradingDays[days - 1].date;
+      const result = await prisma.stockQuotesRealTime.deleteMany({
+        where: { date: { lt: cutoffDate } }
+      });
+
+      print(`clean ${result.count} data`);
+      return;
+    }
+    print("no data to clean");
+  } catch (error) {
+    print(`clean stock quotes error: ${error}`);
   }
-  print("no data to clean");
 };
 
 export const seedStockQuotes = async (date?: string) => {

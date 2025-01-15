@@ -9,20 +9,24 @@ const logger = createLogger(spider_name, "", false);
 
 // 清除超过指定天数的数据
 export const cleanNews = async (days: number = 7) => {
-  logger.log(`check if there is data older than ${days} days`);
+  try {
+    logger.log(`check if there is data older than ${days} days`);
 
-  const result = await prisma.news.deleteMany({
-    where: {
-      date: {
-        lt: dayjs().subtract(days, "day").toDate()
+    const result = await prisma.news.deleteMany({
+      where: {
+        date: {
+          lt: dayjs().subtract(days, "day").toDate()
+        }
       }
-    }
-  });
+    });
 
-  if (result.count === 0) {
-    logger.log(`no data older than ${days} days`);
-  } else {
-    logger.log(`clean ${result.count} data older than ${days} days`);
+    if (result.count === 0) {
+      logger.log(`no data older than ${days} days`);
+    } else {
+      logger.log(`clean ${result.count} data older than ${days} days`);
+    }
+  } catch (error) {
+    logger.error(`clean news error: ${error}`);
   }
 };
 

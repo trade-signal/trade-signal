@@ -20,10 +20,14 @@ const getTradeDates = async () => {
 };
 
 export const refreshTradeDates = async () => {
-  logger.info("refresh trade dates");
-  clearTradeDates();
-  await getTradeDates();
-  logger.info("refresh trade dates success");
+  try {
+    logger.info("refresh trade dates");
+    clearTradeDates();
+    await getTradeDates();
+    logger.info("refresh trade dates success");
+  } catch (error) {
+    logger.error(`refresh trade dates error: ${error}`);
+  }
 };
 
 export const isTradeDate = (date?: string) => {
