@@ -1,14 +1,19 @@
 import {
+  Box,
   Center,
   Container,
+  Group,
   rem,
   ScrollArea,
   Stack,
   Title
 } from "@mantine/core";
 import { Metadata } from "next";
+
+import StockChangeRate from "./components/StockChangeRate";
 import StockIndex from "./StockIndex";
 import StockQuotes from "./StockQuotes";
+
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
@@ -28,6 +33,11 @@ const Market = () => {
         <StockIndex />
         <StockQuotes />
       </Stack>
+
+      {/* <Group justify="space-between" mt="xl">
+        <StockChangeRate mode="up" />
+        <StockChangeRate mode="down" />
+      </Group> */}
     </ScrollArea>
   );
 };

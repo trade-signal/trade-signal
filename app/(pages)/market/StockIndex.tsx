@@ -1,6 +1,5 @@
 "use client";
 
-import dayjs from "dayjs";
 import {
   Paper,
   rem,
@@ -14,6 +13,7 @@ import {
   Skeleton
 } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
+import { getRefetchInterval } from "@/shared/env";
 import { clientGet } from "@/shared/request";
 import { useEffect, useState } from "react";
 import { StockIndexOrder } from "@/app/api/(stock)/stock-index/list/route";
@@ -44,7 +44,7 @@ const StockIndex = () => {
     queryKey: ["stock-index"],
     queryFn: (): Promise<StockIndexOrder[]> =>
       clientGet("/api/stock-index/list", {}),
-    refetchInterval: 1000 * 60, // 每分钟刷新一次,
+    refetchInterval: getRefetchInterval(),
     onSuccess: data => {
       setSymbolChartData(
         data?.map(item => ({
@@ -88,22 +88,24 @@ const StockIndex = () => {
               <Skeleton height={64} width="20%" radius="sm" />
               <Skeleton height={64} width="20%" radius="sm" />
             </>
-          ) : data?.map(item => (
-            <Tabs.Tab
-              value={item.code}
-              key={item.code}
-              ref={setControlRef(item.code)}
-              className={styles.tab}
-            >
-              <Stack gap={0} miw={rem(160)}>
-                <Text className={styles.tabName}>{item.name}</Text>
-                <Group m={0} gap="xs" justify="space-between">
-                  <Text>{formatNumber(item.latest?.newPrice)}</Text>
-                  <Text>{formatPercent(item.latest?.changeRate || 0)}</Text>
-                </Group>
-              </Stack>
-            </Tabs.Tab>
-          ))}
+          ) : (
+            data?.map(item => (
+              <Tabs.Tab
+                value={item.code}
+                key={item.code}
+                ref={setControlRef(item.code)}
+                className={styles.tab}
+              >
+                <Stack gap={0} miw={rem(160)}>
+                  <Text className={styles.tabName}>{item.name}</Text>
+                  <Group m={0} gap="xs" justify="space-between">
+                    <Text>{formatNumber(item.latest?.newPrice)}</Text>
+                    <Text>{formatPercent(item.latest?.changeRate || 0)}</Text>
+                  </Group>
+                </Stack>
+              </Tabs.Tab>
+            ))
+          )}
 
           <FloatingIndicator
             target={activeTab ? controlsRefs[activeTab] : null}

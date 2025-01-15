@@ -1,6 +1,5 @@
 "use client";
 
-import dayjs from "dayjs";
 import {
   Paper,
   rem,
@@ -16,6 +15,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { clientGet } from "@/shared/request";
 import { useEffect, useState } from "react";
+import { getRefetchInterval } from "@/shared/env";
 import { StockQuotesOrder } from "@/app/api/(stock)/stock-quotes/list/route";
 import SymbolChart from "@/app/components/charts/SymbolChart";
 import { formatNumber } from "@/app/components/tables/DataTable/util";
@@ -42,7 +42,7 @@ const StockQuotes = () => {
     queryKey: ["stock-quotes"],
     queryFn: (): Promise<StockQuotesOrder[]> =>
       clientGet("/api/stock-quotes/list", {}),
-    refetchInterval: 1000 * 60, // 每分钟刷新一次
+    refetchInterval: getRefetchInterval(),
     onSuccess: data => {
       setSymbolChartData(
         data?.map(item => ({
@@ -86,22 +86,24 @@ const StockQuotes = () => {
               <Skeleton height={64} width="20%" radius="sm" />
               <Skeleton height={64} width="20%" radius="sm" />
             </>
-          ) : data?.map(item => (
-            <Tabs.Tab
-              value={item.code}
-              key={item.code}
-              ref={setControlRef(item.code)}
-              className={styles.tab}
-            >
-              <Stack gap={0} miw={rem(160)}>
-                <Text className={styles.tabName}>{item.name}</Text>
-                <Group m={0} gap="xs" justify="space-between">
-                  <Text>{formatNumber(item.latest?.newPrice)}</Text>
-                  <Text>{formatPercent(item.latest?.changeRate || 0)}</Text>
-                </Group>
-              </Stack>
-            </Tabs.Tab>
-          ))}
+          ) : (
+            data?.map(item => (
+              <Tabs.Tab
+                value={item.code}
+                key={item.code}
+                ref={setControlRef(item.code)}
+                className={styles.tab}
+              >
+                <Stack gap={0} miw={rem(160)}>
+                  <Text className={styles.tabName}>{item.name}</Text>
+                  <Group m={0} gap="xs" justify="space-between">
+                    <Text>{formatNumber(item.latest?.newPrice)}</Text>
+                    <Text>{formatPercent(item.latest?.changeRate || 0)}</Text>
+                  </Group>
+                </Stack>
+              </Tabs.Tab>
+            ))
+          )}
 
           <FloatingIndicator
             target={activeTab ? controlsRefs[activeTab] : null}
@@ -112,11 +114,13 @@ const StockQuotes = () => {
 
         {isLoading ? (
           <Skeleton height={300} mt="lg" />
-        ) : symbolChartData?.map(item => (
-          <Tabs.Panel value={item.code} key={item.code} pt="lg">
-            {item.code === activeTab ? <SymbolChart {...item} /> : null}
-          </Tabs.Panel>
-        ))}
+        ) : (
+          symbolChartData?.map(item => (
+            <Tabs.Panel value={item.code} key={item.code} pt="lg">
+              {item.code === activeTab ? <SymbolChart {...item} /> : null}
+            </Tabs.Panel>
+          ))
+        )}
       </Tabs>
     </Paper>
   );

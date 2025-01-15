@@ -1,3 +1,4 @@
+import { getRefetchInterval } from "@/shared/env";
 import { clientGet, get } from "@/shared/request";
 import { BatchUpdate } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
@@ -17,7 +18,7 @@ const useBatch = () => {
   const { isFetching, isLoading } = useQuery({
     queryKey: ["batch"],
     queryFn: () => clientGet("/api/batch", {}),
-    refetchInterval: 1000 * 60, // 每分钟刷新一次
+    refetchInterval: getRefetchInterval(),
     onSuccess: data => {
       setBatch(data);
     }
