@@ -16,7 +16,7 @@ import { IconChartCandle } from "@tabler/icons-react";
 import { IconChartArea } from "@tabler/icons-react";
 import { readLocalStorageValue } from "@mantine/hooks";
 import { THEME_SETTING_KEY, ThemeSetting } from "@/app/hooks/useThemeSetting";
-import { hex2rgba } from "@/shared/util";
+import { hex2rgba } from "@/shared/color";
 import { useThemeIcon } from "@/app/hooks/useThemeIcon";
 
 interface SymbolChartData {
