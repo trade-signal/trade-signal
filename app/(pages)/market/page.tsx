@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   title: "市场行情：实时股票和指数行情 - TradeSignal"
 };
 
-const Market = () => {
+const Market = props => {
   return (
     <ScrollArea px="4vw" py="xl" className={styles.scrollArea}>
       <Center my="xl">
@@ -29,15 +29,15 @@ const Market = () => {
         </Title>
       </Center>
 
-      <Stack gap="xl">
+      {/* <Stack gap="xl">
         <StockIndex />
         <StockQuotes />
-      </Stack>
+      </Stack> */}
 
-      {/* <Group justify="space-between" mt="xl">
+      <Group justify="space-between" mt="xl">
         <StockChangeRate mode="up" />
-        <StockChangeRate mode="down" />
-      </Group> */}
+        {/* <StockChangeRate mode="down" /> */}
+      </Group>
     </ScrollArea>
   );
 };

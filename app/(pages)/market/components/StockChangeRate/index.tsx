@@ -1,20 +1,22 @@
 "use client";
 
 import { FC, useMemo, useState } from "react";
-import { Group, Loader, Paper, rem, Title } from "@mantine/core";
+import { Group, Loader, Paper, rem, Stack, Text, Title } from "@mantine/core";
 
-import styles from "./index.module.css";
 import { clientGet } from "@/shared/request";
 import { useQuery } from "@tanstack/react-query";
-import { transformSymbolChartData } from "@/shared/chart";
 import { getRefetchInterval } from "@/shared/env";
-import { StockQuotesOrder } from "@/app/api/(stock)/stock-quotes/list/route";
-import { SymbolChartData } from "@/app/types/chart.type";
+import {
+  formatNumber,
+  formatPercentPlain
+} from "@/app/components/tables/DataTable/util";
 import {
   MantineReactTable,
   MRT_ColumnDef,
   useMantineReactTable
 } from "mantine-react-table";
+
+import styles from "./index.module.css";
 
 interface StockChangeRateProps {
   mode: "up" | "down";
@@ -24,31 +26,46 @@ const StockChangeRate: FC<StockChangeRateProps> = props => {
   const { mode } = props;
 
   const { data, isLoading } = useQuery({
-    queryKey: ["stock-quotes", mode],
-    queryFn: (): Promise<StockQuotesOrder[]> =>
-      clientGet("/api/stock-quotes/list", {
+    queryKey: ["stock-ranking", mode],
+    queryFn: (): Promise<StockQuotesRealTime[]> =>
+      clientGet("/api/stock-ranking", {
         orderBy: "changeRate",
         order: mode === "up" ? "desc" : "asc"
       }),
-    refetchInterval: getRefetchInterval(),
-    onSuccess: data => {
-      // setSymbolChartData(
-      //   data?.map(item => ({
-      //     code: item.code,
-      //     name: item.name,
-      //     latest: transformSymbolChartData(item.latest),
-      //     trends: item.trends.map(trend => transformSymbolChartData(trend))
-      //   }))
-      // );
-    }
+    refetchInterval: getRefetchInterval()
   });
 
   const columns = useMemo<MRT_ColumnDef<StockQuotesOrder>[]>(() => {
     return [
-      { header: "代码", accessorKey: "code" },
-      { header: "名称", accessorKey: "name" },
-      { header: "最新价", accessorKey: "latest.newPrice" },
-      { header: "涨跌幅", accessorKey: "latest.changeRate" }
+      {
+        header: "代码",
+        accessorKey: "stock",
+        Cell: ({ row }) => (
+          <Stack gap="xs">
+            <Text>{row.original.name}</Text>
+            <Text>{row.original.code}</Text>
+          </Stack>
+        ),
+        size: 200
+      },
+      {
+        header: "最新价",
+        accessorKey: "newPrice",
+        size: 100,
+        Cell: ({ row }) => (
+          <Box ta="right">
+            <Text>{formatNumber(row.original.newPrice, 2)}</Text>
+          </Box>
+        )
+      },
+      {
+        header: "涨跌幅",
+        accessorKey: "changeRate",
+        size: 100,
+        Cell: ({ row }) => (
+          <Text ta="right">{formatPercentPlain(row.original.changeRate)}</Text>
+        )
+      }
     ];
   }, []);
 
@@ -56,8 +73,19 @@ const StockChangeRate: FC<StockChangeRateProps> = props => {
     columns,
     data: data || [],
 
-    // 隐藏边框
-    mantineTableContainerProps: {},
+    // 无数据文案
+    renderEmptyRowsFallback: () => <Text>暂无数据</Text>,
+
+    // 表格样式
+    mantinePaperProps: {
+      mt: "xs",
+      shadow: "none",
+      withBorder: false
+    },
+    mantineTableProps: {
+      verticalSpacing: "xs",
+      fontSize: "xs"
+    },
 
     // 禁用不需要的功能
     enableTableHead: false,
