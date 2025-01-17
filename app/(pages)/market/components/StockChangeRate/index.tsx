@@ -1,7 +1,16 @@
 "use client";
 
 import { FC, useMemo, useState } from "react";
-import { Group, Loader, Paper, rem, Stack, Text, Title } from "@mantine/core";
+import {
+  Box,
+  Group,
+  Loader,
+  Paper,
+  rem,
+  Stack,
+  Text,
+  Title
+} from "@mantine/core";
 
 import { clientGet } from "@/shared/request";
 import { useQuery } from "@tanstack/react-query";
@@ -17,6 +26,8 @@ import {
 } from "mantine-react-table";
 
 import styles from "./index.module.css";
+import { StockQuotesOrder } from "@/app/api/(stock)/stock-quotes/list/route";
+import { StockQuotesRealTime } from "@prisma/client";
 
 interface StockChangeRateProps {
   mode: "up" | "down";
@@ -35,7 +46,7 @@ const StockChangeRate: FC<StockChangeRateProps> = props => {
     refetchInterval: getRefetchInterval()
   });
 
-  const columns = useMemo<MRT_ColumnDef<StockQuotesOrder>[]>(() => {
+  const columns = useMemo<MRT_ColumnDef<StockQuotesRealTime>[]>(() => {
     return [
       {
         header: "代码",
@@ -83,8 +94,7 @@ const StockChangeRate: FC<StockChangeRateProps> = props => {
       withBorder: false
     },
     mantineTableProps: {
-      verticalSpacing: "xs",
-      fontSize: "xs"
+      verticalSpacing: "xs"
     },
 
     // 禁用不需要的功能
