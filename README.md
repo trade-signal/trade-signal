@@ -80,6 +80,7 @@ docker run -d -p 3000:3000 \
   -e GITHUB_SECRET=${GITHUB_SECRET} \
   -e GOOGLE_ID=${GOOGLE_ID} \
   -e GOOGLE_SECRET=${GOOGLE_SECRET} \
+  -e NEXTAUTH_SECRET=${NEXTAUTH_SECRET} \
   --name trade-signal \
   trade-signal:latest
 ```
