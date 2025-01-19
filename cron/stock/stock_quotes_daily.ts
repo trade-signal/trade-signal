@@ -56,3 +56,30 @@ export const seedDailyStockQuotes = async (date?: string) => {
     print(`getRealtimeStockQuotes error: ${error}`);
   }
 };
+
+// 清除超过指定天数的数据
+export const cleanStockQuotesDaily = async (days: number = 7) => {
+  try {
+    print(`clean stock quotes daily older than ${days} days`);
+
+    const tradingDays = await prisma.stockQuotesDaily.findMany({
+      select: { date: true },
+      distinct: ["date"],
+      orderBy: { date: "desc" }
+    });
+
+    if (tradingDays.length > days) {
+      const cutoffDate = tradingDays[days - 1].date;
+      const result = await prisma.stockQuotesDaily.deleteMany({
+        where: { date: { lt: cutoffDate } }
+      });
+
+      print(`clean ${result.count} data`);
+      return;
+    }
+
+    print("no data to clean");
+  } catch (error) {
+    print(`clean stock quotes daily error: ${error}`);
+  }
+};

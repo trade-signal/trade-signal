@@ -31,10 +31,15 @@ export const cleanStockQuotes = async (days: number = 7) => {
       print(`clean ${result.count} data`);
       return;
     }
+
     print("no data to clean");
   } catch (error) {
     print(`clean stock quotes error: ${error}`);
   }
+};
+
+const seedLatestStockQuotes = async (list: any[]) => {
+  // TODO: 更新最新行情
 };
 
 export const seedStockQuotes = async (date?: string) => {

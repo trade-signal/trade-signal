@@ -14,7 +14,10 @@ import {
   initStockQuotesData,
   seedStockQuotes
 } from "./stock/stock_quotes";
-import { seedDailyStockQuotes } from "./stock/stock_quotes_daily";
+import {
+  cleanStockQuotesDaily,
+  seedDailyStockQuotes
+} from "./stock/stock_quotes_daily";
 import { initStockBaseData, seedStockBase } from "./stock/stock_base";
 import { isTradeDate, refreshTradeDates } from "./stock/trade_date";
 import { initStockIndexData, seedIndex } from "./stock/stock_index";
@@ -105,14 +108,15 @@ const runNewsScheduleJobs = () => {
 
 const runClearScheduleJobs = () => {
   // 每天清晨 5:30 清理数据（在开盘前）
-  new CronJob("30 5 * * *", () => {
+  new CronJob("30 5 * * *", async () => {
     print("trigger clear data before trade");
 
-    refreshTradeDates();
+    await refreshTradeDates();
 
-    cleanStockSelection();
-    cleanNews(3);
-    cleanStockQuotes(3);
+    await cleanStockSelection();
+    await cleanNews(3);
+    await cleanStockQuotes(3);
+    await cleanStockQuotesDaily(30);
   }).start();
 };
 
