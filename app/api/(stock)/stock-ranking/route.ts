@@ -8,20 +8,19 @@ export const GET = async (request: NextRequest) => {
   const orderBy = searchParams.get("orderBy") || "newPrice";
   const order = searchParams.get("order") || "desc";
 
+  console.log(orderBy, order);
+
   const limit = Number(searchParams.get("limit")) || 5;
 
-  const maxDate = await prisma.stockQuotesRealTime.findFirst({
+  const maxDate = await prisma.stockQuotesLatest.findFirst({
     orderBy: { date: "desc" },
     select: { date: true }
   });
 
-  const list = await prisma.stockQuotesRealTime.findMany({
-    where: {
-      date: { equals: maxDate?.date }
-    },
+  const list = await prisma.stockQuotesLatest.findMany({
+    where: { date: maxDate?.date },
     take: limit,
-    distinct: ["code"],
-    orderBy: [{ createdAt: "desc" }, { [orderBy]: order }]
+    orderBy: [{ [orderBy]: order }]
   });
 
   return Response.json({

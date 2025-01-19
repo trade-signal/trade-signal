@@ -7,6 +7,7 @@ import {
   Loader,
   Paper,
   rem,
+  Skeleton,
   Stack,
   Text,
   Title
@@ -24,10 +25,12 @@ import {
   MRT_ColumnDef,
   useMantineReactTable
 } from "mantine-react-table";
-
-import styles from "./index.module.css";
 import { StockQuotesOrder } from "@/app/api/(stock)/stock-quotes/list/route";
 import { StockQuotesRealTime } from "@prisma/client";
+import { THEME_SETTING_KEY, ThemeSetting } from "@/app/hooks/useThemeSetting";
+import { readLocalStorageValue } from "@mantine/hooks";
+
+import styles from "./index.module.css";
 
 interface StockChangeRateProps {
   mode: "up" | "down";
@@ -35,6 +38,10 @@ interface StockChangeRateProps {
 
 const StockChangeRate: FC<StockChangeRateProps> = props => {
   const { mode } = props;
+
+  const themeSetting: ThemeSetting = readLocalStorageValue({
+    key: THEME_SETTING_KEY
+  });
 
   const { data, isLoading } = useQuery({
     queryKey: ["stock-ranking", mode],
@@ -65,7 +72,15 @@ const StockChangeRate: FC<StockChangeRateProps> = props => {
         size: 100,
         Cell: ({ row }) => (
           <Box ta="right">
-            <Text>{formatNumber(row.original.newPrice, 2)}</Text>
+            <Text
+              c={
+                row.original.newPrice > row.original.preClosePrice
+                  ? themeSetting.upColor ?? "rgba(236, 64, 64, 1)"
+                  : themeSetting.downColor ?? "rgba(46, 139, 87, 1)"
+              }
+            >
+              {formatNumber(row.original.newPrice, 2)}
+            </Text>
           </Box>
         )
       },
@@ -74,11 +89,20 @@ const StockChangeRate: FC<StockChangeRateProps> = props => {
         accessorKey: "changeRate",
         size: 100,
         Cell: ({ row }) => (
-          <Text ta="right">{formatPercentPlain(row.original.changeRate)}</Text>
+          <Text
+            ta="right"
+            c={
+              row.original.newPrice > row.original.preClosePrice
+                ? themeSetting.upColor ?? "rgba(236, 64, 64, 1)"
+                : themeSetting.downColor ?? "rgba(46, 139, 87, 1)"
+            }
+          >
+            {formatPercentPlain(row.original.changeRate)}
+          </Text>
         )
       }
     ];
-  }, []);
+  }, [themeSetting]);
 
   const table = useMantineReactTable({
     columns,
@@ -89,7 +113,7 @@ const StockChangeRate: FC<StockChangeRateProps> = props => {
 
     // 表格样式
     mantinePaperProps: {
-      mt: "xs",
+      mt: "md",
       shadow: "none",
       withBorder: false
     },
@@ -116,7 +140,17 @@ const StockChangeRate: FC<StockChangeRateProps> = props => {
         {isLoading ? <Loader size="sm" values="bars" /> : null}
       </Group>
 
-      <MantineReactTable table={table} />
+      {isLoading ? (
+        <Stack mt="md">
+          <Skeleton height={64} width="100%" radius="sm" />
+          <Skeleton height={64} width="100%" radius="sm" />
+          <Skeleton height={64} width="100%" radius="sm" />
+          <Skeleton height={64} width="100%" radius="sm" />
+          <Skeleton height={64} width="100%" radius="sm" />
+        </Stack>
+      ) : (
+        <MantineReactTable table={table} />
+      )}
     </Paper>
   );
 };

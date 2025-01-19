@@ -38,8 +38,31 @@ export const cleanStockQuotes = async (days: number = 7) => {
   }
 };
 
+const seedRealtimeStockQuotes = async (list: any[]) => {
+  const result = await prisma.stockQuotesRealTime.createMany({
+    data: list.map(item => ({
+      ...item,
+      ts: Date.now()
+    })),
+    skipDuplicates: true
+  });
+};
+
 const seedLatestStockQuotes = async (list: any[]) => {
-  // TODO: 更新最新行情
+  const lastUpdateTs = Date.now();
+
+  for (const item of list) {
+    await prisma.stockQuotesLatest.upsert({
+      where: {
+        date_code: {
+          date: item.date,
+          code: item.code
+        }
+      },
+      update: { ...item, lastUpdateTs },
+      create: { ...item, lastUpdateTs }
+    });
+  }
 };
 
 export const seedStockQuotes = async (date?: string) => {
@@ -71,16 +94,13 @@ export const seedStockQuotes = async (date?: string) => {
     // 添加日期
     list = list.map(item => ({
       ...item,
-      ts: Date.now(),
       date: currentDate
     }));
 
     print(`start write realtimeStockQuotes`);
 
-    const result = await prisma.stockQuotesRealTime.createMany({
-      data: list as any,
-      skipDuplicates: true
-    });
+    await seedRealtimeStockQuotes(list);
+    await seedLatestStockQuotes(list);
 
     await updateBatchStatus(batch.id, "completed", result.count);
 

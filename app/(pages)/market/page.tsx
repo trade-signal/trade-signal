@@ -29,14 +29,14 @@ const Market = props => {
         </Title>
       </Center>
 
-      {/* <Stack gap="xl">
+      <Stack gap="xl">
         <StockIndex />
         <StockQuotes />
-      </Stack> */}
+      </Stack>
 
-      <Group justify="space-between" mt="xl">
+      <Group gap="xl" justify="space-between" mt="xl">
         <StockChangeRate mode="up" />
-        {/* <StockChangeRate mode="down" /> */}
+        <StockChangeRate mode="down" />
       </Group>
     </ScrollArea>
   );
