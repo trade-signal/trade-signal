@@ -10,7 +10,7 @@ import {
 } from "@mantine/core";
 import { Metadata } from "next";
 
-import StockChangeRate from "./components/StockChangeRate";
+import StockRanking from "./components/StockRanking";
 import StockIndex from "./StockIndex";
 import StockQuotes from "./StockQuotes";
 
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   title: "市场行情：实时股票和指数行情 - TradeSignal"
 };
 
-const Market = () => {
+const Market = props => {
   return (
     <ScrollArea px="4vw" py="xl" className={styles.scrollArea}>
       <Center my="xl">
@@ -35,8 +35,18 @@ const Market = () => {
       </Stack>
 
       <Group gap="xl" justify="space-between" mt="xl">
-        <StockChangeRate mode="up" />
-        <StockChangeRate mode="down" />
+        <StockRanking title="最高成交量股票" indicator="volume" order="desc" />
+        <StockRanking
+          title="波动最大的股票"
+          indicator="amplitude"
+          order="desc"
+        />
+      </Group>
+
+      {/* 股票涨跌榜单 */}
+      <Group gap="xl" justify="space-between" mt="xl">
+        <StockRanking title="股票赢家" indicator="changeRate" order="desc" />
+        <StockRanking title="股票输家" indicator="changeRate" order="asc" />
       </Group>
     </ScrollArea>
   );

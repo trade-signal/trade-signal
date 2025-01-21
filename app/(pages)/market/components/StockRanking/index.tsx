@@ -26,40 +26,42 @@ import {
   useMantineReactTable
 } from "mantine-react-table";
 import { StockQuotesOrder } from "@/app/api/(stock)/stock-quotes/list/route";
-import { StockQuotesRealTime } from "@prisma/client";
+import { StockQuotesLatest, StockQuotesLatest } from "@prisma/client";
 import { THEME_SETTING_KEY, ThemeSetting } from "@/app/hooks/useThemeSetting";
 import { readLocalStorageValue } from "@mantine/hooks";
 
 import styles from "./index.module.css";
 
-interface StockChangeRateProps {
-  mode: "up" | "down";
+interface StockRankingProps {
+  title: string;
+  indicator: string;
+  order: "asc" | "desc";
 }
 
-const StockChangeRate: FC<StockChangeRateProps> = props => {
-  const { mode } = props;
+const StockRanking: FC<StockRankingProps> = props => {
+  const { title, indicator, order } = props;
 
   const themeSetting: ThemeSetting = readLocalStorageValue({
     key: THEME_SETTING_KEY
   });
 
   const { data, isLoading } = useQuery({
-    queryKey: ["stock-ranking", mode],
-    queryFn: (): Promise<StockQuotesRealTime[]> =>
+    queryKey: ["stock-ranking", indicator, order],
+    queryFn: (): Promise<StockQuotesLatest[]> =>
       clientGet("/api/stock-ranking", {
-        orderBy: "changeRate",
-        order: mode === "up" ? "desc" : "asc"
+        orderBy: indicator,
+        order: order
       }),
     refetchInterval: getRefetchInterval()
   });
 
-  const columns = useMemo<MRT_ColumnDef<StockQuotesRealTime>[]>(() => {
+  const columns = useMemo<MRT_ColumnDef<StockQuotesLatest>[]>(() => {
     return [
       {
         header: "代码",
         accessorKey: "stock",
         Cell: ({ row }) => (
-          <Stack gap="xs">
+          <Stack gap={0}>
             <Text>{row.original.name}</Text>
             <Text>{row.original.code}</Text>
           </Stack>
@@ -120,6 +122,11 @@ const StockChangeRate: FC<StockChangeRateProps> = props => {
     mantineTableProps: {
       verticalSpacing: "xs"
     },
+    mantineTableBodyCellProps: {
+      style: {
+        gap: 0
+      }
+    },
 
     // 禁用不需要的功能
     enableTableHead: false,
@@ -133,8 +140,8 @@ const StockChangeRate: FC<StockChangeRateProps> = props => {
   return (
     <Paper className={styles.paper}>
       <Group align="center">
-        <Title order={2} size={rem(32)}>
-          {mode === "up" ? "股票涨幅榜" : "股票跌幅榜"}
+        <Title order={2} size={rem(28)}>
+          {title}
         </Title>
 
         {isLoading ? <Loader size="sm" values="bars" /> : null}
@@ -142,11 +149,12 @@ const StockChangeRate: FC<StockChangeRateProps> = props => {
 
       {isLoading ? (
         <Stack mt="md">
-          <Skeleton height={64} width="100%" radius="sm" />
-          <Skeleton height={64} width="100%" radius="sm" />
-          <Skeleton height={64} width="100%" radius="sm" />
-          <Skeleton height={64} width="100%" radius="sm" />
-          <Skeleton height={64} width="100%" radius="sm" />
+          <Skeleton height={58} width="100%" radius="sm" />
+          <Skeleton height={58} width="100%" radius="sm" />
+          <Skeleton height={58} width="100%" radius="sm" />
+          <Skeleton height={58} width="100%" radius="sm" />
+          <Skeleton height={58} width="100%" radius="sm" />
+          <Skeleton height={58} width="100%" radius="sm" />
         </Stack>
       ) : (
         <MantineReactTable table={table} />
@@ -155,4 +163,4 @@ const StockChangeRate: FC<StockChangeRateProps> = props => {
   );
 };
 
-export default StockChangeRate;
+export default StockRanking;

@@ -8,9 +8,7 @@ export const GET = async (request: NextRequest) => {
   const orderBy = searchParams.get("orderBy") || "newPrice";
   const order = searchParams.get("order") || "desc";
 
-  console.log(orderBy, order);
-
-  const limit = Number(searchParams.get("limit")) || 5;
+  const limit = Number(searchParams.get("limit")) || 6;
 
   const maxDate = await prisma.stockQuotesLatest.findFirst({
     orderBy: { date: "desc" },
