@@ -27,7 +27,7 @@ import { transformSymbolChartData } from "@/shared/chart";
 
 import styles from "./StockIndex.module.css";
 
-const StockIndex = (props) => {
+const StockIndex = () => {
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const [symbolChartData, setSymbolChartData] = useState<SymbolChartData[]>([]);
 

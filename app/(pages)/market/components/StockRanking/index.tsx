@@ -26,7 +26,7 @@ import {
   useMantineReactTable
 } from "mantine-react-table";
 import { StockQuotesOrder } from "@/app/api/(stock)/stock-quotes/list/route";
-import { StockQuotesLatest, StockQuotesLatest } from "@prisma/client";
+import { StockQuotesLatest } from "@prisma/client";
 import { THEME_SETTING_KEY, ThemeSetting } from "@/app/hooks/useThemeSetting";
 import { readLocalStorageValue } from "@mantine/hooks";
 

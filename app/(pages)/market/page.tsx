@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   title: "市场行情：实时股票和指数行情 - TradeSignal"
 };
 
-const Market = props => {
+const Market = () => {
   return (
     <ScrollArea px="4vw" py="xl" className={styles.scrollArea}>
       <Center my="xl">
