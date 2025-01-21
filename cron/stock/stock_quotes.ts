@@ -102,9 +102,9 @@ export const seedStockQuotes = async (date?: string) => {
     await seedRealtimeStockQuotes(list);
     await seedLatestStockQuotes(list);
 
-    await updateBatchStatus(batch.id, "completed", result.count);
+    await updateBatchStatus(batch.id, "completed", list.length);
 
-    print(`write realtimeStockQuotes success ${result.count}`);
+    print(`write realtimeStockQuotes success ${list.length}`);
   } catch (error) {
     await updateBatchStatus(batch.id, "failed");
     print(`getRealtimeStockQuotes error: ${error}`);
