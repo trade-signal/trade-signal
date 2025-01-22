@@ -13,19 +13,26 @@ import {
   Skeleton
 } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
-import { clientGet } from "@/shared/request";
 import { useEffect, useState } from "react";
 import { getRefetchInterval } from "@/shared/env";
-import { StockQuotesOrder } from "@/app/api/(stock)/stock-quotes/list/route";
+import { clientGet } from "@/shared/request";
 import SymbolChart from "@/app/components/charts/SymbolChart";
-import { formatNumber } from "@/app/components/tables/DataTable/util";
-import { formatPercent } from "@/app/components/tables/DataTable/util";
+import {
+  formatNumber,
+  formatPercent
+} from "@/app/components/tables/DataTable/util";
 import { SymbolChartData } from "@/app/types/chart.type";
 import { transformSymbolChartData } from "@/shared/chart";
 
-import styles from "./StockQuotes.module.css";
+import styles from "./index.module.css";
 
-const StockQuotes = () => {
+interface SymbolTabsProps {
+  title: string;
+  queryKey: string;
+  apiPath: string;
+}
+
+const SymbolTabs: FC<SymbolTabsProps> = ({ title, queryKey, apiPath }) => {
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const [symbolChartData, setSymbolChartData] = useState<SymbolChartData[]>([]);
 
@@ -39,9 +46,8 @@ const StockQuotes = () => {
   };
 
   const { data, isLoading } = useQuery({
-    queryKey: ["stock-quotes"],
-    queryFn: (): Promise<StockQuotesOrder[]> =>
-      clientGet("/api/stock-quotes/list", {}),
+    queryKey: [queryKey],
+    queryFn: () => clientGet(apiPath, {}),
     refetchInterval: getRefetchInterval(),
     onSuccess: data => {
       setSymbolChartData(
@@ -65,9 +71,8 @@ const StockQuotes = () => {
     <Paper>
       <Group align="center">
         <Title order={2} size={rem(32)}>
-          股票
+          {title}
         </Title>
-
         {isLoading ? <Loader size="sm" values="bars" /> : null}
       </Group>
 
@@ -126,4 +131,4 @@ const StockQuotes = () => {
   );
 };
 
-export default StockQuotes;
+export default SymbolTabs;

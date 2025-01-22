@@ -11,8 +11,7 @@ import {
 import { Metadata } from "next";
 
 import StockRanking from "./components/StockRanking";
-import StockIndex from "./StockIndex";
-import StockQuotes from "./StockQuotes";
+import SymbolTabs from "./components/SymbolTabs";
 
 import styles from "./page.module.css";
 
@@ -30,8 +29,16 @@ const Market = () => {
       </Center>
 
       <Stack gap="xl">
-        <StockIndex />
-        <StockQuotes />
+        <SymbolTabs
+          title="指数"
+          queryKey="stock-index"
+          apiPath="/api/stock-index/list"
+        />
+        <SymbolTabs
+          title="股票"
+          queryKey="stock-quotes"
+          apiPath="/api/stock-quotes/list"
+        />
       </Stack>
 
       <Group gap="xl" justify="space-between" mt="xl">
@@ -43,7 +50,6 @@ const Market = () => {
         />
       </Group>
 
-      {/* 股票涨跌榜单 */}
       <Group gap="xl" justify="space-between" mt="xl">
         <StockRanking title="股票赢家" indicator="changeRate" order="desc" />
         <StockRanking title="股票输家" indicator="changeRate" order="asc" />
