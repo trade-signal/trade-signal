@@ -40,6 +40,10 @@ interface StockRankingProps {
   doubleColumn?: boolean;
 }
 
+interface StockRankingColumnDef extends MRT_ColumnDef<StockQuotesLatest> {
+  size?: number;
+}
+
 const StockRanking: FC<StockRankingProps> = props => {
   const { title, indicator, order, doubleColumn = false } = props;
 
@@ -57,8 +61,8 @@ const StockRanking: FC<StockRankingProps> = props => {
     refetchInterval: getRefetchInterval()
   });
 
-  const columns = useMemo<MRT_ColumnDef<StockQuotesLatest>[]>(() => {
-    const baseColumns = [
+  const columns = useMemo<StockRankingColumnDef[]>(() => {
+    const baseColumns: StockRankingColumnDef[] = [
       {
         header: "代码",
         accessorKey: "stock",
@@ -74,7 +78,7 @@ const StockRanking: FC<StockRankingProps> = props => {
       }
     ];
 
-    const indicatorColumns = {
+    const indicatorColumns: Record<string, StockRankingColumnDef[]> = {
       volume: [
         {
           header: "成交量",
@@ -98,9 +102,11 @@ const StockRanking: FC<StockRankingProps> = props => {
           accessorKey: "amplitude",
           size: 140,
           Cell: ({ row }) => (
-            <Tooltip label="当日振幅" position="right">
-              <Stack gap={0} ta="right">
+            <Stack gap={0} ta="right">
+              <Tooltip label="当日振幅" position="right">
                 <Text>{formatPercentPlain(row.original.amplitude)}</Text>
+              </Tooltip>
+              <Tooltip label="当日最高价/当日最低价" position="right">
                 <Group justify="flex-end">
                   <Text c={themeSetting.upColor}>
                     {formatNumber(row.original.highPrice, 2)}
@@ -109,8 +115,8 @@ const StockRanking: FC<StockRankingProps> = props => {
                     {formatNumber(row.original.lowPrice, 2)}
                   </Text>
                 </Group>
-              </Stack>
-            </Tooltip>
+              </Tooltip>
+            </Stack>
           )
         }
       ],

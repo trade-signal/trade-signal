@@ -1,5 +1,6 @@
 "use client";
 
+import { FC } from "react";
 import {
   Paper,
   rem,
@@ -17,6 +18,7 @@ import { useEffect, useState } from "react";
 import { getRefetchInterval } from "@/shared/env";
 import { clientGet } from "@/shared/request";
 import SymbolChart from "@/app/components/charts/SymbolChart";
+import { StockQuotesOrder } from "@/app/api/(stock)/stock-quotes/list/route";
 import {
   formatNumber,
   formatPercent
@@ -32,8 +34,11 @@ interface SymbolTabsProps {
   apiPath: string;
 }
 
-const SymbolTabs: FC<SymbolTabsProps> = ({ title, queryKey, apiPath }) => {
+const SymbolTabs: FC<SymbolTabsProps> = props => {
+  const { title, queryKey, apiPath } = props;
+
   const [activeTab, setActiveTab] = useState<string | null>(null);
+
   const [symbolChartData, setSymbolChartData] = useState<SymbolChartData[]>([]);
 
   const [rootRef, setRootRef] = useState<HTMLDivElement | null>(null);
@@ -47,7 +52,7 @@ const SymbolTabs: FC<SymbolTabsProps> = ({ title, queryKey, apiPath }) => {
 
   const { data, isLoading } = useQuery({
     queryKey: [queryKey],
-    queryFn: () => clientGet(apiPath, {}),
+    queryFn: (): Promise<StockQuotesOrder[]> => clientGet(apiPath, {}),
     refetchInterval: getRefetchInterval(),
     onSuccess: data => {
       setSymbolChartData(
