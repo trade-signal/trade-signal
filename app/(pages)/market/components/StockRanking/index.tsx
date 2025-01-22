@@ -228,7 +228,7 @@ const StockRanking: FC<StockRankingProps> = props => {
 
   // 表格内容
   const renderTables = () => (
-    <Group gap="xl" grow align="flex-start" mt="md">
+    <Group gap="xl" grow align="flex-start">
       <MantineReactTable table={mainTable} />
       {doubleColumn && <MantineReactTable table={extraTable} />}
     </Group>
