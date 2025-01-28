@@ -3,6 +3,7 @@
 import { FC, useMemo, useState } from "react";
 import {
   Box,
+  Button,
   Group,
   Loader,
   Paper,
@@ -26,6 +27,7 @@ import {
   MRT_ColumnDef,
   useMantineReactTable
 } from "mantine-react-table";
+import { IconChevronCompactRight } from "@tabler/icons-react";
 import { StockQuotesOrder } from "@/app/api/(stock)/stock-quotes/list/route";
 import { StockQuotesLatest } from "@prisma/client";
 import { THEME_SETTING_KEY, ThemeSetting } from "@/app/hooks/useThemeSetting";
@@ -38,6 +40,9 @@ interface StockRankingProps {
   indicator: string;
   order: "asc" | "desc";
   doubleColumn?: boolean;
+  hasMore?: boolean;
+  moreText?: string;
+  moreLink?: string;
 }
 
 interface StockRankingColumnDef extends MRT_ColumnDef<StockQuotesLatest> {
@@ -45,7 +50,15 @@ interface StockRankingColumnDef extends MRT_ColumnDef<StockQuotesLatest> {
 }
 
 const StockRanking: FC<StockRankingProps> = props => {
-  const { title, indicator, order, doubleColumn = false } = props;
+  const {
+    title,
+    indicator,
+    order,
+    doubleColumn = false,
+    hasMore = false,
+    moreText = "",
+    moreLink = ""
+  } = props;
 
   const themeSetting: ThemeSetting = readLocalStorageValue({
     key: THEME_SETTING_KEY
@@ -244,6 +257,20 @@ const StockRanking: FC<StockRankingProps> = props => {
       </Group>
 
       {isLoading ? renderSkeletons() : renderTables()}
+
+      {hasMore ? (
+        <Group gap="xs" className={styles.more}>
+          <Button
+            variant="subtle"
+            radius="xl"
+            onClick={() => moreLink && router.push(moreLink)}
+          >
+            {moreText}
+
+            <IconChevronCompactRight size={16} />
+          </Button>
+        </Group>
+      ) : null}
     </Paper>
   );
 };

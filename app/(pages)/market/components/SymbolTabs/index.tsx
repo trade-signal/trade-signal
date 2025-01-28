@@ -11,12 +11,16 @@ import {
   Group,
   Loader,
   FloatingIndicator,
-  Skeleton
+  Skeleton,
+  Button,
+  Box
 } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getRefetchInterval } from "@/shared/env";
 import { clientGet } from "@/shared/request";
+import { IconChevronCompactRight } from "@tabler/icons-react";
 import SymbolChart from "@/app/components/charts/SymbolChart";
 import { StockQuotesOrder } from "@/app/api/(stock)/stock-quotes/list/route";
 import {
@@ -32,10 +36,22 @@ interface SymbolTabsProps {
   title: string;
   queryKey: string;
   apiPath: string;
+  showMore?: boolean;
+  moreText?: string;
+  moreLink?: string;
 }
 
 const SymbolTabs: FC<SymbolTabsProps> = props => {
-  const { title, queryKey, apiPath } = props;
+  const {
+    title,
+    queryKey,
+    apiPath,
+    showMore = false,
+    moreText = "",
+    moreLink = ""
+  } = props;
+
+  const router = useRouter();
 
   const [activeTab, setActiveTab] = useState<string | null>(null);
 
@@ -114,6 +130,19 @@ const SymbolTabs: FC<SymbolTabsProps> = props => {
               </Tabs.Tab>
             ))
           )}
+
+          {showMore && !isLoading ? (
+            <Box
+              className={styles.more}
+              onClick={() => moreLink && router.push(moreLink)}
+            >
+              <Button variant="filled" radius="xl">
+                {moreText}
+
+                <IconChevronCompactRight size={16} />
+              </Button>
+            </Box>
+          ) : null}
 
           <FloatingIndicator
             target={activeTab ? controlsRefs[activeTab] : null}
