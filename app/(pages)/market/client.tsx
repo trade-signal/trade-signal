@@ -16,7 +16,7 @@ import SymbolTabs from "./components/SymbolTabs";
 
 import styles from "./page.module.css";
 
-const MarketDashboard = props => {
+const MarketClient = props => {
   return (
     <ScrollArea px="4vw" py="xl" className={styles.scrollArea}>
       <Center my="xl">
@@ -32,7 +32,7 @@ const MarketDashboard = props => {
           apiPath="/api/stock-index/list"
           showMore
           moreText="查看所有指数"
-          moreLink="/market/list"
+          moreLink="/market/list/index"
         />
         <SymbolTabs
           title="股票"
@@ -40,7 +40,7 @@ const MarketDashboard = props => {
           apiPath="/api/stock-quotes/list"
           showMore
           moreText="查看所有股票"
-          moreLink="/market/list"
+          moreLink="/market/list/stock"
         />
       </Stack>
 
@@ -52,7 +52,7 @@ const MarketDashboard = props => {
           doubleColumn
           hasMore
           moreText="查看交易最活跃的所有股票"
-          moreLink="/market/list"
+          moreLink="/market/list/stock"
         />
         <StockRanking
           title="波动最大的股票"
@@ -61,7 +61,7 @@ const MarketDashboard = props => {
           doubleColumn
           hasMore
           moreText="查看波动最大的所有股票"
-          moreLink="/market/list"
+          moreLink="/market/list/stock"
         />
       </Group>
 
@@ -72,7 +72,7 @@ const MarketDashboard = props => {
           order="desc"
           hasMore
           moreText="查看每日涨幅最大的所有股票"
-          moreLink="/market/list"
+          moreLink="/market/list/stock"
         />
         <StockRanking
           title="股票输家"
@@ -80,11 +80,11 @@ const MarketDashboard = props => {
           order="asc"
           hasMore
           moreText="查看每日跌幅最大的所有股票"
-          moreLink="/market/list"
+          moreLink="/market/list/stock"
         />
       </Group>
     </ScrollArea>
   );
 };
 
-export default MarketDashboard;
+export default MarketClient;
