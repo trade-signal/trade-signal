@@ -1,4 +1,4 @@
-import { Prisma, StockIndexRealTime } from "@prisma/client";
+import { StockIndexRealTime } from "@prisma/client";
 import prisma from "@/prisma/db";
 import { NextRequest } from "next/server";
 
@@ -6,12 +6,10 @@ export type StockIndexOrder = {
   code: string;
   name: string;
   latest: StockIndexRealTime;
-  trends: StockIndexRealTime[];
 };
 
 export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;
-
   const limit = Number(searchParams.get("limit")) || 5;
 
   const maxDate = await prisma.stockIndexRealTime.findFirst({
@@ -31,33 +29,20 @@ export const GET = async (request: NextRequest) => {
   ];
   const targetCodes = [...orderCodes.slice(0, limit)];
 
-  let where: Prisma.StockIndexRealTimeWhereInput = {
-    code: { in: targetCodes },
-    date: { equals: maxDate?.date }
-  };
-
   const list = await prisma.stockIndexRealTime.findMany({
-    where,
-    orderBy: { createdAt: "asc" }
+    where: {
+      code: { in: targetCodes },
+      date: { equals: maxDate?.date }
+    },
+    orderBy: { code: "asc" }
   });
 
-  const groupData = list.reduce((acc, item) => {
-    if (!acc.has(item.code)) {
-      acc.set(item.code, []);
-    }
-    acc.get(item.code)?.push(item);
-    return acc;
-  }, new Map<string, StockIndexRealTime[]>());
-
   const orderData = targetCodes.map(code => {
-    const data = groupData.get(code);
-    const latest = data?.at(-1);
-
+    const latest = list.find(item => item.code === code);
     return {
       code,
       name: latest?.name,
-      latest,
-      trends: data
+      latest
     };
   });
 

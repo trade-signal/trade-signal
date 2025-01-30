@@ -29,7 +29,7 @@ const MarketClient = props => {
         <SymbolTabs
           title="指数"
           queryKey="stock-index"
-          apiPath="/api/stock-index/list"
+          apiBasePath="/api/stock-index"
           showMore
           moreText="查看所有指数"
           moreLink="/market/list/index"
@@ -37,7 +37,7 @@ const MarketClient = props => {
         <SymbolTabs
           title="股票"
           queryKey="stock-quotes"
-          apiPath="/api/stock-quotes/list"
+          apiBasePath="/api/stock-quotes"
           showMore
           moreText="查看所有股票"
           moreLink="/market/list/stock"

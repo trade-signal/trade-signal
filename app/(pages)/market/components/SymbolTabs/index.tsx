@@ -17,12 +17,15 @@ import {
 } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { getRefetchInterval } from "@/shared/env";
 import { clientGet } from "@/shared/request";
 import { IconChevronCompactRight } from "@tabler/icons-react";
 import SymbolChart from "@/app/components/charts/SymbolChart";
-import { StockQuotesOrder } from "@/app/api/(stock)/stock-quotes/list/route";
+import {
+  StockQuotesList,
+  StockQuotesOrder
+} from "@/app/api/(stock)/stock-quotes/list/route";
 import {
   formatNumber,
   formatPercent
@@ -35,17 +38,19 @@ import styles from "./index.module.css";
 interface SymbolTabsProps {
   title: string;
   queryKey: string;
-  apiPath: string;
+  apiBasePath: string;
   showMore?: boolean;
   moreText?: string;
   moreLink?: string;
 }
 
+type SymbolTabsData = StockQuotesList | StockIndexList;
+
 const SymbolTabs: FC<SymbolTabsProps> = props => {
   const {
     title,
     queryKey,
-    apiPath,
+    apiBasePath,
     showMore = false,
     moreText = "",
     moreLink = ""
@@ -55,7 +60,7 @@ const SymbolTabs: FC<SymbolTabsProps> = props => {
 
   const [activeTab, setActiveTab] = useState<string | null>(null);
 
-  const [symbolChartData, setSymbolChartData] = useState<SymbolChartData[]>([]);
+  const [symbolChartData, setSymbolChartData] = useState<SymbolChartData>();
 
   const [rootRef, setRootRef] = useState<HTMLDivElement | null>(null);
   const [controlsRefs, setControlsRefs] = useState<
@@ -66,27 +71,40 @@ const SymbolTabs: FC<SymbolTabsProps> = props => {
     setControlsRefs(controlsRefs);
   };
 
-  const { data, isLoading } = useQuery({
-    queryKey: [queryKey],
-    queryFn: (): Promise<StockQuotesOrder[]> => clientGet(apiPath, {}),
-    refetchInterval: getRefetchInterval(),
+  const { data: listData, isLoading: isListLoading } = useQuery({
+    queryKey: [`${queryKey}_list`],
+    queryFn: (): Promise<SymbolTabsData[]> =>
+      clientGet(`${apiBasePath}/list`, {}),
     onSuccess: data => {
-      setSymbolChartData(
-        data?.map(item => ({
-          code: item.code,
-          name: item.name,
-          latest: transformSymbolChartData(item.latest),
-          trends: item.trends.map(trend => transformSymbolChartData(trend))
-        }))
-      );
+      if (data && !activeTab) {
+        setActiveTab(data[0].code);
+      }
     }
   });
 
-  useEffect(() => {
-    if (data && !activeTab) {
-      setActiveTab(data[0].code);
+  const { data: trendsData, isLoading: isTrendsLoading } = useQuery({
+    queryKey: [`${queryKey}_trends`, activeTab],
+    queryFn: (): Promise<SymbolTabsData[]> =>
+      activeTab
+        ? clientGet(`${apiBasePath}/trends`, { code: activeTab })
+        : Promise.resolve([]),
+    refetchInterval: getRefetchInterval(),
+    enabled: !!activeTab,
+    onSuccess: data => {
+      if (data?.length) {
+        const latest = transformSymbolChartData(data.at(-1));
+
+        setSymbolChartData({
+          code: latest.code,
+          name: latest.name,
+          latest,
+          trends: data.map(trend => transformSymbolChartData(trend))
+        });
+      }
     }
-  }, [data]);
+  });
+
+  const isLoading = isListLoading || isTrendsLoading;
 
   return (
     <Paper>
@@ -105,7 +123,7 @@ const SymbolTabs: FC<SymbolTabsProps> = props => {
         onChange={value => setActiveTab(value)}
       >
         <Tabs.List ref={setRootRef} className={styles.list}>
-          {isLoading ? (
+          {isListLoading ? (
             <>
               <Skeleton height={64} width="20%" radius="sm" />
               <Skeleton height={64} width="20%" radius="sm" />
@@ -113,7 +131,7 @@ const SymbolTabs: FC<SymbolTabsProps> = props => {
               <Skeleton height={64} width="20%" radius="sm" />
             </>
           ) : (
-            data?.map(item => (
+            listData?.map(item => (
               <Tabs.Tab
                 value={item.code}
                 key={item.code}
@@ -154,11 +172,7 @@ const SymbolTabs: FC<SymbolTabsProps> = props => {
         {isLoading ? (
           <Skeleton height={300} mt="lg" />
         ) : (
-          symbolChartData?.map(item => (
-            <Tabs.Panel value={item.code} key={item.code} pt="lg">
-              {item.code === activeTab ? <SymbolChart {...item} /> : null}
-            </Tabs.Panel>
-          ))
+          <SymbolChart {...symbolChartData} />
         )}
       </Tabs>
     </Paper>
