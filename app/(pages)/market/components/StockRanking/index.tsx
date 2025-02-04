@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useMemo, useState } from "react";
+import { FC, useMemo, useState, useRef, useEffect } from "react";
 import {
   Box,
   Button,
@@ -14,6 +14,7 @@ import {
   Title,
   Tooltip
 } from "@mantine/core";
+import { useIntersection } from "@mantine/hooks";
 
 import { clientGet } from "@/shared/request";
 import { useQuery } from "@tanstack/react-query";
@@ -66,6 +67,11 @@ const StockRanking: FC<StockRankingProps> = props => {
     key: THEME_SETTING_KEY
   });
 
+  const [hasLoaded, setHasLoaded] = useState(false);
+  const { ref: containerRef, entry } = useIntersection({
+    threshold: 0.1
+  });
+
   const { data, isLoading } = useQuery({
     queryKey: ["stock-ranking", indicator, order],
     queryFn: (): Promise<StockQuotesLatest[]> =>
@@ -73,7 +79,11 @@ const StockRanking: FC<StockRankingProps> = props => {
         orderBy: indicator,
         order: order
       }),
-    refetchInterval: getRefetchInterval()
+    refetchInterval: getRefetchInterval(),
+    enabled: hasLoaded || !!entry?.isIntersecting,
+    onSuccess: () => {
+      setHasLoaded(true);
+    }
   });
 
   const columns = useMemo<StockRankingColumnDef[]>(() => {
@@ -250,7 +260,7 @@ const StockRanking: FC<StockRankingProps> = props => {
   );
 
   return (
-    <Paper className={styles.paper}>
+    <Paper className={styles.paper} ref={!hasLoaded ? containerRef : null}>
       <Group align="center">
         <Title order={2} size={rem(28)}>
           {title}
