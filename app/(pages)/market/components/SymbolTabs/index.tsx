@@ -22,10 +22,10 @@ import { getRefetchInterval } from "@/shared/env";
 import { clientGet } from "@/shared/request";
 import { IconChevronCompactRight } from "@tabler/icons-react";
 import SymbolChart from "@/app/components/charts/SymbolChart";
-import {
-  StockQuotesList,
-  StockQuotesOrder
-} from "@/app/api/(stock)/stock-quotes/list/route";
+import { StockQuotesList } from "@/app/api/(stock)/stock-quotes/list/route";
+import { StockIndexList } from "@/app/api/(stock)/stock-index/list/route";
+import { StockQuotesTrends } from "@/app/api/(stock)/stock-quotes/trends/route";
+import { StockIndexTrends } from "@/app/api/(stock)/stock-index/trends/route";
 import {
   formatNumber,
   formatPercent
@@ -45,6 +45,8 @@ interface SymbolTabsProps {
 }
 
 type SymbolTabsData = StockQuotesList | StockIndexList;
+
+type SymbolTrendsData = StockQuotesTrends | StockIndexTrends;
 
 const SymbolTabs: FC<SymbolTabsProps> = props => {
   const {
@@ -84,21 +86,26 @@ const SymbolTabs: FC<SymbolTabsProps> = props => {
 
   const { data: trendsData, isLoading: isTrendsLoading } = useQuery({
     queryKey: [`${queryKey}_trends`, activeTab],
-    queryFn: (): Promise<SymbolTabsData[]> =>
+    queryFn: (): Promise<StockIndexTrends> =>
       activeTab
         ? clientGet(`${apiBasePath}/trends`, { code: activeTab })
         : Promise.resolve([]),
     refetchInterval: getRefetchInterval(),
     enabled: !!activeTab,
     onSuccess: data => {
-      if (data?.length) {
-        const latest = transformSymbolChartData(data.at(-1));
+      if (data?.trends) {
+        const { code, name, trends } = data;
+
+        const lastTrend = trends.at(-1);
+        if (!lastTrend) return;
+
+        const latest = transformSymbolChartData(lastTrend);
 
         setSymbolChartData({
-          code: latest.code,
-          name: latest.name,
+          code,
+          name,
           latest,
-          trends: data.map(trend => transformSymbolChartData(trend))
+          trends: trends.map(trend => transformSymbolChartData(trend))
         });
       }
     }
@@ -171,9 +178,9 @@ const SymbolTabs: FC<SymbolTabsProps> = props => {
 
         {isLoading ? (
           <Skeleton height={300} mt="lg" />
-        ) : (
+        ) : symbolChartData ? (
           <SymbolChart {...symbolChartData} />
-        )}
+        ) : null}
       </Tabs>
     </Paper>
   );

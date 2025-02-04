@@ -41,6 +41,9 @@ export const GET = async (request: NextRequest) => {
       code,
       name: trends[0]?.name,
       trends
+    },
+    statistics: {
+      date: maxDate?.date
     }
   });
 };

@@ -157,6 +157,8 @@ const createTooltip = (props: TooltipProps) => {
 const SymbolChart = (props: SymbolChartProps) => {
   const { code, name, latest, trends } = props;
 
+  if (!code || !name || !latest || !trends || !trends.length) return null;
+
   const { isDark } = useThemeIcon();
 
   const [chartType, setChartType] = useState<"area" | "candle">("area");
@@ -220,7 +222,9 @@ const SymbolChart = (props: SymbolChartProps) => {
     seriesRef.current = [];
   };
 
-  const themeSetting = readLocalStorageValue<ThemeSetting>({ key: THEME_SETTING_KEY });
+  const themeSetting = readLocalStorageValue<ThemeSetting>({
+    key: THEME_SETTING_KEY
+  });
 
   const handleChartTypeChange = (chart: IChartApi, type: "area" | "candle") => {
     clearSeries(chart);

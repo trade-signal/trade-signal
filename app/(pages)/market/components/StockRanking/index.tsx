@@ -18,6 +18,7 @@ import {
 import { clientGet } from "@/shared/request";
 import { useQuery } from "@tanstack/react-query";
 import { getRefetchInterval } from "@/shared/env";
+import { useRouter } from "next/navigation";
 import {
   formatNumber,
   formatPercentPlain
@@ -28,7 +29,6 @@ import {
   useMantineReactTable
 } from "mantine-react-table";
 import { IconChevronCompactRight } from "@tabler/icons-react";
-import { StockQuotesOrder } from "@/app/api/(stock)/stock-quotes/list/route";
 import { StockQuotesLatest } from "@prisma/client";
 import { THEME_SETTING_KEY, ThemeSetting } from "@/app/hooks/useThemeSetting";
 import { readLocalStorageValue } from "@mantine/hooks";
@@ -59,6 +59,8 @@ const StockRanking: FC<StockRankingProps> = props => {
     moreText = "",
     moreLink = ""
   } = props;
+
+  const router = useRouter();
 
   const themeSetting: ThemeSetting = readLocalStorageValue({
     key: THEME_SETTING_KEY
