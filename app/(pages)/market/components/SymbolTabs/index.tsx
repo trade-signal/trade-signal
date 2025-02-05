@@ -179,7 +179,9 @@ const SymbolTabs: FC<SymbolTabsProps> = props => {
         {isLoading ? (
           <Skeleton height={300} mt="lg" />
         ) : symbolChartData ? (
-          <SymbolChart {...symbolChartData} />
+          <Box mt="lg">
+            <SymbolChart {...symbolChartData} />
+          </Box>
         ) : null}
       </Tabs>
     </Paper>

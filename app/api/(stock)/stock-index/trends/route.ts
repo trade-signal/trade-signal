@@ -22,7 +22,7 @@ export const GET = async (request: NextRequest) => {
     );
   }
 
-  const maxDate = await prisma.stockIndexRealTime.findFirst({
+  const maxDate = await prisma.stockQuotesLatest.findFirst({
     orderBy: { date: "desc" },
     select: { date: true }
   });
