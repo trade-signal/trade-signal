@@ -508,6 +508,7 @@ model StockIndexRealTime {
 
   @@unique([ts, code]) // 复合唯一约束
   @@index([ts]) // 时间戳索引
+  @@index([code, date]) // 代码和日期复合索引
   @@index([date]) // 日期索引
   @@index([code]) // 代码索引
   @@map("stock_index_real_time")
