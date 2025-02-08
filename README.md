@@ -23,22 +23,24 @@ docker-compose -p trade-signal -f docker/docker-compose.dev.yml up  -d
 将 `.env.example` 复制为 `.env`，并填写数据库连接信息(`DATABASE_URL` | `DIRECT_URL` 为必要的):
 
 ```properties
-# Connect to database via connection pooling with Supavisor.
+# 数据库连接配置
+# PostgreSQL 示例: postgresql://postgres:123456@localhost:5432/postgres?schema=public
 DATABASE_URL=[Your Database URL]
-# Direct connection to the database. Used for migrations.
 DIRECT_URL=[Your Database URL]
 
-# Github OAuth credentials.
+# GitHub OAuth 配置
 GITHUB_ID=[Your Github ID]
 GITHUB_SECRET=[Your Github Secret]
 
-# Google OAuth credentials.
+# Google OAuth 配置
 GOOGLE_ID=[Your Google ID]
 GOOGLE_SECRET=[Your Google Secret]
 
-# NextAuth secret
+# NextAuth 配置
 NEXTAUTH_SECRET=[Your NextAuth Secret]
 
+# 可选：NextAuth URL 配置（生产环境需要）
+# NEXTAUTH_URL="https://your-domain.com"
 ```
 
 首次运行，需要生成 prisma 的 schema 并初始化数据库
