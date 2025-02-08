@@ -46,8 +46,6 @@ interface SymbolTabsProps {
 
 type SymbolTabsData = StockQuotesList | StockIndexList;
 
-type SymbolTrendsData = StockQuotesTrends | StockIndexTrends;
-
 const SymbolTabs: FC<SymbolTabsProps> = props => {
   const {
     title,

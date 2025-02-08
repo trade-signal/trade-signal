@@ -4,7 +4,7 @@ import {
   getIndicatorFields,
   transformStockData
 } from "@/cron/util";
-import { updateTaskStatus, initTask } from "@/cron/common/task";
+import Task from "@/cron/common/task";
 import { getRealtimeStockQuotes, quotesBaseIndicatorMapping } from "./api";
 
 const spider_name = "stock_base";
@@ -17,6 +17,7 @@ export const checkStockBasic = async () => {
 
 const upsertStockBasic = async (list: any[]) => {
   for (const item of list) {
+    delete item.newPrice;
     await prisma.stockBasic.upsert({
       where: { code: item.code },
       update: { ...item, status: item.newPrice > 0 ? "active" : "suspended" },
@@ -26,12 +27,12 @@ const upsertStockBasic = async (list: any[]) => {
 };
 
 export const fetchStockBasic = async () => {
-  const task = await initTask("stock_base", "eastmoney");
+  const task = new Task("stock_base", "eastmoney");
 
   try {
     print(`start get stock basic`);
 
-    await updateTaskStatus(task.id, "fetching");
+    await task.updateStatus("fetching");
 
     const stocks = await getRealtimeStockQuotes({
       fields: getIndicatorFields(quotesBaseIndicatorMapping)
@@ -44,7 +45,7 @@ export const fetchStockBasic = async () => {
       return;
     }
 
-    await updateTaskStatus(task.id, "transforming");
+    await task.updateStatus("transforming");
 
     let list = transformStockData(stocks, quotesBaseIndicatorMapping);
     // newPrice > 0, 过滤掉停牌的股票
@@ -54,11 +55,11 @@ export const fetchStockBasic = async () => {
 
     await upsertStockBasic(list);
 
-    await updateTaskStatus(task.id, "completed", list.length);
+    await task.updateStatus("completed", list.length);
 
     print(`upsert stock basic success ${list.length}`);
   } catch (error) {
-    await updateTaskStatus(task.id, "failed");
+    await task.updateStatus("failed");
     print(`get stock basic error: ${error}`);
   }
 };

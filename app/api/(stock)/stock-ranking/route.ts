@@ -1,4 +1,3 @@
-import { Prisma, StockQuotesRealTime } from "@prisma/client";
 import prisma from "@/prisma/db";
 import { NextRequest } from "next/server";
 
@@ -10,12 +9,12 @@ export const GET = async (request: NextRequest) => {
 
   const limit = Number(searchParams.get("limit")) || 6;
 
-  const maxDate = await prisma.stockQuotesLatest.findFirst({
+  const maxDate = await prisma.stockQuotes.findFirst({
     orderBy: { date: "desc" },
     select: { date: true }
   });
 
-  const list = await prisma.stockQuotesLatest.findMany({
+  const list = await prisma.stockQuotes.findMany({
     where: { date: maxDate?.date },
     take: limit,
     orderBy: [{ [orderBy]: order }]

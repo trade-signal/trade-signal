@@ -1,7 +1,7 @@
 import prisma from "@/prisma/db";
 
 export const GET = async () => {
-  const data = await prisma.stock.findMany({
+  const data = await prisma.stockBasic.findMany({
     distinct: ["industry"],
     select: { industry: true },
     orderBy: { industry: "asc" }

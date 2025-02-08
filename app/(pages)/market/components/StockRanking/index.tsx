@@ -30,7 +30,7 @@ import {
   useMantineReactTable
 } from "mantine-react-table";
 import { IconChevronCompactRight } from "@tabler/icons-react";
-import { StockQuotesLatest } from "@prisma/client";
+import { StockQuotes } from "@prisma/client";
 import { THEME_SETTING_KEY, ThemeSetting } from "@/app/hooks/useThemeSetting";
 import { readLocalStorageValue } from "@mantine/hooks";
 
@@ -46,7 +46,7 @@ interface StockRankingProps {
   moreLink?: string;
 }
 
-interface StockRankingColumnDef extends MRT_ColumnDef<StockQuotesLatest> {
+interface StockRankingColumnDef extends MRT_ColumnDef<StockQuotes> {
   size?: number;
 }
 
@@ -74,7 +74,7 @@ const StockRanking: FC<StockRankingProps> = props => {
 
   const { data, isLoading } = useQuery({
     queryKey: ["stock-ranking", indicator, order],
-    queryFn: (): Promise<StockQuotesLatest[]> =>
+    queryFn: (): Promise<StockQuotes[]> =>
       clientGet("/api/stock-ranking", {
         orderBy: indicator,
         order: order

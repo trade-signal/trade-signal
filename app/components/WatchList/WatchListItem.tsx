@@ -1,9 +1,10 @@
 import { WatchStock } from "@/app/api/watchlist/list/route";
 import { Divider, Group, Stack, Text, Button } from "@mantine/core";
 import { HoverCard } from "@mantine/core";
-import { StockQuotesRealTime } from "@prisma/client";
+import { StockQuotes } from "@prisma/client";
 import { IconTrash } from "@tabler/icons-react";
 import { useActiveStock } from "@/app/providers/ActiveStockProvider";
+
 import {
   formatNumber,
   formatPercentPlain,
@@ -34,7 +35,7 @@ const InfoItem = ({
 
 interface WatchListItemProps {
   stock: WatchStock;
-  onRemove: (quote: StockQuotesRealTime) => void;
+  onRemove: (quote: StockQuotes) => void;
 }
 
 const WatchListItem = ({ stock, onRemove }: WatchListItemProps) => {

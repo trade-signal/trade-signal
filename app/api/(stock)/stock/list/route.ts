@@ -18,7 +18,7 @@ export const GET = async (request: NextRequest) => {
   ) as MRT_ColumnFiltersState;
   const parsedSorting = JSON.parse(sorting) as MRT_SortingState;
 
-  let where: Prisma.StockWhereInput = {};
+  let where: Prisma.StockBasicWhereInput = {};
 
   if (parsedColumnFilters.length) {
     parsedColumnFilters.forEach(filter => {
@@ -26,12 +26,12 @@ export const GET = async (request: NextRequest) => {
 
       if (Array.isArray(value)) {
         if (value.length > 0) {
-          where[id as keyof Prisma.StockOrderByWithRelationInput] = {
+          where[id as keyof Prisma.StockBasicOrderByWithRelationInput] = {
             in: value.map(v => v.toString())
           };
         }
       } else if (value) {
-        where[id as keyof Prisma.StockOrderByWithRelationInput] = {
+        where[id as keyof Prisma.StockBasicOrderByWithRelationInput] = {
           contains: value.toString()
         };
       }
@@ -45,11 +45,12 @@ export const GET = async (request: NextRequest) => {
     ];
   }
 
-  let orderBy: Prisma.StockOrderByWithRelationInput = {};
+  let orderBy: Prisma.StockBasicOrderByWithRelationInput = {};
   if (parsedSorting.length) {
     parsedSorting.forEach(sort => {
       const { id, desc } = sort;
-      orderBy[id as keyof Prisma.StockOrderByWithRelationInput] = desc
+
+      orderBy[id as keyof Prisma.StockBasicOrderByWithRelationInput] = desc
         ? "desc"
         : "asc";
     });
@@ -57,7 +58,7 @@ export const GET = async (request: NextRequest) => {
     orderBy.code = "asc";
   }
 
-  const data = await prisma.stock.findMany({
+  const data = await prisma.stockBasic.findMany({
     where,
     skip: (page - 1) * pageSize,
     take: pageSize,
@@ -70,7 +71,7 @@ export const GET = async (request: NextRequest) => {
     orderBy
   });
 
-  const total = await prisma.stock
+  const total = await prisma.stockBasic
     .groupBy({
       by: ["code"],
       where,

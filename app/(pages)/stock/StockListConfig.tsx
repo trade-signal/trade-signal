@@ -1,5 +1,6 @@
-import { StockSelection } from "@prisma/client";
+import { StockScreener } from "@prisma/client";
 import { Column } from "@/app/components/tables/DataTable/types";
+
 import {
   formatBillion,
   formatNumber,
@@ -11,7 +12,7 @@ import {
 interface TabConfig {
   value: string;
   label: string;
-  columns: Column<StockSelection>[];
+  columns: Column<StockScreener>[];
 }
 
 // 公共列

@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { get } from "@/shared/request";
-import { StockSelection } from "@prisma/client";
+import { StockScreener } from "@prisma/client";
 import { Tabs } from "@mantine/core";
+
 import { useDebouncedCallback, useDisclosure } from "@mantine/hooks";
 import DataTable from "@/app/components/tables/DataTable";
 import { useActiveStock } from "@/app/providers/ActiveStockProvider";
-import { useBatchContext } from "@/app/providers/BatchProvider";
+import { useSyncTaskContext } from "@/app/providers/SyncTaskProvider";
 import { getOrderBy } from "./StockListConfig";
 
 import { StockFilters, useStockContext } from "./StockContext";
@@ -17,10 +18,10 @@ import { TAB_CONFIGS } from "./StockListConfig";
 const StockList = () => {
   const { filters, setFilters } = useStockContext();
   const { setActiveStockCode } = useActiveStock();
-  const { batch } = useBatchContext();
+  const { task } = useSyncTaskContext();
   const [searchValue, setSearchValue] = useState(filters.search || "");
 
-  const [stockList, setStockList] = useState<StockSelection[]>([]);
+  const [stockList, setStockList] = useState<StockScreener[]>([]);
   const [statistics, setStatistics] = useState<{ date: string }>({ date: "" });
 
   const [refreshTime, setRefreshTime] = useState<string | undefined>();
@@ -38,7 +39,7 @@ const StockList = () => {
       open();
     }
 
-    const response = await get("/api/stock-selection/list", {
+    const response = await get("/api/stock-screener/list", {
       ...filters,
       page: currentPage,
       pageSize: filters.pageSize || 20,
@@ -113,16 +114,17 @@ const StockList = () => {
   }, [page]);
 
   useEffect(() => {
-    if (batch.length > 0) {
-      const currentBatch = batch.find(
-        (item: any) => item.type === "stock_selection"
+    if (task.length > 0) {
+      const currentBatch = task.find(
+        (item: any) => item.taskType === "stock_screener"
       );
-      if (!currentBatch) return;
-      setRefreshTime(dayjs(currentBatch.batchTime).format("YYYY-MM-DD HH:mm"));
-    }
-  }, [batch]);
 
-  const handleRowClick = (row: StockSelection) => {
+      if (!currentBatch) return;
+      setRefreshTime(dayjs(currentBatch.batchDate).format("YYYY-MM-DD HH:mm"));
+    }
+  }, [task]);
+
+  const handleRowClick = (row: StockScreener) => {
     setActiveStockCode(row.code);
   };
 

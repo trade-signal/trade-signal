@@ -5,7 +5,7 @@ import {
   getIndicatorFields
 } from "@/cron/util";
 import dayjs from "dayjs";
-import { updateTaskStatus, initTask } from "@/cron/common/task";
+import Task from "@/cron/common/task";
 import { getRealtimeStockQuotes, quotesDailyIndicatorMapping } from "./api";
 
 const spider_name = "stock_minute_kline";
@@ -14,12 +14,12 @@ const print = createLogger(spider_name, "stock");
 export const fetchStockMinuteKline = async (date?: string) => {
   const currentDate = dayjs(date).format("YYYY-MM-DD");
 
-  const task = await initTask("stock_minute_kline", "eastmoney");
+  const task = new Task("stock_minute_kline", "eastmoney");
 
   try {
     print(`start get realtimeStockQuotes`);
 
-    await updateTaskStatus(task.id, "fetching");
+    await task.updateStatus("fetching");
 
     const stocks = await getRealtimeStockQuotes({
       fields: getIndicatorFields(quotesDailyIndicatorMapping)
@@ -27,7 +27,7 @@ export const fetchStockMinuteKline = async (date?: string) => {
 
     print(`get ${stocks.length} stocks`);
 
-    await updateTaskStatus(task.id, "transforming");
+    await task.updateStatus("transforming");
 
     let list = transformStockData(stocks, quotesDailyIndicatorMapping);
     // newPrice > 0, 过滤掉停牌的股票
@@ -49,11 +49,11 @@ export const fetchStockMinuteKline = async (date?: string) => {
       skipDuplicates: true
     });
 
-    await updateTaskStatus(task.id, "completed", result.count);
+    await task.updateStatus("completed", result.count);
 
     print(`write stock minute kline success ${result.count}`);
   } catch (error) {
-    await updateTaskStatus(task.id, "failed");
+    await task.updateStatus("failed");
     print(`get stock minute kline error: ${error}`);
   }
 };

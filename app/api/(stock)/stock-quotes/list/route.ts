@@ -1,11 +1,11 @@
-import { StockQuotesRealTime } from "@prisma/client";
+import { StockQuotes } from "@prisma/client";
 import prisma from "@/prisma/db";
 import { NextRequest } from "next/server";
 
 export type StockQuotesList = {
   code: string;
   name: string;
-  latest: StockQuotesRealTime;
+  latest: StockQuotes;
 };
 
 export const GET = async (request: NextRequest) => {
@@ -14,28 +14,20 @@ export const GET = async (request: NextRequest) => {
   const order = searchParams.get("order") || "desc";
   const limit = Number(searchParams.get("limit")) || 5;
 
-  const maxDate = await prisma.stockQuotesRealTime.findFirst({
+  const maxDate = await prisma.stockQuotes.findFirst({
     orderBy: { date: "desc" },
     select: { date: true }
   });
 
-  const codes = await prisma.stockSelection.findMany({
-    select: { code: true },
-    distinct: ["code"],
+  const quotes = await prisma.stockQuotes.findMany({
+    where: {
+      date: { equals: maxDate?.date }
+    },
     take: limit,
     orderBy: { [orderBy]: order }
   });
 
-  const latestData = await prisma.stockQuotesRealTime.findMany({
-    where: {
-      code: { in: codes.map(item => item.code) },
-      date: { equals: maxDate?.date }
-    },
-    orderBy: [{ code: "asc" }, { createdAt: "desc" }],
-    distinct: ["code"]
-  });
-
-  const transformData = latestData.map(stock => ({
+  const transformData = quotes.map(stock => ({
     code: stock.code,
     name: stock.name,
     latest: stock

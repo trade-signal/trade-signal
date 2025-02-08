@@ -1,11 +1,11 @@
-import { getServerSession, Session } from "next-auth";
+import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/lib/auth";
 import prisma from "@/prisma/db";
 import { NextRequest } from "next/server";
 import { errorResponse } from "@/middleware";
 
 const getFirstStock = async () => {
-  const stock = await prisma.stock.findFirst({
+  const stock = await prisma.stockBasic.findFirst({
     select: { code: true },
     orderBy: { code: "asc" }
   });
@@ -60,15 +60,8 @@ export const GET = async (req: NextRequest) => {
     });
   }
 
-  const maxDate = await prisma.stockQuotesRealTime.findFirst({
-    select: { date: true },
-    orderBy: { date: "desc" }
-  });
-
-  const stock = await prisma.stockQuotesRealTime.findFirst({
-    where: { date: maxDate?.date, code },
-    distinct: ["code"],
-    orderBy: [{ updatedAt: "desc" }, { newPrice: "desc" }]
+  const stock = await prisma.stockQuotes.findFirst({
+    where: { code }
   });
 
   return Response.json({

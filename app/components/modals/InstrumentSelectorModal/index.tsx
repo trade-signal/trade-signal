@@ -17,7 +17,7 @@ import {
   Text,
   Tooltip
 } from "@mantine/core";
-import { Stock } from "@prisma/client";
+import { StockBasic } from "@prisma/client";
 import { IconMinus, IconPlus } from "@tabler/icons-react";
 import {
   MantineReactTable,
@@ -32,8 +32,8 @@ import { WatchlistWithStocks } from "@/app/api/watchlist/list/route";
 interface InstrumentSelectorModalProps {
   open: boolean;
   watchlist?: WatchlistWithStocks;
-  onAdd: (value: Stock) => void;
-  onDelete: (value: Stock) => void;
+  onAdd: (value: StockBasic) => void;
+  onDelete: (value: StockBasic) => void;
   onClose: () => void;
 }
 
@@ -63,7 +63,7 @@ const InstrumentSelectorModal = ({
       }>
   });
 
-  const columns: MRT_ColumnDef<Stock>[] = [
+  const columns: MRT_ColumnDef<StockBasic>[] = [
     {
       accessorKey: "code",
       header: "代码"
@@ -145,7 +145,7 @@ const InstrumentSelectorModal = ({
     onClose();
   };
 
-  const table = useMantineReactTable<Stock>({
+  const table = useMantineReactTable<StockBasic>({
     // 基础配置
     columns,
     data: flatData,

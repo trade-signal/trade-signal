@@ -1,54 +1,41 @@
-import { StockIndexRealTime } from "@prisma/client";
+import { StockIndexQuotes } from "@prisma/client";
 import prisma from "@/prisma/db";
 import { NextRequest } from "next/server";
 
 export type StockIndexList = {
   code: string;
   name: string;
-  latest: StockIndexRealTime;
+  latest: StockIndexQuotes;
 };
 
 export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;
+  const orderBy = searchParams.get("orderBy") || "newPrice";
+  const order = searchParams.get("order") || "desc";
   const limit = Number(searchParams.get("limit")) || 5;
 
-  const maxDate = await prisma.stockIndexRealTime.findFirst({
+  const maxDate = await prisma.stockIndexQuotes.findFirst({
     orderBy: { date: "desc" },
     select: { date: true }
   });
 
-  const orderCodes = [
-    "000001", // 上证
-    "399001", // 深证
-    "399006", // 创业板
-    "399005", // 中小100
-    "000300", // 沪深300
-    "000016", // 上证50
-    "000688", // 科创50
-    "000852" // 中证1000
-  ];
-  const targetCodes = [...orderCodes.slice(0, limit)];
-
-  const list = await prisma.stockIndexRealTime.findMany({
+  const list = await prisma.stockIndexQuotes.findMany({
     where: {
-      code: { in: targetCodes },
       date: { equals: maxDate?.date }
     },
-    orderBy: { code: "asc" }
+    take: limit,
+    orderBy: { [orderBy]: order }
   });
 
-  const orderData = targetCodes.map(code => {
-    const latest = list.find(item => item.code === code);
-    return {
-      code,
-      name: latest?.name,
-      latest
-    };
-  });
+  const transformData = list.map(stock => ({
+    code: stock.code,
+    name: stock.name,
+    latest: stock
+  }));
 
   return Response.json({
     success: true,
-    data: orderData,
+    data: transformData,
     statistics: {
       date: maxDate?.date
     }

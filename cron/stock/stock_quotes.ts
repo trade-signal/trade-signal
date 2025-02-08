@@ -5,7 +5,7 @@ import {
   transformStockData
 } from "@/cron/util";
 import dayjs from "dayjs";
-import { updateTaskStatus, initTask } from "@/cron/common/task";
+import Task from "@/cron/common/task";
 import { getRealtimeStockQuotes, quotesIndicatorMapping } from "./api";
 
 const spider_name = "stock_quotes";
@@ -56,12 +56,12 @@ const upsertStockQuotes = async (list: any[]) => {
 export const fetchStockQuotes = async (date?: string) => {
   const currentDate = dayjs(date).format("YYYY-MM-DD");
 
-  const task = await initTask("stock_quotes", "eastmoney");
+  const task = new Task("stock_quotes", "eastmoney");
 
   try {
     print(`start get stock quotes`);
 
-    await updateTaskStatus(task.id, "fetching");
+    await task.updateStatus("fetching");
 
     const stocks = await getRealtimeStockQuotes({
       fields: getIndicatorFields(quotesIndicatorMapping)
@@ -74,7 +74,7 @@ export const fetchStockQuotes = async (date?: string) => {
       return;
     }
 
-    await updateTaskStatus(task.id, "transforming");
+    await task.updateStatus("transforming");
 
     let list = transformStockData(stocks, quotesIndicatorMapping);
     // newPrice > 0, 过滤掉停牌的股票
@@ -89,11 +89,11 @@ export const fetchStockQuotes = async (date?: string) => {
 
     await upsertStockQuotes(list);
 
-    await updateTaskStatus(task.id, "completed", list.length);
+    await task.updateStatus("completed", list.length);
 
     print(`upsert stock quotes success ${list.length}`);
   } catch (error) {
-    await updateTaskStatus(task.id, "failed");
+    await task.updateStatus("failed");
     print(`get stock quotes error: ${error}`);
   }
 };

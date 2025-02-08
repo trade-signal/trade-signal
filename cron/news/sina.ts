@@ -1,6 +1,6 @@
 import { get } from "@/shared/request";
 import prisma from "@/prisma/db";
-import { initTask, updateTaskStatus } from "@/cron/common/task";
+import Task from "@/cron/common/task";
 import { createLogger } from "@/cron/util";
 
 const spider_name = "sina";
@@ -168,14 +168,14 @@ const transformSinaNews = (data: SinaNews[]) => {
 };
 
 export const fetchSinaNews = async () => {
-  const task = await initTask("news", "sina");
+  const task = new Task("news", "sina");
 
   try {
-    await updateTaskStatus(task.id, "fetching");
+    await task.updateStatus("fetching");
     const newsData = await getNews();
     print(`get ${newsData.length} news`);
 
-    await updateTaskStatus(task.id, "transforming");
+    await task.updateStatus("transforming");
     const transformedNews = transformSinaNews(newsData);
 
     print(`transformed ${transformedNews.length} news`);
@@ -186,11 +186,11 @@ export const fetchSinaNews = async () => {
       data: transformedNews,
       skipDuplicates: true // 跳过重复记录
     });
-    await updateTaskStatus(task.id, "completed", transformedNews.length);
+    await task.updateStatus("completed", transformedNews.length);
 
     print(`write news success`);
   } catch (error) {
-    await updateTaskStatus(task.id, "failed");
+    await task.updateStatus("failed");
     print(`getNews error: ${error}`);
   }
 };

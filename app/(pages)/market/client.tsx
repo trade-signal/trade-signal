@@ -1,22 +1,13 @@
 "use client";
 
-import {
-  Box,
-  Center,
-  Container,
-  Group,
-  rem,
-  ScrollArea,
-  Stack,
-  Title
-} from "@mantine/core";
+import { Center, Group, rem, ScrollArea, Stack, Title } from "@mantine/core";
 
 import StockRanking from "./components/StockRanking";
 import SymbolTabs from "./components/SymbolTabs";
 
 import styles from "./page.module.css";
 
-const MarketClient = () => {
+const MarketClient = (props) => {
   return (
     <ScrollArea px="4vw" py="xl" className={styles.scrollArea}>
       <Center my="xl">

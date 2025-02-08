@@ -3,22 +3,22 @@
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { get } from "@/shared/request";
-import { BatchUpdate, News } from "@prisma/client";
+import { SyncTask, News } from "@prisma/client";
 import { useDisclosure } from "@mantine/hooks";
 import DataTable from "@/app/components/tables/DataTable";
-import { useBatchContext } from "@/app/providers/BatchProvider";
+import { useSyncTaskContext } from "@/app/providers/SyncTaskProvider";
 
 import { useNewsContext } from "./NewsContext";
 import { COLUMNS } from "./NewsListConfig";
 
 const NewsList = () => {
   const { filters } = useNewsContext();
-  const { batch } = useBatchContext();
+  const { task } = useSyncTaskContext();
 
   const [newsList, setNewsList] = useState<News[]>([]);
 
   const [refreshTimeMap, setRefreshTimeMap] = useState<
-    Record<string, Partial<BatchUpdate>>
+    Record<string, Partial<SyncTask>>
   >({});
   const [refreshTime, setRefreshTime] = useState<string | undefined>();
 
@@ -80,25 +80,25 @@ const NewsList = () => {
     }
   }, [page]);
 
-  const transformBatch = (batch: BatchUpdate[]) => {
+  const transformBatch = (batch: SyncTask[]) => {
     return batch.reduce((acc, curr) => {
-      acc[curr.source] = curr;
+      acc[curr.dataSource] = curr;
       return acc;
-    }, {} as Record<string, Partial<BatchUpdate>>);
+    }, {} as Record<string, Partial<SyncTask>>);
   };
 
   useEffect(() => {
-    if (batch.length > 0) {
-      const batchMap = transformBatch(batch);
+    if (task.length > 0) {
+      const batchMap = transformBatch(task);
       setRefreshTimeMap(batchMap);
-      setRefreshTime(dayjs(batchMap.sina.batchTime).format("YYYY-MM-DD HH:mm"));
+      setRefreshTime(dayjs(batchMap.sina.batchDate).format("YYYY-MM-DD HH:mm"));
     }
-  }, [batch]);
+  }, [task]);
 
   useEffect(() => {
     if (filters.source) {
       setRefreshTime(
-        dayjs(refreshTimeMap[filters.source]?.batchTime).format(
+        dayjs(refreshTimeMap[filters.source]?.batchDate).format(
           "YYYY-MM-DD HH:mm"
         )
       );

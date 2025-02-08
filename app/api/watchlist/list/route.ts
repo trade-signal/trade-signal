@@ -1,11 +1,11 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/lib/auth";
 import prisma from "@/prisma/db";
-import { Watch, Watchlist, StockQuotesRealTime } from "@prisma/client";
+import { Watch, Watchlist, StockQuotes } from "@prisma/client";
 import { errorResponse } from "@/middleware";
 
 export type WatchStock = Watch & {
-  quote: StockQuotesRealTime;
+  quote: StockQuotes;
 };
 
 export type WatchlistWithStocks = Watchlist & {
@@ -61,20 +61,11 @@ export const GET = async () => {
     orderBy: [{ isTop: "desc" }, { order: "asc" }]
   });
 
-  // 4. 获取最新的批次时间
-  const maxDate = await prisma.stockQuotesRealTime.findFirst({
-    select: { date: true },
-    orderBy: { date: "desc" }
-  });
-
   // 5. 获取股票的最新行情
-  const quotes = await prisma.stockQuotesRealTime.findMany({
+  const quotes = await prisma.stockQuotes.findMany({
     where: {
-      date: maxDate?.date,
       code: { in: stocks.map(stock => stock.code) }
-    },
-    distinct: ["code"],
-    orderBy: [{ updatedAt: "desc" }, { newPrice: "desc" }]
+    }
   });
 
   // 6. 按 watchlistId 对股票进行分组

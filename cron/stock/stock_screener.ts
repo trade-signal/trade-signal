@@ -1,7 +1,7 @@
 import prisma from "@/prisma/db";
 import { StockScreener } from "@prisma/client";
 import dayjs from "dayjs";
-import { initTask, updateTaskStatus } from "@/cron/common/task";
+import Task from "@/cron/common/task";
 import { createLogger, transformStockData } from "@/cron/util";
 import { getStockScreener, selectionIndicatorMapping } from "./api";
 
@@ -70,7 +70,7 @@ export const cleanStockScreener = async () => {
 };
 
 export const fetchStockScreener = async (date?: string) => {
-  const task = await initTask("stock_screener", "eastmoney");
+  const task = new Task("stock_screener", "eastmoney");
 
   try {
     if (date) {
@@ -85,7 +85,7 @@ export const fetchStockScreener = async (date?: string) => {
       print(`delete stock screener: ${deleted.count}`);
     }
 
-    await updateTaskStatus(task.id, "fetching");
+    await task.updateStatus("fetching");
 
     // 获取选股指标
     const stocks = await getStocks();
@@ -96,7 +96,7 @@ export const fetchStockScreener = async (date?: string) => {
     }
 
     print(`stock screener count: ${stocks.length}`);
-    await updateTaskStatus(task.id, "transforming");
+    await task.updateStatus("transforming");
 
     print(`start write stock screener`);
 
@@ -112,11 +112,11 @@ export const fetchStockScreener = async (date?: string) => {
       });
     }
 
-    await updateTaskStatus(task.id, "completed", total);
+    await task.updateStatus("completed", total);
 
     print(`write stock screener success ${total}`);
   } catch (error) {
-    await updateTaskStatus(task.id, "failed");
+    await task.updateStatus("failed");
     print(`get stock screener error: ${error}`);
   }
 };

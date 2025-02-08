@@ -1,8 +1,9 @@
 import dayjs from "dayjs";
 import { useEffect } from "react";
 import { clientGet } from "@/shared/request";
-import { StockQuotesRealTime } from "@prisma/client";
+import { StockQuotes } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
+
 import {
   Group,
   Loader,
@@ -40,7 +41,7 @@ const InstrumentDetail = () => {
     queryFn: () =>
       clientGet("/api/watchlist/item", {
         code: activeStockCode || ""
-      }) as Promise<StockQuotesRealTime>,
+      }) as Promise<StockQuotes>,
     enabled: !!userInfo
   });
 

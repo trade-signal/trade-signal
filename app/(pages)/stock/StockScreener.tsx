@@ -32,7 +32,7 @@ const StockScreener = () => {
   const [styleData, setStyleData] = useState<string[]>([]);
 
   const getFilter = async () => {
-    const response = await get("/api/stock-selection/filter", {});
+    const response = await get("/api/stock-screener/filter", {});
 
     if (response.success) {
       setIndustryData(response.data.industries);

@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import { delayRandom } from "@/shared/util";
 import { getCurrentUnixTime } from "@/shared/date";
 import prisma from "@/prisma/db";
-import { initTask, updateTaskStatus } from "@/cron/common/task";
+import Task from "@/cron/common/task";
 
 import { createLogger } from "@/cron/util";
 
@@ -290,13 +290,13 @@ const transformClsNews = (data: Map<string, ClsNews[]>) => {
 };
 
 export const fetchClsNews = async () => {
-  const task = await initTask("news", "cls");
+  const task = new Task("news", "cls");
 
   try {
-    await updateTaskStatus(task.id, "fetching");
+    await task.updateStatus("fetching");
     const newsData = await getNews();
 
-    await updateTaskStatus(task.id, "transforming");
+    await task.updateStatus("transforming");
     const transformedNews = transformClsNews(newsData);
 
     print(`transformed ${transformedNews.length} news`);
@@ -307,11 +307,11 @@ export const fetchClsNews = async () => {
       data: transformedNews,
       skipDuplicates: true // 跳过重复记录
     });
-    await updateTaskStatus(task.id, "completed", transformedNews.length);
+    await task.updateStatus("completed", transformedNews.length);
 
     print(`write news success`);
   } catch (error) {
-    await updateTaskStatus(task.id, "failed");
+    await task.updateStatus("failed");
     print(`getNews error: ${error}`);
   }
 };

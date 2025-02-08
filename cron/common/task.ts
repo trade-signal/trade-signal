@@ -1,15 +1,6 @@
-import dayjs from "dayjs";
-
 import prisma from "@/prisma/db";
 import { SyncTask } from "@prisma/client";
-
-const createTask = async (data: Partial<SyncTask>) => {
-  return prisma.syncTask.create({ data: data as any });
-};
-
-const updateTask = async (id: string, data: Partial<SyncTask>) => {
-  return prisma.syncTask.update({ where: { id }, data: data as any });
-};
+import dayjs from "dayjs";
 
 // 任务类型
 export type TaskType =
@@ -34,23 +25,43 @@ export type TaskStatus =
   | "completed"
   | "failed";
 
-export const initTask = async (type: TaskType, source: TaskSource) => {
-  return createTask({
-    taskType: type,
-    dataSource: source,
-    batchDate: dayjs().toDate(),
-    priority: 2,
-    status: "pending"
-  });
+const createTask = async (data: Partial<SyncTask>) => {
+  return prisma.syncTask.create({ data: data as any });
 };
 
-export const updateTaskStatus = async (
-  taskId: string,
-  status: TaskStatus,
-  count?: number
-) => {
-  await updateTask(taskId, {
-    status,
-    ...(count !== undefined ? { count } : {})
-  });
+const updateTask = async (id: string, data: Partial<SyncTask>) => {
+  return prisma.syncTask.update({ where: { id }, data: data as any });
 };
+
+export default class Task {
+  private task!: SyncTask;
+
+  constructor(
+    private taskType: TaskType,
+    private dataSource: TaskSource = "eastmoney",
+    private batchDate: Date = dayjs().toDate(),
+    private priority: number = 2,
+    private status: TaskStatus = "pending"
+  ) {}
+
+  private async initialize() {
+    this.task = await createTask({
+      taskType: this.taskType,
+      dataSource: this.dataSource,
+      batchDate: this.batchDate,
+      priority: this.priority,
+      status: this.status
+    });
+  }
+
+  async updateStatus(status: TaskStatus, totalCount?: number) {
+    if (!this.task) {
+      await this.initialize();
+    }
+
+    await updateTask(this.task.id, {
+      status,
+      ...(totalCount !== undefined ? { totalCount } : {})
+    });
+  }
+}

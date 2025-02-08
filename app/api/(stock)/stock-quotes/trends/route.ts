@@ -1,11 +1,11 @@
-import { StockQuotesRealTime } from "@prisma/client";
+import { StockQuotes } from "@prisma/client";
 import prisma from "@/prisma/db";
 import { NextRequest } from "next/server";
 
 export type StockQuotesTrends = {
   code: string;
   name: string;
-  trends: StockQuotesRealTime[];
+  trends: StockQuotes[];
 };
 
 export const GET = async (request: NextRequest) => {
@@ -22,12 +22,12 @@ export const GET = async (request: NextRequest) => {
     );
   }
 
-  const maxDate = await prisma.stockQuotesLatest.findFirst({
+  const maxDate = await prisma.stockQuotes.findFirst({
     orderBy: { date: "desc" },
     select: { date: true }
   });
 
-  const trends = await prisma.stockQuotesRealTime.findMany({
+  const trends = await prisma.stockQuotes.findMany({
     where: {
       code,
       date: { equals: maxDate?.date }

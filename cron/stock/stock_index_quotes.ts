@@ -5,7 +5,7 @@ import {
   getIndicatorFields
 } from "@/cron/util";
 import dayjs from "dayjs";
-import { updateTaskStatus, initTask } from "@/cron/common/task";
+import Task from "@/cron/common/task";
 import { getRealTimeIndexQuotes, quotesIndexIndicatorMapping } from "./api";
 
 const spider_name = "stock_index";
@@ -45,11 +45,11 @@ export const cleanStockIndexQuotes = async (days: number = 7) => {
 export const fetchStockIndexQuotes = async (date?: string) => {
   const currentDate = dayjs(date).format("YYYY-MM-DD");
 
-  const task = await initTask("stock_index_quotes", "eastmoney");
+  const task = new Task("stock_index_quotes", "eastmoney");
   try {
     print(`start get stock index quotes`);
 
-    await updateTaskStatus(task.id, "fetching");
+    await task.updateStatus("fetching");
 
     const stocks = await getRealTimeIndexQuotes({
       fields: getIndicatorFields(quotesIndexIndicatorMapping)
@@ -57,7 +57,7 @@ export const fetchStockIndexQuotes = async (date?: string) => {
 
     print(`get ${stocks.length} stocks`);
 
-    await updateTaskStatus(task.id, "transforming");
+    await task.updateStatus("transforming");
 
     let list = transformStockData(stocks, quotesIndexIndicatorMapping);
     // 添加日期
@@ -70,11 +70,11 @@ export const fetchStockIndexQuotes = async (date?: string) => {
 
     await upsertStockIndexQuotes(list);
 
-    await updateTaskStatus(task.id, "completed", list.length);
+    await task.updateStatus("completed", list.length);
 
     print(`upsert stock index quotes success ${list.length}`);
   } catch (error) {
-    await updateTaskStatus(task.id, "failed");
+    await task.updateStatus("failed");
     print(`error: ${error}`);
   }
 };

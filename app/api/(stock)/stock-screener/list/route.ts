@@ -80,12 +80,12 @@ export const GET = async (request: NextRequest) => {
   const offset = (page - 1) * pageSize;
   const limit = pageSize;
 
-  const maxDate = await prisma.stockSelection.findFirst({
+  const maxDate = await prisma.stockScreener.findFirst({
     orderBy: { date: "desc" },
     select: { date: true }
   });
 
-  let where: Prisma.StockSelectionWhereInput = {
+  let where: Prisma.StockScreenerWhereInput = {
     date: { equals: maxDate?.date }
   };
 
@@ -95,7 +95,7 @@ export const GET = async (request: NextRequest) => {
     };
   }
 
-  let whereOR: Prisma.StockSelectionWhereInput[] = [];
+  let whereOR: Prisma.StockScreenerWhereInput[] = [];
 
   if (concepts && concepts.length) {
     whereOR.push(...generateWhereOR(concepts, "concept"));
@@ -124,7 +124,7 @@ export const GET = async (request: NextRequest) => {
     where.OR = [{ code: { contains: search } }, { name: { contains: search } }];
   }
 
-  const data = await prisma.stockSelection.findMany({
+  const data = await prisma.stockScreener.findMany({
     where,
     orderBy: {
       [orderBy]: order
@@ -133,7 +133,7 @@ export const GET = async (request: NextRequest) => {
     take: limit
   });
 
-  const total = await prisma.stockSelection.count({
+  const total = await prisma.stockScreener.count({
     where
   });
 
