@@ -1,6 +1,6 @@
 import { get } from "@/shared/request";
 import { createLogger, getIndicatorFields } from "@/cron/util";
-import { selectionIndicatorMapping } from "./eastmoney.selection.indicator";
+import { selectionIndicatorMapping } from "./eastmoney.screener.indicator";
 
 const spider_name = "eastmoney.selection";
 const print = createLogger(spider_name, "stock");
@@ -14,7 +14,7 @@ const print = createLogger(spider_name, "stock");
  * @param page 页码
  * @param pageSize 每页数量
  */
-export const getStockSelection = async (page: number, pageSize: number) => {
+export const getStockScreener = async (page: number, pageSize: number) => {
   try {
     const url = `https://data.eastmoney.com/dataapi/xuangu/list`;
 
@@ -36,7 +36,7 @@ export const getStockSelection = async (page: number, pageSize: number) => {
 
     return response;
   } catch (error) {
-    print(`getStockSelection error: ${error}`);
+    print(`getStockScreener error: ${error}`);
     return [];
   }
 };

@@ -1,8 +1,8 @@
 import dayjs from "dayjs";
 import prisma from "@/prisma/db";
 import { createLogger } from "@/shared/logger";
-import { seedSinaNews } from "@/cron/news/sina";
-import { seedClsNews } from "@/cron/news/cls";
+import { fetchSinaNews } from "@/cron/news/sina";
+import { fetchClsNews } from "@/cron/news/cls";
 
 const spider_name = "news";
 const logger = createLogger(spider_name, "", false);
@@ -45,12 +45,12 @@ export const checkNews = async (date?: string) => {
 };
 
 // 获取新闻
-export const seedNews = async () => {
+export const fetchNews = async () => {
   try {
     logger.log(`start get news`);
 
     // 获取新闻数据
-    await Promise.all([seedSinaNews(), seedClsNews()]);
+    await Promise.all([fetchSinaNews(), fetchClsNews()]);
 
     logger.log(`get news success`);
   } catch (error) {
@@ -58,13 +58,13 @@ export const seedNews = async () => {
   }
 };
 
-export const initNewsData = async (runDate: string) => {
+export const initNews = async (runDate: string) => {
   const hasNews = await checkNews(runDate);
 
   if (hasNews) {
-    logger.log("news available! No need to seed.");
+    logger.log("news available! No need to fetch.");
     return;
   }
 
-  await seedNews();
+  await fetchNews();
 };

@@ -167,7 +167,7 @@ const transformSinaNews = (data: SinaNews[]) => {
   });
 };
 
-export const seedSinaNews = async () => {
+export const fetchSinaNews = async () => {
   const task = await initTask("news", "sina");
 
   try {

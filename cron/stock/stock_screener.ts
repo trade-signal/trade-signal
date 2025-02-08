@@ -3,10 +3,9 @@ import { StockScreener } from "@prisma/client";
 import dayjs from "dayjs";
 import { initTask, updateTaskStatus } from "@/cron/common/task";
 import { createLogger, transformStockData } from "@/cron/util";
-import { getStockSelection, selectionIndicatorMapping } from "./api";
+import { getStockScreener, selectionIndicatorMapping } from "./api";
 
-
-const spider_name = "stock_selection";
+const spider_name = "stock_screener";
 const print = createLogger(spider_name);
 
 const getStocks = async (): Promise<Partial<StockScreener>[]> => {
@@ -15,15 +14,15 @@ const getStocks = async (): Promise<Partial<StockScreener>[]> => {
 
   const stocks = [];
 
-  print(`getStocks start`);
+  print(`get stocks start`);
 
   while (true) {
     try {
-      const response = await getStockSelection(page, pageSize);
+      const response = await getStockScreener(page, pageSize);
 
       if (!response.success) {
         throw new Error(
-          `getStockSelection error: ${response.message || "unknown error"}`
+          `get stock screener error: ${response.message || "unknown error"}`
         );
       }
 
@@ -37,20 +36,20 @@ const getStocks = async (): Promise<Partial<StockScreener>[]> => {
 
       page++;
     } catch (error) {
-      print(`getStocks error: ${error}`);
+      print(`get stocks error: ${error}`);
       break;
     }
   }
 
-  print(`getStocks end`);
+  print(`get stocks end`);
 
   return stocks;
 };
 
 // 清理历史数据，只保留最新一个交易日数据
-export const cleanStockSelection = async () => {
+export const cleanStockScreener = async () => {
   try {
-    print("clean stock selection");
+    print("clean stock screener");
     const lastDate = await prisma.stockScreener.findFirst({
       orderBy: { date: "desc" },
       select: { date: true }
@@ -66,11 +65,11 @@ export const cleanStockSelection = async () => {
 
     print("no data to clean");
   } catch (error) {
-    print(`clean stock selection error: ${error}`);
+    print(`clean stock screener error: ${error}`);
   }
 };
 
-export const seedStockSelection = async (date?: string) => {
+export const fetchStockScreener = async (date?: string) => {
   const task = await initTask("stock_screener", "eastmoney");
 
   try {
@@ -83,7 +82,7 @@ export const seedStockSelection = async (date?: string) => {
           }
         }
       });
-      print(`deleteStockSelection: ${deleted.count}`);
+      print(`delete stock screener: ${deleted.count}`);
     }
 
     await updateTaskStatus(task.id, "fetching");
@@ -92,14 +91,14 @@ export const seedStockSelection = async (date?: string) => {
     const stocks = await getStocks();
 
     if (stocks.length === 0) {
-      print(`stockSelection is empty`);
+      print(`stock screener is empty`);
       return;
     }
 
-    print(`stockSelection count: ${stocks.length}`);
+    print(`stock screener count: ${stocks.length}`);
     await updateTaskStatus(task.id, "transforming");
 
-    print(`start write stockSelection`);
+    print(`start write stock screener`);
 
     const total = stocks.length;
 
@@ -115,10 +114,10 @@ export const seedStockSelection = async (date?: string) => {
 
     await updateTaskStatus(task.id, "completed", total);
 
-    print(`write stockSelection success ${total}`);
+    print(`write stock screener success ${total}`);
   } catch (error) {
     await updateTaskStatus(task.id, "failed");
-    print(`getStockSelection error: ${error}`);
+    print(`get stock screener error: ${error}`);
   }
 };
 
@@ -129,13 +128,13 @@ export const checkStocks = async (date?: string) => {
   return stocks.length > 0;
 };
 
-export const initStockSelectionData = async (runDate: string) => {
+export const initStockScreener = async (runDate: string) => {
   const hasStocks = await checkStocks(runDate);
 
   if (hasStocks) {
-    print("stockSelection available! No need to seed.");
+    print("stock screener available! No need to fetch.");
     return;
   }
 
-  await seedStockSelection(runDate);
+  await fetchStockScreener(runDate);
 };

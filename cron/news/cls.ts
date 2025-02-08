@@ -289,7 +289,7 @@ const transformClsNews = (data: Map<string, ClsNews[]>) => {
   return result;
 };
 
-export const seedClsNews = async () => {
+export const fetchClsNews = async () => {
   const task = await initTask("news", "cls");
 
   try {
@@ -314,5 +314,4 @@ export const seedClsNews = async () => {
     await updateTaskStatus(task.id, "failed");
     print(`getNews error: ${error}`);
   }
-
 };

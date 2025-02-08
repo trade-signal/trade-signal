@@ -38,19 +38,7 @@ export const cleanStockQuotes = async (days: number = 7) => {
   }
 };
 
-const seedRealtimeStockQuotes = async (list: any[]) => {
-  const result = await prisma.stockQuotes.createMany({
-    data: list.map(item => ({
-      ...item,
-      ts: Date.now()
-    })),
-    skipDuplicates: true
-  });
-};
-
-const seedLatestStockQuotes = async (list: any[]) => {
-  const lastUpdateTs = Date.now();
-
+const upsertStockQuotes = async (list: any[]) => {
   for (const item of list) {
     await prisma.stockQuotes.upsert({
       where: {
@@ -59,19 +47,19 @@ const seedLatestStockQuotes = async (list: any[]) => {
           code: item.code
         }
       },
-      update: { ...item, lastUpdateTs },
-      create: { ...item, lastUpdateTs }
+      update: { ...item },
+      create: { ...item }
     });
   }
 };
 
-export const seedStockQuotes = async (date?: string) => {
+export const fetchStockQuotes = async (date?: string) => {
   const currentDate = dayjs(date).format("YYYY-MM-DD");
 
   const task = await initTask("stock_quotes", "eastmoney");
 
   try {
-    print(`start get realtimeStockQuotes`);
+    print(`start get stock quotes`);
 
     await updateTaskStatus(task.id, "fetching");
 
@@ -82,7 +70,7 @@ export const seedStockQuotes = async (date?: string) => {
     print(`get ${stocks.length} stocks`);
 
     if (stocks.length === 0) {
-      print(`realtimeStockQuotes is empty`);
+      print(`stock quotes is empty`);
       return;
     }
 
@@ -97,17 +85,16 @@ export const seedStockQuotes = async (date?: string) => {
       date: currentDate
     }));
 
-    print(`start write realtimeStockQuotes`);
+    print(`start upsert stock quotes`);
 
-    await seedRealtimeStockQuotes(list);
-    await seedLatestStockQuotes(list);
+    await upsertStockQuotes(list);
 
     await updateTaskStatus(task.id, "completed", list.length);
 
-    print(`write realtimeStockQuotes success ${list.length}`);
+    print(`upsert stock quotes success ${list.length}`);
   } catch (error) {
     await updateTaskStatus(task.id, "failed");
-    print(`getRealtimeStockQuotes error: ${error}`);
+    print(`get stock quotes error: ${error}`);
   }
 };
 
@@ -118,13 +105,13 @@ export const checkStockQuotes = async (date?: string) => {
   return quotes.length > 0;
 };
 
-export const initStockQuotesData = async (date?: string) => {
+export const initStockQuotes = async (date?: string) => {
   const hasQuotes = await checkStockQuotes(date);
 
   if (hasQuotes) {
-    print("realtimeStockQuotes available! No need to seed.");
+    print("stock quotes available! No need to fetch.");
     return;
   }
 
-  await seedStockQuotes(date);
+  await fetchStockQuotes(date);
 };

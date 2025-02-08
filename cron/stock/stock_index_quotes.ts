@@ -11,20 +11,28 @@ import { getRealTimeIndexQuotes, quotesIndexIndicatorMapping } from "./api";
 const spider_name = "stock_index";
 const print = createLogger(spider_name, "stock");
 
-// 清除超过指定天数的数据
-export const cleanStockIndex = async (days: number = 7) => {
-  print(`clean stock index older than ${days} days`);
+const upsertStockIndexQuotes = async (list: any[]) => {
+  for (const item of list) {
+    await prisma.stockIndexQuotes.upsert({
+      where: { date_code: { date: item.date, code: item.code } },
+      update: { ...item },
+      create: { ...item }
+    });
+  }
+};
 
-  const tradingDays = await prisma.stockIndexMinuteKline.findMany({
+export const cleanStockIndexQuotes = async (days: number = 7) => {
+  print(`clean stock index quotes older than ${days} days`);
+
+  const tradingDays = await prisma.stockIndexQuotes.findMany({
     select: { date: true },
     distinct: ["date"],
     orderBy: { date: "desc" }
   });
 
-
   if (tradingDays.length > days) {
     const cutoffDate = tradingDays[days - 1].date;
-    const result = await prisma.stockIndexMinuteKline.deleteMany({
+    const result = await prisma.stockIndexQuotes.deleteMany({
       where: { date: { lt: cutoffDate } }
     });
 
@@ -34,12 +42,12 @@ export const cleanStockIndex = async (days: number = 7) => {
   print("no data to clean");
 };
 
-export const seedIndex = async (date?: string) => {
+export const fetchStockIndexQuotes = async (date?: string) => {
   const currentDate = dayjs(date).format("YYYY-MM-DD");
 
-  const task = await initTask("stock_index_minute_kline", "eastmoney");
+  const task = await initTask("stock_index_quotes", "eastmoney");
   try {
-    print(`start get realtimeIndexQuotes`);
+    print(`start get stock index quotes`);
 
     await updateTaskStatus(task.id, "fetching");
 
@@ -55,40 +63,36 @@ export const seedIndex = async (date?: string) => {
     // 添加日期
     list = list.map(item => ({
       ...item,
-      ts: Date.now(),
       date: currentDate
     }));
 
-    print(`start write realtimeIndexQuotes`);
+    print(`start upsert stock index`);
 
-    const result = await prisma.stockIndexMinuteKline.createMany({
-      data: list as any,
-      skipDuplicates: true
-    });
+    await upsertStockIndexQuotes(list);
 
-    await updateTaskStatus(task.id, "completed", result.count);
+    await updateTaskStatus(task.id, "completed", list.length);
 
-    print(`write realtimeIndexQuotes success ${result.count}`);
+    print(`upsert stock index quotes success ${list.length}`);
   } catch (error) {
     await updateTaskStatus(task.id, "failed");
     print(`error: ${error}`);
   }
 };
 
-export const checkStockIndex = async (date?: string) => {
-  const quotes = await prisma.stockIndexMinuteKline.findMany({
+export const checkStockIndexQuotes = async (date?: string) => {
+  const quotes = await prisma.stockIndexQuotes.findMany({
     where: { date: dayjs(date).format("YYYY-MM-DD") }
   });
   return quotes.length > 0;
 };
 
-export const initStockIndexData = async (date?: string) => {
-  const hasQuotes = await checkStockIndex(date);
+export const initStockIndexQuotes = async (date?: string) => {
+  const hasQuotes = await checkStockIndexQuotes(date);
 
   if (hasQuotes) {
-    print("realtimeIndexQuotes available! No need to seed.");
+    print("stock index quotes available! No need to fetch.");
     return;
   }
 
-  await seedIndex(date);
+  await fetchStockIndexQuotes(date);
 };

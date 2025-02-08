@@ -8,13 +8,13 @@ import dayjs from "dayjs";
 import { updateTaskStatus, initTask } from "@/cron/common/task";
 import { getRealtimeStockQuotes, quotesDailyIndicatorMapping } from "./api";
 
-const spider_name = "stock_quotes_daily";
+const spider_name = "stock_minute_kline";
 const print = createLogger(spider_name, "stock");
 
-export const seedDailyStockQuotes = async (date?: string) => {
+export const fetchStockMinuteKline = async (date?: string) => {
   const currentDate = dayjs(date).format("YYYY-MM-DD");
 
-  const task = await initTask("stock_quotes", "eastmoney");
+  const task = await initTask("stock_minute_kline", "eastmoney");
 
   try {
     print(`start get realtimeStockQuotes`);
@@ -51,19 +51,19 @@ export const seedDailyStockQuotes = async (date?: string) => {
 
     await updateTaskStatus(task.id, "completed", result.count);
 
-    print(`write realtimeStockQuotes success ${result.count}`);
+    print(`write stock minute kline success ${result.count}`);
   } catch (error) {
     await updateTaskStatus(task.id, "failed");
-    print(`getRealtimeStockQuotes error: ${error}`);
+    print(`get stock minute kline error: ${error}`);
   }
 };
 
 // 清除超过指定天数的数据
-export const cleanStockQuotesDaily = async (days: number = 7) => {
+export const cleanStockMinuteKline = async (days: number = 7) => {
   try {
-    print(`clean stock quotes daily older than ${days} days`);
+    print(`clean stock minute kline older than ${days} days`);
 
-    const tradingDays = await prisma.stockQuotes.findMany({
+    const tradingDays = await prisma.stockMinuteKline.findMany({
       select: { date: true },
       distinct: ["date"],
       orderBy: { date: "desc" }
@@ -71,7 +71,7 @@ export const cleanStockQuotesDaily = async (days: number = 7) => {
 
     if (tradingDays.length > days) {
       const cutoffDate = tradingDays[days - 1].date;
-      const result = await prisma.stockQuotes.deleteMany({
+      const result = await prisma.stockMinuteKline.deleteMany({
         where: { date: { lt: cutoffDate } }
       });
 
@@ -81,6 +81,6 @@ export const cleanStockQuotesDaily = async (days: number = 7) => {
 
     print("no data to clean");
   } catch (error) {
-    print(`clean stock quotes daily error: ${error}`);
+    print(`clean stock minute kline error: ${error}`);
   }
 };

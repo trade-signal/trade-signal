@@ -15,11 +15,21 @@ export const checkStockBasic = async () => {
   return stocks.length > 0;
 };
 
-export const seedStockBase = async () => {
+const upsertStockBasic = async (list: any[]) => {
+  for (const item of list) {
+    await prisma.stockBasic.upsert({
+      where: { code: item.code },
+      update: { ...item, status: item.newPrice > 0 ? "active" : "suspended" },
+      create: { ...item, status: item.newPrice > 0 ? "active" : "suspended" }
+    });
+  }
+};
+
+export const fetchStockBasic = async () => {
   const task = await initTask("stock_base", "eastmoney");
 
   try {
-    print(`start get stock base`);
+    print(`start get stock basic`);
 
     await updateTaskStatus(task.id, "fetching");
 
@@ -30,7 +40,7 @@ export const seedStockBase = async () => {
     print(`get ${stocks.length} stocks`);
 
     if (stocks.length === 0) {
-      print(`stock base is empty`);
+      print(`stock basic is empty`);
       return;
     }
 
@@ -40,35 +50,26 @@ export const seedStockBase = async () => {
     // newPrice > 0, 过滤掉停牌的股票
     list = list.filter(item => item.newPrice > 0);
 
-    print(`start write stock base`);
+    print(`start upsert stock basic`);
 
-    const result = await prisma.stockBasic.createMany({
-      data: list.map(item => {
-        const { newPrice, ...rest } = item;
-        return {
-          ...rest,
-          status: newPrice > 0 ? "active" : "suspended"
-        };
-      }),
-      skipDuplicates: true
-    });
+    await upsertStockBasic(list);
 
-    await updateTaskStatus(task.id, "completed", result.count);
+    await updateTaskStatus(task.id, "completed", list.length);
 
-    print(`write stock base success ${result.count}`);
+    print(`upsert stock basic success ${list.length}`);
   } catch (error) {
     await updateTaskStatus(task.id, "failed");
-    print(`getStockBase error: ${error}`);
+    print(`get stock basic error: ${error}`);
   }
 };
 
-export const initStockBaseData = async () => {
+export const initStockBasic = async () => {
   const hasStockBasic = await checkStockBasic();
 
   if (hasStockBasic) {
-    print("stock base available! No need to seed.");
+    print("stock basic available! No need to fetch.");
     return;
   }
 
-  await seedStockBase();
+  await fetchStockBasic();
 };

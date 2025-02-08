@@ -4,23 +4,26 @@ import { CronJob } from "cron";
 import dayjs from "dayjs";
 import { getRunDate } from "@/shared/date";
 import {
-  cleanStockSelection,
-  initStockSelectionData,
-  seedStockSelection
-} from "./stock/stock_selection";
-import { cleanNews, initNewsData, seedNews } from "./news";
+  cleanStockScreener,
+  initStockScreener,
+  fetchStockScreener
+} from "./stock/stock_screener";
+
+import { cleanNews, initNews, fetchNews } from "./news";
 import {
   cleanStockQuotes,
-  initStockQuotesData,
-  seedStockQuotes
+  initStockQuotes,
+  fetchStockQuotes
 } from "./stock/stock_quotes";
-import {
-  cleanStockQuotesDaily,
-  seedDailyStockQuotes
-} from "./stock/stock_quotes_daily";
-import { initStockBaseData, seedStockBase } from "./stock/stock_base";
+
+import { initStockBasic, fetchStockBasic } from "./stock/stock_base";
 import { isTradeDate, refreshTradeDates } from "./stock/trade_date";
-import { initStockIndexData, seedIndex } from "./stock/stock_index";
+
+import {
+  initStockIndexQuotes,
+  fetchStockIndexQuotes
+} from "./stock/stock_index_quotes";
+
 import { createLogger } from "@/shared/logger";
 
 const logger = createLogger("cron", "", false);
@@ -63,10 +66,10 @@ const runStockScheduleJobs = () => {
       return;
     }
 
-    print(`trigger seed stock quotes realtime`);
+    print(`trigger fetch stock quotes realtime`);
 
-    await seedIndex();
-    await seedStockQuotes();
+    await fetchStockIndexQuotes();
+    await fetchStockQuotes();
   }).start();
 
   // 收盘后运行：16:00
@@ -76,12 +79,11 @@ const runStockScheduleJobs = () => {
       return;
     }
 
-    print(`trigger seed stock quotes daily`);
+    print(`trigger fetch stock quotes daily`);
 
-    await seedStockBase();
-    await seedStockQuotes();
-    await seedDailyStockQuotes();
-    await seedStockSelection();
+    await fetchStockBasic();
+    await fetchStockQuotes();
+    await fetchStockScreener();
   }).start();
 };
 
@@ -90,19 +92,19 @@ const runNewsScheduleJobs = () => {
   // 交易时段 (9:00-11:30, 13:00-15:00) 每15分钟抓取一次
   // 其他时段 (8:30-9:00, 11:30-13:00, 15:00-21:30) 每30分钟抓取一次
   new CronJob("*/15 9-11,13-14 * * 1-5", () => {
-    print("trigger seed news");
-    seedNews();
+    print("trigger fetch news");
+    fetchNews();
   }).start();
 
   new CronJob("*/30 8,12,15-21 * * 1-5", () => {
-    print("trigger seed news");
-    seedNews();
+    print("trigger fetch news");
+    fetchNews();
   }).start();
 
   // 非工作日运行: 每小时抓取一次
   new CronJob("0 9-21 * * 0,6", () => {
-    print("trigger seed news");
-    seedNews();
+    print("trigger fetch news");
+    fetchNews();
   }).start();
 };
 
@@ -113,10 +115,9 @@ const runClearScheduleJobs = () => {
 
     await refreshTradeDates();
 
-    await cleanStockSelection();
+    await cleanStockScreener();
     await cleanNews(3);
     await cleanStockQuotes(3);
-    await cleanStockQuotesDaily(30);
   }).start();
 };
 
@@ -128,11 +129,11 @@ const runSchedulerJobs = () => {
 
 const runSeedJobs = async (runDate: string) => {
   await Promise.all([
-    initStockBaseData(),
-    initStockSelectionData(runDate),
-    initStockQuotesData(runDate),
-    initStockIndexData(runDate),
-    initNewsData(runDate)
+    initStockBasic(),
+    initStockScreener(runDate),
+    initStockQuotes(runDate),
+    initStockIndexQuotes(runDate),
+    initNews(runDate)
   ]);
 };
 
