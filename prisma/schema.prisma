@@ -561,3 +561,63 @@ model SyncTask {
   @@index([taskType, status])
   @@map("sync_task")
 }
+
+// 股指分时K线
+model StockIndexMinuteKline {
+  id String @id @default(cuid())
+
+  // 基本信息
+  date   String @db.VarChar(10) // 交易日期
+  time   String @db.VarChar(8) // 交易时间 HH:mm:ss
+  code   String @db.VarChar(6) // 指数代码
+  period Int    @default(1) // K线周期(分钟)
+
+  // 价格数据
+  openPrice  Float // 开盘价
+  highPrice  Float // 最高价
+  lowPrice   Float // 最低价
+  closePrice Float // 收盘价
+  volume     Float // 成交量
+  amount     Float // 成交额
+
+  // 系统字段
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([date, time, code, period])
+  @@index([date, code])
+  @@index([code, date])
+  @@map("stock_index_minute_kline")
+}
+
+// 股指日K线
+model StockIndexDailyKline {
+  id String @id @default(cuid())
+
+  // 基本信息
+  date String @db.VarChar(10) // 交易日期
+  code String @db.VarChar(6) // 指数代码
+
+  // 价格数据
+  openPrice     Float // 开盘价
+  highPrice     Float // 最高价
+  lowPrice      Float // 最低价
+  closePrice    Float // 收盘价
+  preClosePrice Float // 前收盘价
+
+  // 成交数据
+  volume     Float // 成交量
+  amount     Float // 成交额
+  changeRate Float // 涨跌幅
+  upsDowns   Float // 涨跌额
+
+  // 系统字段
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([date, code])
+  @@index([date])
+  @@index([code])
+  @@index([code, date])
+  @@map("stock_index_daily_kline")
+}

@@ -1,6 +1,6 @@
 import { get } from "@/shared/request";
 import prisma from "@/prisma/db";
-import { initBatch, updateBatchStatus } from "@/cron/common/batch";
+import { initTask, updateTaskStatus } from "@/cron/common/task";
 import { createLogger } from "@/cron/util";
 
 const spider_name = "sina";
@@ -168,14 +168,14 @@ const transformSinaNews = (data: SinaNews[]) => {
 };
 
 export const seedSinaNews = async () => {
-  const batch = await initBatch("news", "sina");
+  const task = await initTask("news", "sina");
 
   try {
-    await updateBatchStatus(batch.id, "fetching");
+    await updateTaskStatus(task.id, "fetching");
     const newsData = await getNews();
     print(`get ${newsData.length} news`);
 
-    await updateBatchStatus(batch.id, "transforming");
+    await updateTaskStatus(task.id, "transforming");
     const transformedNews = transformSinaNews(newsData);
 
     print(`transformed ${transformedNews.length} news`);
@@ -186,11 +186,11 @@ export const seedSinaNews = async () => {
       data: transformedNews,
       skipDuplicates: true // 跳过重复记录
     });
-    await updateBatchStatus(batch.id, "completed", transformedNews.length);
+    await updateTaskStatus(task.id, "completed", transformedNews.length);
 
     print(`write news success`);
   } catch (error) {
-    await updateBatchStatus(batch.id, "failed");
+    await updateTaskStatus(task.id, "failed");
     print(`getNews error: ${error}`);
   }
 };

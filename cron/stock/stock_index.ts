@@ -5,7 +5,7 @@ import {
   getIndicatorFields
 } from "@/cron/util";
 import dayjs from "dayjs";
-import { updateBatchStatus, initBatch } from "@/cron/common/batch";
+import { updateTaskStatus, initTask } from "@/cron/common/task";
 import { getRealTimeIndexQuotes, quotesIndexIndicatorMapping } from "./api";
 
 const spider_name = "stock_index";
@@ -15,15 +15,16 @@ const print = createLogger(spider_name, "stock");
 export const cleanStockIndex = async (days: number = 7) => {
   print(`clean stock index older than ${days} days`);
 
-  const tradingDays = await prisma.stockIndexRealTime.findMany({
+  const tradingDays = await prisma.stockIndexMinuteKline.findMany({
     select: { date: true },
     distinct: ["date"],
     orderBy: { date: "desc" }
   });
 
+
   if (tradingDays.length > days) {
     const cutoffDate = tradingDays[days - 1].date;
-    const result = await prisma.stockIndexRealTime.deleteMany({
+    const result = await prisma.stockIndexMinuteKline.deleteMany({
       where: { date: { lt: cutoffDate } }
     });
 
@@ -36,12 +37,11 @@ export const cleanStockIndex = async (days: number = 7) => {
 export const seedIndex = async (date?: string) => {
   const currentDate = dayjs(date).format("YYYY-MM-DD");
 
-  const batch = await initBatch("stock_index", "eastmoney");
-
+  const task = await initTask("stock_index_minute_kline", "eastmoney");
   try {
     print(`start get realtimeIndexQuotes`);
 
-    await updateBatchStatus(batch.id, "fetching");
+    await updateTaskStatus(task.id, "fetching");
 
     const stocks = await getRealTimeIndexQuotes({
       fields: getIndicatorFields(quotesIndexIndicatorMapping)
@@ -49,7 +49,7 @@ export const seedIndex = async (date?: string) => {
 
     print(`get ${stocks.length} stocks`);
 
-    await updateBatchStatus(batch.id, "transforming");
+    await updateTaskStatus(task.id, "transforming");
 
     let list = transformStockData(stocks, quotesIndexIndicatorMapping);
     // 添加日期
@@ -61,22 +61,22 @@ export const seedIndex = async (date?: string) => {
 
     print(`start write realtimeIndexQuotes`);
 
-    const result = await prisma.stockIndexRealTime.createMany({
+    const result = await prisma.stockIndexMinuteKline.createMany({
       data: list as any,
       skipDuplicates: true
     });
 
-    await updateBatchStatus(batch.id, "completed", result.count);
+    await updateTaskStatus(task.id, "completed", result.count);
 
     print(`write realtimeIndexQuotes success ${result.count}`);
   } catch (error) {
-    await updateBatchStatus(batch.id, "failed");
+    await updateTaskStatus(task.id, "failed");
     print(`error: ${error}`);
   }
 };
 
 export const checkStockIndex = async (date?: string) => {
-  const quotes = await prisma.stockIndexRealTime.findMany({
+  const quotes = await prisma.stockIndexMinuteKline.findMany({
     where: { date: dayjs(date).format("YYYY-MM-DD") }
   });
   return quotes.length > 0;

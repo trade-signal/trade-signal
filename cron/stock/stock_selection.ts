@@ -1,14 +1,15 @@
 import prisma from "@/prisma/db";
-import { StockSelection } from "@prisma/client";
+import { StockScreener } from "@prisma/client";
 import dayjs from "dayjs";
-import { initBatch, updateBatchStatus } from "@/cron/common/batch";
+import { initTask, updateTaskStatus } from "@/cron/common/task";
 import { createLogger, transformStockData } from "@/cron/util";
 import { getStockSelection, selectionIndicatorMapping } from "./api";
+
 
 const spider_name = "stock_selection";
 const print = createLogger(spider_name);
 
-const getStocks = async (): Promise<Partial<StockSelection>[]> => {
+const getStocks = async (): Promise<Partial<StockScreener>[]> => {
   let page = 1;
   let pageSize = 1000;
 
@@ -50,17 +51,19 @@ const getStocks = async (): Promise<Partial<StockSelection>[]> => {
 export const cleanStockSelection = async () => {
   try {
     print("clean stock selection");
-    const lastDate = await prisma.stockSelection.findFirst({
+    const lastDate = await prisma.stockScreener.findFirst({
       orderBy: { date: "desc" },
       select: { date: true }
     });
+
     if (lastDate) {
-      const result = await prisma.stockSelection.deleteMany({
+      const result = await prisma.stockScreener.deleteMany({
         where: { date: { lt: lastDate.date } }
       });
       print(`clean ${result.count} data`);
       return;
     }
+
     print("no data to clean");
   } catch (error) {
     print(`clean stock selection error: ${error}`);
@@ -68,12 +71,12 @@ export const cleanStockSelection = async () => {
 };
 
 export const seedStockSelection = async (date?: string) => {
-  const batch = await initBatch("stock_selection", "eastmoney");
+  const task = await initTask("stock_screener", "eastmoney");
 
   try {
     if (date) {
       // 删除指定日期及之后的所有数据
-      const deleted = await prisma.stockSelection.deleteMany({
+      const deleted = await prisma.stockScreener.deleteMany({
         where: {
           date: {
             gte: dayjs(date).format("YYYY-MM-DD")
@@ -83,7 +86,7 @@ export const seedStockSelection = async (date?: string) => {
       print(`deleteStockSelection: ${deleted.count}`);
     }
 
-    await updateBatchStatus(batch.id, "fetching");
+    await updateTaskStatus(task.id, "fetching");
 
     // 获取选股指标
     const stocks = await getStocks();
@@ -94,7 +97,7 @@ export const seedStockSelection = async (date?: string) => {
     }
 
     print(`stockSelection count: ${stocks.length}`);
-    await updateBatchStatus(batch.id, "transforming");
+    await updateTaskStatus(task.id, "transforming");
 
     print(`start write stockSelection`);
 
@@ -104,23 +107,23 @@ export const seedStockSelection = async (date?: string) => {
     while (stocks.length > 0) {
       const list = stocks.splice(0, 1000);
 
-      await prisma.stockSelection.createMany({
+      await prisma.stockScreener.createMany({
         data: list as any,
         skipDuplicates: true
       });
     }
 
-    await updateBatchStatus(batch.id, "completed", total);
+    await updateTaskStatus(task.id, "completed", total);
 
     print(`write stockSelection success ${total}`);
   } catch (error) {
-    await updateBatchStatus(batch.id, "failed");
+    await updateTaskStatus(task.id, "failed");
     print(`getStockSelection error: ${error}`);
   }
 };
 
 export const checkStocks = async (date?: string) => {
-  const stocks = await prisma.stockSelection.findMany({
+  const stocks = await prisma.stockScreener.findMany({
     where: { date: dayjs(date).format("YYYY-MM-DD") }
   });
   return stocks.length > 0;

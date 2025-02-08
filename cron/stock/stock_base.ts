@@ -4,24 +4,24 @@ import {
   getIndicatorFields,
   transformStockData
 } from "@/cron/util";
-import { updateBatchStatus, initBatch } from "@/cron/common/batch";
+import { updateTaskStatus, initTask } from "@/cron/common/task";
 import { getRealtimeStockQuotes, quotesBaseIndicatorMapping } from "./api";
 
 const spider_name = "stock_base";
 const print = createLogger(spider_name, "stock");
 
-export const checkStockBase = async () => {
-  const stocks = await prisma.stock.findMany({});
+export const checkStockBasic = async () => {
+  const stocks = await prisma.stockBasic.findMany({});
   return stocks.length > 0;
 };
 
 export const seedStockBase = async () => {
-  const batch = await initBatch("stock_base", "eastmoney");
+  const task = await initTask("stock_base", "eastmoney");
 
   try {
     print(`start get stock base`);
 
-    await updateBatchStatus(batch.id, "fetching");
+    await updateTaskStatus(task.id, "fetching");
 
     const stocks = await getRealtimeStockQuotes({
       fields: getIndicatorFields(quotesBaseIndicatorMapping)
@@ -34,7 +34,7 @@ export const seedStockBase = async () => {
       return;
     }
 
-    await updateBatchStatus(batch.id, "transforming");
+    await updateTaskStatus(task.id, "transforming");
 
     let list = transformStockData(stocks, quotesBaseIndicatorMapping);
     // newPrice > 0, 过滤掉停牌的股票
@@ -42,7 +42,7 @@ export const seedStockBase = async () => {
 
     print(`start write stock base`);
 
-    const result = await prisma.stock.createMany({
+    const result = await prisma.stockBasic.createMany({
       data: list.map(item => {
         const { newPrice, ...rest } = item;
         return {
@@ -53,19 +53,19 @@ export const seedStockBase = async () => {
       skipDuplicates: true
     });
 
-    await updateBatchStatus(batch.id, "completed", result.count);
+    await updateTaskStatus(task.id, "completed", result.count);
 
     print(`write stock base success ${result.count}`);
   } catch (error) {
-    await updateBatchStatus(batch.id, "failed");
+    await updateTaskStatus(task.id, "failed");
     print(`getStockBase error: ${error}`);
   }
 };
 
 export const initStockBaseData = async () => {
-  const hasStockBase = await checkStockBase();
+  const hasStockBasic = await checkStockBasic();
 
-  if (hasStockBase) {
+  if (hasStockBasic) {
     print("stock base available! No need to seed.");
     return;
   }

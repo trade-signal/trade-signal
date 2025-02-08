@@ -5,7 +5,7 @@ import {
   transformStockData
 } from "@/cron/util";
 import dayjs from "dayjs";
-import { updateBatchStatus, initBatch } from "@/cron/common/batch";
+import { updateTaskStatus, initTask } from "@/cron/common/task";
 import { getRealtimeStockQuotes, quotesIndicatorMapping } from "./api";
 
 const spider_name = "stock_quotes";
@@ -16,7 +16,7 @@ export const cleanStockQuotes = async (days: number = 7) => {
   try {
     print(`clean stock quotes older than ${days} days`);
 
-    const tradingDays = await prisma.stockQuotesRealTime.findMany({
+    const tradingDays = await prisma.stockQuotes.findMany({
       select: { date: true },
       distinct: ["date"],
       orderBy: { date: "desc" }
@@ -24,7 +24,7 @@ export const cleanStockQuotes = async (days: number = 7) => {
 
     if (tradingDays.length > days) {
       const cutoffDate = tradingDays[days - 1].date;
-      const result = await prisma.stockQuotesRealTime.deleteMany({
+      const result = await prisma.stockQuotes.deleteMany({
         where: { date: { lt: cutoffDate } }
       });
 
@@ -39,7 +39,7 @@ export const cleanStockQuotes = async (days: number = 7) => {
 };
 
 const seedRealtimeStockQuotes = async (list: any[]) => {
-  const result = await prisma.stockQuotesRealTime.createMany({
+  const result = await prisma.stockQuotes.createMany({
     data: list.map(item => ({
       ...item,
       ts: Date.now()
@@ -52,7 +52,7 @@ const seedLatestStockQuotes = async (list: any[]) => {
   const lastUpdateTs = Date.now();
 
   for (const item of list) {
-    await prisma.stockQuotesLatest.upsert({
+    await prisma.stockQuotes.upsert({
       where: {
         date_code: {
           date: item.date,
@@ -68,12 +68,12 @@ const seedLatestStockQuotes = async (list: any[]) => {
 export const seedStockQuotes = async (date?: string) => {
   const currentDate = dayjs(date).format("YYYY-MM-DD");
 
-  const batch = await initBatch("stock_quotes", "eastmoney");
+  const task = await initTask("stock_quotes", "eastmoney");
 
   try {
     print(`start get realtimeStockQuotes`);
 
-    await updateBatchStatus(batch.id, "fetching");
+    await updateTaskStatus(task.id, "fetching");
 
     const stocks = await getRealtimeStockQuotes({
       fields: getIndicatorFields(quotesIndicatorMapping)
@@ -86,7 +86,7 @@ export const seedStockQuotes = async (date?: string) => {
       return;
     }
 
-    await updateBatchStatus(batch.id, "transforming");
+    await updateTaskStatus(task.id, "transforming");
 
     let list = transformStockData(stocks, quotesIndicatorMapping);
     // newPrice > 0, 过滤掉停牌的股票
@@ -102,17 +102,17 @@ export const seedStockQuotes = async (date?: string) => {
     await seedRealtimeStockQuotes(list);
     await seedLatestStockQuotes(list);
 
-    await updateBatchStatus(batch.id, "completed", list.length);
+    await updateTaskStatus(task.id, "completed", list.length);
 
     print(`write realtimeStockQuotes success ${list.length}`);
   } catch (error) {
-    await updateBatchStatus(batch.id, "failed");
+    await updateTaskStatus(task.id, "failed");
     print(`getRealtimeStockQuotes error: ${error}`);
   }
 };
 
 export const checkStockQuotes = async (date?: string) => {
-  const quotes = await prisma.stockQuotesRealTime.findMany({
+  const quotes = await prisma.stockQuotes.findMany({
     where: { date: dayjs(date).format("YYYY-MM-DD") }
   });
   return quotes.length > 0;

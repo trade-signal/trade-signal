@@ -4,7 +4,8 @@ import dayjs from "dayjs";
 import { delayRandom } from "@/shared/util";
 import { getCurrentUnixTime } from "@/shared/date";
 import prisma from "@/prisma/db";
-import { initBatch, updateBatchStatus } from "@/cron/common/batch";
+import { initTask, updateTaskStatus } from "@/cron/common/task";
+
 import { createLogger } from "@/cron/util";
 
 const spider_name = "cls";
@@ -289,13 +290,13 @@ const transformClsNews = (data: Map<string, ClsNews[]>) => {
 };
 
 export const seedClsNews = async () => {
-  const batch = await initBatch("news", "cls");
+  const task = await initTask("news", "cls");
 
   try {
-    await updateBatchStatus(batch.id, "fetching");
+    await updateTaskStatus(task.id, "fetching");
     const newsData = await getNews();
 
-    await updateBatchStatus(batch.id, "transforming");
+    await updateTaskStatus(task.id, "transforming");
     const transformedNews = transformClsNews(newsData);
 
     print(`transformed ${transformedNews.length} news`);
@@ -306,11 +307,12 @@ export const seedClsNews = async () => {
       data: transformedNews,
       skipDuplicates: true // 跳过重复记录
     });
-    await updateBatchStatus(batch.id, "completed", transformedNews.length);
+    await updateTaskStatus(task.id, "completed", transformedNews.length);
 
     print(`write news success`);
   } catch (error) {
-    await updateBatchStatus(batch.id, "failed");
+    await updateTaskStatus(task.id, "failed");
     print(`getNews error: ${error}`);
   }
+
 };
