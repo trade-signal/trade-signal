@@ -16,7 +16,7 @@ import {
   fetchStockQuotes
 } from "./stock/stock_quotes";
 
-import { initStockBasic, fetchStockBasic } from "./stock/stock_base";
+import { initStockBasic, fetchStockBasic } from "./stock/stock_basic";
 import { isTradeDate, refreshTradeDates } from "./stock/trade_date";
 
 import {

@@ -31,13 +31,66 @@ const getEastMoneyStockQuotes = async (params: any) => {
 };
 
 /**
+ * 沪深京 A 股-基础信息
+ *
+ * 东方财富网-沪深京 A 股-基础信息
+ * https://quote.eastmoney.com/center/gridlist.html#hs_a_board
+ */
+export const getStockBasic = async ({ fields }: { fields: string }) => {
+  const baseParams = {
+    pn: "1",
+    pz: "50000",
+    po: "1",
+    np: "1",
+    ut: "bd1d9ddb04089700cf9c27f6f7426281",
+    fltt: "2",
+    invt: "2",
+    fid: "f3",
+    fields
+  };
+
+  const sh_data = await getEastMoneyStockQuotes({
+    ...baseParams,
+    fs: "m:1+t:2,m:1+t:23"
+  });
+  sh_data.forEach((item: any) => {
+    item.market = "sh";
+  });
+
+  const sz_data = await getEastMoneyStockQuotes({
+    ...baseParams,
+    fs: "m:0+t:6,m:0+t:80"
+  });
+  sz_data.forEach((item: any) => {
+    item.market = "sz";
+  });
+
+  const bj_data = await getEastMoneyStockQuotes({
+    ...baseParams,
+    fs: "m:0+t:81+s:2048"
+  });
+  bj_data.forEach((item: any) => {
+    item.market = "bj";
+  });
+
+  return [...sh_data, ...sz_data, ...bj_data];
+};
+
+const formatMarketId = (market: string) => {
+  if (market === "sh") return 1;
+  if (market === "sz") return 0;
+  if (market === "bj") return 0;
+  return 0;
+};
+
+/**
  * 沪深京 A 股-实时行情
  *
  * 东方财富网-沪深京 A 股-实时行情
  * https://quote.eastmoney.com/center/gridlist.html#hs_a_board
  *
  */
-export const getRealtimeStockQuotes = ({ fields }: { fields: string }) => {
+export const getStockQuotes = ({ fields }: { fields: string }) => {
   return getEastMoneyStockQuotes({
     pn: "1",
     pz: "50000",
@@ -58,7 +111,7 @@ export const getRealtimeStockQuotes = ({ fields }: { fields: string }) => {
  * 东方财富网-沪深京 A 股-指数信息
  * https://quote.eastmoney.com/center/hszs.html
  */
-export const getRealTimeIndexQuotes = ({ fields }: { fields: string }) => {
+export const getStockIndexQuotes = ({ fields }: { fields: string }) => {
   return getEastMoneyStockQuotes({
     pn: "1",
     pz: "50",

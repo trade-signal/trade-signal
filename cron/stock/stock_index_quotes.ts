@@ -6,9 +6,9 @@ import {
 } from "@/cron/util";
 import dayjs from "dayjs";
 import Task from "@/cron/common/task";
-import { getRealTimeIndexQuotes, quotesIndexIndicatorMapping } from "./api";
+import { getStockIndexQuotes, quotesIndexIndicatorMapping } from "./api";
 
-const spider_name = "stock_index";
+const spider_name = "stock_index_quotes";
 const print = createLogger(spider_name, "stock");
 
 const upsertStockIndexQuotes = async (list: any[]) => {
@@ -51,7 +51,7 @@ export const fetchStockIndexQuotes = async (date?: string) => {
 
     await task.updateStatus("fetching");
 
-    const stocks = await getRealTimeIndexQuotes({
+    const stocks = await getStockIndexQuotes({
       fields: getIndicatorFields(quotesIndexIndicatorMapping)
     });
 

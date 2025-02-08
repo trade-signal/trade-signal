@@ -5,7 +5,7 @@ import {
   transformStockData
 } from "@/cron/util";
 import Task from "@/cron/common/task";
-import { getRealtimeStockQuotes, quotesBaseIndicatorMapping } from "./api";
+import { getStockBasic, quotesBaseIndicatorMapping } from "./api";
 
 const spider_name = "stock_base";
 const print = createLogger(spider_name, "stock");
@@ -15,13 +15,17 @@ export const checkStockBasic = async () => {
   return stocks.length > 0;
 };
 
-const upsertStockBasic = async (list: any[]) => {
+const upsertStockBasic = async (list: any[], marketMapping: any) => {
   for (const item of list) {
     delete item.newPrice;
+
+    item.market = marketMapping[item.code];
+    item.status = item.newPrice > 0 ? "active" : "suspended";
+
     await prisma.stockBasic.upsert({
       where: { code: item.code },
-      update: { ...item, status: item.newPrice > 0 ? "active" : "suspended" },
-      create: { ...item, status: item.newPrice > 0 ? "active" : "suspended" }
+      update: { ...item },
+      create: { ...item }
     });
   }
 };
@@ -34,7 +38,7 @@ export const fetchStockBasic = async () => {
 
     await task.updateStatus("fetching");
 
-    const stocks = await getRealtimeStockQuotes({
+    const stocks = await getStockBasic({
       fields: getIndicatorFields(quotesBaseIndicatorMapping)
     });
 
@@ -47,13 +51,18 @@ export const fetchStockBasic = async () => {
 
     await task.updateStatus("transforming");
 
+    const marketMapping = stocks.reduce((acc, cur) => {
+      acc[cur[quotesBaseIndicatorMapping.code.map]] = cur.market;
+      return acc;
+    }, {});
+
     let list = transformStockData(stocks, quotesBaseIndicatorMapping);
     // newPrice > 0, 过滤掉停牌的股票
     list = list.filter(item => item.newPrice > 0);
 
     print(`start upsert stock basic`);
 
-    await upsertStockBasic(list);
+    await upsertStockBasic(list, marketMapping);
 
     await task.updateStatus("completed", list.length);
 
