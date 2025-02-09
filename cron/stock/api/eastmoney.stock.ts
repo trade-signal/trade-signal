@@ -182,3 +182,21 @@ export const getStockMinuteKline = (marketId: number, code: string) => {
     secid: `${marketId}.${code}`
   });
 };
+
+/**
+ * 沪深京 A 股-指数-分时行情
+ *
+ * 东方财富网-沪深京 A 股-指数-分时行情
+ * https://quote.eastmoney.com/center/hszs.html
+ */
+export const getStockIndexMinuteKline = (marketId: number, code: string) => {
+  return getEastMoneyStockMinuteKline({
+    fields1: "f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14,f17",
+    fields2: "f51,f52,f53,f54,f55,f56,f57,f58",
+    ut: "bd1d9ddb04089700cf9c27f6f7426281",
+    ndays: "1",
+    iscr: "1",
+    iscca: "0",
+    secid: `${marketId}.${code}`
+  });
+};

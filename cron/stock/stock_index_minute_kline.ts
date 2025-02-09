@@ -1,27 +1,19 @@
-import { StockBasic } from "@prisma/client";
+import { StockIndexBasic } from "@prisma/client";
 import prisma from "@/prisma/db";
 import { createLogger } from "@/cron/util";
 import dayjs from "dayjs";
 import Task from "@/cron/common/task";
-import { getStockMinuteKline } from "./api";
+import { getStockIndexMinuteKline } from "./api";
 import { delay } from "@/shared/util";
 
-const spider_name = "stock_minute_kline";
+const spider_name = "stock_index_minute_kline";
 const print = createLogger(spider_name, "stock");
 
-const transformStockMinuteKline = (klines: any[]) => {
+const transformStockIndexMinuteKline = (klines: any[]) => {
   return klines.map(item => {
-    // 2025-02-07 09:15,15.48,15.48,15.48,15.48,0,0.00,15.480
-    const [
-      time,
-      openPrice,
-      closePrice,
-      highPrice,
-      lowPrice,
-      volume,
-      amount,
-      newPrice
-    ] = item.split(",");
+    // 2025-02-07 09:30,3269.23,3269.23,3269.23,3269.23,3272.251
+    const [time, openPrice, closePrice, highPrice, lowPrice, newPrice] =
+      item.split(",");
     return {
       date: dayjs(time).format("YYYY-MM-DD"),
       time: dayjs(time).format("HH:mm:ss"),
@@ -29,25 +21,23 @@ const transformStockMinuteKline = (klines: any[]) => {
       highPrice: parseFloat(highPrice),
       lowPrice: parseFloat(lowPrice),
       closePrice: parseFloat(closePrice),
-      volume: parseFloat(volume),
-      amount: parseFloat(amount),
       newPrice: parseFloat(newPrice)
     };
   });
 };
 
-const getStockMinute = async (stock: StockBasic) => {
+const getStockIndexMinute = async (stock: StockIndexBasic) => {
   const { code, marketId } = stock;
 
-  const klines = await getStockMinuteKline(marketId, code);
+  const klines = await getStockIndexMinuteKline(marketId, code);
 
   if (klines.length === 0)
-    throw new Error(`no stock minute kline data for ${code}`);
+    throw new Error(`no index minute kline data for ${code}`);
 
-  const list = transformStockMinuteKline(klines);
+  const list = transformStockIndexMinuteKline(klines);
   const data = list.map(item => ({ code, period: 1, ...item }));
 
-  const result = await prisma.stockMinuteKline.createMany({
+  const result = await prisma.stockIndexMinuteKline.createMany({
     data: data as any,
     skipDuplicates: true
   });
@@ -55,21 +45,21 @@ const getStockMinute = async (stock: StockBasic) => {
   return result;
 };
 
-export const fetchStockMinuteKline = async () => {
-  const task = new Task("stock_minute_kline", "eastmoney");
+export const fetchStockIndexMinuteKline = async () => {
+  const task = new Task("stock_index_minute_kline", "eastmoney");
 
-  const stocks = await prisma.stockBasic.findMany({});
+  const stocks = await prisma.stockIndexBasic.findMany({});
 
   try {
     await task.updateStatus("fetching");
 
-    print(`fetching ${stocks.length} stocks`);
+    print(`fetching ${stocks.length} index stocks`);
 
     while (stocks.length) {
-      const batchStocks = stocks.splice(0, 100);
+      const batchStocks = stocks.splice(0, 10);
 
       try {
-        print(`start upsert ${batchStocks.length} stocks`);
+        print(`start upsert ${batchStocks.length} index stocks`);
 
         await Promise.all(
           batchStocks.map(
@@ -79,18 +69,18 @@ export const fetchStockMinuteKline = async () => {
 
                 while (retries > 0) {
                   try {
-                    await getStockMinute(stock);
+                    await getStockIndexMinute(stock);
                     await delay(300);
                     resolve(true);
                     break;
                   } catch (error) {
                     retries--;
                     if (retries === 0) {
-                      print(`get ${stock.code} error: ${error}`);
+                      print(`get ${stock.code} index error: ${error}`);
                       reject(error);
                     } else {
                       print(
-                        `get ${stock.code} error: ${error}, retry ${retries} times`
+                        `get ${stock.code} index error: ${error}, retry ${retries} times`
                       );
                       await delay(1000);
                     }
@@ -101,33 +91,33 @@ export const fetchStockMinuteKline = async () => {
         );
 
         print(
-          `upsert ${batchStocks.length} stocks success, remaining ${stocks.length}`
+          `upsert ${batchStocks.length} index stocks success, remaining ${stocks.length}`
         );
       } catch (error) {
-        print(`get stock minute kline error: ${error}`);
+        print(`get index minute kline error: ${error}`);
         stocks.push(...batchStocks);
 
         await delay(5 * 1000);
 
-        print(`retry ${batchStocks.length} stocks`);
+        print(`retry ${batchStocks.length} index stocks`);
       }
     }
 
-    print("fetch all stocks success");
+    print("fetch all index stocks success");
 
     await task.updateStatus("completed", stocks.length);
   } catch (error) {
     await task.updateStatus("failed");
-    print(`get stock minute kline error: ${error}`);
+    print(`get index minute kline error: ${error}`);
   }
 };
 
 // 清除超过指定天数的数据
-export const cleanStockMinuteKline = async (days: number = 7) => {
+export const cleanStockIndexMinuteKline = async (days: number = 7) => {
   try {
-    print(`clean stock minute kline older than ${days} days`);
+    print(`clean index minute kline older than ${days} days`);
 
-    const tradingDays = await prisma.stockMinuteKline.findMany({
+    const tradingDays = await prisma.stockIndexMinuteKline.findMany({
       select: { date: true },
       distinct: ["date"],
       orderBy: { date: "desc" }
@@ -135,16 +125,16 @@ export const cleanStockMinuteKline = async (days: number = 7) => {
 
     if (tradingDays.length > days) {
       const cutoffDate = tradingDays[days - 1].date;
-      const result = await prisma.stockMinuteKline.deleteMany({
+      const result = await prisma.stockIndexMinuteKline.deleteMany({
         where: { date: { lt: cutoffDate } }
       });
 
-      print(`clean ${result.count} stock minute kline data`);
+      print(`clean ${result.count} index minute kline data`);
       return;
     }
 
-    print("no stock minute kline data to clean");
+    print("no index minute kline data to clean");
   } catch (error) {
-    print(`clean stock minute kline error: ${error}`);
+    print(`clean index minute kline error: ${error}`);
   }
 };

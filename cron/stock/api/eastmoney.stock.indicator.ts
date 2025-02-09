@@ -129,17 +129,3 @@ export const quotesIndexIndicatorMapping = {
   ...priceIndicators,
   ...tradingIndicators
 };
-
-// 股票指标 - 分时数据
-export const quotesMinuteIndicatorMapping = {
-  ...basicIndicators,
-  ...priceIndicators,
-  ...tradingIndicators
-};
-
-// 股票指标 - 指数 - 分时数据
-export const quotesIndexMinuteIndicatorMapping = {
-  ...basicIndicators,
-  ...priceIndicators,
-  ...tradingIndicators
-};

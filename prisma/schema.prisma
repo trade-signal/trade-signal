@@ -459,8 +459,6 @@ model StockIndexMinuteKline {
   highPrice  Float // 最高价
   lowPrice   Float // 最低价
   closePrice Float // 收盘价
-  volume     Float // 成交量
-  amount     Float // 成交额
   newPrice   Float // 最新价
   time       String @db.VarChar(8) // 交易时间 HH:mm:ss
 
