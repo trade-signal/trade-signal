@@ -36,7 +36,7 @@ export const getStockScreener = async (page: number, pageSize: number) => {
 
     return response;
   } catch (error) {
-    print(`getStockScreener error: ${error}`);
+    print(`get ${spider_name} stock screener error: ${error}`);
     return [];
   }
 };

@@ -15,11 +15,10 @@ export const checkStockBasic = async () => {
   return stocks.length > 0;
 };
 
-const upsertStockBasic = async (list: any[], marketMapping: any) => {
+const upsertStockBasic = async (list: any[]) => {
   for (const item of list) {
     delete item.newPrice;
 
-    item.market = marketMapping[item.code];
     item.status = item.newPrice > 0 ? "active" : "suspended";
 
     await prisma.stockBasic.upsert({
@@ -51,18 +50,13 @@ export const fetchStockBasic = async () => {
 
     await task.updateStatus("transforming");
 
-    const marketMapping = stocks.reduce((acc, cur) => {
-      acc[cur[quotesBaseIndicatorMapping.code.map]] = cur.market;
-      return acc;
-    }, {});
-
     let list = transformStockData(stocks, quotesBaseIndicatorMapping);
     // newPrice > 0, 过滤掉停牌的股票
     list = list.filter(item => item.newPrice > 0);
 
     print(`start upsert stock basic`);
 
-    await upsertStockBasic(list, marketMapping);
+    await upsertStockBasic(list);
 
     await task.updateStatus("completed", list.length);
 

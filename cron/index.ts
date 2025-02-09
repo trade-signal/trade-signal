@@ -128,8 +128,8 @@ const runSchedulerJobs = () => {
 };
 
 const runSeedJobs = async (runDate: string) => {
+  await Promise.all([initStockBasic()]);
   await Promise.all([
-    initStockBasic(),
     initStockScreener(runDate),
     initStockQuotes(runDate),
     initStockIndexQuotes(runDate),
@@ -140,16 +140,17 @@ const runSeedJobs = async (runDate: string) => {
 async function main() {
   const runDate = getRunDate();
 
+  const isProd = process.env.NODE_ENV === "production";
+
   logger.info(`current time: ${dayjs().format("YYYY-MM-DD HH:mm:ss")}`);
   logger.info(`run date: ${runDate}`);
   logger.info(`run environment: ${process.env.NODE_ENV || "development"}`);
 
-  if (process.env.NODE_ENV === "production") {
+  if (isProd) {
     logger.info("refresh trade dates");
     await refreshTradeDates();
     logger.info("run scheduler jobs");
     runSchedulerJobs();
-    return;
   }
 
   logger.info("Running seed jobs...");

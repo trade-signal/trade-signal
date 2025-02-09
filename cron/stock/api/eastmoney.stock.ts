@@ -9,7 +9,7 @@ const getRandomNumber = () => {
   return Math.floor(Math.random() * 100) + 1;
 };
 
-// 获取东方财富网股票数据
+// 获取股票 行情数据
 const getEastMoneyStockQuotes = async (params: any) => {
   try {
     const randomNumber = getRandomNumber();
@@ -22,10 +22,56 @@ const getEastMoneyStockQuotes = async (params: any) => {
     }
 
     throw new Error(
-      `getEastMoneyStockQuotes error: ${response.message || "unknown error"}`
+      `get ${spider_name} stock quotes error: ${
+        response.message || "unknown error"
+      }`
     );
   } catch (error) {
-    print(`getEastMoneyStockQuotes error: ${error}`);
+    print(`get ${spider_name} stock quotes error: ${error}`);
+    return [];
+  }
+};
+
+// 获取股票 k线数据
+const getEastMoneyStockKline = async (params: any) => {
+  try {
+    const url = `http://push2his.eastmoney.com/api/qt/stock/kline/get`;
+
+    const response = await get(url, params);
+
+    if (response.data && response.data.klines) {
+      return response.data.klines;
+    }
+
+    throw new Error(
+      `get ${spider_name} stock kline error: ${
+        response.message || "unknown error"
+      }`
+    );
+  } catch (error) {
+    print(`get ${spider_name} stock kline error: ${error}`);
+    return [];
+  }
+};
+
+// 获取股票 分时数据
+const getEastMoneyStockMinuteKline = async (params: any) => {
+  try {
+    const url = `https://72.push2.eastmoney.com/api/qt/stock/trends2/get`;
+
+    const response = await get(url, params);
+
+    if (response.data && response.data.trends) {
+      return response.data.trends;
+    }
+
+    throw new Error(
+      `get ${spider_name} stock minute kline error: ${
+        response.message || "unknown error"
+      }`
+    );
+  } catch (error) {
+    print(`get ${spider_name} stock minute kline error: ${error}`);
     return [];
   }
 };
@@ -37,7 +83,7 @@ const getEastMoneyStockQuotes = async (params: any) => {
  * https://quote.eastmoney.com/center/gridlist.html#hs_a_board
  */
 export const getStockBasic = async ({ fields }: { fields: string }) => {
-  const baseParams = {
+  return getEastMoneyStockQuotes({
     pn: "1",
     pz: "50000",
     po: "1",
@@ -46,41 +92,9 @@ export const getStockBasic = async ({ fields }: { fields: string }) => {
     fltt: "2",
     invt: "2",
     fid: "f3",
+    fs: "m:0 t:6,m:0 t:80,m:1 t:2,m:1 t:23,m:0 t:81 s:2048",
     fields
-  };
-
-  const sh_data = await getEastMoneyStockQuotes({
-    ...baseParams,
-    fs: "m:1+t:2,m:1+t:23"
   });
-  sh_data.forEach((item: any) => {
-    item.market = "sh";
-  });
-
-  const sz_data = await getEastMoneyStockQuotes({
-    ...baseParams,
-    fs: "m:0+t:6,m:0+t:80"
-  });
-  sz_data.forEach((item: any) => {
-    item.market = "sz";
-  });
-
-  const bj_data = await getEastMoneyStockQuotes({
-    ...baseParams,
-    fs: "m:0+t:81+s:2048"
-  });
-  bj_data.forEach((item: any) => {
-    item.market = "bj";
-  });
-
-  return [...sh_data, ...sz_data, ...bj_data];
-};
-
-const formatMarketId = (market: string) => {
-  if (market === "sh") return 1;
-  if (market === "sz") return 0;
-  if (market === "bj") return 0;
-  return 0;
 };
 
 /**
@@ -125,5 +139,23 @@ export const getStockIndexQuotes = ({ fields }: { fields: string }) => {
     fid: "",
     fs: "b:MK0010",
     fields
+  });
+};
+
+/**
+ * 沪深京 A 股-分时行情
+ *
+ * 东方财富网-沪深京 A 股-分时行情
+ * https://quote.eastmoney.com/concept/sh603777.html?from=classic
+ */
+export const getStockMinuteKline = (marketId: number, code: string) => {
+  return getEastMoneyStockMinuteKline({
+    fields1: "f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14,f17",
+    fields2: "f51,f52,f53,f54,f55,f56,f57,f58",
+    ut: "fa5fd1943c7b386f172d6893dbfba10b",
+    ndays: "1",
+    iscr: "1",
+    iscca: "0",
+    secid: `${marketId}.${code}`
   });
 };

@@ -101,7 +101,8 @@ export const quotesBaseIndicatorMapping = {
   ...basicIndicators,
   newPrice: priceIndicators.newPrice,
   industry: otherIndicators.industry,
-  listingDate: otherIndicators.listingDate
+  listingDate: otherIndicators.listingDate,
+  marketId: { type: IndicatorType.NUMBER, cn: "市场ID", map: "f13" }
 };
 
 // 股票指标 - 日线
