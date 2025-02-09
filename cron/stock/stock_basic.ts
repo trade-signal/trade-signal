@@ -19,8 +19,6 @@ const upsertStockBasic = async (list: any[]) => {
   for (const item of list) {
     delete item.newPrice;
 
-    item.status = item.newPrice > 0 ? "active" : "suspended";
-
     await prisma.stockBasic.upsert({
       where: { code: item.code },
       update: { ...item },
@@ -30,7 +28,7 @@ const upsertStockBasic = async (list: any[]) => {
 };
 
 export const fetchStockBasic = async () => {
-  const task = new Task("stock_base", "eastmoney");
+  const task = new Task("stock_basic", "eastmoney");
 
   try {
     print(`start get stock basic`);

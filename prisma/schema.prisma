@@ -80,18 +80,16 @@ model VerificationToken {
 
 // ============================== 股票数据 ==============================
 
-// 股票基础信息表
+// 股票 基础信息表
 model StockBasic {
   id String @id @default(cuid())
 
   // 基本信息
-  code        String  @unique @db.VarChar(6) // 股票代码
-  name        String  @db.VarChar(20) // 股票名称
-  industry    String  @db.VarChar(50) // 所处行业
-  listingDate String  @db.VarChar(10) // 上市时间
-  marketId    Int     @default(0) // 市场ID
-  status      String  @default("active") // 状态：active(正常)、suspended(停牌)、delisted(退市)
-  description String? @db.Text // 公司描述
+  code        String @unique @db.VarChar(6) // 股票代码
+  name        String @db.VarChar(20) // 股票名称
+  industry    String @db.VarChar(50) // 所处行业
+  listingDate String @db.VarChar(10) // 上市时间
+  marketId    Int    @default(0) // 市场ID
 
   // 系统字段
   createdAt DateTime @default(now())
@@ -99,8 +97,24 @@ model StockBasic {
 
   @@index([code]) // 代码索引
   @@index([industry]) // 行业索引
-  @@index([status]) // 状态索引
   @@map("stock_basic")
+}
+
+// 股指 基础信息表
+model StockIndexBasic {
+  id String @id @default(cuid())
+
+  // 基本信息
+  code     String @unique @db.VarChar(6) // 指数代码
+  name     String @db.VarChar(20) // 指数名称
+  marketId Int    @default(0) // 市场ID
+
+  // 系统字段
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([code]) // 代码索引
+  @@map("stock_index_basic")
 }
 
 // ============================== 股票选股 ==============================
@@ -367,66 +381,6 @@ model StockQuotes {
   @@map("stock_quotes")
 }
 
-// 股票分时K线
-model StockMinuteKline {
-  id String @id @default(cuid())
-
-  // 基本信息
-  date   String @db.VarChar(10) // 交易日期
-  time   String @db.VarChar(8) // 交易时间 HH:mm:ss
-  code   String @db.VarChar(6) // 股票代码
-  period Int    @default(1) // K线周期(分钟)
-
-  // 价格数据
-  openPrice  Float // 开盘价
-  highPrice  Float // 最高价
-  lowPrice   Float // 最低价
-  closePrice Float // 收盘价
-  volume     Float // 成交量
-  amount     Float // 成交额
-
-  // 系统字段
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([date, time, code, period])
-  @@index([code, date])
-  @@map("stock_minute_kline")
-}
-
-// 股票日K线
-model StockDailyKline {
-  id String @id @default(cuid())
-
-  // 基本信息
-  date String @db.VarChar(10) // 交易日期
-  code String @db.VarChar(6) // 股票代码
-
-  // 价格数据
-  openPrice     Float // 开盘价
-  highPrice     Float // 最高价
-  lowPrice      Float // 最低价
-  closePrice    Float // 收盘价
-  preClosePrice Float // 前收盘价
-
-  // 成交数据
-  volume       Float // 成交量
-  amount       Float // 成交额
-  changeRate   Float // 涨跌幅
-  upsDowns     Float // 涨跌额
-  turnoverRate Float // 换手率
-
-  // 系统字段
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([date, code])
-  @@index([date])
-  @@index([code])
-  @@index([code, date])
-  @@map("stock_daily_kline")
-}
-
 // 股指行情
 model StockIndexQuotes {
   id String @id @default(cuid())
@@ -463,13 +417,40 @@ model StockIndexQuotes {
   @@map("stock_index_quotes")
 }
 
+// 股票分时K线
+model StockMinuteKline {
+  id String @id @default(cuid())
+
+  // 基本信息
+  date   String @db.VarChar(10) // 交易日期
+  code   String @db.VarChar(6) // 股票代码
+  period Int    @default(1) // K线周期(分钟)
+
+  // 价格数据
+  openPrice  Float // 开盘价
+  highPrice  Float // 最高价
+  lowPrice   Float // 最低价
+  closePrice Float // 收盘价
+  volume     Float // 成交量
+  amount     Float // 成交额
+  newPrice   Float // 最新价
+  time       String @db.VarChar(8) // 交易时间 HH:mm:ss
+
+  // 系统字段
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([date, time, code, period])
+  @@index([code, date])
+  @@map("stock_minute_kline")
+}
+
 // 股指分时K线
 model StockIndexMinuteKline {
   id String @id @default(cuid())
 
   // 基本信息
   date   String @db.VarChar(10) // 交易日期
-  time   String @db.VarChar(8) // 交易时间 HH:mm:ss
   code   String @db.VarChar(6) // 指数代码
   period Int    @default(1) // K线周期(分钟)
 
@@ -480,6 +461,8 @@ model StockIndexMinuteKline {
   closePrice Float // 收盘价
   volume     Float // 成交量
   amount     Float // 成交额
+  newPrice   Float // 最新价
+  time       String @db.VarChar(8) // 交易时间 HH:mm:ss
 
   // 系统字段
   createdAt DateTime @default(now())
@@ -488,38 +471,6 @@ model StockIndexMinuteKline {
   @@unique([date, time, code, period])
   @@index([code, date])
   @@map("stock_index_minute_kline")
-}
-
-// 股指日K线
-model StockIndexDailyKline {
-  id String @id @default(cuid())
-
-  // 基本信息
-  date String @db.VarChar(10) // 交易日期
-  code String @db.VarChar(6) // 指数代码
-
-  // 价格数据
-  openPrice     Float // 开盘价
-  highPrice     Float // 最高价
-  lowPrice      Float // 最低价
-  closePrice    Float // 收盘价
-  preClosePrice Float // 前收盘价
-
-  // 成交数据
-  volume     Float // 成交量
-  amount     Float // 成交额
-  changeRate Float // 涨跌幅
-  upsDowns   Float // 涨跌额
-
-  // 系统字段
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([date, code])
-  @@index([date])
-  @@index([code])
-  @@index([code, date])
-  @@map("stock_index_daily_kline")
 }
 
 // ============================== 新闻 ==============================

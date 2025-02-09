@@ -98,6 +98,29 @@ export const getStockBasic = async ({ fields }: { fields: string }) => {
 };
 
 /**
+ * 沪深京 A 股-指数-基础信息
+ *
+ * 东方财富网-沪深京 A 股-指数-基础信息
+ * https://quote.eastmoney.com/center/hszs.html
+ */
+export const getStockIndexBasic = async ({ fields }: { fields: string }) => {
+  return getEastMoneyStockQuotes({
+    pn: "1",
+    pz: "50",
+    po: "1",
+    np: "1",
+    ut: "bd1d9ddb04089700cf9c27f6f7426281",
+    fltt: "2",
+    invt: "2",
+    dect: "1",
+    wbp2u: "|0|1|0|web",
+    fid: "",
+    fs: "b:MK0010",
+    fields
+  });
+};
+
+/**
  * 沪深京 A 股-实时行情
  *
  * 东方财富网-沪深京 A 股-实时行情

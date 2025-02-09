@@ -17,6 +17,10 @@ import {
 } from "./stock/stock_quotes";
 
 import { initStockBasic, fetchStockBasic } from "./stock/stock_basic";
+import {
+  initStockIndexBasic,
+  fetchStockIndexBasic
+} from "./stock/stock_index_basic";
 import { isTradeDate, refreshTradeDates } from "./stock/trade_date";
 
 import {
@@ -82,6 +86,7 @@ const runStockScheduleJobs = () => {
     print(`trigger fetch stock quotes daily`);
 
     await fetchStockBasic();
+    await fetchStockIndexBasic();
     await fetchStockQuotes();
     await fetchStockScreener();
   }).start();
@@ -128,7 +133,7 @@ const runSchedulerJobs = () => {
 };
 
 const runSeedJobs = async (runDate: string) => {
-  await Promise.all([initStockBasic()]);
+  await Promise.all([initStockBasic(), initStockIndexBasic()]);
   await Promise.all([
     initStockScreener(runDate),
     initStockQuotes(runDate),

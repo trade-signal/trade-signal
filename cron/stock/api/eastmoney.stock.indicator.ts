@@ -105,21 +105,13 @@ export const quotesBaseIndicatorMapping = {
   marketId: { type: IndicatorType.NUMBER, cn: "市场ID", map: "f13" }
 };
 
-// 股票指标 - 日线
-export const quotesDailyIndicatorMapping = {
+// 股票指标 - 指数 - 基础
+export const quotesIndexBaseIndicatorMapping = {
   ...basicIndicators,
-  ...priceIndicators,
-  ...tradingIndicators
+  marketId: { type: IndicatorType.NUMBER, cn: "市场ID", map: "f13" }
 };
 
-// 股票指标 - 指数 - 实时行情
-export const quotesIndexIndicatorMapping = {
-  ...basicIndicators,
-  ...priceIndicators,
-  ...tradingIndicators
-};
-
-// 股票指标 - 实时
+// 股票指标 - 实时行情
 export const quotesIndicatorMapping = {
   ...basicIndicators,
   ...priceIndicators,
@@ -129,4 +121,25 @@ export const quotesIndicatorMapping = {
   ...financialIndicators,
   ...sharesAndCapIndicators,
   ...otherIndicators
+};
+
+// 股票指标 - 指数 - 实时行情
+export const quotesIndexIndicatorMapping = {
+  ...basicIndicators,
+  ...priceIndicators,
+  ...tradingIndicators
+};
+
+// 股票指标 - 分时数据
+export const quotesMinuteIndicatorMapping = {
+  ...basicIndicators,
+  ...priceIndicators,
+  ...tradingIndicators
+};
+
+// 股票指标 - 指数 - 分时数据
+export const quotesIndexMinuteIndicatorMapping = {
+  ...basicIndicators,
+  ...priceIndicators,
+  ...tradingIndicators
 };

@@ -5,7 +5,8 @@ import dayjs from "dayjs";
 // 任务类型
 export type TaskType =
   | "news"
-  | "stock_base"
+  | "stock_basic"
+  | "stock_index_basic"
   | "stock_screener"
   | "stock_quotes"
   | "stock_minute_kline"
