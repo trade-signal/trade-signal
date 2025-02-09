@@ -140,13 +140,11 @@ const runSeedJobs = async (runDate: string) => {
 async function main() {
   const runDate = getRunDate();
 
-  const isProd = process.env.NODE_ENV === "production";
-
   logger.info(`current time: ${dayjs().format("YYYY-MM-DD HH:mm:ss")}`);
   logger.info(`run date: ${runDate}`);
   logger.info(`run environment: ${process.env.NODE_ENV || "development"}`);
 
-  if (isProd) {
+  if (process.env.NODE_ENV === "production") {
     logger.info("refresh trade dates");
     await refreshTradeDates();
     logger.info("run scheduler jobs");
