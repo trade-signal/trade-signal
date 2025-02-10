@@ -28,7 +28,7 @@ export const transformSymbolChartKline = (
     open: data.openPrice,
     high: data.highPrice,
     low: data.lowPrice,
-    close: data.newPrice,
+    close: data.closePrice,
     newPrice: data.newPrice
   };
 };

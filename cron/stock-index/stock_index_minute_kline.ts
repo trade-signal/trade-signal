@@ -26,7 +26,7 @@ const transformStockIndexMinuteKline = (klines: any[]) => {
   });
 };
 
-const getStockIndexMinute = async (stock: StockIndexBasic) => {
+export const getStockIndexMinute = async (stock: StockIndexBasic) => {
   const { marketId, code, name } = stock;
 
   const klines = await getStockIndexMinuteKline(marketId, code);
@@ -44,7 +44,15 @@ const getStockIndexMinute = async (stock: StockIndexBasic) => {
   return result;
 };
 
-export const fetchStockIndexMinuteKline = async () => {
+export const getStockIndexMinuteByCode = async (code: string) => {
+  const stock = await prisma.stockIndexBasic.findFirst({
+    where: { code }
+  });
+  if (stock) await getStockIndexMinute(stock);
+};
+
+// @deprecated
+const fetchStockIndexMinuteKline = async () => {
   const task = new Task("stock_index_minute_kline", "eastmoney");
 
   const stocks = await prisma.stockIndexBasic.findMany({});
@@ -92,6 +100,8 @@ export const fetchStockIndexMinuteKline = async () => {
         print(
           `upsert ${batchStocks.length} index stocks success, remaining ${stocks.length}`
         );
+
+        await delay(1000);
       } catch (error) {
         print(`get index minute kline error: ${error}`);
         stocks.push(...batchStocks);
@@ -137,5 +147,3 @@ export const cleanStockIndexMinuteKline = async (days: number = 7) => {
     print(`clean index minute kline error: ${error}`);
   }
 };
-
-fetchStockIndexMinuteKline();

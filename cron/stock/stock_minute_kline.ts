@@ -36,7 +36,7 @@ const transformStockMinuteKline = (klines: any[]) => {
   });
 };
 
-const getStockMinute = async (stock: StockBasic) => {
+export const getStockMinute = async (stock: StockBasic) => {
   const { marketId, code, name } = stock;
 
   const klines = await getStockMinuteKline(marketId, code);
@@ -54,7 +54,15 @@ const getStockMinute = async (stock: StockBasic) => {
   return result;
 };
 
-export const fetchStockMinuteKline = async () => {
+export const getStockMinuteByCode = async (code: string) => {
+  const stock = await prisma.stockBasic.findFirst({
+    where: { code }
+  });
+  if (stock) await getStockMinute(stock);
+};
+
+// @deprecated
+const fetchStockMinuteKline = async () => {
   const task = new Task("stock_minute_kline", "eastmoney");
 
   const stocks = await prisma.stockBasic.findMany({});
@@ -65,7 +73,7 @@ export const fetchStockMinuteKline = async () => {
     print(`fetching ${stocks.length} stocks`);
 
     while (stocks.length) {
-      const batchStocks = stocks.splice(0, 100);
+      const batchStocks = stocks.splice(0, 10);
 
       try {
         print(`start upsert ${batchStocks.length} stocks`);
@@ -102,6 +110,8 @@ export const fetchStockMinuteKline = async () => {
         print(
           `upsert ${batchStocks.length} stocks success, remaining ${stocks.length}`
         );
+
+        await delay(1000);
       } catch (error) {
         print(`get stock minute kline error: ${error}`);
         stocks.push(...batchStocks);

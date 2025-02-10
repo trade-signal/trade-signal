@@ -1,6 +1,7 @@
-import prisma from "@/prisma/db";
-import { StockIndexMinuteKline } from "@prisma/client";
 import { NextRequest } from "next/server";
+import { StockIndexMinuteKline } from "@prisma/client";
+import { getStockIndexMinuteByCode } from "@/cron/stock-index/stock_index_minute_kline";
+import prisma from "@/prisma/db";
 
 export type StockIndexTrends = {
   code: string;
@@ -10,6 +11,7 @@ export type StockIndexTrends = {
 
 export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;
+
   const code = searchParams.get("code");
 
   if (!code) {
@@ -27,9 +29,12 @@ export const GET = async (request: NextRequest) => {
     select: { date: true }
   });
 
+  await getStockIndexMinuteByCode(code);
+
   const trends = await prisma.stockIndexMinuteKline.findMany({
     where: {
       code,
+
       date: { equals: maxDate?.date }
     },
     orderBy: { createdAt: "asc" }

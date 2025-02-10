@@ -33,3 +33,23 @@ export const getRunDate = (config: RunDateConfig = { hour: 16, minute: 0 }) => {
 
 // 获取当前时间戳
 export const getCurrentUnixTime = () => dayjs().unix();
+
+// 是否是交易时间
+export const isTradingTime = () => {
+  const now = dayjs();
+  const hour = now.hour();
+  const minute = now.minute();
+
+  // 上午连续交易：9:30 - 11:30
+  const isMorningTrading =
+    (hour === 9 && minute >= 30) || // 9:30 及以后
+    hour === 10 || // 10点整
+    (hour === 11 && minute < 30); // 11:30 之前
+
+  // 下午连续交易：13:00 - 15:00
+  const isAfternoonTrading =
+    (hour >= 13 && hour < 15) || // 13:00 - 14:59
+    (hour === 15 && minute === 0); // 15:00
+
+  return isMorningTrading || isAfternoonTrading;
+};
