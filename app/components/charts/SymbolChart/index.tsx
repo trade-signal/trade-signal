@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ChartOptions,
   createChart,
@@ -22,7 +22,7 @@ import { ChartTrends } from "@/app/types/chart.type";
 
 const getChartColor = (
   price: number,
-  latest: ChartTrends,
+  stock: ChartTrends,
   chartType: "area" | "candle"
 ) => {
   const themeSetting: ThemeSetting = readLocalStorageValue({
@@ -30,11 +30,11 @@ const getChartColor = (
   });
 
   if (chartType === "area") {
-    return latest.close > latest.preClose
+    return stock.close > stock.preClose
       ? themeSetting.upColor ?? "rgba(236, 64, 64, 1)"
       : themeSetting.downColor ?? "rgba(46, 139, 87, 1)";
   } else {
-    return price > latest.preClose
+    return price > stock.preClose
       ? themeSetting.upColor ?? "#ec4040"
       : themeSetting.downColor ?? "#2e8b57";
   }
@@ -44,13 +44,13 @@ interface TooltipProps {
   chart: IChartApi;
   container: HTMLDivElement;
   name: string;
-  latest: ChartTrends;
+  stock: ChartTrends;
   chartType: "area" | "candle";
   isDark: boolean;
 }
 
 const createTooltip = (props: TooltipProps) => {
-  const { chart, container, name, latest, chartType, isDark } = props;
+  const { chart, container, name, stock, chartType, isDark } = props;
 
   const toolTip = document.createElement("div");
 
@@ -105,7 +105,7 @@ const createTooltip = (props: TooltipProps) => {
     const price = series.value ?? series.close;
     if (typeof price !== "number") return;
 
-    const color = getChartColor(price, latest, chartType);
+    const color = getChartColor(price, stock, chartType);
 
     const dateStr = dayjs
       .unix(param.time as number)
@@ -140,9 +140,9 @@ const createTooltip = (props: TooltipProps) => {
 };
 
 const SymbolChart = (props: SymbolChartData) => {
-  const { code, name, latest, trends } = props;
+  const { code, name, stock, trends } = props;
 
-  if (!code || !name || !latest || !trends || !trends.length) return null;
+  if (!code || !name || !stock || !trends || !trends.length) return null;
 
   const { isDark } = useThemeIcon();
 
@@ -219,15 +219,15 @@ const SymbolChart = (props: SymbolChartData) => {
       case "area":
         const areaSeries = chart.addAreaSeries({
           lineColor:
-            latest.close > latest.preClose
+            stock.close > stock.preClose
               ? hex2rgba(themeSetting.upColor ?? "#ec4040")
               : hex2rgba(themeSetting.downColor ?? "#2e8b57"),
           topColor:
-            latest.close > latest.preClose
+            stock.close > stock.preClose
               ? hex2rgba(themeSetting.upColor ?? "#ec4040", 0.28)
               : hex2rgba(themeSetting.downColor ?? "#2e8b57", 0.28),
           bottomColor:
-            latest.close > latest.preClose
+            stock.close > stock.preClose
               ? hex2rgba(themeSetting.upColor ?? "#ec4040", 0.05)
               : hex2rgba(themeSetting.downColor ?? "#2e8b57", 0.05)
         });
@@ -260,7 +260,7 @@ const SymbolChart = (props: SymbolChartData) => {
             low: item.low,
             close: item.close,
             color:
-              item.close > latest.preClose
+              item.close > stock.preClose
                 ? themeSetting.upColor ?? "#ec4040"
                 : themeSetting.downColor ?? "#2e8b57"
           }))
@@ -296,7 +296,7 @@ const SymbolChart = (props: SymbolChartData) => {
       chart,
       container: chartContainerRef.current,
       name,
-      latest,
+      stock,
       chartType,
       isDark
     });

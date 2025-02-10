@@ -7,8 +7,6 @@ interface PageProps {
 }
 
 const MarketListClient: FC<PageProps> = ({ type }) => {
-  console.log(type);
-
   return <div>MarketList</div>;
 };
 

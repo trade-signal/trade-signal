@@ -19,6 +19,6 @@ export interface ChartKline {
 export interface SymbolChartData {
   code: string;
   name: string;
-  latest: ChartTrends;
+  stock: ChartTrends;
   trends: ChartKline[];
 }

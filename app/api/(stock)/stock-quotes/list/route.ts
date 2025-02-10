@@ -5,7 +5,7 @@ import { NextRequest } from "next/server";
 export type StockQuotesList = {
   code: string;
   name: string;
-  latest: StockQuotes;
+  stock: StockQuotes;
 };
 
 export const GET = async (request: NextRequest) => {
@@ -30,7 +30,7 @@ export const GET = async (request: NextRequest) => {
   const transformData = quotes.map(stock => ({
     code: stock.code,
     name: stock.name,
-    latest: stock
+    stock
   }));
 
   return Response.json({

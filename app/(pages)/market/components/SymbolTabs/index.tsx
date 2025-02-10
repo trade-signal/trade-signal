@@ -96,14 +96,14 @@ const SymbolTabs: FC<SymbolTabsProps> = props => {
       if (data?.trends) {
         const { code, name, trends } = data;
 
-        const latest = listData?.find(item => item.code === code)?.latest;
+        const stock = listData?.find(item => item.code === code)?.stock;
 
-        if (!latest) return;
+        if (!stock) return;
 
         setSymbolChartData({
           code,
           name,
-          latest: transformSymbolChartTrends(latest),
+          stock: transformSymbolChartTrends(stock),
           trends: trends.map(trend => transformSymbolChartKline(trend))
         });
       }
@@ -147,8 +147,8 @@ const SymbolTabs: FC<SymbolTabsProps> = props => {
                 <Stack gap={0} miw={rem(160)}>
                   <Text className={styles.tabName}>{item.name}</Text>
                   <Group m={0} gap="xs" justify="space-between">
-                    <Text>{formatNumber(item.latest?.newPrice)}</Text>
-                    <Text>{formatPercent(item.latest?.changeRate || 0)}</Text>
+                    <Text>{formatNumber(item.stock.newPrice)}</Text>
+                    <Text>{formatPercent(item.stock.changeRate || 0)}</Text>
                   </Group>
                 </Stack>
               </Tabs.Tab>
