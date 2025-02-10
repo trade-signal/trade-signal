@@ -18,26 +18,12 @@ import { readLocalStorageValue } from "@mantine/hooks";
 import { THEME_SETTING_KEY, ThemeSetting } from "@/app/hooks/useThemeSetting";
 import { hex2rgba } from "@/shared/color";
 import { useThemeIcon } from "@/app/hooks/useThemeIcon";
-
-interface SymbolChartData {
-  date: string;
-  open: number;
-  high: number;
-  low: number;
-  close: number;
-  preClose: number;
-}
-
-interface SymbolChartProps {
-  code: string;
-  name: string;
-  latest: SymbolChartData;
-  trends: SymbolChartData[];
-}
+import { SymbolChartData } from "@/app/types/chart.type";
+import { ChartTrends } from "@/app/types/chart.type";
 
 const getChartColor = (
   price: number,
-  latest: SymbolChartData,
+  latest: ChartTrends,
   chartType: "area" | "candle"
 ) => {
   const themeSetting: ThemeSetting = readLocalStorageValue({
@@ -59,7 +45,7 @@ interface TooltipProps {
   chart: IChartApi;
   container: HTMLDivElement;
   name: string;
-  latest: SymbolChartData;
+  latest: ChartTrends;
   chartType: "area" | "candle";
   isDark: boolean;
 }
@@ -154,7 +140,7 @@ const createTooltip = (props: TooltipProps) => {
   return toolTip;
 };
 
-const SymbolChart = (props: SymbolChartProps) => {
+const SymbolChart = (props: SymbolChartData) => {
   const { code, name, latest, trends } = props;
 
   if (!code || !name || !latest || !trends || !trends.length) return null;
@@ -275,7 +261,7 @@ const SymbolChart = (props: SymbolChartProps) => {
             low: item.low,
             close: item.close,
             color:
-              item.close > item.preClose
+              item.close > latest.preClose
                 ? themeSetting.upColor ?? "#ec4040"
                 : themeSetting.downColor ?? "#2e8b57"
           }))

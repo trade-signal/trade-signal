@@ -7,7 +7,7 @@ import SymbolTabs from "./components/SymbolTabs";
 
 import styles from "./page.module.css";
 
-const MarketClient = (props) => {
+const MarketClient = () => {
   return (
     <ScrollArea px="4vw" py="xl" className={styles.scrollArea}>
       <Center my="xl">

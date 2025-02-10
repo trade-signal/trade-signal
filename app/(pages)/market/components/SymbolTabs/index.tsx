@@ -23,15 +23,17 @@ import { clientGet } from "@/shared/request";
 import { IconChevronCompactRight } from "@tabler/icons-react";
 import SymbolChart from "@/app/components/charts/SymbolChart";
 import { StockQuotesList } from "@/app/api/(stock)/stock-quotes/list/route";
-import { StockIndexList } from "@/app/api/(stock)/stock-index/list/route";
-import { StockQuotesTrends } from "@/app/api/(stock)/stock-quotes/trends/route";
+import { StockIndexQuotesList } from "@/app/api/(stock)/stock-index/list/route";
 import { StockIndexTrends } from "@/app/api/(stock)/stock-index/trends/route";
 import {
   formatNumber,
   formatPercent
 } from "@/app/components/tables/DataTable/util";
 import { SymbolChartData } from "@/app/types/chart.type";
-import { transformSymbolChartData } from "@/shared/chart";
+import {
+  transformSymbolChartTrends,
+  transformSymbolChartKline
+} from "@/shared/chart";
 
 import styles from "./index.module.css";
 
@@ -44,7 +46,7 @@ interface SymbolTabsProps {
   moreLink?: string;
 }
 
-type SymbolTabsData = StockQuotesList | StockIndexList;
+type SymbolTabsData = StockQuotesList | StockIndexQuotesList;
 
 const SymbolTabs: FC<SymbolTabsProps> = props => {
   const {
@@ -82,7 +84,7 @@ const SymbolTabs: FC<SymbolTabsProps> = props => {
     }
   });
 
-  const { data: trendsData, isLoading: isTrendsLoading } = useQuery({
+  const { isLoading: isTrendsLoading } = useQuery({
     queryKey: [`${queryKey}_trends`, activeTab],
     queryFn: (): Promise<StockIndexTrends> =>
       activeTab
@@ -94,16 +96,15 @@ const SymbolTabs: FC<SymbolTabsProps> = props => {
       if (data?.trends) {
         const { code, name, trends } = data;
 
-        const lastTrend = trends.at(-1);
-        if (!lastTrend) return;
+        const latest = listData?.find(item => item.code === code)?.latest;
 
-        const latest = transformSymbolChartData(lastTrend);
+        if (!latest) return;
 
         setSymbolChartData({
           code,
           name,
-          latest,
-          trends: trends.map(trend => transformSymbolChartData(trend))
+          latest: transformSymbolChartTrends(latest),
+          trends: trends.map(trend => transformSymbolChartKline(trend))
         });
       }
     }

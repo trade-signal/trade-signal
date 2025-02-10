@@ -1,16 +1,34 @@
-import { ChartData } from "@/app/types/chart.type";
-import { StockIndexRealTime, StockQuotesRealTime } from "@prisma/client";
+import { ChartKline, ChartTrends } from "@/app/types/chart.type";
+import {
+  StockQuotes,
+  StockIndexQuotes,
+  StockIndexMinuteKline,
+  StockMinuteKline
+} from "@prisma/client";
 import dayjs from "dayjs";
 
-export const transformSymbolChartData = (
-  data: StockIndexRealTime | StockQuotesRealTime
-): ChartData => {
+export const transformSymbolChartTrends = (
+  data: StockQuotes | StockIndexQuotes
+): ChartTrends => {
   return {
-    date: dayjs(Number(data.ts)).format("YYYY-MM-DD HH:mm:ss"),
+    date: dayjs(data.date).format("YYYY-MM-DD HH:mm:ss"),
     open: data.openPrice,
     high: data.highPrice,
     low: data.lowPrice,
     close: data.newPrice,
     preClose: data.preClosePrice
+  };
+};
+
+export const transformSymbolChartKline = (
+  data: StockIndexMinuteKline | StockMinuteKline
+): ChartKline => {
+  return {
+    date: dayjs(`${data.date} ${data.time}`).format("YYYY-MM-DD HH:mm:ss"),
+    open: data.openPrice,
+    high: data.highPrice,
+    low: data.lowPrice,
+    close: data.newPrice,
+    newPrice: data.newPrice
   };
 };
