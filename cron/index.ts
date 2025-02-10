@@ -3,32 +3,36 @@ import "dotenv/config";
 import { CronJob } from "cron";
 import dayjs from "dayjs";
 import { getRunDate, isTradingTime } from "@/shared/date";
+import { createLogger } from "@/shared/logger";
+
+import { cleanNews, initNews, fetchNews } from "./news";
+
 import {
   cleanStockScreener,
   initStockScreener,
   fetchStockScreener
 } from "./stock/stock_screener";
 
-import { cleanNews, initNews, fetchNews } from "./news";
-import {
-  cleanStockQuotes,
-  initStockQuotes,
-  fetchStockQuotes
-} from "./stock/stock_quotes";
-
+import { isTradeDate, refreshTradeDates } from "./common/trade_date";
 import { initStockBasic, fetchStockBasic } from "./stock/stock_basic";
 import {
   initStockIndexBasic,
   fetchStockIndexBasic
 } from "./stock-index/stock_index_basic";
-import { isTradeDate, refreshTradeDates } from "./common/trade_date";
 
 import {
+  initStockQuotes,
+  fetchStockQuotes,
+  cleanStockQuotes
+} from "./stock/stock_quotes";
+import {
   initStockIndexQuotes,
-  fetchStockIndexQuotes
+  fetchStockIndexQuotes,
+  cleanStockIndexQuotes
 } from "./stock-index/stock_index_quotes";
 
-import { createLogger } from "@/shared/logger";
+import { cleanStockMinuteKline } from "./stock/stock_minute_kline";
+import { cleanStockIndexMinuteKline } from "./stock-index/stock_index_minute_kline";
 
 const logger = createLogger("cron", "", false);
 const print = (message: string) => {
@@ -106,8 +110,12 @@ const runClearScheduleJobs = () => {
     await refreshTradeDates();
 
     await cleanStockScreener();
+
     await cleanNews(3);
     await cleanStockQuotes(3);
+    await cleanStockIndexQuotes(3);
+    await cleanStockMinuteKline(3);
+    await cleanStockIndexMinuteKline(3);
   }).start();
 };
 
