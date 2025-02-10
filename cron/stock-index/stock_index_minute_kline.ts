@@ -27,15 +27,14 @@ const transformStockIndexMinuteKline = (klines: any[]) => {
 };
 
 const getStockIndexMinute = async (stock: StockIndexBasic) => {
-  const { code, marketId } = stock;
+  const { marketId, code, name } = stock;
 
   const klines = await getStockIndexMinuteKline(marketId, code);
 
-  if (klines.length === 0)
-    throw new Error(`no index minute kline data for ${code}`);
+  if (klines.length === 0) return [];
 
   const list = transformStockIndexMinuteKline(klines);
-  const data = list.map(item => ({ code, period: 1, ...item }));
+  const data = list.map(item => ({ code, name, period: 1, ...item }));
 
   const result = await prisma.stockIndexMinuteKline.createMany({
     data: data as any,
@@ -138,3 +137,5 @@ export const cleanStockIndexMinuteKline = async (days: number = 7) => {
     print(`clean index minute kline error: ${error}`);
   }
 };
+
+fetchStockIndexMinuteKline();

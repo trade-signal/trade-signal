@@ -37,15 +37,14 @@ const transformStockMinuteKline = (klines: any[]) => {
 };
 
 const getStockMinute = async (stock: StockBasic) => {
-  const { code, marketId } = stock;
+  const { marketId, code, name } = stock;
 
   const klines = await getStockMinuteKline(marketId, code);
 
-  if (klines.length === 0)
-    throw new Error(`no stock minute kline data for ${code}`);
+  if (klines.length === 0) return [];
 
   const list = transformStockMinuteKline(klines);
-  const data = list.map(item => ({ code, period: 1, ...item }));
+  const data = list.map(item => ({ code, name, period: 1, ...item }));
 
   const result = await prisma.stockMinuteKline.createMany({
     data: data as any,

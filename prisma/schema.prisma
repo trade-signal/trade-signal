@@ -424,6 +424,7 @@ model StockMinuteKline {
   // 基本信息
   date   String @db.VarChar(10) // 交易日期
   code   String @db.VarChar(6) // 股票代码
+  name   String @db.VarChar(20) // 股票名称
   period Int    @default(1) // K线周期(分钟)
 
   // 价格数据
@@ -452,6 +453,7 @@ model StockIndexMinuteKline {
   // 基本信息
   date   String @db.VarChar(10) // 交易日期
   code   String @db.VarChar(6) // 指数代码
+  name   String @db.VarChar(20) // 指数名称
   period Int    @default(1) // K线周期(分钟)
 
   // 价格数据
