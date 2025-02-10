@@ -38,7 +38,7 @@ const print = (message: string) => {
 const runStockScheduleJobs = () => {
   // 交易时段实时行情抓取
   // 交易时段每3分钟抓取一次:
-  // - 9:30-11:30, 13:00-15:00
+  // 9:15-11:30, 13:00-15:00
   new CronJob("*/3 9-11,13-14 * * 1-5", async () => {
     if (!isTradeDate()) {
       print("not trade date");
@@ -65,10 +65,15 @@ const runStockScheduleJobs = () => {
 
     print(`trigger fetch stock quotes daily`);
 
+    await fetchStockQuotes();
+    await fetchStockIndexQuotes();
+    await fetchStockScreener();
+  }).start();
+
+  // 每月1号运行：更新所有股票和指数的基本信息
+  new CronJob("0 0 1 * *", async () => {
     await fetchStockBasic();
     await fetchStockIndexBasic();
-    await fetchStockQuotes();
-    await fetchStockScreener();
   }).start();
 };
 

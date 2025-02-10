@@ -7,8 +7,7 @@ import {
   UTCTimestamp,
   ColorType,
   DeepPartial,
-  MouseEventParams,
-  PriceScaleMode
+  MouseEventParams
 } from "lightweight-charts";
 import dayjs from "dayjs";
 import { Group, rem, SegmentedControl, Stack, Tooltip } from "@mantine/core";
@@ -323,7 +322,7 @@ const SymbolChart = (props: SymbolChartData) => {
         style={{ position: "relative", width: "100%", height: "320px" }}
       ></div>
 
-      {/* <Group justify="flex-end">
+      <Group justify="flex-end">
         <SegmentedControl
           w={rem(120)}
           value={chartType}
@@ -349,7 +348,7 @@ const SymbolChart = (props: SymbolChartData) => {
             }
           ]}
         />
-      </Group> */}
+      </Group>
     </Stack>
   );
 };

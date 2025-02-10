@@ -21,7 +21,7 @@ const MarketClient = () => {
           title="指数"
           queryKey="stock-index"
           apiBasePath="/api/stock-index"
-          showMore
+          showMore={false}
           moreText="查看所有指数"
           moreLink="/market/list/index"
         />
@@ -29,19 +29,19 @@ const MarketClient = () => {
           title="股票"
           queryKey="stock-quotes"
           apiBasePath="/api/stock-quotes"
-          showMore
+          showMore={false}
           moreText="查看所有股票"
           moreLink="/market/list/stock"
         />
       </Stack>
 
-      <Group gap="xl" justify="space-between" mt="xl">
+      <Group gap="xl" justify="space-between" mt="xl" pt="xl">
         <StockRanking
           title="最高成交量股票"
           indicator="volume"
           order="desc"
           doubleColumn
-          hasMore
+          showMore={false}
           moreText="查看交易最活跃的所有股票"
           moreLink="/market/list/stock"
         />
@@ -50,18 +50,18 @@ const MarketClient = () => {
           indicator="amplitude"
           order="desc"
           doubleColumn
-          hasMore
+          showMore={false}
           moreText="查看波动最大的所有股票"
           moreLink="/market/list/stock"
         />
       </Group>
 
-      <Group gap="xl" justify="space-between" mt="xl">
+      <Group gap="xl" justify="space-between" mt="xl" pt="xl">
         <StockRanking
           title="股票赢家"
           indicator="changeRate"
           order="desc"
-          hasMore
+          showMore={false}
           moreText="查看每日涨幅最大的所有股票"
           moreLink="/market/list/stock"
         />
@@ -69,7 +69,7 @@ const MarketClient = () => {
           title="股票输家"
           indicator="changeRate"
           order="asc"
-          hasMore
+          showMore={false}
           moreText="查看每日跌幅最大的所有股票"
           moreLink="/market/list/stock"
         />

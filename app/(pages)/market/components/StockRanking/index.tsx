@@ -41,7 +41,7 @@ interface StockRankingProps {
   indicator: string;
   order: "asc" | "desc";
   doubleColumn?: boolean;
-  hasMore?: boolean;
+  showMore?: boolean;
   moreText?: string;
   moreLink?: string;
 }
@@ -56,7 +56,7 @@ const StockRanking: FC<StockRankingProps> = props => {
     indicator,
     order,
     doubleColumn = false,
-    hasMore = false,
+    showMore = false,
     moreText = "",
     moreLink = ""
   } = props;
@@ -270,7 +270,7 @@ const StockRanking: FC<StockRankingProps> = props => {
 
       {isLoading ? renderSkeletons() : renderTables()}
 
-      {hasMore ? (
+      {showMore ? (
         <Group gap="xs" className={styles.more}>
           <Button
             variant="subtle"

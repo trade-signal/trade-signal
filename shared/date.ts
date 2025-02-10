@@ -40,9 +40,9 @@ export const isTradingTime = () => {
   const hour = now.hour();
   const minute = now.minute();
 
-  // 上午连续交易：9:30 - 11:30
+  // 上午连续交易：9:15 - 11:30
   const isMorningTrading =
-    (hour === 9 && minute >= 30) || // 9:30 及以后
+    (hour === 9 && minute >= 15) || // 9:15 及以后
     hour === 10 || // 10点整
     (hour === 11 && minute < 30); // 11:30 之前
 
