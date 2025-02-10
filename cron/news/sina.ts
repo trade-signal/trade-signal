@@ -1,43 +1,10 @@
-import { get } from "@/shared/request";
 import prisma from "@/prisma/db";
 import Task from "@/cron/common/task";
 import { createLogger } from "@/cron/util";
+import { getSinaNews } from "@/cron/api";
 
 const spider_name = "sina";
 const print = createLogger(spider_name, "news");
-
-/**
- * 全球财经快讯
- *
- * 新浪财经-全球财经快讯
- * https://finance.sina.com.cn/7x24
- *
- * @param page 页码
- * @param pageSize 每页数量
- */
-const fetchNews = async (page: number, pageSize: number) => {
-  try {
-    const url = `https://zhibo.sina.com.cn/api/zhibo/feed`;
-
-    const response = await get(url, {
-      page,
-      page_size: pageSize,
-      zhibo_id: 152,
-      tag_id: 0,
-      dire: "f",
-      dpc: 1
-    });
-
-    if (!response.result) {
-      throw new Error(`getNews error: ${response.message || "unknown error"}`);
-    }
-
-    return response.result;
-  } catch (error) {
-    print(`getNews error: ${error}`);
-    return [];
-  }
-};
 
 export const getNews = async () => {
   const news = [];
@@ -49,7 +16,7 @@ export const getNews = async () => {
 
   while (true) {
     try {
-      const response = await fetchNews(page, pageSize);
+      const response = await getSinaNews(page, pageSize);
 
       if (!response.status || response.status.code !== 0) {
         print(JSON.stringify(response));

@@ -3,7 +3,7 @@ import prisma from "@/prisma/db";
 import { createLogger } from "@/cron/util";
 import dayjs from "dayjs";
 import Task from "@/cron/common/task";
-import { getStockIndexMinuteKline } from "./api";
+import { getStockIndexMinuteKline } from "../api";
 import { delay } from "@/shared/util";
 
 const spider_name = "stock_index_minute_kline";

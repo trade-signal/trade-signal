@@ -20,13 +20,13 @@ import { initStockBasic, fetchStockBasic } from "./stock/stock_basic";
 import {
   initStockIndexBasic,
   fetchStockIndexBasic
-} from "./stock/stock_index_basic";
-import { isTradeDate, refreshTradeDates } from "./stock/trade_date";
+} from "./stock-index/stock_index_basic";
+import { isTradeDate, refreshTradeDates } from "./common/trade_date";
 
 import {
   initStockIndexQuotes,
   fetchStockIndexQuotes
-} from "./stock/stock_index_quotes";
+} from "./stock-index/stock_index_quotes";
 
 import { createLogger } from "@/shared/logger";
 

@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { createLogger } from "@/shared/logger";
-import { getTradeDate } from "./api";
+import { getTradeDate } from "../api";
 
 const spider_name = "trade_date";
 const logger = createLogger(spider_name);

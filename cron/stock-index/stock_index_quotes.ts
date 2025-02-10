@@ -6,7 +6,7 @@ import {
 } from "@/cron/util";
 import dayjs from "dayjs";
 import Task from "@/cron/common/task";
-import { getStockIndexQuotes, quotesIndexIndicatorMapping } from "./api";
+import { getStockIndexQuotes, quotesIndexIndicatorMapping } from "../api";
 
 const spider_name = "stock_index_quotes";
 const print = createLogger(spider_name, "stock");

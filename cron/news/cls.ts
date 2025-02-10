@@ -1,62 +1,14 @@
-import { get } from "@/shared/request";
-import { md5Encrypt, sha1Encrypt } from "@/shared/encrypt";
 import dayjs from "dayjs";
 import { delayRandom } from "@/shared/util";
 import { getCurrentUnixTime } from "@/shared/date";
 import prisma from "@/prisma/db";
 import Task from "@/cron/common/task";
+import { getClsNews } from "@/cron/api";
 
 import { createLogger } from "@/cron/util";
 
 const spider_name = "cls";
 const print = createLogger(spider_name, "news");
-
-const generateSign = (params: Record<string, any>) => {
-  const str = Object.keys(params)
-    .sort()
-    .map(key => `${key}=${params[key]}`)
-    .join("&");
-  return md5Encrypt(sha1Encrypt(str));
-};
-
-/**
- * 24小时电报
- *
- * 财联社 - 24小时电报
- * https://www.cls.cn/telegraph
- *
- * @param category 分类
- * @param lastTime 时间戳
- */
-
-const fetchNews = async (category: string, lastTime?: number) => {
-  try {
-    const url = `https://www.cls.cn/v1/roll/get_roll_list`;
-
-    const baseParams = {
-      app: "CailianpressWeb",
-      category: category || "",
-      last_time: lastTime || getCurrentUnixTime(),
-      os: "web",
-      refresh_type: 1,
-      rn: 20,
-      sv: "8.4.6"
-    };
-
-    const response = await get(url, {
-      ...baseParams,
-      sign: generateSign(baseParams)
-    });
-
-    if (response.errno != 0) {
-      throw new Error(`获取24小时电报失败: ${response.msg}`);
-    }
-
-    return response.data && response.data.roll_data;
-  } catch (error) {
-    return [];
-  }
-};
 
 // 财联社分类
 export const CLS_CATEGORIES = [
@@ -104,7 +56,7 @@ export const getNews = async () => {
 
     while (true) {
       try {
-        const data = await fetchNews(category.value, lastTime);
+        const data = await getClsNews(category.value, lastTime);
 
         if (!data || !Array.isArray(data) || data.length === 0) {
           throw new Error(`${category.label} 分类数据获取失败: 数据为空`);

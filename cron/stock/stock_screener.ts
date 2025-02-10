@@ -3,7 +3,7 @@ import { StockScreener } from "@prisma/client";
 import dayjs from "dayjs";
 import Task from "@/cron/common/task";
 import { createLogger, transformStockData } from "@/cron/util";
-import { getStockScreener, selectionIndicatorMapping } from "./api";
+import { getStockScreener, selectionIndicatorMapping } from "../api";
 
 const spider_name = "stock_screener";
 const print = createLogger(spider_name);

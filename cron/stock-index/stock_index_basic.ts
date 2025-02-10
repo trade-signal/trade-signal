@@ -5,7 +5,7 @@ import {
   transformStockData
 } from "@/cron/util";
 import Task from "@/cron/common/task";
-import { getStockIndexBasic, quotesIndexBaseIndicatorMapping } from "./api";
+import { getStockIndexBasic, quotesIndexBaseIndicatorMapping } from "../api";
 
 const spider_name = "stock_index_base";
 const print = createLogger(spider_name, "stock");
