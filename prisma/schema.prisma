@@ -473,6 +473,28 @@ model StockIndexMinuteKline {
   @@map("stock_index_minute_kline")
 }
 
+// 活跃股票
+model StockActive {
+  code       String   @unique
+  name       String
+  marketId   Int
+  lastViewAt DateTime @default(now())
+
+  @@index([lastViewAt])
+  @@map("stock_active")
+}
+
+// 活跃指数
+model StockIndexActive {
+  code       String   @unique
+  name       String
+  marketId   Int
+  lastViewAt DateTime @default(now())
+
+  @@index([lastViewAt])
+  @@map("stock_index_active")
+}
+
 // ============================== 新闻 ==============================
 
 // 新闻

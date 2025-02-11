@@ -1,10 +1,12 @@
-import { StockBasic } from "@prisma/client";
+import { StockActive } from "@prisma/client";
 import prisma from "@/prisma/db";
-import { createLogger } from "@/cron/util";
 import dayjs from "dayjs";
 import Task from "@/cron/common/task";
-import { getStockMinuteKline } from "../api";
+import { createLogger } from "@/cron/util";
 import { delay } from "@/shared/util";
+
+import { getStockMinuteKline } from "../api";
+import { getActiveStocks } from "./stock_active";
 
 const spider_name = "stock_minute_kline";
 const print = createLogger(spider_name, "stock");
@@ -36,7 +38,7 @@ const transformStockMinuteKline = (klines: any[]) => {
   });
 };
 
-export const getStockMinute = async (stock: StockBasic) => {
+export const getStockMinute = async (stock: StockActive) => {
   const { marketId, code, name } = stock;
 
   const klines = await getStockMinuteKline(marketId, code);
@@ -55,28 +57,34 @@ export const getStockMinute = async (stock: StockBasic) => {
 };
 
 export const getStockMinuteByCode = async (code: string) => {
-  const stock = await prisma.stockBasic.findFirst({
+  const stock = await prisma.stockActive.findFirst({
     where: { code }
   });
   if (stock) await getStockMinute(stock);
 };
 
-// @deprecated
-const fetchStockMinuteKline = async () => {
+export const fetchActiveStockMinuteKline = async () => {
   const task = new Task("stock_minute_kline", "eastmoney");
 
-  const stocks = await prisma.stockBasic.findMany({});
+  const stocks = await getActiveStocks();
+
+  print(`fetching ${stocks.length} active stocks`);
+
+  if (stocks.length === 0) {
+    print("no active stock");
+    return;
+  }
 
   try {
     await task.updateStatus("fetching");
 
-    print(`fetching ${stocks.length} stocks`);
+    print(`fetching ${stocks.length} active stocks`);
 
     while (stocks.length) {
       const batchStocks = stocks.splice(0, 10);
 
       try {
-        print(`start upsert ${batchStocks.length} stocks`);
+        print(`start upsert ${batchStocks.length} active stocks`);
 
         await Promise.all(
           batchStocks.map(
@@ -93,11 +101,11 @@ const fetchStockMinuteKline = async () => {
                   } catch (error) {
                     retries--;
                     if (retries === 0) {
-                      print(`get ${stock.code} error: ${error}`);
+                      print(`get active stock ${stock.code} error: ${error}`);
                       reject(error);
                     } else {
                       print(
-                        `get ${stock.code} error: ${error}, retry ${retries} times`
+                        `get active stock ${stock.code} error: ${error}, retry ${retries} times`
                       );
                       await delay(1000);
                     }
@@ -113,7 +121,7 @@ const fetchStockMinuteKline = async () => {
 
         await delay(1000);
       } catch (error) {
-        print(`get stock minute kline error: ${error}`);
+        print(`get active stocks minute kline error: ${error}`);
         stocks.push(...batchStocks);
 
         await delay(5 * 1000);
@@ -122,19 +130,19 @@ const fetchStockMinuteKline = async () => {
       }
     }
 
-    print("fetch all stocks success");
+    print("fetch active stocks minute kline success");
 
     await task.updateStatus("completed", stocks.length);
   } catch (error) {
     await task.updateStatus("failed");
-    print(`get stock minute kline error: ${error}`);
+    print(`get active stocks minute kline error: ${error}`);
   }
 };
 
 // 清除超过指定天数的数据
-export const cleanStockMinuteKline = async (days: number = 7) => {
+export const cleanActiveStockMinuteKline = async (days: number = 7) => {
   try {
-    print(`clean stock minute kline older than ${days} days`);
+    print(`clean active stocks minute kline older than ${days} days`);
 
     const tradingDays = await prisma.stockMinuteKline.findMany({
       select: { date: true },
@@ -148,12 +156,32 @@ export const cleanStockMinuteKline = async (days: number = 7) => {
         where: { date: { lt: cutoffDate } }
       });
 
-      print(`clean ${result.count} stock minute kline data`);
+      print(`clean ${result.count} active stocks minute kline data`);
       return;
     }
 
     print("no stock minute kline data to clean");
   } catch (error) {
-    print(`clean stock minute kline error: ${error}`);
+    print(`clean active stocks minute kline error: ${error}`);
   }
+};
+
+const checkStockMinuteKline = async (date?: string) => {
+  const stocks = await prisma.stockMinuteKline.findMany({
+    where: {
+      date: dayjs(date).format("YYYY-MM-DD")
+    }
+  });
+  return stocks.length > 0;
+};
+
+export const initStockMinuteKline = async (date?: string) => {
+  const hasStockMinuteKline = await checkStockMinuteKline(date);
+
+  if (hasStockMinuteKline) {
+    print("stock minute kline available! No need to fetch.");
+    return;
+  }
+
+  await fetchActiveStockMinuteKline();
 };

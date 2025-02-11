@@ -31,8 +31,21 @@ import {
   cleanStockIndexQuotes
 } from "./stock-index/stock_index_quotes";
 
-import { cleanStockMinuteKline } from "./stock/stock_minute_kline";
-import { cleanStockIndexMinuteKline } from "./stock-index/stock_index_minute_kline";
+import {
+  cleanActiveStockMinuteKline,
+  fetchActiveStockMinuteKline,
+  initStockMinuteKline
+} from "./stock/stock_minute_kline";
+import {
+  cleanActiveStockIndexMinuteKline,
+  fetchActiveStockIndexMinuteKline,
+  initStockIndexMinuteKline
+} from "./stock-index/stock_index_minute_kline";
+import { cleanActiveStocks, initActiveStocks } from "./stock/stock_active";
+import {
+  cleanActiveStocksIndex,
+  initActiveStockIndex
+} from "./stock-index/stock_index_active";
 
 const logger = createLogger("cron", "", false);
 const print = (message: string) => {
@@ -58,6 +71,8 @@ const runStockScheduleJobs = () => {
 
     await fetchStockIndexQuotes();
     await fetchStockQuotes();
+    await fetchActiveStockMinuteKline();
+    await fetchActiveStockIndexMinuteKline();
   }).start();
 
   // 收盘后运行：16:00
@@ -109,13 +124,16 @@ const runClearScheduleJobs = () => {
 
     await refreshTradeDates();
 
+    await cleanNews(3);
+
     await cleanStockScreener();
 
-    await cleanNews(3);
-    await cleanStockQuotes(3);
-    await cleanStockIndexQuotes(3);
-    await cleanStockMinuteKline(3);
-    await cleanStockIndexMinuteKline(3);
+    await Promise.all([cleanStockQuotes(3), cleanStockIndexQuotes(3)]);
+    await Promise.all([cleanActiveStocks(3), cleanActiveStocksIndex(3)]);
+    await Promise.all([
+      cleanActiveStockMinuteKline(3),
+      cleanActiveStockIndexMinuteKline(3)
+    ]);
   }).start();
 };
 
@@ -126,13 +144,21 @@ const runSchedulerJobs = () => {
 };
 
 const runSeedJobs = async (runDate: string) => {
-  await Promise.all([initStockBasic(), initStockIndexBasic()]);
-  await Promise.all([
-    initStockScreener(runDate),
-    initStockQuotes(runDate),
-    initStockIndexQuotes(runDate),
-    initNews(runDate)
-  ]);
+  try {
+    await Promise.all([initStockBasic(), initStockIndexBasic()]);
+    await Promise.all([initStockScreener(runDate), initNews(runDate)]);
+    await Promise.all([
+      initStockQuotes(runDate),
+      initStockIndexQuotes(runDate)
+    ]);
+    await Promise.all([initActiveStocks(), initActiveStockIndex()]);
+    await Promise.all([
+      initStockMinuteKline(runDate),
+      initStockIndexMinuteKline(runDate)
+    ]);
+  } catch (error) {
+    logger.error(`run seed jobs error: ${error}`);
+  }
 };
 
 async function main() {
@@ -148,7 +174,7 @@ async function main() {
   await runSeedJobs(runDate);
   logger.info("Running seed jobs completed...");
 
-  if (isProd) return;
+  if (!isProd) return;
 
   logger.info("refresh trade dates");
   await refreshTradeDates();

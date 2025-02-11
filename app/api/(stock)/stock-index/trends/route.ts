@@ -31,10 +31,9 @@ export const GET = async (request: NextRequest) => {
   const trends = await prisma.stockIndexMinuteKline.findMany({
     where: {
       code,
-
       date: { equals: maxDate?.date }
     },
-    orderBy: { createdAt: "asc" }
+    orderBy: { time: "asc" }
   });
 
   return Response.json({

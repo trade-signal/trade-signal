@@ -32,7 +32,7 @@ export const GET = async (request: NextRequest) => {
       code,
       date: { equals: maxDate?.date }
     },
-    orderBy: [{ createdAt: "asc" }]
+    orderBy: [{ time: "asc" }]
   });
 
   return Response.json({
