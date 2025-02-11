@@ -148,10 +148,11 @@ async function main() {
   await runSeedJobs(runDate);
   logger.info("Running seed jobs completed...");
 
-  if (!isProd) return;
+  if (isProd) return;
 
   logger.info("refresh trade dates");
   await refreshTradeDates();
+
   logger.info("run scheduler jobs");
   runSchedulerJobs();
 }

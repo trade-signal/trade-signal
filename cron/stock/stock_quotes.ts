@@ -39,17 +39,40 @@ export const cleanStockQuotes = async (days: number = 7) => {
 };
 
 const upsertStockQuotes = async (list: any[]) => {
-  for (const item of list) {
-    await prisma.stockQuotes.upsert({
-      where: {
-        date_code: {
-          date: item.date,
-          code: item.code
-        }
-      },
-      update: { ...item },
-      create: { ...item }
-    });
+  const stocks = await prisma.stockQuotes.findMany({
+    select: {
+      date: true
+    }
+  });
+
+  if (stocks.length === 0) {
+    await Promise.all(
+      list.map(async item => {
+        await prisma.stockQuotes.create({ data: item });
+      })
+    );
+    return;
+  }
+
+  while (list.length > 0) {
+    const batch = list.splice(0, 200);
+
+    await Promise.all(
+      batch.map(async item => {
+        await prisma.stockQuotes.upsert({
+          where: {
+            date_code: {
+              date: item.date,
+              code: item.code
+            }
+          },
+          update: { ...item },
+          create: { ...item }
+        });
+      })
+    );
+
+    print(`upsert ${batch.length} stocks, left ${list.length}`);
   }
 };
 

@@ -16,14 +16,36 @@ export const checkStockBasic = async () => {
 };
 
 const upsertStockBasic = async (list: any[]) => {
-  for (const item of list) {
-    delete item.newPrice;
+  const stocks = await prisma.stockBasic.findMany({});
 
-    await prisma.stockBasic.upsert({
-      where: { code: item.code },
-      update: { ...item },
-      create: { ...item }
-    });
+  const data = list.map(item => {
+    delete item.newPrice;
+    return item;
+  });
+
+  if (stocks.length === 0) {
+    await Promise.all(
+      data.map(async item => {
+        await prisma.stockBasic.create({ data: item });
+      })
+    );
+    return;
+  }
+
+  while (data.length > 0) {
+    const batch = data.splice(0, 200);
+
+    await Promise.all(
+      batch.map(async item => {
+        await prisma.stockBasic.upsert({
+          where: { code: item.code },
+          update: { ...item },
+          create: { ...item }
+        });
+      })
+    );
+
+    print(`upsert ${batch.length} stocks, left ${data.length}`);
   }
 };
 
