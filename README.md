@@ -56,23 +56,20 @@ npx prisma db push
 npm install && npm run dev
 ````
 
-
 ## 生产环境
 
-### 构建镜像
+### 使用 DockerHub 镜像
 
-```bash
-docker build -t trade-signal:latest .
-```
-
-### 运行容器
+最简单的方式是直接使用 DockerHub 上的镜像：
 
 ```bash
 docker run -d -p 3000:3000 \
   --env-file .env.production \
   --name trade-signal \
-  trade-signal:latest
+  yzqzy/trade-signal:latest
 ```
+
+或者使用环境变量：
 
 ```bash
 docker run -d -p 3000:3000 \
@@ -83,11 +80,22 @@ docker run -d -p 3000:3000 \
   -e GOOGLE_ID=${GOOGLE_ID} \
   -e GOOGLE_SECRET=${GOOGLE_SECRET} \
   -e NEXTAUTH_SECRET=${NEXTAUTH_SECRET} \
+  -e NEXTAUTH_URL=${NEXTAUTH_URL} \
   --name trade-signal \
-  trade-signal:latest
+  yzqzy/trade-signal:latest
 ```
 
-or
+### 本地构建（可选）
+
+如果您想自行构建镜像：
+
+```bash
+docker build -t trade-signal:latest .
+```
+
+然后按上述方式运行容器，将镜像名从 `yzqzy/trade-signal` 改为 `trade-signal` 即可。
+
+您也可以使用 docker-compose：
 
 ```bash
 docker-compose -p trade-signal -f docker/docker-compose.prod.yml up -d
