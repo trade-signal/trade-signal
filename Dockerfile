@@ -23,7 +23,9 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# 生成 Prisma 客户端
+# 生成 Prisma 客户端并确保正确的权限
+RUN mkdir -p node_modules/.prisma
+RUN chmod -R 777 node_modules/@prisma node_modules/.prisma
 RUN npx prisma generate 
 
 # 构建应用
@@ -44,10 +46,18 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 ENV NODE_ENV=production
 ENV PORT=3000
 
-# 创建非 root 用户
+# 创建非 root 用户并设置适当的权限
 RUN addgroup -g 1001 -S nodejs 
-RUN adduser -S nextjs -u 1001 
+RUN adduser -S nextjs -u 1001
 RUN npm install -g pm2
+
+# 设置工作目录权限
+RUN mkdir -p /app/node_modules/.prisma /app/prisma
+RUN chown -R nextjs:nodejs /app
+
+# 添加启动脚本
+COPY start.sh .
+RUN chmod +x start.sh
 
 # 优化文件复制顺序，将较少变动的文件放在前面
 COPY --from=builder /app/public ./public
@@ -65,4 +75,4 @@ USER nextjs
 
 EXPOSE 3000
 
-CMD ["pm2-runtime", "start", "ecosystem.config.cjs"]
+CMD ["./start.sh"]

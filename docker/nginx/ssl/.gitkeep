@@ -1,0 +1,5 @@
+# SSL 证书配置说明
+
+此目录用于存放 SSL 证书文件：
+- ssl.crt - SSL 证书文件
+- ssl.key - SSL 私钥文件

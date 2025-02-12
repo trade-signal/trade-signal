@@ -1,11 +1,24 @@
 version: '3.8'
 
 services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - app
+    restart: unless-stopped
+    networks:
+      - app-network
+
   app:
     image: yzqzy/trade-signal:latest
-    ports:
-      - "80:3000"
-      - "443:3000"
+    expose:
+      - "3000"
     environment:
       - NODE_ENV=production
       - DATABASE_URL=${DATABASE_URL}
@@ -26,8 +39,8 @@ services:
 
   db:
     image: postgres:15-alpine
-    ports:
-      - "5432:5432"
+    expose:
+      - "5432"
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -47,4 +60,4 @@ networks:
     driver: bridge
 
 volumes:
-  postgres_data:
+  postgres_data: 

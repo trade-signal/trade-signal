@@ -16,6 +16,16 @@ export const checkStockIndexBasic = async () => {
 };
 
 const upsertStockIndexBasic = async (list: any[]) => {
+  const stocks = await prisma.stockIndexBasic.findMany({});
+
+  if (stocks.length === 0) {
+    await prisma.stockIndexBasic.createMany({
+      data: list,
+      skipDuplicates: true
+    });
+    return;
+  }
+
   for (const item of list) {
     await prisma.stockIndexBasic.upsert({
       where: { code: item.code },

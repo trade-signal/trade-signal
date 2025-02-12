@@ -22,27 +22,6 @@ docker-compose -p trade-signal -f docker/docker-compose.dev.yml up  -d
 
 将 `.env.example` 复制为 `.env`，并填写数据库连接信息(`DATABASE_URL` | `DIRECT_URL` 为必要的):
 
-```properties
-# 数据库连接配置
-# PostgreSQL 示例: postgresql://postgres:123456@localhost:5432/postgres?schema=public
-DATABASE_URL=[Your Database URL]
-DIRECT_URL=[Your Database URL]
-
-# GitHub OAuth 配置
-GITHUB_ID=[Your Github ID]
-GITHUB_SECRET=[Your Github Secret]
-
-# Google OAuth 配置
-GOOGLE_ID=[Your Google ID]
-GOOGLE_SECRET=[Your Google Secret]
-
-# NextAuth 配置
-NEXTAUTH_SECRET=[Your NextAuth Secret]
-
-# 可选：NextAuth URL 配置（生产环境需要）
-# NEXTAUTH_URL="https://your-domain.com"
-```
-
 首次运行，需要生成 prisma 的 schema 并初始化数据库
 
 ````bash
@@ -81,6 +60,9 @@ docker run -d -p 3000:3000 \
   -e GOOGLE_SECRET=${GOOGLE_SECRET} \
   -e NEXTAUTH_SECRET=${NEXTAUTH_SECRET} \
   -e NEXTAUTH_URL=${NEXTAUTH_URL} \
+  -e POSTGRES_USER=${POSTGRES_USER} \
+  -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
+  -e POSTGRES_DB=${POSTGRES_DB} \
   --name trade-signal \
   yzqzy/trade-signal:latest
 ```
@@ -98,7 +80,11 @@ docker build -t trade-signal:latest .
 您也可以使用 docker-compose：
 
 ```bash
-docker-compose -p trade-signal -f docker/docker-compose.prod.yml up -d
+docker-compose \
+  -p trade-signal \
+  --env-file .env.production \
+  -f docker/docker-compose.prod.yml \
+  up -d
 ```
 
 ## 参考资料
