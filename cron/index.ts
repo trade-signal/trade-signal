@@ -52,6 +52,14 @@ const print = (message: string) => {
   logger.log(`[${dayjs().format("YYYY-MM-DD HH:mm:ss")}] ${message}`);
 };
 
+// 交易时段 实时行情抓取
+const runStockTrendingJobs = async () => {
+  await fetchStockIndexQuotes();
+  await fetchActiveStockIndexMinuteKline();
+  await fetchStockQuotes();
+  await fetchActiveStockMinuteKline();
+};
+
 const runStockScheduleJobs = () => {
   // 交易时段实时行情抓取
   // 交易时段每3分钟抓取一次:
@@ -69,10 +77,7 @@ const runStockScheduleJobs = () => {
 
     print(`trigger fetch stock quotes realtime`);
 
-    await fetchStockIndexQuotes();
-    await fetchStockQuotes();
-    await fetchActiveStockMinuteKline();
-    await fetchActiveStockIndexMinuteKline();
+    await runStockTrendingJobs();
   }).start();
 
   // 收盘后运行：16:00
@@ -84,8 +89,7 @@ const runStockScheduleJobs = () => {
 
     print(`trigger fetch stock quotes daily`);
 
-    await fetchStockQuotes();
-    await fetchStockIndexQuotes();
+    await runStockTrendingJobs();
     await fetchStockScreener();
   }).start();
 
