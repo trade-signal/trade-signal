@@ -131,9 +131,9 @@ const runClearScheduleJobs = () => {
     await cleanNews(3);
 
     await cleanStockScreener();
+    await Promise.all([cleanActiveStocks(), cleanActiveStocksIndex()]);
 
     await Promise.all([cleanStockQuotes(3), cleanStockIndexQuotes(3)]);
-    await Promise.all([cleanActiveStocks(3), cleanActiveStocksIndex(3)]);
     await Promise.all([
       cleanActiveStockMinuteKline(3),
       cleanActiveStockIndexMinuteKline(3)
