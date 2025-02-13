@@ -173,6 +173,29 @@ export const getStockIndexQuotes = ({ fields }: { fields: string }) => {
   });
 };
 
+/**
+ * 沪深京板块-实时行情
+ *
+ * 东方财富网-沪深京板块-实时行情
+ * https://quote.eastmoney.com/center/gridlist.html#hs_a_board
+ */
+export const getStockPlateQuotes = ({ fields }: { fields: string }) => {
+  return getEastMoneyStockQuotes({
+    pn: "1",
+    pz: "200",
+    po: "1",
+    np: "1",
+    ut: "fa5fd1943c7b386f172d6893dbfba10b",
+    fltt: "1",
+    invt: "2",
+    dect: "1",
+    wbp2u: "|0|1|0|web",
+    fid: "f3",
+    fs: "m:90 t:2 f:!50",
+    fields
+  });
+};
+
 // ----------------------- 股票 分时行情 -------------------------------------
 
 /**
