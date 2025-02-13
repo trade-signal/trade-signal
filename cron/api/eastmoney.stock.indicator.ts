@@ -96,7 +96,9 @@ const otherIndicators = {
   reportDate: { type: IndicatorType.DATE, cn: "报告期", map: "f221" }
 };
 
-// 股票指标 - 基础
+// --------------------------------------------------------------
+
+// 个股指标 - 基础
 export const quotesBaseIndicatorMapping = {
   ...basicIndicators,
   newPrice: priceIndicators.newPrice,
@@ -105,13 +107,19 @@ export const quotesBaseIndicatorMapping = {
   marketId: { type: IndicatorType.NUMBER, cn: "市场ID", map: "f13" }
 };
 
-// 股票指标 - 指数 - 基础
+// 指数指标 - 基础
 export const quotesIndexBaseIndicatorMapping = {
   ...basicIndicators,
   marketId: { type: IndicatorType.NUMBER, cn: "市场ID", map: "f13" }
 };
 
-// 股票指标 - 实时行情
+// 板块指标 - 基础
+export const quotesPlateBaseIndicatorMapping = {
+  ...basicIndicators,
+  marketId: { type: IndicatorType.NUMBER, cn: "市场ID", map: "f13" }
+};
+
+// 个股指标 - 实时行情
 export const quotesIndicatorMapping = {
   ...basicIndicators,
   ...priceIndicators,
@@ -123,7 +131,7 @@ export const quotesIndicatorMapping = {
   ...otherIndicators
 };
 
-// 股票指标 - 指数 - 实时行情
+// 指数指标 - 实时行情
 export const quotesIndexIndicatorMapping = {
   ...basicIndicators,
   ...priceIndicators,

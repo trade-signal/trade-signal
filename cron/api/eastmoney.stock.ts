@@ -9,6 +9,8 @@ const getRandomNumber = () => {
   return Math.floor(Math.random() * 100) + 1;
 };
 
+// ----------------------- 股票 行情数据 -------------------------------------
+
 // 获取股票 行情数据
 const getEastMoneyStockQuotes = async (params: any) => {
   try {
@@ -32,32 +34,11 @@ const getEastMoneyStockQuotes = async (params: any) => {
   }
 };
 
-// 获取股票 k线数据
-const getEastMoneyStockKline = async (params: any) => {
-  try {
-    const url = `http://push2his.eastmoney.com/api/qt/stock/kline/get`;
-
-    const response = await get(url, params);
-
-    if (response.data && response.data.klines) {
-      return response.data.klines;
-    }
-
-    throw new Error(
-      `get ${spider_name} stock kline error: ${
-        response.message || "unknown error"
-      }`
-    );
-  } catch (error) {
-    print(`get ${spider_name} stock kline error: ${error}`);
-    return [];
-  }
-};
-
 // 获取股票 分时数据
 const getEastMoneyStockMinuteKline = async (params: any) => {
   try {
-    const url = `https://72.push2.eastmoney.com/api/qt/stock/trends2/get`;
+    const randomNumber = getRandomNumber();
+    const url = `http://${randomNumber}.push2.eastmoney.com/api/qt/stock/trends2/get`;
 
     const response = await get(url, params);
 
@@ -76,10 +57,12 @@ const getEastMoneyStockMinuteKline = async (params: any) => {
   }
 };
 
+// ----------------------- 股票 基础信息 -------------------------------------
+
 /**
- * 沪深京 A 股-基础信息
+ * 沪深京个股-基础信息
  *
- * 东方财富网-沪深京 A 股-基础信息
+ * 东方财富网-沪深京个股-基础信息
  * https://quote.eastmoney.com/center/gridlist.html#hs_a_board
  */
 export const getStockBasic = async ({ fields }: { fields: string }) => {
@@ -98,9 +81,9 @@ export const getStockBasic = async ({ fields }: { fields: string }) => {
 };
 
 /**
- * 沪深京 A 股-指数-基础信息
+ * 沪深京指数-基础信息
  *
- * 东方财富网-沪深京 A 股-指数-基础信息
+ * 东方财富网-沪深京指数-基础信息
  * https://quote.eastmoney.com/center/hszs.html
  */
 export const getStockIndexBasic = async ({ fields }: { fields: string }) => {
@@ -121,9 +104,34 @@ export const getStockIndexBasic = async ({ fields }: { fields: string }) => {
 };
 
 /**
- * 沪深京 A 股-实时行情
+ * 沪深京板块-基础信息
  *
- * 东方财富网-沪深京 A 股-实时行情
+ * 东方财富网-沪深京板块-基础信息
+ * https://quote.eastmoney.com/center/gridlist.html#hs_a_board
+ */
+export const getStockPlateBasic = async ({ fields }: { fields: string }) => {
+  return getEastMoneyStockQuotes({
+    pn: "1",
+    pz: "200",
+    po: "1",
+    np: "1",
+    ut: "fa5fd1943c7b386f172d6893dbfba10b",
+    fltt: "1",
+    invt: "2",
+    dect: "1",
+    wbp2u: "|0|1|0|web",
+    fid: "f3",
+    fs: "m:90 t:2 f:!50",
+    fields
+  });
+};
+
+// ----------------------- 股票 实时行情 -------------------------------------
+
+/**
+ * 沪深京个股-实时行情
+ *
+ * 东方财富网-沪深京个股-实时行情
  * https://quote.eastmoney.com/center/gridlist.html#hs_a_board
  *
  */
@@ -143,9 +151,9 @@ export const getStockQuotes = ({ fields }: { fields: string }) => {
 };
 
 /**
- * 沪深京 A 股-指数-实时行情
+ * 沪深京指数-实时行情
  *
- * 东方财富网-沪深京 A 股-指数信息
+ * 东方财富网-沪深京指数-指数信息
  * https://quote.eastmoney.com/center/hszs.html
  */
 export const getStockIndexQuotes = ({ fields }: { fields: string }) => {
@@ -165,10 +173,12 @@ export const getStockIndexQuotes = ({ fields }: { fields: string }) => {
   });
 };
 
+// ----------------------- 股票 分时行情 -------------------------------------
+
 /**
- * 沪深京 A 股-分时行情
+ * 沪深京个股-分时行情
  *
- * 东方财富网-沪深京 A 股-分时行情
+ * 东方财富网-沪深京个股-分时行情
  * https://quote.eastmoney.com/concept/sh603777.html?from=classic
  */
 export const getStockMinuteKline = (marketId: number, code: string) => {
@@ -184,9 +194,9 @@ export const getStockMinuteKline = (marketId: number, code: string) => {
 };
 
 /**
- * 沪深京 A 股-指数-分时行情
+ * 沪深京指数-分时行情
  *
- * 东方财富网-沪深京 A 股-指数-分时行情
+ * 东方财富网-沪深京指数-分时行情
  * https://quote.eastmoney.com/center/hszs.html
  */
 export const getStockIndexMinuteKline = (marketId: number, code: string) => {

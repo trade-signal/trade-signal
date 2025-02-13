@@ -100,7 +100,7 @@ model StockBasic {
   @@map("stock_basic")
 }
 
-// 股指 基础信息表
+// 指数 基础信息表
 model StockIndexBasic {
   id String @id @default(cuid())
 
@@ -115,6 +115,23 @@ model StockIndexBasic {
 
   @@index([code]) // 代码索引
   @@map("stock_index_basic")
+}
+
+// 板块 基础信息表
+model StockPlateBasic {
+  id String @id @default(cuid())
+
+  // 基本信息
+  code     String @unique @db.VarChar(6) // 板块代码  
+  name     String @db.VarChar(20) // 板块名称
+  marketId Int    @default(0) // 市场ID
+
+  // 系统字段
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([code]) // 代码索引
+  @@map("stock_plate_basic")
 }
 
 // ============================== 股票选股 ==============================
@@ -417,6 +434,8 @@ model StockIndexQuotes {
   @@map("stock_index_quotes")
 }
 
+// ============================== 股票 分时K线 ==============================
+
 // 股票分时K线
 model StockMinuteKline {
   id String @id @default(cuid())
@@ -472,6 +491,8 @@ model StockIndexMinuteKline {
   @@index([code, date])
   @@map("stock_index_minute_kline")
 }
+
+// ============================== 股票 活跃股票 ==============================
 
 // 活跃股票
 model StockActive {
