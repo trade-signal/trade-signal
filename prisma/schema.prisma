@@ -398,7 +398,7 @@ model StockQuotes {
   @@map("stock_quotes")
 }
 
-// 股指行情
+// 指数行情
 model StockIndexQuotes {
   id String @id @default(cuid())
 
@@ -434,6 +434,46 @@ model StockIndexQuotes {
   @@map("stock_index_quotes")
 }
 
+// 板块行情
+model StockPlateQuotes {
+  id String @id @default(cuid())
+
+  // 基本信息
+  date String @db.VarChar(10) // 交易日期
+  code String @db.VarChar(6) // 板块代码
+  name String @db.VarChar(20) // 板块名称
+
+  // 价格相关指标
+  newPrice   Float // 最新价
+  changeRate Float // 涨跌幅
+  upsDowns   Float // 涨跌额
+
+  // 交易相关指标
+  volume         Float // 成交量
+  dealAmount     Float // 成交额
+  turnoverRate   Float // 换手率
+  totalMarketCap Float // 总市值
+
+  // 成分股统计
+  upCount   Int // 上涨家数
+  downCount Int // 下跌家数
+
+  // 领涨领跌信息
+  topGainerName String // 领涨股
+  topGainerCode String // 领涨股Code
+  topLoserName  String // 领跌股
+  topLoserCode  String // 领跌股Code
+
+  // 系统字段
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([date, code])
+  @@index([date])
+  @@index([code])
+  @@map("stock_plate_quotes")
+}
+
 // ============================== 股票 分时K线 ==============================
 
 // 股票分时K线
@@ -465,7 +505,7 @@ model StockMinuteKline {
   @@map("stock_minute_kline")
 }
 
-// 股指分时K线
+// 指数分时K线
 model StockIndexMinuteKline {
   id String @id @default(cuid())
 

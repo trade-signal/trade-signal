@@ -81,13 +81,20 @@ export const fetchStockPlateQuotes = async (date?: string) => {
   }
 };
 
-export const initStockPlateQuotes = async () => {
-  const hasStockPlateQuotes = await checkStockPlateQuotes();
+export const checkStockPlateQuotes = async (date?: string) => {
+  const quotes = await prisma.stockPlateQuotes.findMany({
+    where: { date: dayjs(date).format("YYYY-MM-DD") }
+  });
+  return quotes.length > 0;
+};
+
+export const initStockPlateQuotes = async (date?: string) => {
+  const hasStockPlateQuotes = await checkStockPlateQuotes(date);
 
   if (hasStockPlateQuotes) {
     print("stock plate quotes available! No need to fetch.");
     return;
   }
 
-  await fetchStockPlateQuotes();
+  await fetchStockPlateQuotes(date);
 };

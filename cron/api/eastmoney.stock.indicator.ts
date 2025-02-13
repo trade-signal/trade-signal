@@ -137,3 +137,33 @@ export const quotesIndexIndicatorMapping = {
   ...priceIndicators,
   ...tradingIndicators
 };
+
+// 板块指标 - 实时行情
+export const quotesPlateIndicatorMapping = {
+  ...basicIndicators,
+  ...priceIndicators,
+
+  // 交易相关指标
+  volume: tradingIndicators.volume,
+  dealAmount: tradingIndicators.dealAmount,
+  turnoverRate: tradingIndicators.turnoverRate,
+  totalMarketCap: sharesAndCapIndicators.totalMarketCap,
+
+  // 成分股统计
+  upCount: { type: IndicatorType.NUMBER, cn: "上涨家数", map: "f104" },
+  downCount: { type: IndicatorType.NUMBER, cn: "下跌家数", map: "f105" },
+
+  // 领涨领跌信息
+  topGainerName: { type: IndicatorType.STRING, cn: "领涨股", map: "f128" },
+  topGainerCode: {
+    type: IndicatorType.STRING,
+    cn: "领涨股Code",
+    map: "f140"
+  },
+  topLoserName: { type: IndicatorType.STRING, cn: "领跌股", map: "f207" },
+  topLoserCode: {
+    type: IndicatorType.STRING,
+    cn: "领跌股Code",
+    map: "f208"
+  }
+};
