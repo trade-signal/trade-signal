@@ -19,8 +19,8 @@ export const generateRowKey = (
 
 export const getColor = (value: number) => {
   const themeSetting: any = readLocalStorageValue({ key: THEME_SETTING_KEY });
-  if (value > 0) return themeSetting.upColor ?? "red.7";
-  if (value < 0) return themeSetting.downColor ?? "green.7";
+  if (value > 0) return themeSetting.upColor;
+  if (value < 0) return themeSetting.downColor;
   return "gray.7";
 };
 
@@ -43,13 +43,13 @@ export const renderSignal = (value: boolean) => {
   const themeSetting: any = readLocalStorageValue({ key: THEME_SETTING_KEY });
   if (value) {
     return (
-      <Text span c={themeSetting.upColor ?? "green.7"} fw={700}>
+      <Text span c={themeSetting.upColor} fw={700}>
         ✓
       </Text>
     );
   }
   return (
-    <Text span c={themeSetting.downColor ?? "red.7"} fw={700}>
+    <Text span c={themeSetting.downColor} fw={700}>
       ✗
     </Text>
   );

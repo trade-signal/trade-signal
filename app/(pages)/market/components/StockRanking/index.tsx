@@ -99,7 +99,7 @@ const StockRanking: FC<StockRankingProps> = props => {
             </Stack>
           </Tooltip>
         ),
-        size: 160
+        size: 140
       }
     ];
 
@@ -125,13 +125,11 @@ const StockRanking: FC<StockRankingProps> = props => {
         {
           header: "振幅",
           accessorKey: "amplitude",
-          size: 140,
+          size: 160,
           Cell: ({ row }) => (
-            <Stack gap={0} ta="right">
-              <Tooltip label="当日振幅" position="right">
+            <Tooltip label="当日振幅、最高价/最低价" position="right">
+              <Stack gap={0} ta="right">
                 <Text>{formatPercentPlain(row.original.amplitude)}</Text>
-              </Tooltip>
-              <Tooltip label="当日最高价/当日最低价" position="right">
                 <Group justify="flex-end">
                   <Text c={themeSetting.upColor}>
                     {formatNumber(row.original.highPrice, 2)}
@@ -140,8 +138,8 @@ const StockRanking: FC<StockRankingProps> = props => {
                     {formatNumber(row.original.lowPrice, 2)}
                   </Text>
                 </Group>
-              </Tooltip>
-            </Stack>
+              </Stack>
+            </Tooltip>
           )
         }
       ],
@@ -156,8 +154,8 @@ const StockRanking: FC<StockRankingProps> = props => {
                 <Text
                   c={
                     row.original.newPrice > row.original.preClosePrice
-                      ? themeSetting.upColor ?? "rgba(236, 64, 64, 1)"
-                      : themeSetting.downColor ?? "rgba(46, 139, 87, 1)"
+                      ? themeSetting.upColor
+                      : themeSetting.downColor
                   }
                 >
                   {formatNumber(row.original.newPrice, 2)}
@@ -176,8 +174,8 @@ const StockRanking: FC<StockRankingProps> = props => {
                 ta="right"
                 c={
                   row.original.newPrice > row.original.preClosePrice
-                    ? themeSetting.upColor ?? "rgba(236, 64, 64, 1)"
-                    : themeSetting.downColor ?? "rgba(46, 139, 87, 1)"
+                    ? themeSetting.upColor
+                    : themeSetting.downColor
                 }
               >
                 {formatPercentPlain(row.original.changeRate)}

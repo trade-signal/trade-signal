@@ -31,12 +31,12 @@ const getChartColor = (
 
   if (chartType === "area") {
     return stock.close > stock.preClose
-      ? themeSetting.upColor ?? "rgba(236, 64, 64, 1)"
-      : themeSetting.downColor ?? "rgba(46, 139, 87, 1)";
+      ? themeSetting.upColor
+      : themeSetting.downColor;
   } else {
     return price > stock.preClose
-      ? themeSetting.upColor ?? "#ec4040"
-      : themeSetting.downColor ?? "#2e8b57";
+      ? themeSetting.upColor
+      : themeSetting.downColor;
   }
 };
 
@@ -220,16 +220,16 @@ const SymbolChart = (props: SymbolChartData) => {
         const areaSeries = chart.addAreaSeries({
           lineColor:
             stock.close > stock.preClose
-              ? hex2rgba(themeSetting.upColor ?? "#ec4040")
-              : hex2rgba(themeSetting.downColor ?? "#2e8b57"),
+              ? hex2rgba(themeSetting.upColor)
+              : hex2rgba(themeSetting.downColor),
           topColor:
             stock.close > stock.preClose
-              ? hex2rgba(themeSetting.upColor ?? "#ec4040", 0.28)
-              : hex2rgba(themeSetting.downColor ?? "#2e8b57", 0.28),
+              ? hex2rgba(themeSetting.upColor, 0.28)
+              : hex2rgba(themeSetting.downColor, 0.28),
           bottomColor:
             stock.close > stock.preClose
-              ? hex2rgba(themeSetting.upColor ?? "#ec4040", 0.05)
-              : hex2rgba(themeSetting.downColor ?? "#2e8b57", 0.05)
+              ? hex2rgba(themeSetting.upColor, 0.05)
+              : hex2rgba(themeSetting.downColor, 0.05)
         });
 
         const areaData = trends
@@ -244,12 +244,12 @@ const SymbolChart = (props: SymbolChartData) => {
         break;
       case "candle":
         const candleSeries = chart.addCandlestickSeries({
-          upColor: themeSetting.upColor ?? "#ec4040",
-          downColor: themeSetting.downColor ?? "#2e8b57",
+          upColor: themeSetting.upColor,
+          downColor: themeSetting.downColor,
           borderVisible: false,
           wickVisible: false, // temp: 隐藏蜡烛图的线
-          wickUpColor: themeSetting.upColor ?? "#ec4040",
-          wickDownColor: themeSetting.downColor ?? "#2e8b57"
+          wickUpColor: themeSetting.upColor,
+          wickDownColor: themeSetting.downColor
         });
 
         const candleData = trends
@@ -261,8 +261,8 @@ const SymbolChart = (props: SymbolChartData) => {
             close: item.close,
             color:
               item.close > stock.preClose
-                ? themeSetting.upColor ?? "#ec4040"
-                : themeSetting.downColor ?? "#2e8b57"
+                ? themeSetting.upColor
+                : themeSetting.downColor
           }))
           .filter(
             item =>

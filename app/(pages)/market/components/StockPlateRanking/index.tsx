@@ -107,35 +107,43 @@ const StockRanking: FC<StockRankingProps> = props => {
     const indicatorColumns: Record<string, StockRankingColumnDef[]> = {
       changeRate: [
         {
-          header: "涨幅",
-          accessorKey: "changeRate",
+          header: "最新价",
+          accessorKey: "newPrice",
           size: 100,
           Cell: ({ row }) => (
-            <Tooltip label="当日涨幅" position="right">
+            <Tooltip label="最新价" position="right">
               <Box ta="right">
-                <Text>{formatPercentPlain(row.original.changeRate)}</Text>
+                <Text>{formatNumber(row.original.newPrice / 100)}</Text>
               </Box>
             </Tooltip>
           )
         },
         {
-          header: "成交额",
-          accessorKey: "dealAmount",
+          header: "涨跌额",
+          accessorKey: "upsDowns",
           size: 100,
           Cell: ({ row }) => (
-            <Stack gap={0} ta="right">
-              <Tooltip label="当日成交额" position="right">
-                <Box ta="right">
-                  <Text>{formatBillion(row.original.dealAmount)}亿</Text>
-                </Box>
-              </Tooltip>
-              <Tooltip label="上涨/下跌家数" position="right">
-                <Group justify="flex-end">
-                  <Text>{row.original.upCount}</Text>
-                  <Text>{row.original.downCount}</Text>
-                </Group>
-              </Tooltip>
-            </Stack>
+            <Tooltip label="当日涨跌额" position="right">
+              <Box ta="right">
+                <Text c={themeSetting.upColor}>
+                  {formatNumber(row.original.upsDowns / 100)}
+                </Text>
+              </Box>
+            </Tooltip>
+          )
+        },
+        {
+          header: "涨跌幅",
+          accessorKey: "changeRate",
+          size: 100,
+          Cell: ({ row }) => (
+            <Tooltip label="当日涨跌幅" position="right">
+              <Box ta="right">
+                <Text c={themeSetting.upColor}>
+                  {formatPercentPlain(row.original.changeRate / 100)}
+                </Text>
+              </Box>
+            </Tooltip>
           )
         }
       ],
@@ -146,21 +154,39 @@ const StockRanking: FC<StockRankingProps> = props => {
           size: 100,
           Cell: ({ row }) => (
             <Tooltip label="当日成交额" position="right">
+              <Box ta="right">{formatBillion(row.original.dealAmount)}亿</Box>
+            </Tooltip>
+          )
+        },
+        {
+          header: "换手率",
+          accessorKey: "turnoverRate",
+          size: 100,
+          Cell: ({ row }) => (
+            <Tooltip label="当日换手率" position="right">
               <Box ta="right">
-                <Text>{formatBillion(row.original.dealAmount)}亿</Text>
+                {formatPercentPlain(row.original.turnoverRate / 100)}
               </Box>
             </Tooltip>
           )
         },
         {
-          header: "涨幅",
-          accessorKey: "changeRate",
+          header: "总市值",
+          accessorKey: "totalMarketCap",
           size: 100,
           Cell: ({ row }) => (
-            <Tooltip label="当日涨幅" position="right">
-              <Box ta="right">
-                {formatPercentPlain(row.original.changeRate)}
-              </Box>
+            <Tooltip label="总市值、涨跌家数" position="right">
+              <Stack gap={0} ta="right">
+                <Box ta="right">
+                  <Text>{formatBillion(row.original.totalMarketCap)}亿</Text>
+                </Box>
+                <Group justify="flex-end">
+                  <Text c={themeSetting.upColor}>{row.original.upCount}</Text>
+                  <Text c={themeSetting.downColor}>
+                    {row.original.downCount}
+                  </Text>
+                </Group>
+              </Stack>
             </Tooltip>
           )
         }
