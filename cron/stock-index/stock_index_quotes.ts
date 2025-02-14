@@ -39,6 +39,7 @@ export const cleanStockIndexQuotes = async (days: number = 7) => {
     print(`clean ${result.count} data`);
     return;
   }
+
   print("no data to clean");
 };
 
@@ -46,6 +47,7 @@ export const fetchStockIndexQuotes = async (date?: string) => {
   const currentDate = dayjs(date).format("YYYY-MM-DD");
 
   const task = new Task("stock_index_quotes", "eastmoney");
+
   try {
     print(`start get stock index quotes`);
 

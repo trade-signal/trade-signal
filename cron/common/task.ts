@@ -5,15 +5,15 @@ import dayjs from "dayjs";
 // 任务类型
 export type TaskType =
   | "news"
-  | "stock_basic"
-  | "stock_index_basic"
   | "stock_screener"
+  | "stock_basic"
   | "stock_quotes"
   | "stock_minute_kline"
-  | "stock_daily_kline"
+  | "stock_index_basic"
   | "stock_index_quotes"
   | "stock_index_minute_kline"
-  | "stock_index_daily_kline";
+  | "stock_plate_basic"
+  | "stock_plate_quotes";
 
 // 数据来源
 export type TaskSource = "sina" | "cls" | "eastmoney";

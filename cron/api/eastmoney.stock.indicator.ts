@@ -96,7 +96,9 @@ const otherIndicators = {
   reportDate: { type: IndicatorType.DATE, cn: "报告期", map: "f221" }
 };
 
-// 股票指标 - 基础
+// --------------------------------------------------------------
+
+// 个股指标 - 基础
 export const quotesBaseIndicatorMapping = {
   ...basicIndicators,
   newPrice: priceIndicators.newPrice,
@@ -105,13 +107,19 @@ export const quotesBaseIndicatorMapping = {
   marketId: { type: IndicatorType.NUMBER, cn: "市场ID", map: "f13" }
 };
 
-// 股票指标 - 指数 - 基础
+// 指数指标 - 基础
 export const quotesIndexBaseIndicatorMapping = {
   ...basicIndicators,
   marketId: { type: IndicatorType.NUMBER, cn: "市场ID", map: "f13" }
 };
 
-// 股票指标 - 实时行情
+// 板块指标 - 基础
+export const quotesPlateBaseIndicatorMapping = {
+  ...basicIndicators,
+  marketId: { type: IndicatorType.NUMBER, cn: "市场ID", map: "f13" }
+};
+
+// 个股指标 - 实时行情
 export const quotesIndicatorMapping = {
   ...basicIndicators,
   ...priceIndicators,
@@ -123,9 +131,39 @@ export const quotesIndicatorMapping = {
   ...otherIndicators
 };
 
-// 股票指标 - 指数 - 实时行情
+// 指数指标 - 实时行情
 export const quotesIndexIndicatorMapping = {
   ...basicIndicators,
   ...priceIndicators,
   ...tradingIndicators
+};
+
+// 板块指标 - 实时行情
+export const quotesPlateIndicatorMapping = {
+  ...basicIndicators,
+  ...priceIndicators,
+
+  // 交易相关指标
+  volume: tradingIndicators.volume,
+  dealAmount: tradingIndicators.dealAmount,
+  turnoverRate: tradingIndicators.turnoverRate,
+  totalMarketCap: sharesAndCapIndicators.totalMarketCap,
+
+  // 成分股统计
+  upCount: { type: IndicatorType.NUMBER, cn: "上涨家数", map: "f104" },
+  downCount: { type: IndicatorType.NUMBER, cn: "下跌家数", map: "f105" },
+
+  // 领涨领跌信息
+  topGainerName: { type: IndicatorType.STRING, cn: "领涨股", map: "f128" },
+  topGainerCode: {
+    type: IndicatorType.STRING,
+    cn: "领涨股Code",
+    map: "f140"
+  },
+  topLoserName: { type: IndicatorType.STRING, cn: "领跌股", map: "f207" },
+  topLoserCode: {
+    type: IndicatorType.STRING,
+    cn: "领跌股Code",
+    map: "f208"
+  }
 };

@@ -1,0 +1,10 @@
+.paper {
+  width: 48%;
+}
+
+.more {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: rem(10);
+}

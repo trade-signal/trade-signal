@@ -2,7 +2,7 @@ import { StockIndexQuotes } from "@prisma/client";
 import prisma from "@/prisma/db";
 import { NextRequest } from "next/server";
 
-export type StockIndexQuotesList = {
+export type StockIndexQuotesItem = {
   code: string;
   name: string;
   stock: StockIndexQuotes;

@@ -21,8 +21,8 @@ export interface ThemeSetting {
 export const DEFAULT_THEME_SETTING: ThemeSetting = {
   colorScheme: "light",
   fontSize: 16,
-  upColor: "#f03e3e",
-  downColor: "#37b24d"
+  upColor: "#ec4040",
+  downColor: "#2e8b57"
 };
 
 export const THEME_SETTING_KEY = "trade-signal-theme-setting";

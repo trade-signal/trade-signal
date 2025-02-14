@@ -21,6 +21,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getRefetchInterval } from "@/shared/env";
 import { useRouter } from "next/navigation";
 import {
+  formatBillion,
   formatNumber,
   formatPercentPlain
 } from "@/app/components/tables/DataTable/util";
@@ -30,7 +31,7 @@ import {
   useMantineReactTable
 } from "mantine-react-table";
 import { IconChevronCompactRight } from "@tabler/icons-react";
-import { StockQuotes } from "@prisma/client";
+import { StockPlateQuotes } from "@prisma/client";
 import { THEME_SETTING_KEY, ThemeSetting } from "@/app/hooks/useThemeSetting";
 import { readLocalStorageValue } from "@mantine/hooks";
 
@@ -46,7 +47,7 @@ interface StockRankingProps {
   moreLink?: string;
 }
 
-interface StockRankingColumnDef extends MRT_ColumnDef<StockQuotes> {
+interface StockRankingColumnDef extends MRT_ColumnDef<StockPlateQuotes> {
   size?: number;
 }
 
@@ -73,9 +74,9 @@ const StockRanking: FC<StockRankingProps> = props => {
   });
 
   const { data, isLoading } = useQuery({
-    queryKey: ["stock-ranking", indicator, order],
-    queryFn: (): Promise<StockQuotes[]> =>
-      clientGet("/api/stock-ranking/list", {
+    queryKey: ["stock-plate-ranking", indicator, order],
+    queryFn: (): Promise<StockPlateQuotes[]> =>
+      clientGet("/api/stock-plate-ranking/list", {
         orderBy: indicator,
         order: order
       }),
@@ -92,73 +93,40 @@ const StockRanking: FC<StockRankingProps> = props => {
         header: "代码",
         accessorKey: "stock",
         Cell: ({ row }) => (
-          <Tooltip label="股票代码和名称" position="top-start">
+          <Tooltip label="板块代码和名称" position="top-start">
             <Stack gap={0}>
               <Text>{row.original.name}</Text>
               <Text>{row.original.code}</Text>
             </Stack>
           </Tooltip>
         ),
-        size: 140
+        size: 160
       }
     ];
 
     const indicatorColumns: Record<string, StockRankingColumnDef[]> = {
-      volume: [
-        {
-          header: "成交量",
-          accessorKey: "volume",
-          size: 140,
-          Cell: ({ row }) => (
-            <Tooltip label="当日成交量/当日成交额" position="right">
-              <Stack gap={0} ta="right">
-                <Text>{formatNumber(row.original.volume / 10000, 2)}万</Text>
-                <Text>
-                  {formatNumber(row.original.dealAmount / 100000000, 2)}亿
-                </Text>
-              </Stack>
-            </Tooltip>
-          )
-        }
-      ],
-      amplitude: [
-        {
-          header: "振幅",
-          accessorKey: "amplitude",
-          size: 160,
-          Cell: ({ row }) => (
-            <Tooltip label="当日振幅、最高价/最低价" position="right">
-              <Stack gap={0} ta="right">
-                <Text>{formatPercentPlain(row.original.amplitude)}</Text>
-                <Group justify="flex-end">
-                  <Text c={themeSetting.upColor}>
-                    {formatNumber(row.original.highPrice, 2)}
-                  </Text>
-                  <Text c={themeSetting.downColor}>
-                    {formatNumber(row.original.lowPrice, 2)}
-                  </Text>
-                </Group>
-              </Stack>
-            </Tooltip>
-          )
-        }
-      ],
       changeRate: [
         {
           header: "最新价",
           accessorKey: "newPrice",
           size: 100,
           Cell: ({ row }) => (
-            <Tooltip label="最新成交价" position="right">
+            <Tooltip label="最新价" position="right">
               <Box ta="right">
-                <Text
-                  c={
-                    row.original.newPrice > row.original.preClosePrice
-                      ? themeSetting.upColor
-                      : themeSetting.downColor
-                  }
-                >
-                  {formatNumber(row.original.newPrice, 2)}
+                <Text>{formatNumber(row.original.newPrice / 100)}</Text>
+              </Box>
+            </Tooltip>
+          )
+        },
+        {
+          header: "涨跌额",
+          accessorKey: "upsDowns",
+          size: 100,
+          Cell: ({ row }) => (
+            <Tooltip label="当日涨跌额" position="right">
+              <Box ta="right">
+                <Text c={themeSetting.upColor}>
+                  {formatNumber(row.original.upsDowns / 100)}
                 </Text>
               </Box>
             </Tooltip>
@@ -170,16 +138,55 @@ const StockRanking: FC<StockRankingProps> = props => {
           size: 100,
           Cell: ({ row }) => (
             <Tooltip label="当日涨跌幅" position="right">
-              <Text
-                ta="right"
-                c={
-                  row.original.newPrice > row.original.preClosePrice
-                    ? themeSetting.upColor
-                    : themeSetting.downColor
-                }
-              >
-                {formatPercentPlain(row.original.changeRate)}
-              </Text>
+              <Box ta="right">
+                <Text c={themeSetting.upColor}>
+                  {formatPercentPlain(row.original.changeRate / 100)}
+                </Text>
+              </Box>
+            </Tooltip>
+          )
+        }
+      ],
+      dealAmount: [
+        {
+          header: "成交额",
+          accessorKey: "dealAmount",
+          size: 100,
+          Cell: ({ row }) => (
+            <Tooltip label="当日成交额" position="right">
+              <Box ta="right">{formatBillion(row.original.dealAmount)}亿</Box>
+            </Tooltip>
+          )
+        },
+        {
+          header: "换手率",
+          accessorKey: "turnoverRate",
+          size: 100,
+          Cell: ({ row }) => (
+            <Tooltip label="当日换手率" position="right">
+              <Box ta="right">
+                {formatPercentPlain(row.original.turnoverRate / 100)}
+              </Box>
+            </Tooltip>
+          )
+        },
+        {
+          header: "总市值",
+          accessorKey: "totalMarketCap",
+          size: 100,
+          Cell: ({ row }) => (
+            <Tooltip label="总市值、涨跌家数" position="right">
+              <Stack gap={0} ta="right">
+                <Box ta="right">
+                  <Text>{formatBillion(row.original.totalMarketCap)}亿</Text>
+                </Box>
+                <Group justify="flex-end">
+                  <Text c={themeSetting.upColor}>{row.original.upCount}</Text>
+                  <Text c={themeSetting.downColor}>
+                    {row.original.downCount}
+                  </Text>
+                </Group>
+              </Stack>
             </Tooltip>
           )
         }

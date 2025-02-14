@@ -56,7 +56,7 @@ export const fetchStockIndexBasic = async () => {
 
     await task.updateStatus("transforming");
 
-    let list = transformStockData(stocks, quotesIndexBaseIndicatorMapping);
+    const list = transformStockData(stocks, quotesIndexBaseIndicatorMapping);
 
     print(`start upsert stock index basic`);
 

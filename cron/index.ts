@@ -19,6 +19,10 @@ import {
   initStockIndexBasic,
   fetchStockIndexBasic
 } from "./stock-index/stock_index_basic";
+import {
+  initStockPlateBasic,
+  fetchStockPlateBasic
+} from "./stock-plate/stock_plate_basic";
 
 import {
   initStockQuotes,
@@ -30,6 +34,11 @@ import {
   fetchStockIndexQuotes,
   cleanStockIndexQuotes
 } from "./stock-index/stock_index_quotes";
+import {
+  initStockPlateQuotes,
+  fetchStockPlateQuotes,
+  cleanStockPlateQuotes
+} from "./stock-plate/stock_plate_quotes";
 
 import {
   cleanActiveStockMinuteKline,
@@ -58,6 +67,7 @@ const runStockTrendingJobs = async () => {
   await fetchActiveStockIndexMinuteKline();
   await fetchStockQuotes();
   await fetchActiveStockMinuteKline();
+  await fetchStockPlateQuotes();
 };
 
 const runStockScheduleJobs = () => {
@@ -97,6 +107,7 @@ const runStockScheduleJobs = () => {
   new CronJob("0 0 1 * *", async () => {
     await fetchStockBasic();
     await fetchStockIndexBasic();
+    await fetchStockPlateBasic();
   }).start();
 };
 
@@ -133,7 +144,11 @@ const runClearScheduleJobs = () => {
     await cleanStockScreener();
     await Promise.all([cleanActiveStocks(), cleanActiveStocksIndex()]);
 
-    await Promise.all([cleanStockQuotes(3), cleanStockIndexQuotes(3)]);
+    await Promise.all([
+      cleanStockQuotes(3),
+      cleanStockIndexQuotes(3),
+      cleanStockPlateQuotes(3)
+    ]);
     await Promise.all([
       cleanActiveStockMinuteKline(3),
       cleanActiveStockIndexMinuteKline(3)
@@ -149,11 +164,16 @@ const runSchedulerJobs = () => {
 
 const runSeedJobs = async (runDate: string) => {
   try {
-    await Promise.all([initStockBasic(), initStockIndexBasic()]);
+    await Promise.all([
+      initStockBasic(),
+      initStockIndexBasic(),
+      initStockPlateBasic()
+    ]);
     await Promise.all([initStockScreener(runDate), initNews(runDate)]);
     await Promise.all([
       initStockQuotes(runDate),
-      initStockIndexQuotes(runDate)
+      initStockIndexQuotes(runDate),
+      initStockPlateQuotes(runDate)
     ]);
     await Promise.all([initActiveStocks(), initActiveStockIndex()]);
     await Promise.all([
