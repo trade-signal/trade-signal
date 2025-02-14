@@ -1,11 +1,11 @@
-import { StockQuotes } from "@prisma/client";
+import { StockPlateQuotes } from "@prisma/client";
 import prisma from "@/prisma/db";
 import { NextRequest } from "next/server";
 
-export type StockQuotesItem = {
+export type StockPlateQuotesItem = {
   code: string;
   name: string;
-  stock: StockQuotes;
+  stock: StockPlateQuotes;
 };
 
 export const GET = async (request: NextRequest) => {
@@ -14,12 +14,12 @@ export const GET = async (request: NextRequest) => {
   const order = searchParams.get("order") || "desc";
   const limit = Number(searchParams.get("limit")) || 5;
 
-  const maxDate = await prisma.stockQuotes.findFirst({
+  const maxDate = await prisma.stockPlateQuotes.findFirst({
     orderBy: { date: "desc" },
     select: { date: true }
   });
 
-  const quotes = await prisma.stockQuotes.findMany({
+  const quotes = await prisma.stockPlateQuotes.findMany({
     where: {
       date: { equals: maxDate?.date }
     },

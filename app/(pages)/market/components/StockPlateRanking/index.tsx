@@ -21,6 +21,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getRefetchInterval } from "@/shared/env";
 import { useRouter } from "next/navigation";
 import {
+  formatBillion,
   formatNumber,
   formatPercentPlain
 } from "@/app/components/tables/DataTable/util";
@@ -30,7 +31,7 @@ import {
   useMantineReactTable
 } from "mantine-react-table";
 import { IconChevronCompactRight } from "@tabler/icons-react";
-import { StockQuotes } from "@prisma/client";
+import { StockPlateQuotes } from "@prisma/client";
 import { THEME_SETTING_KEY, ThemeSetting } from "@/app/hooks/useThemeSetting";
 import { readLocalStorageValue } from "@mantine/hooks";
 
@@ -46,7 +47,7 @@ interface StockRankingProps {
   moreLink?: string;
 }
 
-interface StockRankingColumnDef extends MRT_ColumnDef<StockQuotes> {
+interface StockRankingColumnDef extends MRT_ColumnDef<StockPlateQuotes> {
   size?: number;
 }
 
@@ -73,9 +74,9 @@ const StockRanking: FC<StockRankingProps> = props => {
   });
 
   const { data, isLoading } = useQuery({
-    queryKey: ["stock-ranking", indicator, order],
-    queryFn: (): Promise<StockQuotes[]> =>
-      clientGet("/api/stock-ranking/list", {
+    queryKey: ["stock-plate-ranking", indicator, order],
+    queryFn: (): Promise<StockPlateQuotes[]> =>
+      clientGet("/api/stock-plate-ranking/list", {
         orderBy: indicator,
         order: order
       }),
@@ -92,7 +93,7 @@ const StockRanking: FC<StockRankingProps> = props => {
         header: "代码",
         accessorKey: "stock",
         Cell: ({ row }) => (
-          <Tooltip label="股票代码和名称" position="top-start">
+          <Tooltip label="板块代码和名称" position="top-start">
             <Stack gap={0}>
               <Text>{row.original.name}</Text>
               <Text>{row.original.code}</Text>
@@ -104,84 +105,62 @@ const StockRanking: FC<StockRankingProps> = props => {
     ];
 
     const indicatorColumns: Record<string, StockRankingColumnDef[]> = {
-      volume: [
+      changeRate: [
         {
-          header: "成交量",
-          accessorKey: "volume",
-          size: 140,
+          header: "涨幅",
+          accessorKey: "changeRate",
+          size: 100,
           Cell: ({ row }) => (
-            <Tooltip label="当日成交量/当日成交额" position="right">
-              <Stack gap={0} ta="right">
-                <Text>{formatNumber(row.original.volume / 10000, 2)}万</Text>
-                <Text>
-                  {formatNumber(row.original.dealAmount / 100000000, 2)}亿
-                </Text>
-              </Stack>
+            <Tooltip label="当日涨幅" position="right">
+              <Box ta="right">
+                <Text>{formatPercentPlain(row.original.changeRate)}</Text>
+              </Box>
             </Tooltip>
           )
-        }
-      ],
-      amplitude: [
+        },
         {
-          header: "振幅",
-          accessorKey: "amplitude",
-          size: 140,
+          header: "成交额",
+          accessorKey: "dealAmount",
+          size: 100,
           Cell: ({ row }) => (
             <Stack gap={0} ta="right">
-              <Tooltip label="当日振幅" position="right">
-                <Text>{formatPercentPlain(row.original.amplitude)}</Text>
+              <Tooltip label="当日成交额" position="right">
+                <Box ta="right">
+                  <Text>{formatBillion(row.original.dealAmount)}亿</Text>
+                </Box>
               </Tooltip>
-              <Tooltip label="当日最高价/当日最低价" position="right">
+              <Tooltip label="上涨/下跌家数" position="right">
                 <Group justify="flex-end">
-                  <Text c={themeSetting.upColor}>
-                    {formatNumber(row.original.highPrice, 2)}
-                  </Text>
-                  <Text c={themeSetting.downColor}>
-                    {formatNumber(row.original.lowPrice, 2)}
-                  </Text>
+                  <Text>{row.original.upCount}</Text>
+                  <Text>{row.original.downCount}</Text>
                 </Group>
               </Tooltip>
             </Stack>
           )
         }
       ],
-      changeRate: [
+      dealAmount: [
         {
-          header: "最新价",
-          accessorKey: "newPrice",
+          header: "成交额",
+          accessorKey: "dealAmount",
           size: 100,
           Cell: ({ row }) => (
-            <Tooltip label="最新成交价" position="right">
+            <Tooltip label="当日成交额" position="right">
               <Box ta="right">
-                <Text
-                  c={
-                    row.original.newPrice > row.original.preClosePrice
-                      ? themeSetting.upColor ?? "rgba(236, 64, 64, 1)"
-                      : themeSetting.downColor ?? "rgba(46, 139, 87, 1)"
-                  }
-                >
-                  {formatNumber(row.original.newPrice, 2)}
-                </Text>
+                <Text>{formatBillion(row.original.dealAmount)}亿</Text>
               </Box>
             </Tooltip>
           )
         },
         {
-          header: "涨跌幅",
+          header: "涨幅",
           accessorKey: "changeRate",
           size: 100,
           Cell: ({ row }) => (
-            <Tooltip label="当日涨跌幅" position="right">
-              <Text
-                ta="right"
-                c={
-                  row.original.newPrice > row.original.preClosePrice
-                    ? themeSetting.upColor ?? "rgba(236, 64, 64, 1)"
-                    : themeSetting.downColor ?? "rgba(46, 139, 87, 1)"
-                }
-              >
+            <Tooltip label="当日涨幅" position="right">
+              <Box ta="right">
                 {formatPercentPlain(row.original.changeRate)}
-              </Text>
+              </Box>
             </Tooltip>
           )
         }

@@ -22,8 +22,8 @@ import { getRefetchInterval } from "@/shared/env";
 import { clientGet } from "@/shared/request";
 import { IconChevronCompactRight } from "@tabler/icons-react";
 import SymbolChart from "@/app/components/charts/SymbolChart";
-import { StockQuotesList } from "@/app/api/(stock)/stock-quotes/list/route";
-import { StockIndexQuotesList } from "@/app/api/(stock)/stock-index/list/route";
+import { StockQuotesItem } from "@/app/api/(stock)/stock-quotes/list/route";
+import { StockIndexQuotesItem } from "@/app/api/(stock)/stock-index/list/route";
 import { StockIndexTrends } from "@/app/api/(stock)/stock-index/trends/route";
 import {
   formatNumber,
@@ -46,7 +46,7 @@ interface SymbolTabsProps {
   moreLink?: string;
 }
 
-type SymbolTabsData = StockQuotesList | StockIndexQuotesList;
+type SymbolTabsData = StockQuotesItem | StockIndexQuotesItem;
 
 const SymbolTabs: FC<SymbolTabsProps> = props => {
   const {
