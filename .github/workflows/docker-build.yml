@@ -73,7 +73,13 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
-            cd workspace/trade-signal || echo "❌ 目录切换失败" && exit 1
+            set -e
+
+            # 切换目录
+            cd ~/workspace/trade-signal || {
+              echo "❌ 目录切换失败"
+              exit 1
+            }
 
             echo "开始部署服务..."
             if ! docker compose -p trade-signal --env-file .env.production -f docker-compose.prod.yml up -d; then
