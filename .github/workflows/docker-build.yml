@@ -81,6 +81,12 @@ jobs:
               exit 1
             }
 
+            echo "开始拉取最新镜像..."
+            if ! docker compose -f docker-compose.prod.yml pull; then
+              echo "❌ 镜像拉取失败"
+              exit 1
+            fi
+
             echo "开始部署服务..."
             if ! docker compose -p trade-signal --env-file .env.production -f docker-compose.prod.yml up -d; then
               echo "❌ 服务部署失败"
