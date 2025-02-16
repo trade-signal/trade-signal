@@ -46,7 +46,7 @@ const links: Link[] = [
     link: "/quotes",
     label: "行情中心"
   },
-  { link: "/screener", label: "股票筛选" },
+  { link: "/screener", label: "筛选器" },
   {
     link: "/more",
     label: "更多",
@@ -136,7 +136,7 @@ const Header = () => {
           // hack: handle /quotes redirect
           if (link.link.startsWith("/quotes") && !link.link.endsWith("/")) {
             e.preventDefault();
-            router.push(link.link + "/indices");
+            router.push(link.link + "/index");
           }
         }}
       >

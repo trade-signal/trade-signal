@@ -1,10 +1,10 @@
 import { Metadata } from "next";
 import QuoteListClient from "./client";
 
-export type QuoteListType = "indices" | "stocks" | "sectors";
+export type QuoteListType = "index" | "stock" | "plate";
 
 export const metadata: Metadata = {
-  title: "市场行情：实时股票和指数行情 - TradeSignal"
+  title: "市场行情 - TradeSignal"
 };
 
 interface PageProps {

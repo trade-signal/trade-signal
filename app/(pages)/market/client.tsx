@@ -24,7 +24,7 @@ const MarketClient = () => {
           apiBasePath="/api/stock-index"
           showMore
           moreText="查看所有指数"
-          moreLink="/quotes/indices"
+          moreLink="/quotes/index"
         />
         <SymbolTabs
           title="股票"
@@ -32,7 +32,7 @@ const MarketClient = () => {
           apiBasePath="/api/stock-quotes"
           showMore
           moreText="查看所有股票"
-          moreLink="/quotes/stocks"
+          moreLink="/quotes/stock"
         />
       </Stack>
 
@@ -43,7 +43,7 @@ const MarketClient = () => {
           order="desc"
           showMore
           moreText="查看每日涨幅最大的所有板块"
-          moreLink="/quotes/sectors"
+          moreLink="/quotes/plate"
         />
         <StockPlateRanking
           title="最高成交额板块"
@@ -51,7 +51,7 @@ const MarketClient = () => {
           order="desc"
           showMore
           moreText="查看每日成交额最大的所有板块"
-          moreLink="/quotes/sectors"
+          moreLink="/quotes/plate"
         />
       </Group>
 
@@ -63,7 +63,7 @@ const MarketClient = () => {
           doubleColumn
           showMore
           moreText="查看交易最活跃的所有股票"
-          moreLink="/quotes/stocks"
+          moreLink="/quotes/stock"
         />
         <StockRanking
           title="波动最大的股票"
@@ -72,7 +72,7 @@ const MarketClient = () => {
           doubleColumn
           showMore
           moreText="查看波动最大的所有股票"
-          moreLink="/quotes/stocks"
+          moreLink="/quotes/stock"
         />
       </Group>
 
@@ -83,7 +83,7 @@ const MarketClient = () => {
           order="desc"
           showMore
           moreText="查看每日涨幅最大的所有股票"
-          moreLink="/quotes/stocks"
+          moreLink="/quotes/stock"
         />
         <StockRanking
           title="股票输家"
@@ -91,7 +91,7 @@ const MarketClient = () => {
           order="asc"
           showMore
           moreText="查看每日跌幅最大的所有股票"
-          moreLink="/quotes/stocks"
+          moreLink="/quotes/stock"
         />
       </Group>
     </ScrollArea>
