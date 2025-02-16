@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "股票筛选器：搜索和过滤股票 - TradeSignal"
 };
 
-const Stock = () => {
+const StockScreenerPage = () => {
   return (
     <StockProvider>
       <Container fluid>
@@ -20,4 +20,4 @@ const Stock = () => {
   );
 };
 
-export default Stock;
+export default StockScreenerPage;

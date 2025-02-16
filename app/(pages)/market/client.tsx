@@ -22,17 +22,17 @@ const MarketClient = () => {
           title="指数"
           queryKey="stock-index"
           apiBasePath="/api/stock-index"
-          showMore={false}
+          showMore
           moreText="查看所有指数"
-          moreLink="/market/list/index"
+          moreLink="/quotes/indices"
         />
         <SymbolTabs
           title="股票"
           queryKey="stock-quotes"
           apiBasePath="/api/stock-quotes"
-          showMore={false}
+          showMore
           moreText="查看所有股票"
-          moreLink="/market/list/stock"
+          moreLink="/quotes/stocks"
         />
       </Stack>
 
@@ -41,17 +41,17 @@ const MarketClient = () => {
           title="最高涨幅板块"
           indicator="changeRate"
           order="desc"
-          showMore={false}
+          showMore
           moreText="查看每日涨幅最大的所有板块"
-          moreLink="/market/list/plate"
+          moreLink="/quotes/sectors"
         />
         <StockPlateRanking
           title="最高成交额板块"
           indicator="dealAmount"
           order="desc"
-          showMore={false}
+          showMore
           moreText="查看每日成交额最大的所有板块"
-          moreLink="/market/list/plate"
+          moreLink="/quotes/sectors"
         />
       </Group>
 
@@ -61,18 +61,18 @@ const MarketClient = () => {
           indicator="volume"
           order="desc"
           doubleColumn
-          showMore={false}
+          showMore
           moreText="查看交易最活跃的所有股票"
-          moreLink="/market/list/stock"
+          moreLink="/quotes/stocks"
         />
         <StockRanking
           title="波动最大的股票"
           indicator="amplitude"
           order="desc"
           doubleColumn
-          showMore={false}
+          showMore
           moreText="查看波动最大的所有股票"
-          moreLink="/market/list/stock"
+          moreLink="/quotes/stocks"
         />
       </Group>
 
@@ -81,17 +81,17 @@ const MarketClient = () => {
           title="股票赢家"
           indicator="changeRate"
           order="desc"
-          showMore={false}
+          showMore
           moreText="查看每日涨幅最大的所有股票"
-          moreLink="/market/list/stock"
+          moreLink="/quotes/stocks"
         />
         <StockRanking
           title="股票输家"
           indicator="changeRate"
           order="asc"
-          showMore={false}
+          showMore
           moreText="查看每日跌幅最大的所有股票"
-          moreLink="/market/list/stock"
+          moreLink="/quotes/stocks"
         />
       </Group>
     </ScrollArea>

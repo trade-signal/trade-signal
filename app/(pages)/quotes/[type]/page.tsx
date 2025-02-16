@@ -1,5 +1,7 @@
 import { Metadata } from "next";
-import MarketListClient from "./client";
+import QuoteListClient from "./client";
+
+export type QuoteListType = "indices" | "stocks" | "sectors";
 
 export const metadata: Metadata = {
   title: "市场行情：实时股票和指数行情 - TradeSignal"
@@ -7,11 +9,11 @@ export const metadata: Metadata = {
 
 interface PageProps {
   params: Promise<{
-    type: string;
+    type: QuoteListType;
   }>;
 }
 
-export default async function MarketList(props: PageProps) {
+export default async function QuoteList(props: PageProps) {
   const { type } = await props.params;
-  return <MarketListClient type={type} />;
+  return <QuoteListClient type={type} />;
 }

@@ -42,7 +42,11 @@ interface Link {
 const links: Link[] = [
   { link: "/market", label: "市场" },
   { link: "/news", label: "新闻" },
-  { link: "/stock", label: "股票" },
+  {
+    link: "/quotes",
+    label: "行情中心"
+  },
+  { link: "/screener", label: "股票筛选" },
   {
     link: "/more",
     label: "更多",
@@ -64,12 +68,15 @@ const links: Link[] = [
 ];
 
 const LinkMenu = (link: Omit<Link, "children"> & { children: Link[] }) => {
+  const pathname = usePathname();
+
   return (
     <Menu key={link.label} shadow="md" trigger="hover">
       <Menu.Target>
         <Link
           href={link.link}
           className={styles.link}
+          data-active={pathname.includes(link.link) ? "true" : undefined}
           onClick={e => e.preventDefault()}
         >
           {link.label}
@@ -120,10 +127,17 @@ const Header = () => {
         key={link.label}
         href={link.link}
         className={styles.link}
-        data-active={pathname === link.link || undefined}
+        data-active={pathname.includes(link.link) ? "true" : undefined}
         style={{
           pointerEvents: link.disabled ? "none" : "auto",
           color: link.disabled ? "gray" : ""
+        }}
+        onClick={e => {
+          // hack: handle /quotes redirect
+          if (link.link.startsWith("/quotes") && !link.link.endsWith("/")) {
+            e.preventDefault();
+            router.push(link.link + "/indices");
+          }
         }}
       >
         {link.label}
