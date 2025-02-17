@@ -15,6 +15,12 @@ import {
   Button,
   Box
 } from "@mantine/core";
+import {
+  StockIndexMinuteKline,
+  StockIndexQuotes,
+  StockMinuteKline,
+  StockQuotes
+} from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -22,9 +28,6 @@ import { getRefetchInterval } from "@/shared/env";
 import { clientGet } from "@/shared/request";
 import { IconChevronCompactRight } from "@tabler/icons-react";
 import SymbolChart from "@/app/components/charts/SymbolChart";
-import { StockQuotesItem } from "@/app/api/(stock)/stock-quotes/list/route";
-import { StockIndexQuotesItem } from "@/app/api/(stock)/stock-index/list/route";
-import { StockIndexTrends } from "@/app/api/(stock)/stock-index/trends/route";
 import {
   formatNumber,
   formatPercent
@@ -46,7 +49,8 @@ interface SymbolTabsProps {
   moreLink?: string;
 }
 
-type SymbolTabsData = StockQuotesItem | StockIndexQuotesItem;
+type SymbolTabsData = StockQuotes | StockIndexQuotes;
+type SymbolTabsTrends = StockMinuteKline | StockIndexMinuteKline;
 
 const SymbolTabs: FC<SymbolTabsProps> = props => {
   const {
@@ -89,25 +93,23 @@ const SymbolTabs: FC<SymbolTabsProps> = props => {
 
   const { isLoading: isTrendsLoading } = useQuery({
     queryKey: [`${queryKey}_trends`, activeTab],
-    queryFn: (): Promise<StockIndexTrends> =>
+    queryFn: (): Promise<SymbolTabsTrends[]> =>
       activeTab
         ? clientGet(`${apiBasePath}/trends`, { code: activeTab })
         : Promise.resolve([]),
     refetchInterval: getRefetchInterval(),
     enabled: !!activeTab,
     onSuccess: data => {
-      if (data?.trends) {
-        const { code, name, trends } = data;
-
-        const stock = listData?.find(item => item.code === code)?.stock;
+      if (data && data.length) {
+        const stock = listData?.find(item => item.code === activeTab);
 
         if (!stock) return;
 
         setSymbolChartData({
-          code,
-          name,
+          code: stock.code,
+          name: stock.name,
           stock: transformSymbolChartTrends(stock),
-          trends: trends.map(trend => transformSymbolChartKline(trend))
+          trends: data.map(trend => transformSymbolChartKline(trend))
         });
       }
     }
@@ -150,8 +152,8 @@ const SymbolTabs: FC<SymbolTabsProps> = props => {
                 <Stack gap={0} miw={rem(160)}>
                   <Text className={styles.tabName}>{item.name}</Text>
                   <Group m={0} gap="xs" justify="space-between">
-                    <Text>{formatNumber(item.stock.newPrice)}</Text>
-                    <Text>{formatPercent(item.stock.changeRate || 0)}</Text>
+                    <Text>{formatNumber(item.newPrice)}</Text>
+                    <Text>{formatPercent(item.changeRate || 0)}</Text>
                   </Group>
                 </Stack>
               </Tabs.Tab>

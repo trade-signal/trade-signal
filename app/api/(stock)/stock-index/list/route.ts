@@ -2,12 +2,6 @@ import { StockIndexQuotes } from "@prisma/client";
 import prisma from "@/prisma/db";
 import { NextRequest } from "next/server";
 
-export type StockIndexQuotesItem = {
-  code: string;
-  name: string;
-  stock: StockIndexQuotes;
-};
-
 const getOrderList = (list: StockIndexQuotes[]) => {
   const orderCodes = [
     "000001", // 上证
@@ -59,15 +53,9 @@ export const GET = async (request: NextRequest) => {
   const orders = getOrderList(list);
   const orderList = orders.slice(offset, offset + limit);
 
-  const transformData = orderList.map(stock => ({
-    code: stock.code,
-    name: stock.name,
-    stock
-  }));
-
   return Response.json({
     success: true,
-    data: transformData,
+    data: orderList,
     statistics: {
       date: maxDate?.date
     }

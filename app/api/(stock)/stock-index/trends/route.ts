@@ -1,12 +1,5 @@
 import { NextRequest } from "next/server";
-import { StockIndexMinuteKline } from "@prisma/client";
 import prisma from "@/prisma/db";
-
-export type StockIndexTrends = {
-  code: string;
-  name: string;
-  trends: StockIndexMinuteKline[];
-};
 
 export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;
@@ -38,11 +31,7 @@ export const GET = async (request: NextRequest) => {
 
   return Response.json({
     success: true,
-    data: {
-      code,
-      name: trends[0]?.name,
-      trends
-    },
+    data: trends,
     statistics: {
       date: maxDate?.date
     }

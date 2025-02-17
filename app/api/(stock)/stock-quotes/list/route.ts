@@ -1,12 +1,5 @@
-import { StockQuotes } from "@prisma/client";
 import prisma from "@/prisma/db";
 import { NextRequest } from "next/server";
-
-export type StockQuotesItem = {
-  code: string;
-  name: string;
-  stock: StockQuotes;
-};
 
 export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;
@@ -33,15 +26,9 @@ export const GET = async (request: NextRequest) => {
     orderBy: { [orderBy]: order }
   });
 
-  const transformData = quotes.map(stock => ({
-    code: stock.code,
-    name: stock.name,
-    stock
-  }));
-
   return Response.json({
     success: true,
-    data: transformData,
+    data: quotes,
     statistics: {
       date: maxDate?.date
     }
