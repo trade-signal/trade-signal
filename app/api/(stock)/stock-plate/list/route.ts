@@ -12,7 +12,12 @@ export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;
   const orderBy = searchParams.get("orderBy") || "newPrice";
   const order = searchParams.get("order") || "desc";
-  const limit = Number(searchParams.get("limit")) || 5;
+
+  const page = Number(searchParams.get("page")) || 1;
+  const pageSize = Number(searchParams.get("pageSize")) || 20;
+
+  const offset = (page - 1) * pageSize;
+  const limit = pageSize;
 
   const maxDate = await prisma.stockPlateQuotes.findFirst({
     orderBy: { date: "desc" },
@@ -23,6 +28,7 @@ export const GET = async (request: NextRequest) => {
     where: {
       date: { equals: maxDate?.date }
     },
+    skip: offset,
     take: limit,
     orderBy: { [orderBy]: order }
   });

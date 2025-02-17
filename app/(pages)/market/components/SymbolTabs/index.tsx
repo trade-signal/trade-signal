@@ -76,7 +76,10 @@ const SymbolTabs: FC<SymbolTabsProps> = props => {
   const { data: listData, isLoading: isListLoading } = useQuery({
     queryKey: [`${queryKey}_list`],
     queryFn: (): Promise<SymbolTabsData[]> =>
-      clientGet(`${apiBasePath}/list`, {}),
+      clientGet(`${apiBasePath}/list`, {
+        page: 1,
+        pageSize: 5
+      }),
     onSuccess: data => {
       if (data && !activeTab) {
         setActiveTab(data[0].code);

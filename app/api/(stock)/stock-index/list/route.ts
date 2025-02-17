@@ -8,7 +8,7 @@ export type StockIndexQuotesItem = {
   stock: StockIndexQuotes;
 };
 
-const getOrderList = (list: StockIndexQuotes[], limit: number) => {
+const getOrderList = (list: StockIndexQuotes[]) => {
   const orderCodes = [
     "000001", // 上证
     "399001", // 深证
@@ -33,12 +33,17 @@ const getOrderList = (list: StockIndexQuotes[], limit: number) => {
 
   orderList.push(...list);
 
-  return orderList.slice(0, limit);
+  return orderList;
 };
 
 export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;
-  const limit = Number(searchParams.get("limit")) || 5;
+
+  const page = Number(searchParams.get("page")) || 1;
+  const pageSize = Number(searchParams.get("pageSize")) || 20;
+
+  const offset = (page - 1) * pageSize;
+  const limit = pageSize;
 
   const maxDate = await prisma.stockIndexQuotes.findFirst({
     orderBy: { date: "desc" },
@@ -51,7 +56,8 @@ export const GET = async (request: NextRequest) => {
     }
   });
 
-  const orderList = getOrderList(list, limit);
+  const orders = getOrderList(list);
+  const orderList = orders.slice(offset, offset + limit);
 
   const transformData = orderList.map(stock => ({
     code: stock.code,
