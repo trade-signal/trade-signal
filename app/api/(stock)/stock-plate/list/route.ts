@@ -26,11 +26,23 @@ export const GET = async (request: NextRequest) => {
     orderBy: { [orderBy]: order }
   });
 
+  const total = await prisma.stockPlateQuotes.count({
+    where: {
+      date: { equals: maxDate?.date }
+    }
+  });
+
   return Response.json({
     success: true,
     data: quotes,
     statistics: {
       date: maxDate?.date
+    },
+    pagination: {
+      page,
+      pageSize,
+      total,
+      totalPage: Math.ceil(total / pageSize)
     }
   });
 };

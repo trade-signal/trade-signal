@@ -50,6 +50,12 @@ export const GET = async (request: NextRequest) => {
     }
   });
 
+  const total = await prisma.stockIndexQuotes.count({
+    where: {
+      date: { equals: maxDate?.date }
+    }
+  });
+
   const orders = getOrderList(list);
   const orderList = orders.slice(offset, offset + limit);
 
@@ -58,6 +64,12 @@ export const GET = async (request: NextRequest) => {
     data: orderList,
     statistics: {
       date: maxDate?.date
+    },
+    pagination: {
+      page,
+      pageSize,
+      total,
+      totalPage: Math.ceil(total / pageSize)
     }
   });
 };
