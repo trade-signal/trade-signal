@@ -66,18 +66,39 @@ const getEastMoneyStockMinuteKline = async (params: any) => {
  * https://quote.eastmoney.com/center/gridlist.html#hs_a_board
  */
 export const getStockBasic = async ({ fields }: { fields: string }) => {
-  return getEastMoneyStockQuotes({
-    pn: "1",
-    pz: "50000",
-    po: "1",
-    np: "1",
-    ut: "bd1d9ddb04089700cf9c27f6f7426281",
-    fltt: "2",
-    invt: "2",
-    fid: "f3",
-    fs: "m:0 t:6,m:0 t:80,m:1 t:2,m:1 t:23,m:0 t:81 s:2048",
-    fields
-  });
+  let page = 1;
+  let pageSize = 200;
+
+  const all_stocks = [];
+
+  while (true) {
+    const stocks = await getEastMoneyStockQuotes({
+      pn: page,
+      pz: pageSize,
+      po: "1",
+      np: "1",
+      ut: "bd1d9ddb04089700cf9c27f6f7426281",
+      fltt: "2",
+      invt: "2",
+      fid: "f3",
+      fs: "m:0 t:6,m:0 t:80,m:1 t:2,m:1 t:23,m:0 t:81 s:2048",
+      fields
+    });
+
+    if (stocks.length === 0) {
+      break;
+    }
+
+    all_stocks.push(...stocks);
+
+    if (stocks.length < pageSize) {
+      break;
+    }
+
+    page++;
+  }
+
+  return all_stocks;
 };
 
 /**
@@ -135,19 +156,40 @@ export const getStockPlateBasic = async ({ fields }: { fields: string }) => {
  * https://quote.eastmoney.com/center/gridlist.html#hs_a_board
  *
  */
-export const getStockQuotes = ({ fields }: { fields: string }) => {
-  return getEastMoneyStockQuotes({
-    pn: "1",
-    pz: "50000",
-    po: "1",
-    np: "1",
-    ut: "bd1d9ddb04089700cf9c27f6f7426281",
-    fltt: "2",
-    invt: "2",
-    fid: "f3",
-    fs: "m:0 t:6,m:0 t:80,m:1 t:2,m:1 t:23,m:0 t:81 s:2048",
-    fields
-  });
+export const getStockQuotes = async ({ fields }: { fields: string }) => {
+  let page = 1;
+  let pageSize = 200;
+
+  const all_stocks = [];
+
+  while (true) {
+    const stocks = await getEastMoneyStockQuotes({
+      pn: page,
+      pz: pageSize,
+      po: "1",
+      np: "1",
+      ut: "bd1d9ddb04089700cf9c27f6f7426281",
+      fltt: "2",
+      invt: "2",
+      fid: "f3",
+      fs: "m:0 t:6,m:0 t:80,m:1 t:2,m:1 t:23,m:0 t:81 s:2048",
+      fields
+    });
+
+    if (stocks.length === 0) {
+      break;
+    }
+
+    all_stocks.push(...stocks);
+
+    if (stocks.length < pageSize) {
+      break;
+    }
+
+    page++;
+  }
+
+  return all_stocks;
 };
 
 /**

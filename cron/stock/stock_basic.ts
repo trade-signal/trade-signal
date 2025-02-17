@@ -25,14 +25,13 @@ const upsertStockBasic = async (list: any[]) => {
 
   if (stocks.length === 0) {
     while (data.length > 0) {
-      const batch = data.splice(0, 1000);
+      const batch = data.splice(0, 200);
 
       await prisma.stockBasic.createMany({
         data: batch,
         skipDuplicates: true
       });
     }
-
     return;
   }
 
