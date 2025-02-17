@@ -1,17 +1,22 @@
 "use client";
 
-import { FC, useState } from "react";
+import { FC, useState, useMemo, useCallback, useRef } from "react";
 import { Group, Skeleton, Stack, Tabs, Text } from "@mantine/core";
 import { useRouter } from "next/navigation";
 import { QuoteListType } from "./page";
-import { useQuery } from "@tanstack/react-query";
-import { clientGet } from "@/shared/request";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { get } from "@/shared/request";
 import { getRefetchInterval } from "@/shared/env";
 import {
   MantineReactTable,
   MRT_ColumnDef,
   useMantineReactTable
 } from "mantine-react-table";
+import {
+  quotesIndexIndicatorMapping,
+  quotesPlateIndicatorMapping,
+  quotesIndicatorMapping
+} from "@/cron/api/eastmoney.stock.indicator";
 
 interface PageProps {
   type: QuoteListType;
@@ -19,18 +24,39 @@ interface PageProps {
 
 const tabs = {
   index: "大盘指数",
-  stock: "A股行情",
-  plate: "行业板块"
+  plate: "行业板块",
+  stock: "个股行情"
 };
 
 const getApiPath = (type: QuoteListType) => {
   switch (type) {
     case "index":
       return "/api/stock-index/list";
-    case "stock":
-      return "/api/stock-quotes/list";
     case "plate":
       return "/api/stock-plate/list";
+    case "stock":
+      return "/api/stock-quotes/list";
+  }
+};
+
+const getColumns = (type: QuoteListType) => {
+  switch (type) {
+    case "index":
+      return Object.keys(quotesIndexIndicatorMapping).map(key => ({
+        header: quotesIndexIndicatorMapping[key].cn,
+        accessorKey: key
+      }));
+    case "plate":
+      return Object.keys(quotesPlateIndicatorMapping).map(key => ({
+        header: quotesPlateIndicatorMapping[key].cn,
+        accessorKey: key
+      }));
+      break;
+    case "stock":
+      return Object.keys(quotesIndicatorMapping).map(key => ({
+        header: quotesIndicatorMapping[key].cn,
+        accessorKey: key
+      }));
   }
 };
 
@@ -38,23 +64,58 @@ const QuoteListClient: FC<PageProps> = ({ type }) => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState(type);
 
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+  const rowVirtualizerInstanceRef = useRef<MRT_RowVirtualizer>(null);
+
   const handleTabChange = (val: QuoteListType) => {
     setActiveTab(val);
     router.push(`/quotes/${val}`);
   };
 
-  const { data, isLoading } = useQuery({
+  const {
+    data: stocks,
+    fetchNextPage,
+    isFetching,
+    isLoading,
+    isError
+  } = useInfiniteQuery({
     queryKey: ["quotes", type],
-    queryFn: () => {
-      return clientGet(`${getApiPath(type)}`, {
+    queryFn: ({ pageParam = 0 }) => {
+      return get(`${getApiPath(type)}`, {
+        page: pageParam + 1,
+        pageSize: 20,
         orderBy: "changeRate",
         order: "desc"
       });
     },
-    refetchInterval: getRefetchInterval()
+    getNextPageParam: (_lastGroup, groups) => groups.length,
+    refetchInterval: getRefetchInterval(),
+    refetchOnWindowFocus: false
   });
 
-  console.log(data);
+  const flatData = useMemo(
+    () => stocks?.pages.flatMap(page => page.data) ?? [],
+    [stocks]
+  );
+
+  const totalDBRowCount = stocks?.pages?.[0]?.pagination?.total ?? 0;
+  const totalFetched = flatData.length;
+
+  const fetchMoreOnBottomReached = useCallback(
+    (containerRefElement?: HTMLDivElement | null) => {
+      if (containerRefElement) {
+        const { scrollHeight, scrollTop, clientHeight } = containerRefElement;
+        if (
+          scrollHeight - scrollTop - clientHeight < 20 &&
+          !isFetching &&
+          totalFetched < totalDBRowCount
+        ) {
+          fetchNextPage();
+        }
+      }
+    },
+    [fetchNextPage, isFetching, totalFetched, totalDBRowCount]
+  );
 
   const renderTabContent = (field: string) => {
     if (activeTab !== field) {
@@ -74,6 +135,13 @@ const QuoteListClient: FC<PageProps> = ({ type }) => {
         showGlobalFilter: true // 默认显示搜索框
       },
 
+      // 设置表格高度
+      mantineTableProps: {
+        style: { maxHeight: "65vh" }
+      },
+
+      enableStickyHeader: true,
+
       // 禁用不需要的功能
       enablePagination: false,
       enableDensityToggle: false,
@@ -87,6 +155,23 @@ const QuoteListClient: FC<PageProps> = ({ type }) => {
       // 数据处理相关
       manualFiltering: true,
       manualSorting: true,
+
+      // 虚拟滚动相关
+      mantineTableContainerProps: {
+        ref: tableContainerRef,
+        style: { maxHeight: "65vh" },
+        onScroll: (event: UIEvent<HTMLDivElement>) =>
+          fetchMoreOnBottomReached(event.target as HTMLDivElement)
+      },
+      rowVirtualizerInstanceRef,
+      rowVirtualizerOptions: { overscan: 10 },
+
+      // 表格状态
+      state: {
+        isLoading,
+        showAlertBanner: isError,
+        showProgressBars: isFetching
+      },
 
       // 本地化配置
       localization: {
@@ -111,30 +196,25 @@ const QuoteListClient: FC<PageProps> = ({ type }) => {
       mantineToolbarAlertBannerProps: {
         color: "red",
         children: "数据加载中..."
-      }
+      },
 
-      // renderBottomToolbarCustomActions: () => (
-      //   <Group w="100%" justify="flex-end" mt="sm">
-      //     <Text size="sm" c="dimmed">
-      //       共 {totalDBRowCount} 条记录 ({totalFetched}/{totalDBRowCount})
-      //     </Text>
-      //   </Group>
-      // )
+      renderBottomToolbarCustomActions: () => (
+        <Group w="100%" justify="flex-end" mt="sm">
+          <Text size="sm" c="dimmed">
+            共 {totalDBRowCount} 条记录 ({totalFetched}/{totalDBRowCount})
+          </Text>
+        </Group>
+      )
     } as const;
 
-    const columns: MRT_ColumnDef<any>[] = [
-      {
-        header: "代码",
-        accessorKey: "code"
-      },
-      {
-        header: "名称",
-        accessorKey: "name"
-      }
-    ];
+    const columns: MRT_ColumnDef<any>[] = getColumns(activeTab);
 
     return (
-      <MantineReactTable columns={columns} data={data} {...baseTableProps} />
+      <MantineReactTable
+        columns={columns}
+        data={flatData}
+        {...baseTableProps}
+      />
     );
   };
 
