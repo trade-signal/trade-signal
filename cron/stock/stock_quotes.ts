@@ -46,11 +46,14 @@ const upsertStockQuotes = async (list: any[]) => {
   });
 
   if (stocks.length === 0) {
-    await Promise.all(
-      list.map(async item => {
-        await prisma.stockQuotes.create({ data: item });
-      })
-    );
+    while (list.length > 0) {
+      const batch = list.splice(0, 200);
+
+      await prisma.stockQuotes.createMany({
+        data: batch,
+        skipDuplicates: true
+      });
+    }
     return;
   }
 
