@@ -127,11 +127,15 @@ const StockRanking: FC<StockRankingProps> = props => {
           size: 100,
           Cell: ({ row }) => (
             <Tooltip label="当日涨跌额" position="right">
-              <Box ta="right">
-                <Text c={themeSetting.upColor}>
+                <Text
+                  c={
+                    row.original.upsDowns > 0
+                      ? themeSetting.upColor
+                      : themeSetting.downColor
+                  }
+                >
                   {formatNumber(row.original.upsDowns / 100)}
-                </Text>
-              </Box>
+                </Text>  
             </Tooltip>
           )
         },
@@ -141,11 +145,15 @@ const StockRanking: FC<StockRankingProps> = props => {
           size: 100,
           Cell: ({ row }) => (
             <Tooltip label="当日涨跌幅" position="right">
-              <Box ta="right">
-                <Text c={themeSetting.upColor}>
-                  {formatPercentPlain(row.original.changeRate / 100)}
-                </Text>
-              </Box>
+              <Text
+                c={
+                  row.original.changeRate > 0
+                    ? themeSetting.upColor
+                    : themeSetting.downColor
+                }
+              >
+                {formatPercentPlain(row.original.changeRate / 100)}
+              </Text>
             </Tooltip>
           )
         }
