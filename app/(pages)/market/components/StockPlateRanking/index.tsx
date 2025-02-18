@@ -77,10 +77,12 @@ const StockRanking: FC<StockRankingProps> = props => {
     queryKey: ["stock-plate-ranking", indicator, order],
     queryFn: (): Promise<StockPlateQuotes[]> =>
       clientGet("/api/stock-plate/list", {
-        sorting: [{
-          id: indicator,
-          desc: order === 'desc'
-        }],
+        sorting: JSON.stringify([
+          {
+            id: indicator,
+            desc: order === "desc"
+          }
+        ]),
         pageSize: 6
       }),
     refetchInterval: getRefetchInterval(),
@@ -127,15 +129,15 @@ const StockRanking: FC<StockRankingProps> = props => {
           size: 100,
           Cell: ({ row }) => (
             <Tooltip label="当日涨跌额" position="right">
-                <Text
-                  c={
-                    row.original.upsDowns > 0
-                      ? themeSetting.upColor
-                      : themeSetting.downColor
-                  }
-                >
-                  {formatNumber(row.original.upsDowns / 100)}
-                </Text>  
+              <Text
+                c={
+                  row.original.upsDowns > 0
+                    ? themeSetting.upColor
+                    : themeSetting.downColor
+                }
+              >
+                {formatNumber(row.original.upsDowns / 100)}
+              </Text>
             </Tooltip>
           )
         },

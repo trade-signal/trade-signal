@@ -23,7 +23,10 @@ export const GET = async (request: NextRequest) => {
   const offset = (page - 1) * pageSize;
   const limit = pageSize;
 
-  const where = generateWhereClause(parsedColumnFilters, globalFilter, ["code", "name"]);
+  const where = generateWhereClause(parsedColumnFilters, globalFilter, [
+    "code",
+    "name"
+  ]);
   const orderBy = generateOrderByClause(parsedSorting, "code");
 
   const maxDate = await prisma.stockQuotes.findFirst({

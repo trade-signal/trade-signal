@@ -81,7 +81,12 @@ const SymbolTabs: FC<SymbolTabsProps> = props => {
     queryKey: [`${queryKey}_list`],
     queryFn: (): Promise<SymbolTabsData[]> =>
       clientGet(`${apiBasePath}/list`, {
-        page: 1,
+        sorting: JSON.stringify([
+          {
+            id: "newPrice",
+            desc: true
+          }
+        ]),
         pageSize: 5
       }),
     onSuccess: data => {

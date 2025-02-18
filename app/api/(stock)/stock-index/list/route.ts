@@ -49,7 +49,10 @@ export const GET = async (request: NextRequest) => {
 
   const parsedSorting = JSON.parse(sorting) as MRT_SortingState;
 
-  const where = generateWhereClause(parsedColumnFilters, globalFilter, ["code", "name"]);
+  const where = generateWhereClause(parsedColumnFilters, globalFilter, [
+    "code",
+    "name"
+  ]);
   const orderBy = generateOrderByClause(parsedSorting, "code");
 
   const offset = (page - 1) * pageSize;
@@ -65,9 +68,7 @@ export const GET = async (request: NextRequest) => {
       ...where,
       date: { equals: maxDate?.date }
     },
-    orderBy,
-    skip: offset,
-    take: limit
+    orderBy
   });
 
   const total = await prisma.stockIndexQuotes.count({

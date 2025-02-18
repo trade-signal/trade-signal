@@ -76,10 +76,12 @@ const StockRanking: FC<StockRankingProps> = props => {
     queryKey: ["stock-ranking", indicator, order],
     queryFn: (): Promise<StockQuotes[]> =>
       clientGet("/api/stock-quotes/list", {
-        sorting: [{
-          id: indicator,
-          desc: order === 'desc'
-        }],
+        sorting: JSON.stringify([
+          {
+            id: indicator,
+            desc: order === "desc"
+          }
+        ]),
         pageSize: 6
       }),
     refetchInterval: getRefetchInterval(),
