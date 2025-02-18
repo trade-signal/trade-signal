@@ -42,11 +42,11 @@ interface Link {
 const links: Link[] = [
   { link: "/market", label: "市场" },
   { link: "/news", label: "新闻" },
-  {
-    link: "/quotes",
-    label: "行情中心"
-  },
-  { link: "/screener", label: "筛选器" },
+  // {
+  //   link: "/quotes",
+  //   label: "行情中心"
+  // },
+  { link: "/screener", label: "股票" },
   {
     link: "/more",
     label: "更多",
