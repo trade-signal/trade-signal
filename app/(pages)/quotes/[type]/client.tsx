@@ -1,6 +1,13 @@
 "use client";
 
-import { FC, useState, useMemo, useCallback, useRef } from "react";
+import {
+  FC,
+  type UIEvent,
+  useState,
+  useMemo,
+  useCallback,
+  useRef
+} from "react";
 import { Group, Skeleton, Stack, Tabs, Text } from "@mantine/core";
 import { useRouter } from "next/navigation";
 import { QuoteListType } from "./page";
@@ -10,6 +17,7 @@ import { getRefetchInterval } from "@/shared/env";
 import {
   MantineReactTable,
   MRT_ColumnDef,
+  MRT_RowVirtualizer,
   useMantineReactTable
 } from "mantine-react-table";
 import {
@@ -43,18 +51,25 @@ const getColumns = (type: QuoteListType) => {
   switch (type) {
     case "index":
       return Object.keys(quotesIndexIndicatorMapping).map(key => ({
-        header: quotesIndexIndicatorMapping[key].cn,
+        header:
+          quotesIndexIndicatorMapping[
+            key as keyof typeof quotesIndexIndicatorMapping
+          ].cn,
         accessorKey: key
       }));
     case "plate":
       return Object.keys(quotesPlateIndicatorMapping).map(key => ({
-        header: quotesPlateIndicatorMapping[key].cn,
+        header:
+          quotesPlateIndicatorMapping[
+            key as keyof typeof quotesPlateIndicatorMapping
+          ].cn,
         accessorKey: key
       }));
       break;
     case "stock":
       return Object.keys(quotesIndicatorMapping).map(key => ({
-        header: quotesIndicatorMapping[key].cn,
+        header:
+          quotesIndicatorMapping[key as keyof typeof quotesIndicatorMapping].cn,
         accessorKey: key
       }));
   }

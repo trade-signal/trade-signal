@@ -13,7 +13,7 @@ interface PageProps {
   }>;
 }
 
-export default async function QuoteList(props) {
+export default async function QuoteList(props: PageProps) {
   const { type } = await props.params;
   return <QuoteListClient type={type} />;
 }
