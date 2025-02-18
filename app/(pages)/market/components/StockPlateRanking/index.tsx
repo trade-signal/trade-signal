@@ -76,9 +76,12 @@ const StockRanking: FC<StockRankingProps> = props => {
   const { data, isLoading } = useQuery({
     queryKey: ["stock-plate-ranking", indicator, order],
     queryFn: (): Promise<StockPlateQuotes[]> =>
-      clientGet("/api/stock-plate-ranking/list", {
-        orderBy: indicator,
-        order: order
+      clientGet("/api/stock-plate/list", {
+        sorting: [{
+          id: indicator,
+          desc: order === 'desc'
+        }],
+        pageSize: 6
       }),
     refetchInterval: getRefetchInterval(),
     enabled: hasLoaded || !!entry?.isIntersecting,

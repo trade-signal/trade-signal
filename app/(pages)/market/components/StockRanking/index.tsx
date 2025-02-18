@@ -75,9 +75,12 @@ const StockRanking: FC<StockRankingProps> = props => {
   const { data, isLoading } = useQuery({
     queryKey: ["stock-ranking", indicator, order],
     queryFn: (): Promise<StockQuotes[]> =>
-      clientGet("/api/stock-ranking/list", {
-        orderBy: indicator,
-        order: order
+      clientGet("/api/stock-quotes/list", {
+        sorting: [{
+          id: indicator,
+          desc: order === 'desc'
+        }],
+        pageSize: 6
       }),
     refetchInterval: getRefetchInterval(),
     enabled: hasLoaded || !!entry?.isIntersecting,
