@@ -1,10 +1,23 @@
 import prisma from "@/prisma/db";
+import { MRT_ColumnFiltersState, MRT_SortingState } from "mantine-react-table";
 import { NextRequest } from "next/server";
+import { generateWhereClause, generateOrderByClause } from "@/shared/util";
 
 export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;
-  const orderBy = searchParams.get("orderBy") || "newPrice";
-  const order = searchParams.get("order") || "desc";
+
+  const columnFilters = searchParams.get("columnFilters") ?? "[]";
+  const globalFilter = searchParams.get("globalFilter") ?? "";
+  const sorting = searchParams.get("sorting") ?? "[]";
+
+  const parsedColumnFilters = JSON.parse(
+    columnFilters
+  ) as MRT_ColumnFiltersState;
+
+  const parsedSorting = JSON.parse(sorting) as MRT_SortingState;
+
+  const where = generateWhereClause(parsedColumnFilters, globalFilter, ["code", "name"]);
+  const orderBy = generateOrderByClause(parsedSorting, "code");
 
   const page = Number(searchParams.get("page")) || 1;
   const pageSize = Number(searchParams.get("pageSize")) || 20;
@@ -19,15 +32,17 @@ export const GET = async (request: NextRequest) => {
 
   const quotes = await prisma.stockPlateQuotes.findMany({
     where: {
+      ...where,
       date: { equals: maxDate?.date }
     },
+    orderBy,
     skip: offset,
-    take: limit,
-    orderBy: { [orderBy]: order }
+    take: limit
   });
 
   const total = await prisma.stockPlateQuotes.count({
     where: {
+      ...where,
       date: { equals: maxDate?.date }
     }
   });

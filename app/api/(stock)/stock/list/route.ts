@@ -1,7 +1,7 @@
 import { type NextRequest } from "next/server";
-import { Prisma } from "@prisma/client";
 import prisma from "@/prisma/db";
 import { MRT_ColumnFiltersState, MRT_SortingState } from "mantine-react-table";
+import { generateWhereClause, generateOrderByClause  } from "@/shared/util";
 
 export const GET = async (request: NextRequest) => {
   const searchParams = new URL(request.url).searchParams;
@@ -18,45 +18,8 @@ export const GET = async (request: NextRequest) => {
   ) as MRT_ColumnFiltersState;
   const parsedSorting = JSON.parse(sorting) as MRT_SortingState;
 
-  let where: Prisma.StockBasicWhereInput = {};
-
-  if (parsedColumnFilters.length) {
-    parsedColumnFilters.forEach(filter => {
-      const { id, value } = filter;
-
-      if (Array.isArray(value)) {
-        if (value.length > 0) {
-          where[id as keyof Prisma.StockBasicOrderByWithRelationInput] = {
-            in: value.map(v => v.toString())
-          };
-        }
-      } else if (value) {
-        where[id as keyof Prisma.StockBasicOrderByWithRelationInput] = {
-          contains: value.toString()
-        };
-      }
-    });
-  }
-
-  if (globalFilter) {
-    where.OR = [
-      { code: { contains: globalFilter } },
-      { name: { contains: globalFilter } }
-    ];
-  }
-
-  let orderBy: Prisma.StockBasicOrderByWithRelationInput = {};
-  if (parsedSorting.length) {
-    parsedSorting.forEach(sort => {
-      const { id, desc } = sort;
-
-      orderBy[id as keyof Prisma.StockBasicOrderByWithRelationInput] = desc
-        ? "desc"
-        : "asc";
-    });
-  } else {
-    orderBy.code = "asc";
-  }
+  const where = generateWhereClause(parsedColumnFilters, globalFilter, ["code", "name"]);
+  const orderBy = generateOrderByClause(parsedSorting, "code");
 
   const data = await prisma.stockBasic.findMany({
     where,

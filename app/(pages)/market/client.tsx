@@ -22,7 +22,7 @@ const MarketClient = () => {
           title="指数"
           queryKey="stock-index"
           apiBasePath="/api/stock-index"
-          showMore={false}
+          showMore
           moreText="查看所有指数"
           moreLink="/quotes/index"
         />
@@ -30,7 +30,7 @@ const MarketClient = () => {
           title="股票"
           queryKey="stock-quotes"
           apiBasePath="/api/stock-quotes"
-          showMore={false}
+          showMore
           moreText="查看所有股票"
           moreLink="/quotes/stock"
         />
@@ -41,7 +41,7 @@ const MarketClient = () => {
           title="最高涨幅板块"
           indicator="changeRate"
           order="desc"
-          showMore={false}
+          showMore
           moreText="查看每日涨幅最大的所有板块"
           moreLink="/quotes/plate"
         />
@@ -49,7 +49,7 @@ const MarketClient = () => {
           title="最高成交额板块"
           indicator="dealAmount"
           order="desc"
-          showMore={false}
+          showMore
           moreText="查看每日成交额最大的所有板块"
           moreLink="/quotes/plate"
         />
@@ -61,7 +61,7 @@ const MarketClient = () => {
           indicator="volume"
           order="desc"
           doubleColumn
-          showMore={false}
+          showMore
           moreText="查看交易最活跃的所有股票"
           moreLink="/quotes/stock"
         />
@@ -70,7 +70,7 @@ const MarketClient = () => {
           indicator="amplitude"
           order="desc"
           doubleColumn
-          showMore={false}
+          showMore
           moreText="查看波动最大的所有股票"
           moreLink="/quotes/stock"
         />
@@ -81,7 +81,7 @@ const MarketClient = () => {
           title="股票赢家"
           indicator="changeRate"
           order="desc"
-          showMore={false}
+          showMore
           moreText="查看每日涨幅最大的所有股票"
           moreLink="/quotes/stock"
         />
@@ -89,7 +89,7 @@ const MarketClient = () => {
           title="股票输家"
           indicator="changeRate"
           order="asc"
-          showMore={false}
+          showMore
           moreText="查看每日跌幅最大的所有股票"
           moreLink="/quotes/stock"
         />

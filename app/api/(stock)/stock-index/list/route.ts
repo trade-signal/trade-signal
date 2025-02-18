@@ -1,6 +1,9 @@
 import { StockIndexQuotes } from "@prisma/client";
 import prisma from "@/prisma/db";
 import { NextRequest } from "next/server";
+import { MRT_SortingState } from "mantine-react-table";
+import { MRT_ColumnFiltersState } from "mantine-react-table";
+import { generateWhereClause, generateOrderByClause } from "@/shared/util";
 
 const getOrderList = (list: StockIndexQuotes[]) => {
   const orderCodes = [
@@ -33,8 +36,21 @@ const getOrderList = (list: StockIndexQuotes[]) => {
 export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;
 
+  const columnFilters = searchParams.get("columnFilters") ?? "[]";
+  const globalFilter = searchParams.get("globalFilter") ?? "";
+  const sorting = searchParams.get("sorting") ?? "[]";
+
   const page = Number(searchParams.get("page")) || 1;
   const pageSize = Number(searchParams.get("pageSize")) || 20;
+
+  const parsedColumnFilters = JSON.parse(
+    columnFilters
+  ) as MRT_ColumnFiltersState;
+
+  const parsedSorting = JSON.parse(sorting) as MRT_SortingState;
+
+  const where = generateWhereClause(parsedColumnFilters, globalFilter, ["code", "name"]);
+  const orderBy = generateOrderByClause(parsedSorting, "code");
 
   const offset = (page - 1) * pageSize;
   const limit = pageSize;
@@ -46,12 +62,17 @@ export const GET = async (request: NextRequest) => {
 
   const list = await prisma.stockIndexQuotes.findMany({
     where: {
+      ...where,
       date: { equals: maxDate?.date }
-    }
+    },
+    orderBy,
+    skip: offset,
+    take: limit
   });
 
   const total = await prisma.stockIndexQuotes.count({
     where: {
+      ...where,
       date: { equals: maxDate?.date }
     }
   });

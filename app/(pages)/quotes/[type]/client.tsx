@@ -11,14 +11,15 @@ import {
 import { Group, Skeleton, Stack, Tabs, Text } from "@mantine/core";
 import { useRouter } from "next/navigation";
 import { QuoteListType } from "./page";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { get } from "@/shared/request";
 import { getRefetchInterval } from "@/shared/env";
 import {
   MantineReactTable,
   MRT_ColumnDef,
+  MRT_ColumnFiltersState,
   MRT_RowVirtualizer,
-  useMantineReactTable
+  MRT_SortingState,
 } from "mantine-react-table";
 import {
   quotesIndexIndicatorMapping,
@@ -47,6 +48,17 @@ const getApiPath = (type: QuoteListType) => {
   }
 };
 
+const getSearchText = (type: QuoteListType) => {
+  switch (type) {
+    case "index":
+      return "输入指数代码或名称";
+    case "plate":
+      return "输入板块代码或名称";
+    case "stock":
+      return "输入股票代码或名称";
+  }
+};
+
 const getColumns = (type: QuoteListType) => {
   switch (type) {
     case "index":
@@ -65,7 +77,6 @@ const getColumns = (type: QuoteListType) => {
           ].cn,
         accessorKey: key
       }));
-      break;
     case "stock":
       return Object.keys(quotesIndicatorMapping).map(key => ({
         header:
@@ -82,6 +93,10 @@ const QuoteListClient: FC<PageProps> = ({ type }) => {
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const rowVirtualizerInstanceRef = useRef<MRT_RowVirtualizer>(null);
 
+  const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = useState<string>();
+  const [sorting, setSorting] = useState<MRT_SortingState>([]);
+
   const handleTabChange = (val: QuoteListType) => {
     setActiveTab(val);
     router.push(`/quotes/${val}`);
@@ -94,13 +109,14 @@ const QuoteListClient: FC<PageProps> = ({ type }) => {
     isLoading,
     isError
   } = useInfiniteQuery({
-    queryKey: ["quotes", type],
+    queryKey: ["quotes", type, columnFilters, globalFilter, sorting],
     queryFn: ({ pageParam = 0 }) => {
       return get(`${getApiPath(type)}`, {
         page: pageParam + 1,
         pageSize: 20,
-        orderBy: "changeRate",
-        order: "desc"
+        columnFilters: JSON.stringify(columnFilters ?? []),
+        globalFilter: globalFilter ?? "",
+        sorting: JSON.stringify(sorting ?? [])
       });
     },
     getNextPageParam: (_lastGroup, groups) => groups.length,
@@ -151,10 +167,6 @@ const QuoteListClient: FC<PageProps> = ({ type }) => {
       },
 
       // 设置表格高度
-      mantineTableProps: {
-        style: { maxHeight: "65vh" }
-      },
-
       enableStickyHeader: true,
 
       // 禁用不需要的功能
@@ -174,7 +186,7 @@ const QuoteListClient: FC<PageProps> = ({ type }) => {
       // 虚拟滚动相关
       mantineTableContainerProps: {
         ref: tableContainerRef,
-        style: { maxHeight: "65vh" },
+        style: { maxHeight: "70vh" },
         onScroll: (event: UIEvent<HTMLDivElement>) =>
           fetchMoreOnBottomReached(event.target as HTMLDivElement)
       },
@@ -183,14 +195,22 @@ const QuoteListClient: FC<PageProps> = ({ type }) => {
 
       // 表格状态
       state: {
+        columnFilters,
+        globalFilter,
         isLoading,
         showAlertBanner: isError,
-        showProgressBars: isFetching
+        showProgressBars: isFetching,
+        sorting
       },
+
+      // 事件处理
+      onColumnFiltersChange: setColumnFilters,
+      onGlobalFilterChange: setGlobalFilter,
+      onSortingChange: setSorting,
 
       // 本地化配置
       localization: {
-        search: "输入股票代码或名称",
+        search: getSearchText(activeTab),
         showHideSearch: "显示/隐藏搜索框",
         filterByColumn: "筛选{column}",
         clearFilter: "清除筛选条件",
