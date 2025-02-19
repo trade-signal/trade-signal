@@ -7,10 +7,10 @@ import { useActiveStock } from "@/app/providers/ActiveStockProvider";
 
 import {
   formatNumber,
-  formatPercentPlain,
+  formatPercent,
   formatYuan,
   getColor
-} from "../tables/DataTable/util";
+} from "@/shared/formatters";
 
 import styles from "./WatchListItem.module.css";
 
@@ -70,7 +70,7 @@ const WatchListItem = ({ stock, onRemove }: WatchListItemProps) => {
                 {formatNumber(stock.quote.upsDowns)}
               </Text>
               <Text size="sm" c={getColor(stock.quote.changeRate)}>
-                {formatPercentPlain(stock.quote.changeRate)}
+                {formatPercent(stock.quote.changeRate)}
               </Text>
             </Group>
           </Stack>
@@ -94,7 +94,7 @@ const WatchListItem = ({ stock, onRemove }: WatchListItemProps) => {
           />
           <InfoItem
             label="涨跌幅"
-            value={formatPercentPlain(quote.changeRate)}
+            value={formatPercent(quote.changeRate)}
             color={getColor(quote.changeRate)}
           />
           <InfoItem label="最高" value={formatNumber(quote.highPrice)} />
@@ -107,14 +107,8 @@ const WatchListItem = ({ stock, onRemove }: WatchListItemProps) => {
         <Stack gap={2}>
           <InfoItem label="成交量" value={formatNumber(quote.volume)} />
           <InfoItem label="成交额" value={formatYuan(quote.dealAmount)} />
-          <InfoItem
-            label="换手率"
-            value={formatPercentPlain(quote.turnoverRate)}
-          />
-          <InfoItem
-            label="量比"
-            value={formatPercentPlain(quote.volumeRatio)}
-          />
+          <InfoItem label="换手率" value={formatPercent(quote.turnoverRate)} />
+          <InfoItem label="量比" value={formatPercent(quote.volumeRatio)} />
         </Stack>
 
         <Divider my="xs" />

@@ -19,7 +19,7 @@ import {
   MRT_ColumnDef,
   MRT_ColumnFiltersState,
   MRT_RowVirtualizer,
-  MRT_SortingState,
+  MRT_SortingState
 } from "mantine-react-table";
 import {
   quotesIndexIndicatorMapping,
@@ -62,13 +62,20 @@ const getSearchText = (type: QuoteListType) => {
 const getColumns = (type: QuoteListType) => {
   switch (type) {
     case "index":
-      return Object.keys(quotesIndexIndicatorMapping).map(key => ({
-        header:
+      return Object.keys(quotesIndexIndicatorMapping).map(key => {
+        const indicator =
           quotesIndexIndicatorMapping[
             key as keyof typeof quotesIndexIndicatorMapping
-          ].cn,
-        accessorKey: key
-      }));
+          ];
+        return {
+          header: indicator.cn,
+          accessorKey: key
+          // render: ({ cell }) => {
+          //   const value = cell.getValue<number>();
+          //   return value ? value.toFixed(2) : "-";
+          // }
+        };
+      });
     case "plate":
       return Object.keys(quotesPlateIndicatorMapping).map(key => ({
         header:
@@ -93,7 +100,9 @@ const QuoteListClient: FC<PageProps> = ({ type }) => {
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const rowVirtualizerInstanceRef = useRef<MRT_RowVirtualizer>(null);
 
-  const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>([]);
+  const [columnFilters, setColumnFilters] = useState<MRT_ColumnFiltersState>(
+    []
+  );
   const [globalFilter, setGlobalFilter] = useState<string>();
   const [sorting, setSorting] = useState<MRT_SortingState>([]);
 

@@ -20,10 +20,7 @@ import { clientGet } from "@/shared/request";
 import { useQuery } from "@tanstack/react-query";
 import { getRefetchInterval } from "@/shared/env";
 import { useRouter } from "next/navigation";
-import {
-  formatNumber,
-  formatPercentPlain
-} from "@/app/components/tables/DataTable/util";
+import { formatNumber, formatPercent } from "@/shared/formatters";
 import {
   MantineReactTable,
   MRT_ColumnDef,
@@ -134,7 +131,7 @@ const StockRanking: FC<StockRankingProps> = props => {
           Cell: ({ row }) => (
             <Tooltip label="当日振幅、最高价/最低价" position="right">
               <Stack gap={0} ta="right">
-                <Text>{formatPercentPlain(row.original.amplitude)}</Text>
+                <Text>{formatPercent(row.original.amplitude)}</Text>
                 <Group justify="flex-end">
                   <Text c={themeSetting.upColor}>
                     {formatNumber(row.original.highPrice, 2)}
@@ -183,7 +180,7 @@ const StockRanking: FC<StockRankingProps> = props => {
                     : themeSetting.downColor
                 }
               >
-                {formatPercentPlain(row.original.changeRate)}
+                {formatPercent(row.original.changeRate)}
               </Text>
             </Tooltip>
           )

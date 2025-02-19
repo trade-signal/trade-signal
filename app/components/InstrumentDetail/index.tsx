@@ -19,12 +19,12 @@ import { useLoginContext } from "@/app/providers/LoginProvider";
 import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 
 import {
+  getColor,
   formatNumber,
   formatVolume,
   formatYuan,
-  getColor
-} from "../tables/DataTable/util";
-import { formatPercentPlain } from "../tables/DataTable/util";
+  formatPercent
+} from "@/shared/formatters";
 
 import styles from "./index.module.css";
 
@@ -96,7 +96,7 @@ const InstrumentDetail = () => {
           {formatNumber(stock?.upsDowns || 0)}
         </Text>
         <Text size="sm" c={getColor(stock?.changeRate || 0)}>
-          {formatPercentPlain(stock?.changeRate || 0)}
+          {formatPercent(stock?.changeRate || 0)}
         </Text>
       </Group>
 
@@ -139,7 +139,7 @@ const InstrumentDetail = () => {
           <Group justify="space-between">
             <Text size="xs">换手率</Text>
             <Text size="xs" fw={600}>
-              {formatPercentPlain(stock?.turnoverRate || 0)}
+              {formatPercent(stock?.turnoverRate || 0)}
             </Text>
           </Group>
           <Group justify="space-between">
@@ -151,7 +151,7 @@ const InstrumentDetail = () => {
           <Group justify="space-between">
             <Text size="xs">振幅</Text>
             <Text size="xs" fw={600}>
-              {formatPercentPlain(stock?.amplitude || 0)}
+              {formatPercent(stock?.amplitude || 0)}
             </Text>
           </Group>
 

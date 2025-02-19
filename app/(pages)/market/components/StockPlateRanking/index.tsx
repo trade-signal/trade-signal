@@ -14,6 +14,7 @@ import {
   Title,
   Tooltip
 } from "@mantine/core";
+import { StockPlateQuotes } from "@prisma/client";
 import { useIntersection } from "@mantine/hooks";
 
 import { clientGet } from "@/shared/request";
@@ -23,15 +24,15 @@ import { useRouter } from "next/navigation";
 import {
   formatBillion,
   formatNumber,
-  formatPercentPlain
-} from "@/app/components/tables/DataTable/util";
+  formatPercent
+} from "@/shared/formatters";
 import {
   MantineReactTable,
   MRT_ColumnDef,
   useMantineReactTable
 } from "mantine-react-table";
 import { IconChevronCompactRight } from "@tabler/icons-react";
-import { StockPlateQuotes } from "@prisma/client";
+
 import { THEME_SETTING_KEY, ThemeSetting } from "@/app/hooks/useThemeSetting";
 import { readLocalStorageValue } from "@mantine/hooks";
 
@@ -154,7 +155,7 @@ const StockRanking: FC<StockRankingProps> = props => {
                     : themeSetting.downColor
                 }
               >
-                {formatPercentPlain(row.original.changeRate / 100)}
+                {formatPercent(row.original.changeRate / 100)}
               </Text>
             </Tooltip>
           )
@@ -178,7 +179,7 @@ const StockRanking: FC<StockRankingProps> = props => {
           Cell: ({ row }) => (
             <Tooltip label="当日换手率" position="right">
               <Box ta="right">
-                {formatPercentPlain(row.original.turnoverRate / 100)}
+                {formatPercent(row.original.turnoverRate / 100)}
               </Box>
             </Tooltip>
           )

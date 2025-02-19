@@ -2,7 +2,7 @@ import { News } from "@prisma/client";
 import Link from "next/link";
 import { HoverCard, Pill, ScrollArea, Text } from "@mantine/core";
 import { Column } from "@/app/components/tables/DataTable/types";
-import { formatDateDiff } from "@/app/components/tables/DataTable/util";
+import { renderTimeWithHover } from "@/shared/renders";
 
 // 定时来源类型
 enum SourceType {
@@ -134,7 +134,7 @@ export const COLUMNS: Column<News>[] = [
     title: "发布时间",
     width: 140,
     align: "left",
-    render: formatDateDiff
+    render: renderTimeWithHover
   },
   {
     key: "stocks",

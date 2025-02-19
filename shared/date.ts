@@ -53,3 +53,33 @@ export const isTradingTime = () => {
 
   return isMorningTrading || isAfternoonTrading;
 };
+
+// 格式化日期
+export const formatDate = (value: string) => dayjs(value).format("YYYY-MM-DD");
+export const formatDateE = (value: string) =>
+  dayjs(value).format("YYYY-MM-DD HH:mm:ss");
+
+// 格式化日期差
+export const formatDateDiff = (value: string) => {
+  const now = dayjs();
+  const date = dayjs(value);
+  const diffMinutes = now.diff(date, "minutes");
+  const diffHours = now.diff(date, "hours");
+  const diffDays = now.diff(date, "days");
+
+  let relativeTime = "";
+  if (diffDays > 0) {
+    relativeTime = `${diffDays}天前`;
+  } else if (diffHours > 0) {
+    relativeTime = `${diffHours}小时前`;
+  } else if (diffMinutes > 0) {
+    relativeTime = `${diffMinutes}分钟前`;
+  } else {
+    relativeTime = "刚刚";
+  }
+
+  return {
+    relativeTime,
+    date: formatDateE(value)
+  };
+};

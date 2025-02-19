@@ -28,10 +28,7 @@ import { getRefetchInterval } from "@/shared/env";
 import { clientGet } from "@/shared/request";
 import { IconChevronCompactRight } from "@tabler/icons-react";
 import SymbolChart from "@/app/components/charts/SymbolChart";
-import {
-  formatNumber,
-  formatPercent
-} from "@/app/components/tables/DataTable/util";
+import { formatNumber, formatPercent } from "@/shared/formatters";
 import { SymbolChartData } from "@/app/types/chart.type";
 import {
   transformSymbolChartTrends,
