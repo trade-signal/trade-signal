@@ -100,5 +100,3 @@ export const initStockBasic = async () => {
 
   await fetchStockBasic();
 };
-
-fetchStockBasic();

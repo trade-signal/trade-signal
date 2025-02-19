@@ -29,7 +29,6 @@ const getEastMoneyStockQuotes = async (params: any) => {
       }`
     );
   } catch (error) {
-    console.log(error, "1111111111111111111");
     print(`get ${spider_name} stock quotes error: ${error}`);
     return [];
   }
@@ -89,8 +88,6 @@ export const getStockBasic = async ({ fields }: { fields: string }) => {
     if (stocks.length === 0) {
       break;
     }
-
-    console.log(stocks, "1111111111111111111");
 
     all_stocks.push(...stocks);
 
