@@ -6,7 +6,7 @@ import { getColor, formatPercent } from "./formatters";
 import { formatDateDiff } from "./date";
 
 export const renderPercent = (value: number, decimals = 2) => {
-  const val = formatPercent(value, decimals);
+  const val = formatPercent(value, decimals, false);
   return (
     <Text span c={getColor(Number(val))} fw={700}>
       {val}%

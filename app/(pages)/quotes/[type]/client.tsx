@@ -69,27 +69,35 @@ const getColumns = (type: QuoteListType) => {
           ];
         return {
           header: indicator.cn,
-          accessorKey: key
-          // render: ({ cell }) => {
-          //   const value = cell.getValue<number>();
-          //   return value ? value.toFixed(2) : "-";
-          // }
+          accessorKey: key,
+          Cell: ({ cell }: { cell: any }) =>
+            indicator.formatter(cell.getValue())
         };
       });
     case "plate":
-      return Object.keys(quotesPlateIndicatorMapping).map(key => ({
-        header:
+      return Object.keys(quotesPlateIndicatorMapping).map(key => {
+        const indicator =
           quotesPlateIndicatorMapping[
             key as keyof typeof quotesPlateIndicatorMapping
-          ].cn,
-        accessorKey: key
-      }));
+          ];
+        return {
+          header: indicator.cn,
+          accessorKey: key,
+          Cell: ({ cell }: { cell: any }) =>
+            indicator.formatter(cell.getValue())
+        };
+      });
     case "stock":
-      return Object.keys(quotesIndicatorMapping).map(key => ({
-        header:
-          quotesIndicatorMapping[key as keyof typeof quotesIndicatorMapping].cn,
-        accessorKey: key
-      }));
+      return Object.keys(quotesIndicatorMapping).map(key => {
+        const indicator =
+          quotesIndicatorMapping[key as keyof typeof quotesIndicatorMapping];
+        return {
+          header: indicator.cn,
+          accessorKey: key,
+          Cell: ({ cell }: { cell: any }) =>
+            indicator.formatter(cell.getValue())
+        };
+      });
   }
 };
 

@@ -9,14 +9,21 @@ export const getColor = (value: number) => {
   return "gray.7";
 };
 
-export const formatPercent = (value: number, decimals = 2) => {
-  return value.toFixed(decimals) + "%";
+export const formatPercent = (value: number, decimals = 2, withSign = true) => {
+  if (!value && value !== 0) return "-";
+  const val = value.toFixed(decimals) + "%";
+  return withSign ? val : val.replace("%", "");
 };
 
-export const formatNumber = (value: number, decimals = 2) =>
-  value.toFixed(decimals);
+export const formatNumber = (value: number, decimals = 2) => {
+  if (!value && value !== 0) return "-";
+  return value.toFixed(decimals);
+};
 
-export const formatBillion = (value: number) => (value / 100000000).toFixed(2);
+export const formatBillion = (value: number) => {
+  if (!value && value !== 0) return "-";
+  return (value / 100000000).toFixed(2);
+};
 
 export const formatLargeNumber = (value: number) => {
   if (!value && value !== 0) return "-";
