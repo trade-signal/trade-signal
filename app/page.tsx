@@ -3,7 +3,7 @@
 import { Button, Container, Group, Text } from "@mantine/core";
 import { IconBrandGithubFilled } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
-import Footer from "./components/common/Footer";
+import Footer from "./layout/Footer";
 
 import styles from "./page.module.css";
 

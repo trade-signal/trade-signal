@@ -228,7 +228,7 @@ const QuoteListClient: FC<PageProps> = ({ type, indicator, order }) => {
       // 虚拟滚动相关
       mantineTableContainerProps: {
         ref: tableContainerRef,
-        style: { maxHeight: "70vh" },
+        style: { maxHeight: "calc(100vh - 240px)" },
         onScroll: (event: UIEvent<HTMLDivElement>) =>
           fetchMoreOnBottomReached(event.target as HTMLDivElement)
       },

@@ -9,10 +9,10 @@ import { Notifications } from "@mantine/notifications";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { IconDeviceLaptop } from "@tabler/icons-react";
 
-import Header from "@/app/components/common/Header";
-import RightAside from "@/app/components/common/RightAside";
+import Header from "@/app/layout/Header";
+import RightAside from "@/app/layout/RightAside";
 import { LoginProvider } from "@/app/providers/LoginProvider";
-import SpotlightModal from "@/app/components/modals/SpotlightModal";
+import SpotlightModal from "@/app/components/SpotlightModal";
 import { ActiveStockProvider } from "@/app/providers/ActiveStockProvider";
 import { ThemeSettingProvider } from "@/app/providers/ThemeSettingProvider";
 import { SyncTaskProvider } from "@/app/providers/SyncTaskProvider";

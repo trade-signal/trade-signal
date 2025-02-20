@@ -1,8 +1,9 @@
 import { Table, Group, TextInput } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
+import { Column } from "@/app/types/column.type";
+import { transformAlign } from "@/shared/renders";
+
 import DataTableColumnSortCell from "./DataTableColumnSortCell";
-import { Column } from "./types";
-import { transformAlign } from "./util";
 
 interface DataTableHeaderProps<T> {
   columns: Column<T>[];
