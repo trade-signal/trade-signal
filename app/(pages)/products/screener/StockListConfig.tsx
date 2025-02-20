@@ -1,5 +1,5 @@
 import { StockScreener } from "@prisma/client";
-import { Column } from "@/app/components/tables/DataTable/types";
+import { Column } from "@/app/types/column.type";
 
 import { renderSignal, renderPercent } from "@/shared/renders";
 import { formatBillion, formatNumber, formatYuan } from "@/shared/formatters";

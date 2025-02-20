@@ -1,10 +1,10 @@
 import { Box, LoadingOverlay } from "@mantine/core";
+import { Column } from "@/app/types/column.type";
 
 import DataTableContainer from "./DataTableContainer";
 import DataTableHeader from "./DataTableHeader";
 import DataTableBody from "./DataTableBody";
 import DataTableFooter from "./DataTableFooter";
-import { Column } from "./types";
 
 interface DataTableProps<T> {
   columns: Column<T>[];

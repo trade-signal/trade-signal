@@ -10,7 +10,7 @@ import {
 import { IconPlus } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import InstrumentSelectorModal from "@/app/components/modals/InstrumentSelectorModal";
+import InstrumentSelectorModal from "@/app/components/InstrumentSelectorModal";
 import { WatchlistWithStocks } from "@/app/api/watchlist/list/route";
 import { useLoginContext } from "@/app/providers/LoginProvider";
 import { clientGet, post } from "@/shared/request";

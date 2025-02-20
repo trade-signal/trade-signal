@@ -1,7 +1,7 @@
 import { News } from "@prisma/client";
 import Link from "next/link";
 import { HoverCard, Pill, ScrollArea, Text } from "@mantine/core";
-import { Column } from "@/app/components/tables/DataTable/types";
+import { Column } from "@/app/types/column.type";
 import { renderTimeWithHover } from "@/shared/renders";
 
 // 定时来源类型

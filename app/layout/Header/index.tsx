@@ -13,8 +13,6 @@ import {
 import { spotlight } from "@mantine/spotlight";
 import {
   IconArrowsLeftRight,
-  IconBrandGithub,
-  IconBrandTelegram,
   IconLanguage,
   IconMessageCircle,
   IconPalette,
@@ -26,48 +24,13 @@ import { signOut } from "next-auth/react";
 import { useLoginContext } from "@/app/providers/LoginProvider";
 import { useThemeSettingContext } from "@/app/providers/ThemeSettingProvider";
 import { useThemeIcon } from "@/app/hooks/useThemeIcon";
+import links, { type RouteLink } from "@/app/config/routes";
 
 import styles from "./index.module.css";
 
-interface Link {
-  link: string;
-  label: string;
-  disabled?: boolean;
-  icon?: React.ReactNode;
-  target?: string;
-  group?: string;
-  children?: Link[];
-}
-
-const links: Link[] = [
-  { link: "/market", label: "市场" },
-  { link: "/news", label: "新闻" },
-  {
-    link: "/quotes",
-    label: "行情中心"
-  },
-  { link: "/screener", label: "筛选器" },
-  {
-    link: "/more",
-    label: "更多",
-    children: [
-      {
-        link: "https://github.com/trade-signal",
-        label: "Github",
-        icon: <IconBrandGithub style={{ width: rem(14), height: rem(14) }} />,
-        target: "_blank"
-      },
-      {
-        link: "https://t.me/+25mzy3YRvbA4ODM1",
-        label: "Telegram",
-        icon: <IconBrandTelegram style={{ width: rem(14), height: rem(14) }} />,
-        target: "_blank"
-      }
-    ]
-  }
-];
-
-const LinkMenu = (link: Omit<Link, "children"> & { children: Link[] }) => {
+const LinkMenu = (
+  link: Omit<RouteLink, "children"> & { children: RouteLink[] }
+) => {
   const pathname = usePathname();
 
   return (
@@ -97,8 +60,19 @@ const LinkMenu = (link: Omit<Link, "children"> & { children: Link[] }) => {
                 key={child.label}
                 component={Link}
                 href={child.link}
+                style={{
+                  pointerEvents: child.disabled ? "none" : "auto",
+                  color: child.disabled ? "gray" : ""
+                }}
+                onClick={e => {
+                  if (child.disabled) {
+                    e.preventDefault();
+                    return;
+                  }
+                }}
                 leftSection={child.icon}
                 target={child.target}
+                disabled={child.disabled}
               >
                 {child.label}
               </Menu.Item>
@@ -121,7 +95,11 @@ const Header = () => {
 
   const items = links.map(link =>
     link.children ? (
-      <LinkMenu key={link.label} {...link} children={link.children as Link[]} />
+      <LinkMenu
+        key={link.label}
+        {...link}
+        children={link.children as RouteLink[]}
+      />
     ) : (
       <Link
         key={link.label}

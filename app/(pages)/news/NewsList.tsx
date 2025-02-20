@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 import { get } from "@/shared/request";
 import { SyncTask, News } from "@prisma/client";
 import { useDisclosure } from "@mantine/hooks";
-import DataTable from "@/app/components/tables/DataTable";
+import DataTable from "@/app/components/DataTable";
 import { useSyncTaskContext } from "@/app/providers/SyncTaskProvider";
 
 import { useNewsContext } from "./NewsContext";

@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useContext } from "react";
 import { useDisclosure } from "@mantine/hooks";
 
-import { ThemeMenu } from "@/app/components/common/ThemeMenu";
+import { ThemeMenu } from "@/app/layout/ThemeMenu";
 
 interface ThemeSettingContextType {
   visible: boolean;

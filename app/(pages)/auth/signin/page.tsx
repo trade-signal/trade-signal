@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import AuthorizationModal from "@/app/components/modals/AuthorizationModal";
+import AuthorizationModal from "@/app/components/AuthorizationModal";
 import { useLogin } from "@/app/hooks/useLogin";
 
 const SignIn = () => {

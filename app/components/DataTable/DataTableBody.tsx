@@ -1,6 +1,6 @@
 import { Table, Text } from "@mantine/core";
-import { Column } from "./types";
-import { generateRowKey } from "./util";
+import { Column } from "@/app/types/column.type";
+import { generateRowKey } from "@/shared/renders";
 
 interface DataTableBodyProps<T> {
   columns: Column<T>[];

@@ -1,6 +1,6 @@
 import { ReactNode, createContext, useContext } from "react";
 import { SessionUser } from "next-auth";
-import AuthorizationModal from "@/app/components/modals/AuthorizationModal";
+import AuthorizationModal from "@/app/components/AuthorizationModal";
 import { AuthType, useLogin } from "@/app/hooks/useLogin";
 
 export interface LoginContextType {
