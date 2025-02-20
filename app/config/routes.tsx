@@ -12,7 +12,6 @@ export interface RouteLink {
 }
 
 const links: RouteLink[] = [
-  { link: "/market", label: "市场" },
   {
     link: "/products",
     label: "产品",
@@ -28,6 +27,7 @@ const links: RouteLink[] = [
       }
     ]
   },
+  { link: "/market", label: "市场" },
   { link: "/news", label: "新闻" },
   {
     link: "/quotes",

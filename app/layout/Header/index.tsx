@@ -60,8 +60,19 @@ const LinkMenu = (
                 key={child.label}
                 component={Link}
                 href={child.link}
+                style={{
+                  pointerEvents: child.disabled ? "none" : "auto",
+                  color: child.disabled ? "gray" : ""
+                }}
+                onClick={e => {
+                  if (child.disabled) {
+                    e.preventDefault();
+                    return;
+                  }
+                }}
                 leftSection={child.icon}
                 target={child.target}
+                disabled={child.disabled}
               >
                 {child.label}
               </Menu.Item>

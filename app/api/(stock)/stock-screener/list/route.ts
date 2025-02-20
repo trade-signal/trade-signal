@@ -5,7 +5,7 @@ import {
   StockPriceRange,
   StockMarketValue,
   StockPeRatio
-} from "@/app/(pages)/screener/StockScreenerConfig";
+} from "@/app/(pages)/products/screener/StockScreenerConfig";
 import { parseCommaSeparatedParam } from "@/shared/util";
 
 // 价格范围
