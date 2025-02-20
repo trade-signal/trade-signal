@@ -8,6 +8,7 @@ import {
   useCallback,
   useRef
 } from "react";
+import dayjs from "dayjs";
 import { Group, Skeleton, Stack, Tabs, Text } from "@mantine/core";
 import { useRouter } from "next/navigation";
 import { QuoteListType } from "./page";
@@ -26,9 +27,12 @@ import {
   quotesPlateIndicatorMapping,
   quotesIndicatorMapping
 } from "@/cron/api/eastmoney.stock.indicator";
+import { useSyncTaskContext } from "@/app/providers/SyncTaskProvider";
 
 interface PageProps {
   type: QuoteListType;
+  indicator?: string;
+  order?: "asc" | "desc";
 }
 
 const tabs = {
@@ -59,6 +63,16 @@ const getSearchText = (type: QuoteListType) => {
   }
 };
 
+const getTaskType = (type: QuoteListType) => {
+  switch (type) {
+    case "index":
+      return "stock_index_quotes";
+    case "plate":
+      return "stock_plate_quotes";
+    case "stock":
+      return "stock_quotes";
+  }
+};
 const getColumns = (type: QuoteListType) => {
   switch (type) {
     case "index":
@@ -101,9 +115,11 @@ const getColumns = (type: QuoteListType) => {
   }
 };
 
-const QuoteListClient: FC<PageProps> = ({ type }) => {
+const QuoteListClient: FC<PageProps> = ({ type, indicator, order }) => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState(type);
+
+  const { task } = useSyncTaskContext();
 
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const rowVirtualizerInstanceRef = useRef<MRT_RowVirtualizer>(null);
@@ -112,7 +128,16 @@ const QuoteListClient: FC<PageProps> = ({ type }) => {
     []
   );
   const [globalFilter, setGlobalFilter] = useState<string>();
-  const [sorting, setSorting] = useState<MRT_SortingState>([]);
+  const [sorting, setSorting] = useState<MRT_SortingState>(
+    indicator ? [{ id: indicator, desc: order === "desc" }] : []
+  );
+
+  const refreshTime = useMemo(() => {
+    const currentBatch = task.find(
+      (item: any) => item.taskType === getTaskType(type)
+    );
+    return dayjs(currentBatch?.batchDate).format("YYYY-MM-DD HH:mm");
+  }, [task]);
 
   const handleTabChange = (val: QuoteListType) => {
     setActiveTab(val);
@@ -210,6 +235,14 @@ const QuoteListClient: FC<PageProps> = ({ type }) => {
       rowVirtualizerInstanceRef,
       rowVirtualizerOptions: { overscan: 10 },
 
+      // 表格样式配置
+      mantinePaperProps: {
+        style: {
+          border: "none",
+          padding: 0
+        }
+      },
+
       // 表格状态
       state: {
         columnFilters,
@@ -251,7 +284,10 @@ const QuoteListClient: FC<PageProps> = ({ type }) => {
       },
 
       renderBottomToolbarCustomActions: () => (
-        <Group w="100%" justify="flex-end" mt="sm">
+        <Group w="100%" justify="space-between" mt="sm">
+          <Text size="sm" c="dimmed">
+            更新时间: {refreshTime}
+          </Text>
           <Text size="sm" c="dimmed">
             共 {totalDBRowCount} 条记录 ({totalFetched}/{totalDBRowCount})
           </Text>
@@ -271,7 +307,7 @@ const QuoteListClient: FC<PageProps> = ({ type }) => {
   };
 
   return (
-    <Stack className="market-list-container" p="md">
+    <Stack className="market-list-container" py="md">
       <Tabs
         value={activeTab}
         onChange={val => handleTabChange(val as QuoteListType)}

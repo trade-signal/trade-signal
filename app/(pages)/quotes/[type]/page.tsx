@@ -8,12 +8,12 @@ export const metadata: Metadata = {
 };
 
 interface PageProps {
-  params: Promise<{
-    type: QuoteListType;
-  }>;
+  params: Promise<{ type: QuoteListType }>;
+  searchParams: Promise<{ indicator?: string; order?: "asc" | "desc" }>;
 }
 
 export default async function QuoteList(props: PageProps) {
   const { type } = await props.params;
-  return <QuoteListClient type={type} />;
+  const { indicator, order } = await props.searchParams;
+  return <QuoteListClient type={type} indicator={indicator} order={order} />;
 }
