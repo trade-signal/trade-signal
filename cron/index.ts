@@ -72,9 +72,9 @@ const runStockTrendingJobs = async () => {
 
 const runStockScheduleJobs = () => {
   // 交易时段实时行情抓取
-  // 交易时段每3分钟抓取一次:
+  // 交易时段每5分钟抓取一次:
   // 9:15-11:30, 13:00-15:00
-  new CronJob("*/3 9-11,13-14 * * 1-5", async () => {
+  new CronJob("*/5 9-11,13-14 * * 1-5", async () => {
     if (!isTradeDate()) {
       print("not trade date");
       return;
