@@ -3,8 +3,33 @@ import { readLocalStorageValue } from "@mantine/hooks";
 import { THEME_SETTING_KEY } from "@/app/hooks/useThemeSetting";
 import { ColumnAlign } from "@/app/types/column.type";
 
-import { getColor, formatPercent } from "./formatters";
+import { getColor, formatPercent, getUpDownColor } from "./formatters";
 import { formatDateDiff } from "./date";
+
+export const renderUpNumber = (value: number, decimals = 2) => {
+  return (
+    <Text span c={getUpDownColor("up", value)} fw={700}>
+      {value}
+    </Text>
+  );
+};
+
+export const renderDownNumber = (value: number, decimals = 2) => {
+  return (
+    <Text span c={getUpDownColor("down", value)} fw={700}>
+      {value}
+    </Text>
+  );
+};
+
+export const renderNumber = (value: number, decimals = 2) => {
+  const val = value.toFixed(decimals);
+  return (
+    <Text span c={getColor(Number(val))} fw={700}>
+      {val}
+    </Text>
+  );
+};
 
 export const renderPercent = (value: number, decimals = 2) => {
   const val = formatPercent(value, decimals, false);

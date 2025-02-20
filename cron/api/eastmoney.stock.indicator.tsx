@@ -1,5 +1,10 @@
 import { IndicatorType } from "@/cron/type";
-import { renderPercent } from "@/shared/renders";
+import {
+  renderDownNumber,
+  renderNumber,
+  renderPercent,
+  renderUpNumber
+} from "@/shared/renders";
 import {
   formatBillion,
   formatNumber,
@@ -28,7 +33,7 @@ const priceIndicators = {
     type: IndicatorType.NUMBER,
     cn: "最新价",
     map: "f2",
-    formatter: formatNumber
+    formatter: renderNumber
   },
   changeRate: {
     type: IndicatorType.NUMBER,
@@ -40,7 +45,7 @@ const priceIndicators = {
     type: IndicatorType.NUMBER,
     cn: "涨跌额",
     map: "f4",
-    formatter: formatNumber
+    formatter: renderNumber
   }
 };
 
@@ -56,7 +61,7 @@ const tradingIndicators = {
     type: IndicatorType.NUMBER,
     cn: "成交额",
     map: "f6",
-    formatter: formatBillion
+    formatter: formatLargeNumber
   },
   amplitude: {
     type: IndicatorType.NUMBER,
@@ -234,25 +239,25 @@ const sharesAndCapIndicators = {
     type: IndicatorType.NUMBER,
     cn: "总股本",
     map: "f38",
-    formatter: formatBillion
+    formatter: formatLargeNumber
   },
   freeShares: {
     type: IndicatorType.NUMBER,
     cn: "已流通股份",
     map: "f39",
-    formatter: formatBillion
+    formatter: formatLargeNumber
   },
   totalMarketCap: {
     type: IndicatorType.NUMBER,
     cn: "总市值",
     map: "f20",
-    formatter: formatBillion
+    formatter: formatLargeNumber
   },
   freeCap: {
     type: IndicatorType.NUMBER,
     cn: "流通市值",
     map: "f21",
-    formatter: formatBillion
+    formatter: formatLargeNumber
   }
 };
 
@@ -351,13 +356,13 @@ export const quotesPlateIndicatorMapping = {
     type: IndicatorType.NUMBER,
     cn: "上涨家数",
     map: "f104",
-    formatter: (v: any) => v
+    formatter: renderUpNumber
   },
   downCount: {
     type: IndicatorType.NUMBER,
     cn: "下跌家数",
     map: "f105",
-    formatter: (v: any) => v
+    formatter: renderDownNumber
   },
 
   // 领涨领跌信息

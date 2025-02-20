@@ -97,8 +97,22 @@ const getColumns = (type: QuoteListType) => {
         return {
           header: indicator.cn,
           accessorKey: key,
-          Cell: ({ cell }: { cell: any }) =>
-            indicator.formatter(cell.getValue())
+          Cell: ({ cell }: { cell: any }) => {
+            let value = cell.getValue();
+
+            if (
+              value &&
+              (key === "newPrice" ||
+                key === "changeRate" ||
+                key === "upsDowns" ||
+                key === "turnoverRate" ||
+                key === "totalMarketCap")
+            ) {
+              value = value / 100;
+            }
+
+            return indicator.formatter(value);
+          }
         };
       });
     case "stock":

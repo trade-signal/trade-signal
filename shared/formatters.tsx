@@ -2,10 +2,22 @@ import dayjs from "dayjs";
 import { readLocalStorageValue } from "@mantine/hooks";
 import { THEME_SETTING_KEY } from "@/app/hooks/useThemeSetting";
 
-export const getColor = (value: number) => {
+const getThemeSetting = () => {
   const themeSetting: any = readLocalStorageValue({ key: THEME_SETTING_KEY });
+  return themeSetting;
+};
+
+export const getColor = (value: number) => {
+  const themeSetting = getThemeSetting();
   if (value > 0) return themeSetting.upColor;
   if (value < 0) return themeSetting.downColor;
+  return "gray.7";
+};
+
+export const getUpDownColor = (type: "up" | "down", value: number) => {
+  const themeSetting = getThemeSetting();
+  if (type === "up" && value !== 0) return themeSetting.upColor;
+  if (type === "down" && value !== 0) return themeSetting.downColor;
   return "gray.7";
 };
 
