@@ -6,7 +6,8 @@ import StockScreener from "./StockScreener";
 import StockList from "./StockList";
 
 export const metadata: Metadata = {
-  title: "股票筛选器：搜索和过滤股票 - TradeSignal"
+  title: "股票筛选器：搜索和过滤股票 - TradeSignal",
+  description: "快速筛选并发现理想的交易标的"
 };
 
 const StockScreenerPage = () => {

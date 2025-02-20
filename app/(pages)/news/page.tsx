@@ -6,7 +6,8 @@ import NewsScreener from "./NewsScreener";
 import NewsList from "./NewsList";
 
 export const metadata: Metadata = {
-  title: "新闻流: 定制市场新闻 - TradeSignal"
+  title: "新闻流: 定制市场新闻 - TradeSignal",
+  description: "实时市场新闻筛选与追踪，助您把握投资先机"
 };
 
 const News = () => {
