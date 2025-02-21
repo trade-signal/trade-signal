@@ -1,8 +1,11 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Treemap, Tooltip } from "recharts";
 import { useViewportSize } from "@mantine/hooks";
+import { Skeleton, Stack } from "@mantine/core";
+import { useQuery } from "@tanstack/react-query";
+import { clientGet } from "@/shared/request";
 
 import CustomizedContent from "./components/CustomizedContent";
 
@@ -148,8 +151,18 @@ const COLORS = [
   "#F8C12D"
 ];
 
-const TreemapChart = () => {
+const TreemapChartClient = () => {
   const { width, height } = useViewportSize();
+
+  const [orderBy, setOrderBy] = useState("changeRate");
+
+  const { data: treemapData, isLoading } = useQuery({
+    queryKey: ["treemap"],
+    queryFn: () =>
+      clientGet("/api/stock-treemap/list", {
+        orderBy
+      })
+  });
 
   const { treemapW, treemapH } = useMemo(() => {
     return {
@@ -158,20 +171,26 @@ const TreemapChart = () => {
     };
   }, [width, height]);
 
+  if (isLoading) {
+    return <Skeleton mt={20} height={treemapH} width={treemapW} />;
+  }
+
   return (
-    <Treemap
-      width={treemapW}
-      height={treemapH}
-      data={data}
-      dataKey="size"
-      stroke="#fff"
-      fill="#8884d8"
-      // @ts-ignore
-      content={<CustomizedContent colors={COLORS} />}
-    >
-      <Tooltip />
-    </Treemap>
+    <Stack mt={20}>
+      <Treemap
+        width={treemapW}
+        height={treemapH}
+        data={data}
+        dataKey="size"
+        stroke="#fff"
+        fill="#8884d8"
+        // @ts-ignore
+        content={<CustomizedContent colors={COLORS} />}
+      >
+        <Tooltip />
+      </Treemap>
+    </Stack>
   );
 };
 
-export default TreemapChart;
+export default TreemapChartClient;

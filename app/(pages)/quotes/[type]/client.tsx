@@ -11,7 +11,6 @@ import {
 import dayjs from "dayjs";
 import { Group, Skeleton, Stack, Tabs, Text } from "@mantine/core";
 import { useRouter } from "next/navigation";
-import { QuoteListType } from "./page";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { get } from "@/shared/request";
 import { getRefetchInterval } from "@/shared/env";
@@ -28,6 +27,8 @@ import {
   quotesIndicatorMapping
 } from "@/cron/api/eastmoney.stock.indicator";
 import { useSyncTaskContext } from "@/app/providers/SyncTaskProvider";
+
+import { QuoteListType } from "./page";
 
 interface PageProps {
   type: QuoteListType;

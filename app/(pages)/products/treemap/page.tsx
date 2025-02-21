@@ -1,7 +1,7 @@
 import { Container } from "@mantine/core";
 import { Metadata } from "next";
 
-import TreemapChart from "./TreemapChart";
+import TreemapChartClient from "./client";
 
 export const metadata: Metadata = {
   title: "大盘云图 | 板块热力图 - TradeSignal",
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 const MarketMapPage = () => {
   return (
     <Container fluid h={"calc(100vh - 120px)"}>
-      <TreemapChart />
+      <TreemapChartClient />
     </Container>
   );
 };

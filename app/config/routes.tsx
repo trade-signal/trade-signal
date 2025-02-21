@@ -21,7 +21,7 @@ const links: RouteLink[] = [
         label: "股票筛选器"
       },
       {
-        link: "/products/market-map",
+        link: "/products/treemap",
         label: "大盘云图"
       }
     ]
