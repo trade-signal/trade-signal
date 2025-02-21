@@ -18,7 +18,7 @@ const links: RouteLink[] = [
     children: [
       {
         link: "/products/screener",
-        label: "股票筛选器"
+        label: "选股器"
       },
       {
         link: "/products/treemap",
@@ -28,10 +28,6 @@ const links: RouteLink[] = [
   },
   { link: "/market", label: "市场" },
   { link: "/news", label: "新闻" },
-  {
-    link: "/quotes",
-    label: "行情中心"
-  },
   {
     link: "/more",
     label: "更多",

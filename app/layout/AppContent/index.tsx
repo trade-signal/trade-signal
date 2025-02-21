@@ -34,7 +34,7 @@ function AppContent({ children }: { children: React.ReactNode }) {
       visibleFrom="xs"
     >
       <AppShell.Header visibleFrom="xs" pr={collapsed ? 0 : asideWidth}>
-        {/* <Header /> */}
+        <Header />
       </AppShell.Header>
 
       <AppShell.Main>{children}</AppShell.Main>
