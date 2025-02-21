@@ -64,10 +64,14 @@ const print = (message: string) => {
 // 交易时段 实时行情抓取
 const runStockTrendingJobs = async () => {
   await fetchStockIndexQuotes();
-  await fetchActiveStockIndexMinuteKline();
-  await fetchStockQuotes();
-  await fetchActiveStockMinuteKline();
   await fetchStockPlateQuotes();
+  await fetchStockQuotes();
+};
+
+// 交易时段 分时趋势
+const runStockMinuteKlineJobs = async () => {
+  await fetchActiveStockMinuteKline();
+  await fetchActiveStockIndexMinuteKline();
 };
 
 const runStockScheduleJobs = () => {
@@ -88,6 +92,7 @@ const runStockScheduleJobs = () => {
     print(`trigger fetch stock quotes realtime`);
 
     await runStockTrendingJobs();
+    await runStockMinuteKlineJobs();
   }).start();
 
   // 收盘后运行：16:00
@@ -99,8 +104,9 @@ const runStockScheduleJobs = () => {
 
     print(`trigger fetch stock quotes daily`);
 
-    await runStockTrendingJobs();
     await fetchStockScreener();
+    await runStockTrendingJobs();
+    await runStockMinuteKlineJobs();
   }).start();
 
   // 每月1号运行：更新所有股票和指数的基本信息
