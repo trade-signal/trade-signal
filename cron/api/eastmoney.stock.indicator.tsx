@@ -8,7 +8,8 @@ import {
 import {
   formatBillion,
   formatNumber,
-  formatLargeNumber
+  formatLargeNumber,
+  formatPercent
 } from "@/shared/formatters";
 
 // 基本信息指标
@@ -193,19 +194,19 @@ const financialIndicators = {
     type: IndicatorType.NUMBER,
     cn: "加权净资产收益率",
     map: "f37",
-    formatter: renderPercent
+    formatter: formatPercent
   },
   saleGpr: {
     type: IndicatorType.NUMBER,
     cn: "毛利率",
     map: "f49",
-    formatter: renderPercent
+    formatter: formatPercent
   },
   debtAssetRatio: {
     type: IndicatorType.NUMBER,
     cn: "资产负债率",
     map: "f57",
-    formatter: renderPercent
+    formatter: formatPercent
   },
   totalOperateIncome: {
     type: IndicatorType.NUMBER,
