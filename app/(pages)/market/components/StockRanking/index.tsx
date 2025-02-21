@@ -28,8 +28,7 @@ import {
 } from "mantine-react-table";
 import { IconChevronCompactRight } from "@tabler/icons-react";
 import { StockQuotes } from "@prisma/client";
-import { THEME_SETTING_KEY, ThemeSetting } from "@/app/hooks/useThemeSetting";
-import { readLocalStorageValue } from "@mantine/hooks";
+import { getThemeSetting } from "@/shared/theme";
 
 import styles from "./index.module.css";
 
@@ -60,9 +59,7 @@ const StockRanking: FC<StockRankingProps> = props => {
 
   const router = useRouter();
 
-  const themeSetting: ThemeSetting = readLocalStorageValue({
-    key: THEME_SETTING_KEY
-  });
+  const themeSetting = getThemeSetting();
 
   const [hasLoaded, setHasLoaded] = useState(false);
   const { ref: containerRef, entry } = useIntersection({

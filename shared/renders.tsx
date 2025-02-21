@@ -1,8 +1,6 @@
 import { HoverCard, Text } from "@mantine/core";
-import { readLocalStorageValue } from "@mantine/hooks";
-import { THEME_SETTING_KEY } from "@/app/hooks/useThemeSetting";
 import { ColumnAlign } from "@/app/types/column.type";
-
+import { getThemeSetting } from "./theme";
 import { getColor, formatPercent, getUpDownColor } from "./formatters";
 import { formatDateDiff } from "./date";
 
@@ -41,7 +39,7 @@ export const renderPercent = (value: number, decimals = 2) => {
 };
 
 export const renderSignal = (value: boolean) => {
-  const themeSetting: any = readLocalStorageValue({ key: THEME_SETTING_KEY });
+  const themeSetting = getThemeSetting();
   if (value) {
     return (
       <Text span c={themeSetting.upColor} fw={700}>

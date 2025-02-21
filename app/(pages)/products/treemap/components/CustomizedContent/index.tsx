@@ -25,7 +25,7 @@ const CustomizedContent = (props: CustomizedContentProps) => {
         style={{
           fill:
             depth < 2
-              ? colors[Math.floor((index / root.children.length) * 6)]
+              ? colors[5 - Math.floor((index / root.children.length) * 6)]
               : "none",
           stroke: "#fff",
           strokeWidth: 2 / (depth + 1e-10),

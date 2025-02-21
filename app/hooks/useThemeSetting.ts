@@ -1,22 +1,12 @@
 "use client";
 
-import { themeOverride } from "@/theme";
-import {
-  DEFAULT_THEME,
-  MantineColorScheme,
-  mergeMantineTheme
-} from "@mantine/core";
-import { readLocalStorageValue, useLocalStorage } from "@mantine/hooks";
+import { themeOverride } from "@/shared/theme";
+import { DEFAULT_THEME, mergeMantineTheme } from "@mantine/core";
+import { useLocalStorage } from "@mantine/hooks";
 import { useEffect, useMemo, useState } from "react";
+import { ThemeSetting, getThemeSetting } from "@/shared/theme";
 
 export type SetThemeType = "colorScheme" | "fontSize" | "upColor" | "downColor";
-
-export interface ThemeSetting {
-  colorScheme: MantineColorScheme;
-  fontSize: number;
-  upColor: string;
-  downColor: string;
-}
 
 export const DEFAULT_THEME_SETTING: ThemeSetting = {
   colorScheme: "light",
@@ -62,9 +52,7 @@ export const useThemeSetting = () => {
     let defaultValue = DEFAULT_THEME_SETTING;
 
     try {
-      defaultValue = readLocalStorageValue({
-        key: THEME_SETTING_KEY
-      }) as ThemeSetting;
+      defaultValue = getThemeSetting();
 
       if (!defaultValue.colorScheme) {
         defaultValue.colorScheme = DEFAULT_THEME_SETTING.colorScheme;

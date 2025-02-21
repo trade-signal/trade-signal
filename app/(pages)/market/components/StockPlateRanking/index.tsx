@@ -16,6 +16,12 @@ import {
 } from "@mantine/core";
 import { StockPlateQuotes } from "@prisma/client";
 import { useIntersection } from "@mantine/hooks";
+import { IconChevronCompactRight } from "@tabler/icons-react";
+import {
+  MantineReactTable,
+  MRT_ColumnDef,
+  useMantineReactTable
+} from "mantine-react-table";
 
 import { clientGet } from "@/shared/request";
 import { useQuery } from "@tanstack/react-query";
@@ -26,15 +32,7 @@ import {
   formatNumber,
   formatPercent
 } from "@/shared/formatters";
-import {
-  MantineReactTable,
-  MRT_ColumnDef,
-  useMantineReactTable
-} from "mantine-react-table";
-import { IconChevronCompactRight } from "@tabler/icons-react";
-
-import { THEME_SETTING_KEY, ThemeSetting } from "@/app/hooks/useThemeSetting";
-import { readLocalStorageValue } from "@mantine/hooks";
+import { getThemeSetting } from "@/shared/theme";
 
 import styles from "./index.module.css";
 
@@ -65,9 +63,7 @@ const StockRanking: FC<StockRankingProps> = props => {
 
   const router = useRouter();
 
-  const themeSetting: ThemeSetting = readLocalStorageValue({
-    key: THEME_SETTING_KEY
-  });
+  const themeSetting = getThemeSetting();
 
   const [hasLoaded, setHasLoaded] = useState(false);
   const { ref: containerRef, entry } = useIntersection({

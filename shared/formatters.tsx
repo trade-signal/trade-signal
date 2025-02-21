@@ -1,11 +1,5 @@
 import dayjs from "dayjs";
-import { readLocalStorageValue } from "@mantine/hooks";
-import { THEME_SETTING_KEY } from "@/app/hooks/useThemeSetting";
-
-const getThemeSetting = () => {
-  const themeSetting: any = readLocalStorageValue({ key: THEME_SETTING_KEY });
-  return themeSetting;
-};
+import { getThemeSetting } from "./theme";
 
 export const getColor = (value: number) => {
   const themeSetting = getThemeSetting();

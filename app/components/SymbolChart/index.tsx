@@ -13,21 +13,18 @@ import dayjs from "dayjs";
 import { Group, rem, SegmentedControl, Stack, Tooltip } from "@mantine/core";
 import { IconChartCandle } from "@tabler/icons-react";
 import { IconChartArea } from "@tabler/icons-react";
-import { readLocalStorageValue } from "@mantine/hooks";
-import { THEME_SETTING_KEY, ThemeSetting } from "@/app/hooks/useThemeSetting";
 import { hex2rgba } from "@/shared/color";
 import { useThemeIcon } from "@/app/hooks/useThemeIcon";
 import { SymbolChartData } from "@/app/types/chart.type";
 import { ChartTrends } from "@/app/types/chart.type";
+import { getThemeSetting } from "@/shared/theme";
 
 const getChartColor = (
   price: number,
   stock: ChartTrends,
   chartType: "area" | "candle"
 ) => {
-  const themeSetting: ThemeSetting = readLocalStorageValue({
-    key: THEME_SETTING_KEY
-  });
+  const themeSetting = getThemeSetting();
 
   if (chartType === "area") {
     return stock.close > stock.preClose
@@ -207,9 +204,7 @@ const SymbolChart = (props: SymbolChartData) => {
     seriesRef.current = [];
   };
 
-  const themeSetting = readLocalStorageValue<ThemeSetting>({
-    key: THEME_SETTING_KEY
-  });
+  const themeSetting = getThemeSetting();
 
   const handleChartTypeChange = (chart: IChartApi, type: "area" | "candle") => {
     clearSeries(chart);
