@@ -22,7 +22,8 @@ const links: RouteLink[] = [
       },
       {
         link: "/products/treemap",
-        label: "大盘云图"
+        label: "大盘云图",
+        disabled: true
       }
     ]
   },
