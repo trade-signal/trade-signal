@@ -21,8 +21,7 @@ import { IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import {
   getColor,
   formatNumber,
-  formatVolume,
-  formatYuan,
+  formatLargeNumber,
   formatPercent
 } from "@/shared/formatters";
 
@@ -127,13 +126,13 @@ const InstrumentDetail = () => {
           <Group justify="space-between">
             <Text size="xs">成交量</Text>
             <Text size="xs" fw={600}>
-              {formatVolume(stock?.volume || 0)}
+              {formatLargeNumber(stock?.volume || 0)}
             </Text>
           </Group>
           <Group justify="space-between">
             <Text size="xs">成交额</Text>
             <Text size="xs" fw={600}>
-              {formatYuan(stock?.dealAmount || 0)}
+              {formatLargeNumber(stock?.dealAmount || 0)}
             </Text>
           </Group>
           <Group justify="space-between">
@@ -171,13 +170,13 @@ const InstrumentDetail = () => {
           <Group justify="space-between">
             <Text size="xs">基本每股收益(TTM)</Text>
             <Text size="xs" fw={600}>
-              {formatYuan(stock?.basicEps || 0)}
+              {formatLargeNumber(stock?.basicEps || 0)}
             </Text>
           </Group>
           <Group justify="space-between">
             <Text size="xs">每股净资产（元）</Text>
             <Text size="xs" fw={600}>
-              {formatYuan(stock?.bvps || 0)}
+              {formatLargeNumber(stock?.bvps || 0)}
             </Text>
           </Group>
 
@@ -185,13 +184,13 @@ const InstrumentDetail = () => {
           <Group justify="space-between">
             <Text size="xs">总市值</Text>
             <Text size="xs" fw={600}>
-              {formatYuan(stock?.totalMarketCap || 0)}
+              {formatLargeNumber(stock?.totalMarketCap || 0)}
             </Text>
           </Group>
           <Group justify="space-between">
             <Text size="xs">流通市值</Text>
             <Text size="xs" fw={600}>
-              {formatYuan(stock?.freeCap || 0)}
+              {formatLargeNumber(stock?.freeCap || 0)}
             </Text>
           </Group>
         </Spoiler>

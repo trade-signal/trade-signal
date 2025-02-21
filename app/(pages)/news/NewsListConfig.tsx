@@ -11,7 +11,7 @@ enum SourceType {
 }
 
 // 定义市场类型枚举
-enum MarketType {
+enum NewsMarketType {
   CN = "cn", // A股
   US = "us", // 美股
   HK = "hk", // 港股
@@ -32,30 +32,30 @@ export const SOURCE_MAP: Record<string, string> = {
 
 // 颜色映射
 export const MARKET_COLORS: Record<string, string> = {
-  [MarketType.CN]: "red", // 红色 - 中国市场传统色
-  [MarketType.US]: "blue", // 蓝色 - 代表美国市场
-  [MarketType.HK]: "green", // 绿色 - 港股传统色
-  [MarketType.FUND]: "violet", // 紫色 - 代表基金投资
-  [MarketType.CFF]: "orange", // 橙色 - 代表期货交易
-  [MarketType.FOREX]: "cyan", // 青色 - 代表外汇市场
-  [MarketType.WORLD_INDEX]: "indigo", // 靛蓝 - 代表全球指数
-  [MarketType.COMMODITY]: "yellow", // 黄色 - 对应大宗商品（如黄金）
-  [MarketType.GLOBAL]: "teal", // 青绿 - 代表全球市场
-  [MarketType.GLOBAL_BOND]: "lime" // 青柠 - 代表债券市场
+  [NewsMarketType.CN]: "red",
+  [NewsMarketType.US]: "blue",
+  [NewsMarketType.HK]: "green",
+  [NewsMarketType.FUND]: "violet",
+  [NewsMarketType.CFF]: "orange",
+  [NewsMarketType.FOREX]: "cyan",
+  [NewsMarketType.WORLD_INDEX]: "indigo",
+  [NewsMarketType.COMMODITY]: "yellow",
+  [NewsMarketType.GLOBAL]: "teal",
+  [NewsMarketType.GLOBAL_BOND]: "lime"
 };
 
 // 市场标签映射
 export const MARKET_LABELS: Record<string, string> = {
-  [MarketType.CN]: "A股",
-  [MarketType.US]: "美股",
-  [MarketType.HK]: "港股",
-  [MarketType.FUND]: "基金",
-  [MarketType.CFF]: "期货",
-  [MarketType.FOREX]: "外汇",
-  [MarketType.WORLD_INDEX]: "全球指数",
-  [MarketType.COMMODITY]: "大宗商品",
-  [MarketType.GLOBAL]: "全球",
-  [MarketType.GLOBAL_BOND]: "全球债券"
+  [NewsMarketType.CN]: "A股",
+  [NewsMarketType.US]: "美股",
+  [NewsMarketType.HK]: "港股",
+  [NewsMarketType.FUND]: "基金",
+  [NewsMarketType.CFF]: "期货",
+  [NewsMarketType.FOREX]: "外汇",
+  [NewsMarketType.WORLD_INDEX]: "全球指数",
+  [NewsMarketType.COMMODITY]: "大宗商品",
+  [NewsMarketType.GLOBAL]: "全球",
+  [NewsMarketType.GLOBAL_BOND]: "全球债券"
 };
 
 const getMarketColor = (market: string): string => {
@@ -85,7 +85,7 @@ const formatStocks = (stocks: Stock[], row: News) => {
           const market = row.source === SourceType.SINA ? stock.market : "cn";
 
           const isCn =
-            market === MarketType.CN &&
+            market === NewsMarketType.CN &&
             ["sz", "sh"].some(key => stock.code.startsWith(key));
 
           const marketLabel = getMarketLabel(market);

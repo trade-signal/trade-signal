@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 const MarketMapPage = () => {
   return (
-    <Container fluid h={"calc(100vh - 120px)"}>
+    <Container fluid h={"calc(100vh - 100px)"}>
       <TreemapChartClient />
     </Container>
   );

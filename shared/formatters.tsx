@@ -35,6 +35,7 @@ export const formatLargeNumber = (value: number) => {
   if (!value && value !== 0) return "-";
 
   const units = [
+    { value: 1e12, unit: "万亿" },
     { value: 1e8, unit: "亿" },
     { value: 1e4, unit: "万" },
     { value: 1, unit: "" }
@@ -54,6 +55,3 @@ export const formatLargeNumber = (value: number) => {
 export const formatDate = (value: string) => dayjs(value).format("YYYY-MM-DD");
 export const formatDateE = (value: string) =>
   dayjs(value).format("YYYY-MM-DD HH:mm:ss");
-
-export const formatVolume = formatLargeNumber;
-export const formatYuan = formatLargeNumber;

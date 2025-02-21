@@ -2,7 +2,11 @@ import { StockScreener } from "@prisma/client";
 import { Column } from "@/app/types/column.type";
 
 import { renderSignal, renderPercent } from "@/shared/renders";
-import { formatBillion, formatNumber, formatYuan } from "@/shared/formatters";
+import {
+  formatBillion,
+  formatNumber,
+  formatLargeNumber
+} from "@/shared/formatters";
 
 interface TabConfig {
   value: string;
@@ -150,7 +154,7 @@ export const TAB_CONFIGS: TabConfig[] = [
         key: "dealAmount",
         title: "成交额",
         width: 120,
-        render: value => formatYuan(value),
+        render: value => formatLargeNumber(value),
         sortable: true,
         align: "right"
       },

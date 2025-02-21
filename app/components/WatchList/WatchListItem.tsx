@@ -8,7 +8,7 @@ import { useActiveStock } from "@/app/providers/ActiveStockProvider";
 import {
   formatNumber,
   formatPercent,
-  formatYuan,
+  formatLargeNumber,
   getColor
 } from "@/shared/formatters";
 
@@ -106,7 +106,10 @@ const WatchListItem = ({ stock, onRemove }: WatchListItemProps) => {
 
         <Stack gap={2}>
           <InfoItem label="成交量" value={formatNumber(quote.volume)} />
-          <InfoItem label="成交额" value={formatYuan(quote.dealAmount)} />
+          <InfoItem
+            label="成交额"
+            value={formatLargeNumber(quote.dealAmount)}
+          />
           <InfoItem label="换手率" value={formatPercent(quote.turnoverRate)} />
           <InfoItem label="量比" value={formatPercent(quote.volumeRatio)} />
         </Stack>
