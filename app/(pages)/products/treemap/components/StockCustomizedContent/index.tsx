@@ -1,5 +1,7 @@
-interface CustomizedContentProps {
-  root: any;
+import { StockTreemap } from "@/app/api/(stock)/stock-treemap/list/route";
+
+interface StockCustomizedContentProps {
+  root: StockTreemap;
   depth: number;
   x: number;
   y: number;
@@ -11,9 +13,8 @@ interface CustomizedContentProps {
   value: number;
 }
 
-const CustomizedContent = (props: CustomizedContentProps) => {
-  const { root, depth, x, y, width, height, index, colors, name, value } =
-    props;
+const StockCustomizedContent = (props: StockCustomizedContentProps) => {
+  const { root, depth, x, y, width, height, index, colors, name } = props;
 
   return (
     <g>
@@ -25,8 +26,8 @@ const CustomizedContent = (props: CustomizedContentProps) => {
         style={{
           fill:
             depth < 2
-              ? colors[5 - Math.floor((index / root.children.length) * 6)]
-              : "none",
+              ? colors[Math.floor((index / root.children.length) * 6)]
+              : "#ffffff00",
           stroke: "#fff",
           strokeWidth: 2 / (depth + 1e-10),
           strokeOpacity: 1 / (depth + 1e-10)
@@ -52,4 +53,4 @@ const CustomizedContent = (props: CustomizedContentProps) => {
   );
 };
 
-export default CustomizedContent;
+export default StockCustomizedContent;

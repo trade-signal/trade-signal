@@ -2,15 +2,14 @@
 
 import { useMemo, useState } from "react";
 import { Treemap, Tooltip } from "recharts";
-import { StockQuotes } from "@prisma/client";
 import { useViewportSize } from "@mantine/hooks";
 import { Skeleton, Stack } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { clientGet } from "@/shared/request";
+import { getThemeSetting, generateRangeColors } from "@/shared/theme";
 
 import { StockTreemap } from "@/app/api/(stock)/stock-treemap/list/route";
-import CustomizedContent from "./components/CustomizedContent";
-import { getThemeSetting, generateRangeColors } from "@/shared/theme";
+import StockCustomizedContent from "./components/StockCustomizedContent";
 
 const TreemapChartClient = () => {
   const { width, height } = useViewportSize();
@@ -27,7 +26,7 @@ const TreemapChartClient = () => {
 
   // 生成颜色区间
   const colors = useMemo(() => {
-    return generateRangeColors(downColor, upColor, 6);
+    return generateRangeColors(upColor, downColor, 7);
   }, [upColor, downColor]);
 
   const { data, isLoading } = useQuery({
@@ -38,16 +37,6 @@ const TreemapChartClient = () => {
       })
   });
 
-  const treemapData = useMemo(() => {
-    return data?.map(item => ({
-      ...item,
-      children: item.stocks.map(stock => ({
-        name: stock.name,
-        size: stock.changeRate
-      }))
-    }));
-  }, [data]);
-
   if (isLoading) {
     return <Skeleton mt={20} height={treemapH} width={treemapW} />;
   }
@@ -57,12 +46,13 @@ const TreemapChartClient = () => {
       <Treemap
         width={treemapW}
         height={treemapH}
-        data={treemapData}
-        dataKey="size"
+        data={data}
+        dataKey={orderBy}
         stroke="#fff"
         fill="#8884d8"
+        isAnimationActive={false}
         // @ts-ignore
-        content={<CustomizedContent data={treemapData} colors={colors} />}
+        content={<StockCustomizedContent colors={colors} />}
       >
         <Tooltip />
       </Treemap>

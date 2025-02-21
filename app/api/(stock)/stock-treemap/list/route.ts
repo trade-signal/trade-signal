@@ -3,7 +3,7 @@ import prisma from "@/prisma/db";
 import { StockQuotes, StockPlateQuotes } from "@prisma/client";
 
 export interface StockTreemap extends StockPlateQuotes {
-  stocks: StockQuotes[];
+  children: StockQuotes[];
 }
 
 export const GET = async (request: NextRequest) => {
@@ -38,7 +38,7 @@ export const GET = async (request: NextRequest) => {
 
   const treemapData = quotes.map(quote => ({
     ...quote,
-    stocks: stockQuotesMap[quote.name] || []
+    children: stockQuotesMap[quote.name] || []
   }));
 
   return Response.json({
