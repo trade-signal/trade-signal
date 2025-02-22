@@ -34,6 +34,8 @@ const TreemapChartClient = () => {
   const currentThemeColor = getCurrentThemeColor();
   const [marketType, setMarketType] = useState("all");
 
+  const [data, setData] = useState<StockTreemap[]>([]);
+
   const refreshTime = useMemo(() => {
     const currentBatch = task.find(
       (item: any) => item.taskType === "stock_plate_quotes"
@@ -49,17 +51,20 @@ const TreemapChartClient = () => {
     [width, height]
   );
 
-  const { data, isLoading } = useQuery({
+  const { isLoading } = useQuery({
     queryKey: ["treemap", marketType],
     queryFn: (): Promise<StockTreemap[]> =>
-      clientGet("/api/stock-treemap/list", { marketType })
+      clientGet("/api/stock-treemap/list", { marketType }),
+    onSuccess: data => {
+      setData(data);
+    }
   });
 
-  if (isLoading || !data) {
+  if (isLoading && !data.length) {
     return (
       <Paper>
         <Group align="flex-start">
-          <Paper mt={20} p="md" style={{ width: 200 }}>
+          <Paper mt={20} p="md" style={{ width: 160 }}>
             <Skeleton height={160} />
             <Skeleton height={160} mt={20} />
           </Paper>
@@ -74,12 +79,12 @@ const TreemapChartClient = () => {
   return (
     <Paper mt={20} bg="transparent">
       <Group align="flex-start">
-        <Paper p="xs" style={{ width: 200 }}>
+        <Paper p="xs" style={{ width: 160 }}>
           <Text ml={2} size="sm" fw={500}>
             {refreshTime}
           </Text>
           <SegmentedControl
-            p="sm"
+            p="md"
             mt={20}
             fullWidth
             color={currentThemeColor}
@@ -88,6 +93,11 @@ const TreemapChartClient = () => {
             withItemsBorders={false}
             onChange={setMarketType}
             data={MARKET_OPTIONS}
+            styles={{
+              label: {
+                textAlign: "left"
+              }
+            }}
           />
           <Stack ml={2} mt={20} gap="xs">
             <Text size="sm" fw={500}>
