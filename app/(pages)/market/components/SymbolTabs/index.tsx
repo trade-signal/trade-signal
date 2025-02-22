@@ -42,6 +42,7 @@ interface SymbolTabsProps {
   title: string;
   queryKey: string;
   apiBasePath: string;
+  indicator: string;
   showMore?: boolean;
   moreText?: string;
   moreLink?: string;
@@ -50,11 +51,23 @@ interface SymbolTabsProps {
 type SymbolTabsData = StockQuotes | StockIndexQuotes;
 type SymbolTabsTrends = StockMinuteKline | StockIndexMinuteKline;
 
+const getSorting = (indicator: string) => {
+  if (!indicator) return "[]";
+
+  return JSON.stringify([
+    {
+      id: indicator,
+      desc: true
+    }
+  ]);
+};
+
 const SymbolTabs: FC<SymbolTabsProps> = props => {
   const {
     title,
     queryKey,
     apiBasePath,
+    indicator,
     showMore = false,
     moreText = "",
     moreLink = ""
@@ -79,12 +92,7 @@ const SymbolTabs: FC<SymbolTabsProps> = props => {
     queryKey: [`${queryKey}_list`],
     queryFn: (): Promise<SymbolTabsData[]> =>
       clientGet(`${apiBasePath}/list`, {
-        sorting: JSON.stringify([
-          {
-            id: "newPrice",
-            desc: true
-          }
-        ]),
+        sorting: getSorting(indicator),
         pageSize: 5
       }),
     onSuccess: data => {

@@ -133,8 +133,6 @@ const getColumns = (type: QuoteListType) => {
 
 const getIndicator = (type: QuoteListType) => {
   switch (type) {
-    case "index":
-      return "changeRate";
     case "plate":
       return "changeRate";
     case "stock":

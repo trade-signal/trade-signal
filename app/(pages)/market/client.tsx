@@ -20,6 +20,7 @@ const MarketClient = () => {
       <Stack gap="xl">
         <SymbolTabs
           title="指数"
+          indicator=""
           queryKey="stock-index"
           apiBasePath="/api/stock-index"
           showMore
@@ -28,6 +29,7 @@ const MarketClient = () => {
         />
         <SymbolTabs
           title="股票"
+          indicator="newPrice"
           queryKey="stock-quotes"
           apiBasePath="/api/stock-quotes"
           showMore
