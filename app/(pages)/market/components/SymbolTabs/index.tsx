@@ -28,7 +28,8 @@ import { getRefetchInterval } from "@/shared/env";
 import { clientGet } from "@/shared/request";
 import { IconChevronCompactRight } from "@tabler/icons-react";
 import SymbolChart from "@/app/components/SymbolChart";
-import { formatNumber, formatPercent } from "@/shared/formatters";
+import { formatNumber } from "@/shared/formatters";
+import { renderPercent } from "@/shared/renders";
 import { SymbolChartData } from "@/app/types/chart.type";
 import {
   transformSymbolChartTrends,
@@ -155,7 +156,7 @@ const SymbolTabs: FC<SymbolTabsProps> = props => {
                   <Text className={styles.tabName}>{item.name}</Text>
                   <Group m={0} gap="xs" justify="space-between">
                     <Text>{formatNumber(item.newPrice)}</Text>
-                    <Text>{formatPercent(item.changeRate || 0)}</Text>
+                    <Text>{renderPercent(item.changeRate || 0)}</Text>
                   </Group>
                 </Stack>
               </Tabs.Tab>

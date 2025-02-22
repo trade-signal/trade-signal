@@ -156,7 +156,7 @@ const QuoteListClient: FC<PageProps> = ({ type, indicator, order }) => {
 
   const handleTabChange = (val: QuoteListType) => {
     setActiveTab(val);
-    router.push(`/quotes/${val}`);
+    router.push(`/market/quotes/${val}`);
   };
 
   const {
@@ -211,7 +211,7 @@ const QuoteListClient: FC<PageProps> = ({ type, indicator, order }) => {
     }
 
     if (isLoading) {
-      return <Skeleton height="80vh" />;
+      return <Skeleton height="85vh" />;
     }
 
     const baseTableProps = {
