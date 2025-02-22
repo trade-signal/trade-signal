@@ -74,6 +74,7 @@ const getTaskType = (type: QuoteListType) => {
       return "stock_quotes";
   }
 };
+
 const getColumns = (type: QuoteListType) => {
   switch (type) {
     case "index":
@@ -130,6 +131,19 @@ const getColumns = (type: QuoteListType) => {
   }
 };
 
+const getIndicator = (type: QuoteListType) => {
+  switch (type) {
+    case "index":
+      return "changeRate";
+    case "plate":
+      return "changeRate";
+    case "stock":
+      return "changeRate";
+    default:
+      return "";
+  }
+};
+
 const QuoteListClient: FC<PageProps> = ({ type, indicator, order }) => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState(type);
@@ -155,8 +169,13 @@ const QuoteListClient: FC<PageProps> = ({ type, indicator, order }) => {
   }, [task]);
 
   const handleTabChange = (val: QuoteListType) => {
-    setActiveTab(val);
-    router.push(`/market/quotes/${val}`);
+    const indicator = getIndicator(val);
+
+    if (indicator) {
+      router.push(`/market/quotes/${val}?indicator=${indicator}&order=desc`);
+    } else {
+      router.push(`/market/quotes/${val}`);
+    }
   };
 
   const {

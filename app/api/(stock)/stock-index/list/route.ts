@@ -78,7 +78,7 @@ export const GET = async (request: NextRequest) => {
     }
   });
 
-  const orders = getOrderList(list);
+  const orders = parsedSorting.length > 0 ? list : getOrderList(list);
   const orderList = orders.slice(offset, offset + limit);
 
   return Response.json({
