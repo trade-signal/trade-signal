@@ -351,6 +351,7 @@ export const quotesPlateIndicatorMapping = {
   dealAmount: tradingIndicators.dealAmount,
   turnoverRate: tradingIndicators.turnoverRate,
   totalMarketCap: sharesAndCapIndicators.totalMarketCap,
+  freeCap: sharesAndCapIndicators.freeCap,
 
   // 成分股统计
   upCount: {

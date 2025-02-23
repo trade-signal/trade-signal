@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import dayjs from "dayjs";
 import { useViewportSize } from "@mantine/hooks";
 import {
   Skeleton,
@@ -16,23 +17,24 @@ import { clientGet } from "@/shared/request";
 import { getCurrentThemeColor } from "@/shared/theme";
 import { StockTreemap } from "@/app/api/(stock)/stock-treemap/list/route";
 import { useSyncTaskContext } from "@/app/providers/SyncTaskProvider";
-import dayjs from "dayjs";
+import {
+  MARKET_OPTIONS,
+  MarketType,
+  TREEMAP_SORT_OPTIONS,
+  TreemapSortType
+} from "@/shared/stock";
 
+import ScreenerSelect from "@/app/components/ScreenerSelect";
 import { TreemapChart } from "./components/TreemapChart";
-
-const MARKET_OPTIONS = [
-  { label: "沪京深A股", value: "all" },
-  { label: "上证A股", value: "sh" },
-  { label: "深证A股", value: "sz" },
-  { label: "北证A股", value: "bj" }
-] as { label: string; value: string }[];
 
 const TreemapChartClient = () => {
   const { width, height } = useViewportSize();
   const { task } = useSyncTaskContext();
 
   const currentThemeColor = getCurrentThemeColor();
+
   const [marketType, setMarketType] = useState("all");
+  const [sortType, setSortType] = useState("totalMarketCap");
 
   const [data, setData] = useState<StockTreemap[]>([]);
 
@@ -64,9 +66,9 @@ const TreemapChartClient = () => {
     return (
       <Paper>
         <Group align="flex-start">
-          <Paper mt={20} p="md" style={{ width: 160 }}>
-            <Skeleton height={160} />
-            <Skeleton height={160} mt={20} />
+          <Paper mt={20} p="md" style={{ width: 200 }}>
+            <Skeleton w={180} h={160} />
+            <Skeleton w={180} h={160} mt={20} />
           </Paper>
           <Paper p="md" style={{ flex: 1 }}>
             <Skeleton height={treemapH} />
@@ -79,40 +81,60 @@ const TreemapChartClient = () => {
   return (
     <Paper mt={20} bg="transparent">
       <Group align="flex-start">
-        <Paper p="xs" style={{ width: 160 }}>
-          <Text ml={2} size="sm" fw={500}>
-            {refreshTime}
+        <Paper p="xs" style={{ width: 200 }}>
+          <Text span size="sm">
+            数据更新时间：{dayjs(refreshTime).format("MM-DD HH:mm")}
           </Text>
-          <SegmentedControl
-            p="md"
-            mt={20}
-            fullWidth
-            color={currentThemeColor}
-            orientation="vertical"
-            value={marketType}
-            withItemsBorders={false}
-            onChange={setMarketType}
-            data={MARKET_OPTIONS}
-            styles={{
-              label: {
-                textAlign: "left"
-              }
-            }}
-          />
-          <Stack ml={2} mt={20} gap="xs">
+
+          <Stack mt={20}>
+            <ScreenerSelect
+              title="市场"
+              width={180}
+              justify="start"
+              value={marketType}
+              data={MARKET_OPTIONS}
+              onChange={value => setMarketType(value as MarketType)}
+            />
+
+            <ScreenerSelect
+              title="指标"
+              width={180}
+              justify="start"
+              value={sortType}
+              data={TREEMAP_SORT_OPTIONS}
+              onChange={value => setSortType(value as TreemapSortType)}
+            />
+          </Stack>
+
+          <Stack mt={20}>
+            <Stack gap="xs">
+              <Text size="sm" fw={500}>
+                指标说明
+              </Text>
+              <List size="sm">
+                <List.Item>金额类指标使用平方根压缩，保持适度差异</List.Item>
+                <List.Item>
+                  涨跌幅和换手率取绝对值后放大，保持正负值都能显示
+                </List.Item>
+              </List>
+            </Stack>
+
             <Text size="sm" fw={500}>
               操作提示
             </Text>
             <List size="sm">
-              <List.Item>面积代表总市值</List.Item>
-              <List.Item>颜色代表涨跌幅度</List.Item>
               <List.Item>支持悬浮查看详情</List.Item>
               <List.Item>支持滚动拖动鼠标</List.Item>
             </List>
           </Stack>
         </Paper>
         <Paper p="xs" shadow="sm" style={{ flex: 1 }}>
-          <TreemapChart data={data} height={treemapH} marketType={marketType} />
+          <TreemapChart
+            data={data}
+            height={treemapH}
+            marketType={marketType}
+            sortType={sortType as TreemapSortType}
+          />
         </Paper>
       </Group>
     </Paper>

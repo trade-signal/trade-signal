@@ -453,6 +453,7 @@ model StockPlateQuotes {
   dealAmount     Float // 成交额
   turnoverRate   Float // 换手率
   totalMarketCap Float // 总市值
+  freeCap        Float // 流通市值
 
   // 成分股统计
   upCount   Int // 上涨家数

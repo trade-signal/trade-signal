@@ -23,14 +23,24 @@ interface StockScreenerSelectProps {
   title: string;
   value?: string | null;
   data: DataItem[];
+  width?: number;
+  justify?: "start" | "end" | "center";
   clearable?: boolean;
   nothingFoundMessage?: string;
   onChange: (value: string | null) => void;
 }
 
 const StockScreenerSelect: FC<StockScreenerSelectProps> = props => {
-  const { title, value, data, clearable, nothingFoundMessage, onChange } =
-    props;
+  const {
+    title,
+    value,
+    data,
+    clearable,
+    nothingFoundMessage,
+    width = 250,
+    justify = "center",
+    onChange
+  } = props;
 
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
@@ -83,7 +93,7 @@ const StockScreenerSelect: FC<StockScreenerSelectProps> = props => {
 
   return (
     <Combobox
-      width={250}
+      width={width}
       store={combobox}
       position="bottom-start"
       withArrow
@@ -93,6 +103,7 @@ const StockScreenerSelect: FC<StockScreenerSelectProps> = props => {
         <Button
           variant="outline"
           w={"auto"}
+          justify={justify}
           onClick={() => combobox.toggleDropdown()}
         >
           {title}{" "}

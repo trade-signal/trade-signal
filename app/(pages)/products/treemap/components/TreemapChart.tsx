@@ -9,23 +9,47 @@ import {
   formatLargeNumber
 } from "@/shared/formatters";
 import { StockTreemap } from "@/app/api/(stock)/stock-treemap/list/route";
+import { TreemapSortType } from "@/shared/stock";
 
 interface TreemapChartProps {
   data: StockTreemap[];
   height: number;
   marketType: string;
+  sortType: TreemapSortType;
 }
 
 export const TreemapChart = ({
   data,
   height,
-  marketType
+  marketType,
+  sortType
 }: TreemapChartProps) => {
   const { colorScheme, upColor, downColor } = getThemeSetting();
 
   // 提取计算显示值的逻辑
-  const calculateDisplayValue = (stock: StockQuotes): number => {
-    return Math.log(stock.totalMarketCap || 1) * 100;
+  const calculateDisplayValue = (stock: StockQuotes | StockTreemap): number => {
+    let value = stock[sortType];
+
+    // 根据不同指标添加权重系数
+    switch (sortType) {
+      case "changeRate":
+      case "turnoverRate":
+        // 涨跌幅和换手率取绝对值后放大，保持正负值都能显示
+        value = Math.abs(value) * 100;
+        break;
+      case "dealAmount":
+      case "volume":
+      case "totalMarketCap":
+      case "freeCap":
+        // 金额类指标使用平方根压缩，保持适度差异
+        value = Math.sqrt(Math.max(value, 1));
+        break;
+      default:
+        // 其他指标保持原值
+        break;
+    }
+
+    return value;
   };
 
   // 提取 tooltip 格式化函数
@@ -64,6 +88,10 @@ export const TreemapChart = ({
           <div style="display: flex; justify-content: space-between;">
             <span>总市值</span>
             <span>${formatLargeNumber(data.totalMarketCap)}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>流通市值</span>
+            <span>${formatLargeNumber(data.freeCap)}</span>
           </div>
           <div style="display: flex; justify-content: space-between;">
             <span>成交额</span>
@@ -168,7 +196,7 @@ export const TreemapChart = ({
     const processData = (data: StockTreemap[]) => {
       return data.map(plate => ({
         ...plate,
-        value: plate.totalMarketCap,
+        value: calculateDisplayValue(plate),
         children: plate.children.map(stock => ({
           value: calculateDisplayValue(stock),
           ...stock,
@@ -298,7 +326,7 @@ export const TreemapChart = ({
         }
       ]
     };
-  }, [data, colorScheme, upColor, downColor, marketType]);
+  }, [data, colorScheme, upColor, downColor, marketType, sortType]);
 
   return (
     <ReactECharts
