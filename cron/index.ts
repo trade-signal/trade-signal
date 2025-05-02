@@ -40,22 +40,6 @@ import {
   cleanStockPlateQuotes
 } from "./stock-plate/stock_plate_quotes";
 
-import {
-  cleanActiveStockMinuteKline,
-  fetchActiveStockMinuteKline,
-  initStockMinuteKline
-} from "./stock/stock_minute_kline";
-import {
-  cleanActiveStockIndexMinuteKline,
-  fetchActiveStockIndexMinuteKline,
-  initStockIndexMinuteKline
-} from "./stock-index/stock_index_minute_kline";
-import { cleanActiveStocks, initActiveStocks } from "./stock/stock_active";
-import {
-  cleanActiveStocksIndex,
-  initActiveStockIndex
-} from "./stock-index/stock_index_active";
-
 const logger = createLogger("cron", "", false);
 const print = (message: string) => {
   logger.log(`[${dayjs().format("YYYY-MM-DD HH:mm:ss")}] ${message}`);
@@ -66,12 +50,6 @@ const runStockTrendingJobs = async () => {
   await fetchStockIndexQuotes();
   await fetchStockPlateQuotes();
   await fetchStockQuotes();
-};
-
-// 交易时段 分时趋势
-const runStockMinuteKlineJobs = async () => {
-  await fetchActiveStockMinuteKline();
-  await fetchActiveStockIndexMinuteKline();
 };
 
 const runStockScheduleJobs = () => {
@@ -92,7 +70,6 @@ const runStockScheduleJobs = () => {
     print(`trigger fetch stock quotes realtime`);
 
     await runStockTrendingJobs();
-    await runStockMinuteKlineJobs();
   }).start();
 
   // 收盘后运行：16:00
@@ -106,7 +83,6 @@ const runStockScheduleJobs = () => {
 
     await fetchStockScreener();
     await runStockTrendingJobs();
-    await runStockMinuteKlineJobs();
   }).start();
 
   // 每月1号运行：更新所有股票和指数的基本信息
@@ -148,16 +124,11 @@ const runClearScheduleJobs = () => {
     await cleanNews(3);
 
     await cleanStockScreener();
-    await Promise.all([cleanActiveStocks(), cleanActiveStocksIndex()]);
 
     await Promise.all([
       cleanStockQuotes(3),
       cleanStockIndexQuotes(3),
       cleanStockPlateQuotes(3)
-    ]);
-    await Promise.all([
-      cleanActiveStockMinuteKline(3),
-      cleanActiveStockIndexMinuteKline(3)
     ]);
   }).start();
 };
@@ -180,11 +151,6 @@ const runSeedJobs = async (runDate: string) => {
       initStockQuotes(runDate),
       initStockIndexQuotes(runDate),
       initStockPlateQuotes(runDate)
-    ]);
-    await Promise.all([initActiveStocks(), initActiveStockIndex()]);
-    await Promise.all([
-      initStockMinuteKline(runDate),
-      initStockIndexMinuteKline(runDate)
     ]);
   } catch (error) {
     logger.error(`run seed jobs error: ${error}`);

@@ -2,7 +2,6 @@ import dayjs from "dayjs";
 import { delayRandom } from "@/shared/util";
 import { getCurrentUnixTime } from "@/shared/date";
 import prisma from "@/prisma/db";
-import Task from "@/cron/common/task";
 import { getClsNews } from "@/cron/api";
 
 import { createLogger } from "@/cron/util";
@@ -242,13 +241,9 @@ const transformClsNews = (data: Map<string, ClsNews[]>) => {
 };
 
 export const fetchClsNews = async () => {
-  const task = new Task("news", "cls");
-
   try {
-    await task.updateStatus("fetching");
     const newsData = await getNews();
 
-    await task.updateStatus("transforming");
     const transformedNews = transformClsNews(newsData);
 
     print(`transformed ${transformedNews.length} news`);
@@ -259,11 +254,9 @@ export const fetchClsNews = async () => {
       data: transformedNews,
       skipDuplicates: true // 跳过重复记录
     });
-    await task.updateStatus("completed", transformedNews.length);
 
     print(`write news success`);
   } catch (error) {
-    await task.updateStatus("failed");
     print(`getNews error: ${error}`);
   }
 };

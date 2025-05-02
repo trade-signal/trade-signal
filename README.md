@@ -45,7 +45,7 @@ npm install && npm run dev
 docker run -d -p 3000:3000 \
   --env-file .env.production \
   --name trade-signal \
-  yzqzy/trade-signal:latest
+  trade-signal:latest
 ```
 
 或者使用环境变量：
@@ -64,7 +64,7 @@ docker run -d -p 3000:3000 \
   -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
   -e POSTGRES_DB=${POSTGRES_DB} \
   --name trade-signal \
-  yzqzy/trade-signal:latest
+  trade-signal:latest
 ```
 
 ### 本地构建（可选）
@@ -75,7 +75,7 @@ docker run -d -p 3000:3000 \
 docker build -t trade-signal:latest .
 ```
 
-然后按上述方式运行容器，将镜像名从 `yzqzy/trade-signal` 改为 `trade-signal` 即可。
+然后按上述方式运行容器。
 
 您也可以使用 docker-compose：
 

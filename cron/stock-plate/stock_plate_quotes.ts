@@ -5,7 +5,6 @@ import {
   getIndicatorFields
 } from "@/cron/util";
 import dayjs from "dayjs";
-import Task from "@/cron/common/task";
 import { getStockPlateQuotes, quotesPlateIndicatorMapping } from "../api";
 
 const spider_name = "stock_plate_quotes";
@@ -46,20 +45,14 @@ export const cleanStockPlateQuotes = async (days: number = 7) => {
 export const fetchStockPlateQuotes = async (date?: string) => {
   const currentDate = dayjs(date).format("YYYY-MM-DD");
 
-  const task = new Task("stock_plate_quotes", "eastmoney");
-
   try {
     print(`start get stock plate quotes`);
-
-    await task.updateStatus("fetching");
 
     const stocks = await getStockPlateQuotes({
       fields: getIndicatorFields(quotesPlateIndicatorMapping)
     });
 
     print(`get ${stocks.length} stocks`);
-
-    await task.updateStatus("transforming");
 
     let list = transformStockData(stocks, quotesPlateIndicatorMapping);
     // 添加日期
@@ -72,11 +65,8 @@ export const fetchStockPlateQuotes = async (date?: string) => {
 
     await upsertStockPlateQuotes(list);
 
-    await task.updateStatus("completed", list.length);
-
     print(`upsert stock plate quotes success ${list.length}`);
   } catch (error) {
-    await task.updateStatus("failed");
     print(`fetch stock plate quotes error: ${error}`);
   }
 };

@@ -4,7 +4,6 @@ import {
   getIndicatorFields,
   transformStockData
 } from "@/cron/util";
-import Task from "@/cron/common/task";
 import { getStockPlateBasic, quotesPlateBaseIndicatorMapping } from "../api";
 
 const spider_name = "stock_plate_base";
@@ -36,12 +35,8 @@ const upsertStockPlateBasic = async (list: any[]) => {
 };
 
 export const fetchStockPlateBasic = async () => {
-  const task = new Task("stock_plate_basic", "eastmoney");
-
   try {
     print(`start get stock plate basic`);
-
-    await task.updateStatus("fetching");
 
     const stocks = await getStockPlateBasic({
       fields: getIndicatorFields(quotesPlateBaseIndicatorMapping)
@@ -54,19 +49,14 @@ export const fetchStockPlateBasic = async () => {
       return;
     }
 
-    await task.updateStatus("completed", stocks.length);
-
     const list = transformStockData(stocks, quotesPlateBaseIndicatorMapping);
 
     print(`start upsert stock plate basic`);
 
     await upsertStockPlateBasic(list);
 
-    await task.updateStatus("completed", list.length);
-
     print(`upsert stock plate basic success ${list.length}`);
   } catch (error) {
-    await task.updateStatus("failed");
     print(`fetch stock plate basic error: ${error}`);
   }
 };

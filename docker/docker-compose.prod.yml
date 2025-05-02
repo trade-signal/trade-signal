@@ -1,6 +1,6 @@
 services:
   app:
-    image: yzqzy/trade-signal:latest
+    image: trade-signal:latest
     ports:
       - "80:3000"
       - "443:3000"

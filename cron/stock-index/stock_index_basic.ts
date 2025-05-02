@@ -4,7 +4,6 @@ import {
   getIndicatorFields,
   transformStockData
 } from "@/cron/util";
-import Task from "@/cron/common/task";
 import { getStockIndexBasic, quotesIndexBaseIndicatorMapping } from "../api";
 
 const spider_name = "stock_index_base";
@@ -36,12 +35,8 @@ const upsertStockIndexBasic = async (list: any[]) => {
 };
 
 export const fetchStockIndexBasic = async () => {
-  const task = new Task("stock_index_basic", "eastmoney");
-
   try {
     print(`start get stock index basic`);
-
-    await task.updateStatus("fetching");
 
     const stocks = await getStockIndexBasic({
       fields: getIndicatorFields(quotesIndexBaseIndicatorMapping)
@@ -54,19 +49,14 @@ export const fetchStockIndexBasic = async () => {
       return;
     }
 
-    await task.updateStatus("transforming");
-
     const list = transformStockData(stocks, quotesIndexBaseIndicatorMapping);
 
     print(`start upsert stock index basic`);
 
     await upsertStockIndexBasic(list);
 
-    await task.updateStatus("completed", list.length);
-
     print(`upsert stock index basic success ${list.length}`);
   } catch (error) {
-    await task.updateStatus("failed");
     print(`get stock index basic error: ${error}`);
   }
 };

@@ -1,7 +1,6 @@
 import prisma from "@/prisma/db";
 import { StockScreener } from "@prisma/client";
 import dayjs from "dayjs";
-import Task from "@/cron/common/task";
 import { createLogger, transformStockData } from "@/cron/util";
 import { getStockScreener, selectionIndicatorMapping } from "../api";
 
@@ -70,8 +69,6 @@ export const cleanStockScreener = async () => {
 };
 
 export const fetchStockScreener = async (date?: string) => {
-  const task = new Task("stock_screener", "eastmoney");
-
   try {
     if (date) {
       // 删除指定日期及之后的所有数据
@@ -85,8 +82,6 @@ export const fetchStockScreener = async (date?: string) => {
       print(`delete stock screener: ${deleted.count}`);
     }
 
-    await task.updateStatus("fetching");
-
     // 获取选股指标
     const stocks = await getStocks();
 
@@ -96,7 +91,6 @@ export const fetchStockScreener = async (date?: string) => {
     }
 
     print(`stock screener count: ${stocks.length}`);
-    await task.updateStatus("transforming");
 
     print(`start write stock screener`);
 
@@ -112,11 +106,8 @@ export const fetchStockScreener = async (date?: string) => {
       });
     }
 
-    await task.updateStatus("completed", total);
-
     print(`write stock screener success ${total}`);
   } catch (error) {
-    await task.updateStatus("failed");
     print(`get stock screener error: ${error}`);
   }
 };

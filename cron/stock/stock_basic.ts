@@ -4,7 +4,6 @@ import {
   getIndicatorFields,
   transformStockData
 } from "@/cron/util";
-import Task from "@/cron/common/task";
 import { getStockBasic, quotesBaseIndicatorMapping } from "../api";
 
 const spider_name = "stock_base";
@@ -53,12 +52,8 @@ const upsertStockBasic = async (list: any[]) => {
 };
 
 export const fetchStockBasic = async () => {
-  const task = new Task("stock_basic", "eastmoney");
-
   try {
     print(`start get stock basic`);
-
-    await task.updateStatus("fetching");
 
     const stocks = await getStockBasic({
       fields: getIndicatorFields(quotesBaseIndicatorMapping)
@@ -71,8 +66,6 @@ export const fetchStockBasic = async () => {
       return;
     }
 
-    await task.updateStatus("transforming");
-
     let list = transformStockData(stocks, quotesBaseIndicatorMapping);
     // newPrice > 0, 过滤掉停牌的股票
     list = list.filter(item => item.newPrice > 0);
@@ -81,11 +74,8 @@ export const fetchStockBasic = async () => {
 
     await upsertStockBasic(list);
 
-    await task.updateStatus("completed", list.length);
-
     print(`upsert stock basic success ${list.length}`);
   } catch (error) {
-    await task.updateStatus("failed");
     print(`get stock basic error: ${error}`);
   }
 };

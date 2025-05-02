@@ -15,69 +15,6 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// ============================== 用户认证 ==============================
-
-model User {
-  id            String    @id @default(cuid())
-  email         String    @unique // 邮箱
-  emailVerified DateTime? @default(now())
-  name          String? // 用户名
-  image         String? // 头像
-  password      String? // 密码
-
-  accounts Account[] // 账户
-  sessions Session[] // 会话
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("user")
-}
-
-model Account {
-  id                       String  @id @default(cuid())
-  userId                   String
-  type                     String
-  provider                 String
-  providerAccountId        String
-  refresh_token            String? @db.Text
-  refresh_token_expires_in Int?
-  access_token             String? @db.Text
-  expires_at               Int?
-  token_type               String?
-  scope                    String?
-  id_token                 String? @db.Text
-  session_state            String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  // 添加复合唯一约束
-  @@unique([provider, providerAccountId])
-  @@map("account")
-}
-
-// @deprecated These models are not used in JWT mode, but required by next-auth schema
-model Session {
-  id           String   @id @default(cuid())
-  userId       String // 用户ID
-  sessionToken String   @unique // 会话令牌
-  expires      DateTime // 过期时间
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("session")
-}
-
-// @deprecated These models are not used in JWT mode, but required by next-auth schema
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
-  @@map("verification_token")
-}
-
 // ============================== 股票数据 ==============================
 
 // 股票 基础信息表
@@ -533,30 +470,6 @@ model StockIndexMinuteKline {
   @@map("stock_index_minute_kline")
 }
 
-// ============================== 股票 活跃股票 ==============================
-
-// 活跃股票
-model StockActive {
-  code       String   @unique
-  name       String
-  marketId   Int
-  lastViewAt DateTime @default(now())
-
-  @@index([lastViewAt])
-  @@map("stock_active")
-}
-
-// 活跃指数
-model StockIndexActive {
-  code       String   @unique
-  name       String
-  marketId   Int
-  lastViewAt DateTime @default(now())
-
-  @@index([lastViewAt])
-  @@map("stock_index_active")
-}
-
 // ============================== 新闻 ==============================
 
 // 新闻
@@ -582,77 +495,4 @@ model News {
   @@index([date]) // 日期索引
   @@index([source, sourceId]) // 来源和来源ID复合索引
   @@map("news")
-}
-
-// ============================== 用户自选 ==============================
-
-// 自选分组
-model Watchlist {
-  id          String  @id @default(cuid())
-  userId      String // 用户ID
-  name        String // 分组名称
-  description String? // 分组描述
-  order       Int     @default(0) // 排序
-  isDefault   Boolean @default(false) // 是否为默认分组
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([userId, name]) // 同一用户不能创建同名分组
-  @@index([userId]) // 用户ID索引
-  @@map("watchlist")
-}
-
-// 自选股票
-model Watch {
-  id          String  @id @default(cuid())
-  watchlistId String // 自选分组ID
-  userId      String // 用户ID
-  type        String // 产品类型：stock(股票)、fund(基金)、future(期货)等
-  code        String // 产品代码
-  name        String // 产品名称
-  note        String? // 用户备注
-  order       Int     @default(0) // 排序
-  isTop       Boolean @default(false) // 是否置顶
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([watchlistId, type, code]) // 同一分组内不能重复添加相同产品
-  @@index([userId]) // 用户ID索引
-  @@index([watchlistId]) // 分组ID索引
-  @@index([type, code]) // 产品类型和代码复合索引
-  @@map("watch")
-}
-
-// ============================== 系统数据 ==============================
-
-model SyncTask {
-  id String @id @default(cuid())
-
-  // 任务基本信息
-  taskType   String // 任务类型：news, stock_quotes, stock_kline 等
-  dataSource String // 数据源：sina, eastmoney, cls 等
-  batchDate  DateTime // 数据批次日期
-  priority   Int      @default(2) // 优先级：1(高)、2(中)、3(低)
-
-  // 执行信息
-  status   String // 状态：pending, running, completed, failed
-  startAt  DateTime? // 开始时间
-  endAt    DateTime? // 结束时间
-  duration Int? // 执行时长(秒)
-
-  // 结果信息
-  totalCount Int     @default(0) // 总处理数量
-  errorCount Int     @default(0) // 错误数量
-  errorMsg   String? // 错误信息
-  metadata   Json? // 元数据
-
-  // 系统字段
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([taskType, batchDate])
-  @@index([taskType, status])
-  @@map("sync_task")
 }
