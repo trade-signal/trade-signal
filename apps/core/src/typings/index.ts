@@ -1,9 +1,9 @@
 export enum IndicatorType {
-  DATE = "date",
-  STRING = "string",
-  NUMBER = "number",
-  BOOLEAN = "boolean",
-  ARRAY = "array"
+  DATE = 'date',
+  STRING = 'string',
+  NUMBER = 'number',
+  BOOLEAN = 'boolean',
+  ARRAY = 'array',
 }
 
 export type IndicatorMapping = Record<
