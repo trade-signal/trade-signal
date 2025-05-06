@@ -1,4 +1,3 @@
-import { Prisma } from "@prisma/client";
 import { MRT_ColumnFiltersState, MRT_SortingState } from "mantine-react-table";
 
 export const parseCommaSeparatedParam = (
@@ -68,4 +67,3 @@ export const generateOrderByClause = <T>(
 
   return orderBy;
 };
-

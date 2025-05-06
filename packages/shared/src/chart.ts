@@ -1,4 +1,4 @@
-import { ChartKline, ChartTrends } from "@/apps/web/app/types/chart.type";
+import { ChartKline, ChartTrends } from "@trade-signal/types";
 import {
   StockQuotes,
   StockIndexQuotes,

@@ -1,0 +1,47 @@
+{
+  "name": "trade-signal",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@mantine/core": "^7.15.2",
+    "@mantine/dates": "^7.15.2",
+    "@mantine/form": "^7.15.2",
+    "@mantine/hooks": "^7.15.2",
+    "@mantine/notifications": "^7.15.2",
+    "@mantine/spotlight": "^7.15.2",
+    "@prisma/client": "^6.0.1",
+    "@tabler/icons-react": "^3.26.0",
+    "@tanstack/react-query": "^4.36.1",
+    "clsx": "^2.1.1",
+    "cron": "^2.3.0",
+    "dayjs": "^1.11.13",
+    "echarts": "^5.6.0",
+    "echarts-for-react": "^3.0.2",
+    "lightweight-charts": "^4.2.2",
+    "mantine-react-table": "^2.0.0-beta.7",
+    "next": "15.0.3",
+    "react": "^18",
+    "react-dom": "^18",
+    "zod": "^3.24.1",
+    "@trade-signal/shared": "workspace:*",
+    "@trade-signal/types": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "postcss": "^8.4.49",
+    "postcss-preset-mantine": "^1.17.0",
+    "postcss-simple-vars": "^7.0.1",
+    "prisma": "^6.0.1",
+    "tsup": "^8.3.5",
+    "typescript": "^5"
+  }
+}

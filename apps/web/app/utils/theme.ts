@@ -1,7 +1,7 @@
 "use client";
 
 import { readLocalStorageValue } from "@mantine/hooks";
-import { THEME_SETTING_KEY } from "@/apps/web/app/hooks/useThemeSetting";
+import { THEME_SETTING_KEY } from "../hooks/useThemeSetting";
 import {
   createTheme,
   MantineColorScheme,

@@ -1,0 +1,7 @@
+packages:
+  # 所有 apps 目录下的包
+  - "apps/*"
+  # 所有 packages 目录下的包
+  - "packages/*"
+  # 排除所有包内的 node_modules
+  - "!**/node_modules"

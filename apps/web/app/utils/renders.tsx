@@ -1,8 +1,9 @@
 import { HoverCard, Text } from "@mantine/core";
-import { ColumnAlign } from "@/apps/web/app/types/column.type";
+import { ColumnAlign } from "@trade-signal/types";
+import { formatDateDiff } from "@trade-signal/shared";
+
 import { getThemeSetting } from "./theme";
 import { getColor, formatPercent, getUpDownColor } from "./formatters";
-import { formatDateDiff } from "./date";
 
 export const renderUpNumber = (value: number, decimals = 2) => {
   return (
