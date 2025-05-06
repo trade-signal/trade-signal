@@ -1,8 +1,8 @@
-import dayjs from 'dayjs';
-import { createLogger } from '@/packages/shared/logger';
-import { getTradeDate } from '../api';
+import dayjs from "dayjs";
+import { createLogger } from "@trade-signal/shared";
+import { getTradeDate } from "../spider/trade.sina";
 
-const spider_name = 'trade_date';
+const spider_name = "trade_date";
 const logger = createLogger(spider_name);
 
 let tradeDates: string[] = [];
@@ -21,16 +21,16 @@ const getTradeDates = async () => {
 
 export const refreshTradeDates = async () => {
   try {
-    logger.info('refresh trade dates');
+    logger.info("refresh trade dates");
     clearTradeDates();
     await getTradeDates();
-    logger.info('refresh trade dates success');
+    logger.info("refresh trade dates success");
   } catch (error) {
     logger.error(`refresh trade dates error: ${error}`);
   }
 };
 
 export const isTradeDate = (date?: string) => {
-  const tradeDate = dayjs(date).format('YYYY-MM-DD');
+  const tradeDate = dayjs(date).format("YYYY-MM-DD");
   return tradeDates.includes(tradeDate);
 };

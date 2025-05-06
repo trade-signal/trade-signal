@@ -1,4 +1,4 @@
-import { get } from "@/packages/shared/request";
+import { get } from "@trade-signal/shared";
 
 /**
  * 全球财经快讯

@@ -1,8 +1,7 @@
-import { createLogger } from '@/apps/core/cron/util';
-import { get } from '@/packages/shared/request';
+import { createLogger, get } from "@trade-signal/shared";
 
-const spider_name = 'eastmoney';
-const print = createLogger(spider_name, 'stock');
+const spider_name = "eastmoney";
+const print = createLogger(spider_name, "stock");
 
 // 获取随机数（用于请求参数 1-100）
 const getRandomNumber = () => {
@@ -25,8 +24,8 @@ const getEastMoneyStockQuotes = async (params: any) => {
 
     throw new Error(
       `get ${spider_name} stock quotes error: ${
-        response.message || 'unknown error'
-      }`,
+        response.message || "unknown error"
+      }`
     );
   } catch (error) {
     print(`get ${spider_name} stock quotes error: ${error}`);
@@ -48,8 +47,8 @@ const getEastMoneyStockMinuteKline = async (params: any) => {
 
     throw new Error(
       `get ${spider_name} stock minute kline error: ${
-        response.message || 'unknown error'
-      }`,
+        response.message || "unknown error"
+      }`
     );
   } catch (error) {
     print(`get ${spider_name} stock minute kline error: ${error}`);
@@ -75,14 +74,14 @@ export const getStockBasic = async ({ fields }: { fields: string }) => {
     const stocks = await getEastMoneyStockQuotes({
       pn: page,
       pz: pageSize,
-      po: '1',
-      np: '1',
-      ut: 'bd1d9ddb04089700cf9c27f6f7426281',
-      fltt: '2',
-      invt: '2',
-      fid: 'f3',
-      fs: 'm:0 t:6,m:0 t:80,m:1 t:2,m:1 t:23,m:0 t:81 s:2048',
-      fields,
+      po: "1",
+      np: "1",
+      ut: "bd1d9ddb04089700cf9c27f6f7426281",
+      fltt: "2",
+      invt: "2",
+      fid: "f3",
+      fs: "m:0 t:6,m:0 t:80,m:1 t:2,m:1 t:23,m:0 t:81 s:2048",
+      fields
     });
 
     if (stocks.length === 0) {
@@ -109,18 +108,18 @@ export const getStockBasic = async ({ fields }: { fields: string }) => {
  */
 export const getStockIndexBasic = async ({ fields }: { fields: string }) => {
   return getEastMoneyStockQuotes({
-    pn: '1',
-    pz: '50',
-    po: '1',
-    np: '1',
-    ut: 'bd1d9ddb04089700cf9c27f6f7426281',
-    fltt: '2',
-    invt: '2',
-    dect: '1',
-    wbp2u: '|0|1|0|web',
-    fid: '',
-    fs: 'b:MK0010',
-    fields,
+    pn: "1",
+    pz: "50",
+    po: "1",
+    np: "1",
+    ut: "bd1d9ddb04089700cf9c27f6f7426281",
+    fltt: "2",
+    invt: "2",
+    dect: "1",
+    wbp2u: "|0|1|0|web",
+    fid: "",
+    fs: "b:MK0010",
+    fields
   });
 };
 
@@ -132,18 +131,18 @@ export const getStockIndexBasic = async ({ fields }: { fields: string }) => {
  */
 export const getStockPlateBasic = async ({ fields }: { fields: string }) => {
   return getEastMoneyStockQuotes({
-    pn: '1',
-    pz: '200',
-    po: '1',
-    np: '1',
-    ut: 'fa5fd1943c7b386f172d6893dbfba10b',
-    fltt: '1',
-    invt: '2',
-    dect: '1',
-    wbp2u: '|0|1|0|web',
-    fid: 'f3',
-    fs: 'm:90 t:2 f:!50',
-    fields,
+    pn: "1",
+    pz: "200",
+    po: "1",
+    np: "1",
+    ut: "fa5fd1943c7b386f172d6893dbfba10b",
+    fltt: "1",
+    invt: "2",
+    dect: "1",
+    wbp2u: "|0|1|0|web",
+    fid: "f3",
+    fs: "m:90 t:2 f:!50",
+    fields
   });
 };
 
@@ -166,14 +165,14 @@ export const getStockQuotes = async ({ fields }: { fields: string }) => {
     const stocks = await getEastMoneyStockQuotes({
       pn: page,
       pz: pageSize,
-      po: '1',
-      np: '1',
-      ut: 'bd1d9ddb04089700cf9c27f6f7426281',
-      fltt: '2',
-      invt: '2',
-      fid: 'f3',
-      fs: 'm:0 t:6,m:0 t:80,m:1 t:2,m:1 t:23,m:0 t:81 s:2048',
-      fields,
+      po: "1",
+      np: "1",
+      ut: "bd1d9ddb04089700cf9c27f6f7426281",
+      fltt: "2",
+      invt: "2",
+      fid: "f3",
+      fs: "m:0 t:6,m:0 t:80,m:1 t:2,m:1 t:23,m:0 t:81 s:2048",
+      fields
     });
 
     if (stocks.length === 0) {
@@ -200,18 +199,18 @@ export const getStockQuotes = async ({ fields }: { fields: string }) => {
  */
 export const getStockIndexQuotes = ({ fields }: { fields: string }) => {
   return getEastMoneyStockQuotes({
-    pn: '1',
-    pz: '50',
-    po: '1',
-    np: '1',
-    ut: 'bd1d9ddb04089700cf9c27f6f7426281',
-    fltt: '2',
-    invt: '2',
-    dect: '1',
-    wbp2u: '|0|1|0|web',
-    fid: '',
-    fs: 'b:MK0010',
-    fields,
+    pn: "1",
+    pz: "50",
+    po: "1",
+    np: "1",
+    ut: "bd1d9ddb04089700cf9c27f6f7426281",
+    fltt: "2",
+    invt: "2",
+    dect: "1",
+    wbp2u: "|0|1|0|web",
+    fid: "",
+    fs: "b:MK0010",
+    fields
   });
 };
 
@@ -223,18 +222,18 @@ export const getStockIndexQuotes = ({ fields }: { fields: string }) => {
  */
 export const getStockPlateQuotes = ({ fields }: { fields: string }) => {
   return getEastMoneyStockQuotes({
-    pn: '1',
-    pz: '200',
-    po: '1',
-    np: '1',
-    ut: 'fa5fd1943c7b386f172d6893dbfba10b',
-    fltt: '1',
-    invt: '2',
-    dect: '1',
-    wbp2u: '|0|1|0|web',
-    fid: 'f3',
-    fs: 'm:90 t:2 f:!50',
-    fields,
+    pn: "1",
+    pz: "200",
+    po: "1",
+    np: "1",
+    ut: "fa5fd1943c7b386f172d6893dbfba10b",
+    fltt: "1",
+    invt: "2",
+    dect: "1",
+    wbp2u: "|0|1|0|web",
+    fid: "f3",
+    fs: "m:90 t:2 f:!50",
+    fields
   });
 };
 
@@ -248,13 +247,13 @@ export const getStockPlateQuotes = ({ fields }: { fields: string }) => {
  */
 export const getStockMinuteKline = (marketId: number, code: string) => {
   return getEastMoneyStockMinuteKline({
-    fields1: 'f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14,f17',
-    fields2: 'f51,f52,f53,f54,f55,f56,f57,f58',
-    ut: 'fa5fd1943c7b386f172d6893dbfba10b',
-    ndays: '1',
-    iscr: '1',
-    iscca: '0',
-    secid: `${marketId}.${code}`,
+    fields1: "f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14,f17",
+    fields2: "f51,f52,f53,f54,f55,f56,f57,f58",
+    ut: "fa5fd1943c7b386f172d6893dbfba10b",
+    ndays: "1",
+    iscr: "1",
+    iscca: "0",
+    secid: `${marketId}.${code}`
   });
 };
 
@@ -266,12 +265,12 @@ export const getStockMinuteKline = (marketId: number, code: string) => {
  */
 export const getStockIndexMinuteKline = (marketId: number, code: string) => {
   return getEastMoneyStockMinuteKline({
-    fields1: 'f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14,f17',
-    fields2: 'f51,f52,f53,f54,f55,f56,f57,f58',
-    ut: 'bd1d9ddb04089700cf9c27f6f7426281',
-    ndays: '1',
-    iscr: '1',
-    iscca: '0',
-    secid: `${marketId}.${code}`,
+    fields1: "f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14,f17",
+    fields2: "f51,f52,f53,f54,f55,f56,f57,f58",
+    ut: "bd1d9ddb04089700cf9c27f6f7426281",
+    ndays: "1",
+    iscr: "1",
+    iscca: "0",
+    secid: `${marketId}.${code}`
   });
 };

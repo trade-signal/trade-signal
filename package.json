@@ -15,7 +15,6 @@
     "lint": "turbo run lint",
     "format": "turbo run format",
     "clean": "turbo run clean",
-    "test": "turbo run test",
     "db:build": "turbo run build --filter @trade-signal/database",
     "db:generate": "dotenv -e .env -- turbo run db:generate --filter @trade-signal/database",
     "db:push": "dotenv -e .env -- turbo run db:push --filter @trade-signal/database",

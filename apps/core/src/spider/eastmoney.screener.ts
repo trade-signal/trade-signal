@@ -1,9 +1,8 @@
-import { get } from '@/packages/shared/request';
-import { createLogger, getIndicatorFields } from '@/apps/core/cron/util';
-import { selectionIndicatorMapping } from './eastmoney.screener.indicator';
+import { get, createLogger, getIndicatorFields } from "@trade-signal/shared";
+import { selectionIndicatorMapping } from "./eastmoney.screener.indicator";
 
-const spider_name = 'eastmoney.selection';
-const print = createLogger(spider_name, 'stock');
+const spider_name = "eastmoney.selection";
+const print = createLogger(spider_name, "stock");
 
 /**
  * 选股指标
@@ -30,8 +29,8 @@ export const getStockScreener = async (page: number, pageSize: number) => {
       filter: filter,
       p: page,
       ps: pageSize,
-      source: 'SELECT_SECURITIES',
-      client: 'WEB',
+      source: "SELECT_SECURITIES",
+      client: "WEB"
     });
 
     return response;

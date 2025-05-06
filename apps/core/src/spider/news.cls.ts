@@ -1,6 +1,9 @@
-import { get } from "@/packages/shared/request";
-import { md5Encrypt, sha1Encrypt } from "@/packages/shared/encrypt";
-import { getCurrentUnixTime } from "@/packages/shared/date";
+import {
+  get,
+  md5Encrypt,
+  sha1Encrypt,
+  getCurrentUnixTime
+} from "@trade-signal/shared";
 
 const generateSign = (params: Record<string, any>) => {
   const str = Object.keys(params)
