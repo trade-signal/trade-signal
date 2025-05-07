@@ -34,5 +34,8 @@
     "dotenv-cli": "^7.0.0",
     "pino-pretty": "^13.0.0",
     "turbo": "^2.4.4"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.7.0"
   }
 }

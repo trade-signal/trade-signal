@@ -59,7 +59,7 @@ model StockPlateBasic {
   id String @id @default(cuid())
 
   // 基本信息
-  code     String @unique @db.VarChar(6) // 板块代码  
+  code     String @unique @db.VarChar(6) // 板块代码
   name     String @db.VarChar(20) // 板块名称
   marketId Int    @default(0) // 市场ID
 
