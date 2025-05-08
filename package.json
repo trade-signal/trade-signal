@@ -15,15 +15,17 @@
     "lint": "turbo run lint",
     "format": "turbo run format",
     "clean": "turbo run clean",
-    "db:build": "turbo run build --filter @trade-signal/database",
-    "db:generate": "dotenv -e .env -- turbo run db:generate --filter @trade-signal/database",
-    "db:push": "dotenv -e .env -- turbo run db:push --filter @trade-signal/database",
-    "db:studio": "dotenv -e .env -- turbo run db:studio --filter @trade-signal/database",
     "shared:build": "turbo run build --filter @trade-signal/shared",
     "shared:dev": "turbo run dev --filter @trade-signal/shared",
     "shared:lint": "turbo run lint --filter @trade-signal/shared",
     "shared:format": "turbo run format --filter @trade-signal/shared",
-    "shared:clean": "turbo run clean --filter @trade-signal/shared"
+    "shared:clean": "turbo run clean --filter @trade-signal/shared",
+    "types:build": "turbo run build --filter @trade-signal/types",
+    "types:dev": "turbo run dev --filter @trade-signal/types",
+    "types:start": "turbo run start --filter @trade-signal/types",
+    "types:lint": "turbo run lint --filter @trade-signal/types",
+    "types:format": "turbo run format --filter @trade-signal/types",
+    "types:clean": "turbo run clean --filter @trade-signal/types"
   },
   "packageManager": "pnpm@9.4.0",
   "engines": {

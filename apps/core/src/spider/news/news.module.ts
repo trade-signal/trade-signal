@@ -1,11 +1,16 @@
 import { Module } from "@nestjs/common";
 
+import { PrismaService } from "../../common/database/prisma.service";
+import { SinaService } from "./providers/sina/sina.service";
+import { ClsService } from "./providers/cls/cls.service";
+
 import { NewsController } from "./news.controller";
 import { NewsService } from "./news.service";
-import { PrismaService } from "src/common/database/prisma.service";
+
 @Module({
+  imports: [],
   controllers: [NewsController],
-  providers: [NewsService, PrismaService],
+  providers: [NewsService, PrismaService, SinaService, ClsService],
   exports: [NewsService]
 })
 export class NewsModule {}

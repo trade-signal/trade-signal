@@ -2,7 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import dayjs from "dayjs";
 import { getRunDate } from "@trade-signal/shared";
 
-import { PrismaService } from "src/common/database/prisma.service";
+import { PrismaService } from "../../common/database/prisma.service";
 import { SinaService } from "./providers/sina/sina.service";
 import { ClsService } from "./providers/cls/cls.service";
 

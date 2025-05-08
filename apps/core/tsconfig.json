@@ -16,6 +16,10 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@trade-signal/shared": ["../../packages/shared/src"],
+      "@trade-signal/types": ["../../packages/types/src"]
+    }
   }
 }
