@@ -4,7 +4,7 @@ import { getCurrentUnixTime, delayRandom } from "@trade-signal/shared";
 
 import { getClsNews } from "../../../../api/news.cls";
 import { NewsProvider } from "../../interfaces/news-provider.interface";
-import { NewsItem, NewsQuery } from "../../news.types";
+import { NewsItem } from "../../news.types";
 
 @Injectable()
 export class ClsService implements NewsProvider {
@@ -19,20 +19,44 @@ export class ClsService implements NewsProvider {
     "fund" // 基金
   ];
 
-  private transformClsNews(data: ClsNews[]): NewsItem[] {
-    return data.map(item => ({
-      id: item.id,
-      title: item.title,
-      content: item.content
-    }));
+  public transformNews(data: ClsNews[], category: string): NewsItem[] {
+    return data.map(item => {
+      const {
+        id,
+        content,
+        shareurl,
+        title,
+        brief,
+        ctime,
+        subjects,
+        stock_list
+      } = item;
+
+      return {
+        source: "cls",
+        sourceId: String(id),
+        sourceUrl: shareurl,
+        title: title,
+        summary: brief,
+        content: content,
+        date: new Date(ctime * 1e3),
+        // hack: use subject_name as tags
+        tags: subjects?.map(item => item.subject_name) || [],
+        categories: [category],
+        stocks:
+          stock_list?.map(item => ({
+            market: "",
+            code: item.StockID,
+            name: item.name
+          })) || []
+      };
+    });
   }
 
-  async getNews(query: NewsQuery): Promise<NewsItem[]> {
+  async getNews(): Promise<NewsItem[]> {
     this.logger.debug(`开始获取财联社数据`);
 
-    const newsMap = new Map<string, ClsNews[]>(
-      ClsService.CLS_CATEGORIES.map(category => [category, []])
-    );
+    const result: NewsItem[] = [];
 
     for (const category of ClsService.CLS_CATEGORIES) {
       let lastTime = getCurrentUnixTime();
@@ -46,7 +70,7 @@ export class ClsService implements NewsProvider {
             throw new Error(`${category} 分类数据获取失败: 数据为空`);
           }
 
-          newsMap.set(category, [...(newsMap.get(category) || []), ...data]);
+          result.push(...this.transformNews(data, category));
 
           lastTime = data[data.length - 1].ctime;
 
@@ -66,5 +90,7 @@ export class ClsService implements NewsProvider {
     }
 
     this.logger.debug(`财联社数据获取完成`);
+
+    return result;
   }
 }

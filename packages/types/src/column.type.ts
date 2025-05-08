@@ -4,6 +4,7 @@ export interface Column<T> {
   key: keyof T;
   title: string;
   width?: number;
+  // @ts-ignore
   render?: (value: any, row: T, index: number) => React.ReactNode;
   sortable?: boolean;
   searchable?: boolean;

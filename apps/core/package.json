@@ -1,11 +1,11 @@
 {
-  "name": "core",
+  "name": "@trade-signal/core",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Trade Signal Core Service",
+  "author": "yzqzy",
   "private": true,
-  "license": "UNLICENSED",
   "scripts": {
+    "dev": "npm run start:dev",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",

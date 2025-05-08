@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { createLogger } from "@trade-signal/shared";
-import { getTradeDate } from "../spider/trade.sina";
+import { getTradeDate } from "../api/trade.sina";
 
 const spider_name = "trade_date";
 const logger = createLogger(spider_name);
