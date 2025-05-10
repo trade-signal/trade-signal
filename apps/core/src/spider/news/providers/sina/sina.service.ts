@@ -1,9 +1,10 @@
 import { Injectable, Logger } from "@nestjs/common";
 
-import { NewsProvider } from "../../interfaces/news-provider.interface";
-import { NewsItem, NewsQuery } from "../../news.types";
-import { SinaNews, SinaNewsExt } from "./sina.types";
 import { getSinaNews } from "src/api/news.sina";
+
+import { NewsProvider } from "../../interfaces/news-provider.interface";
+import { NewsItem } from "../../news.types";
+import { SinaNews, SinaNewsExt } from "./sina.types";
 
 @Injectable()
 export class SinaService implements NewsProvider {
