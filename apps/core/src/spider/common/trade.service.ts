@@ -1,9 +1,11 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import dayjs from "dayjs";
-import { getTradeDate } from "src/api/trade.sina";
+import { getTradeDate } from "src/spider/api/trade.sina";
 
 @Injectable()
 export class TradeService {
+  private readonly logger = new Logger(TradeService.name);
+
   private tradeDates: string[] = [];
 
   async initTradeDates() {
@@ -17,6 +19,21 @@ export class TradeService {
       await this.initTradeDates();
     }
     return this.tradeDates;
+  }
+
+  async clearTradeDates() {
+    this.tradeDates = [];
+  }
+
+  async refreshTradeDates() {
+    try {
+      this.logger.debug("refresh trade dates");
+      await this.clearTradeDates();
+      await this.initTradeDates();
+      this.logger.debug("refresh trade dates success");
+    } catch (error) {
+      this.logger.error(`refresh trade dates error: ${error}`);
+    }
   }
 
   async isTradeDate(date: string) {

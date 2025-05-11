@@ -1,8 +1,8 @@
 import { Injectable, Logger } from "@nestjs/common";
-import dayjs from "dayjs";
 import { getRunDate } from "@trade-signal/shared";
+import dayjs from "dayjs";
 
-import { PrismaService } from "../../common/database/prisma.service";
+import { PrismaService } from "src/common/database/prisma.service";
 import { SinaService } from "./providers/sina/sina.service";
 import { ClsService } from "./providers/cls/cls.service";
 
@@ -58,12 +58,20 @@ export class NewsService {
     try {
       this.logger.log("start get news");
 
-      await Promise.all([
+      const news = await Promise.all([
         this.sinaService.getNews(),
         this.clsService.getNews()
       ]);
 
-      this.logger.log("get news success");
+      this.logger.log(`get ${news.length} news`);
+
+      const newsData = news.flat() as any;
+
+      await this.prisma.news.createMany({
+        data: newsData
+      });
+
+      this.logger.log(`insert ${newsData.length} news`);
     } catch (error) {
       this.logger.error(`getNews error: ${error}`);
     }

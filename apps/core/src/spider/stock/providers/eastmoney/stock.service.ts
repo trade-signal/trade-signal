@@ -1,19 +1,19 @@
 import { Injectable, Logger } from "@nestjs/common";
 import dayjs from "dayjs";
 
-import { getStockBasic, getStockQuotes } from "src/api/eastmoney.stock";
+import { getStockBasic, getStockQuotes } from "src/spider/api/eastmoney.stock";
 import {
   quotesBaseIndicatorMapping,
   quotesIndicatorMapping
-} from "src/api/eastmoney.stock.indicator";
-import { getStockScreener } from "src/api/eastmoney.screener";
-import { selectionIndicatorMapping } from "src/api/eastmoney.screener.indicator";
+} from "src/spider/api/eastmoney.stock.indicator";
+import { getStockScreener } from "src/spider/api/eastmoney.screener";
+import { selectionIndicatorMapping } from "src/spider/api/eastmoney.screener.indicator";
 
 import { getIndicatorFields, transformStockData } from "src/utils/tools";
 
 @Injectable()
-export class StockBasicService {
-  private readonly logger = new Logger(StockBasicService.name);
+export class EastMoneyStockService {
+  private readonly logger = new Logger(EastMoneyStockService.name);
 
   async getStockBasic() {
     this.logger.debug("开始获取股票基本信息");

@@ -1,7 +1,7 @@
 import { get, createLogger } from "@trade-signal/shared";
 
 import { selectionIndicatorMapping } from "./eastmoney.screener.indicator";
-import { getIndicatorFields } from "../utils/tools";
+import { getIndicatorFields } from "src/utils/tools";
 
 const spider_name = "eastmoney.selection";
 const logger = createLogger(spider_name, "stock");

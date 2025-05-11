@@ -2,7 +2,6 @@
   "name": "@trade-signal/core",
   "version": "0.0.1",
   "description": "Trade Signal Core Service",
-  "author": "yzqzy",
   "private": true,
   "scripts": {
     "dev": "npm run start:dev",
