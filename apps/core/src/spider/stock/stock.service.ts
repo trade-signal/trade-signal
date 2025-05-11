@@ -1,12 +1,15 @@
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
+import { Cron } from "@nestjs/schedule";
 
+import { getRunDate } from "@trade-signal/shared";
 import { PrismaService } from "src/common/database/prisma.service";
 import { EastMoneyStockService } from "./providers/eastmoney/stock.service";
-import { Cron } from "@nestjs/schedule";
 
 @Injectable()
 export class StockService implements OnModuleInit {
   private readonly logger = new Logger(StockService.name);
+
+  private readonly BATCH_SIZE = 200;
 
   constructor(
     private readonly prisma: PrismaService,
@@ -64,21 +67,33 @@ export class StockService implements OnModuleInit {
 
     this.logger.log(`get ${stocks.length} stocks`);
 
-    while (stocks.length > 0) {
-      const batch = stocks.splice(0, 200);
+    try {
+      while (stocks.length > 0) {
+        const batch = stocks.splice(0, this.BATCH_SIZE);
 
-      await Promise.all(
-        batch.map(async item => {
-          await this.prisma.stockBasic.upsert({
-            where: { code: item.code },
-            update: item,
-            create: item
-          });
-        })
-      );
+        await Promise.all(
+          batch.map(async item => {
+            await this.prisma.stockBasic.upsert({
+              where: { code: item.code },
+              update: {
+                ...item,
+                newPrice: undefined // 设置为 undefined 会被 Prisma 忽略
+              },
+              create: {
+                ...item,
+                newPrice: undefined // 设置为 undefined 会被 Prisma 忽略
+              }
+            });
+          })
+        );
+
+        this.logger.log(`insert ${batch.length} stocks, left ${stocks.length}`);
+      }
+
+      this.logger.log("get stock basic success");
+    } catch (error) {
+      this.logger.error(`get stock basic error: ${error}`);
     }
-
-    this.logger.log("get stock basic success");
   }
 
   // 初始化股票基本信息
@@ -96,8 +111,10 @@ export class StockService implements OnModuleInit {
   // --------------------- 股票行情信息 ---------------------
 
   // 检查股票行情信息是否存在
-  async checkStockQuotes() {
-    const stock = await this.prisma.stockQuotes.findFirst({});
+  async checkStockQuotes(date: string) {
+    const stock = await this.prisma.stockQuotes.findFirst({
+      where: { date }
+    });
     return stock !== null;
   }
 
@@ -129,14 +146,14 @@ export class StockService implements OnModuleInit {
   }
 
   // 获取股票行情信息
-  async getStockQuotes() {
+  async getStockQuotes(date?: string) {
     try {
       this.logger.log(`get stock quotes`);
 
-      const stocks = await this.eastMoneyStockService.getStockQuotes();
+      const stocks = await this.eastMoneyStockService.getStockQuotes(date);
 
       while (stocks.length > 0) {
-        const batch = stocks.splice(0, 200);
+        const batch = stocks.splice(0, this.BATCH_SIZE);
 
         await Promise.all(
           batch.map(async item => {
@@ -154,21 +171,20 @@ export class StockService implements OnModuleInit {
       this.logger.log("get stock quotes success");
     } catch (error) {
       this.logger.error(`get stock quotes error: ${error}`);
-    } finally {
-      this.logger.log("get stock quotes success");
     }
   }
 
   // 初始化股票行情信息
   async initStockQuotes() {
-    const hasStockQuotes = await this.checkStockQuotes();
+    const runDate = getRunDate();
+    const hasStockQuotes = await this.checkStockQuotes(runDate);
 
     if (hasStockQuotes) {
       this.logger.log("stock quotes available! No need to fetch.");
       return;
     }
 
-    await this.getStockQuotes();
+    await this.getStockQuotes(runDate);
   }
 
   // --------------------- 股票选股指标 ---------------------
@@ -214,7 +230,7 @@ export class StockService implements OnModuleInit {
       const stocks = await this.eastMoneyStockService.getStockScreener();
 
       while (stocks.length > 0) {
-        const batch = stocks.splice(0, 200);
+        const batch = stocks.splice(0, this.BATCH_SIZE);
 
         await Promise.all(
           batch.map(async item => {

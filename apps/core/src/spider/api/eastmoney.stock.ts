@@ -66,7 +66,7 @@ const getEastMoneyStockMinuteKline = async (params: any) => {
  */
 export const getStockBasic = async ({ fields }: { fields: string }) => {
   let page = 1;
-  const pageSize = 200;
+  const pageSize = 100;
 
   const all_stocks = [];
 
@@ -157,7 +157,7 @@ export const getStockPlateBasic = async ({ fields }: { fields: string }) => {
  */
 export const getStockQuotes = async ({ fields }: { fields: string }) => {
   let page = 1;
-  const pageSize = 200;
+  const pageSize = 100;
 
   const all_stocks = [];
 

@@ -70,7 +70,7 @@ export class EastMoneyStockService {
     let page = 1;
     let pageSize = 1000;
 
-    const data = [];
+    const result = [];
 
     while (true) {
       try {
@@ -85,7 +85,7 @@ export class EastMoneyStockService {
 
         const list = transformStockData(data, selectionIndicatorMapping);
 
-        data.push(...list);
+        result.push(...list);
 
         if (!count || page * pageSize >= count) break;
 
@@ -96,8 +96,8 @@ export class EastMoneyStockService {
       }
     }
 
-    this.logger.debug(`获取股票筛选器信息成功，共${data.length}条`);
+    this.logger.debug(`获取股票筛选器信息成功，共${result.length}条`);
 
-    return data;
+    return result;
   }
 }

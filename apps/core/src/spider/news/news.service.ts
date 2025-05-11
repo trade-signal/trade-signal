@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { getRunDate } from "@trade-signal/shared";
+// import { getRunDate } from "@trade-signal/shared";
 import dayjs from "dayjs";
 
 import { PrismaService } from "src/common/database/prisma.service";
@@ -15,7 +15,7 @@ export class NewsService {
     private readonly sinaService: SinaService,
     private readonly clsService: ClsService
   ) {
-    this.initNews(getRunDate());
+    // this.initNews(getRunDate());
   }
 
   // 清除超过指定天数的数据

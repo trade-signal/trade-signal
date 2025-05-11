@@ -3,8 +3,10 @@
   "version": "0.0.1",
   "description": "Trade Signal Core Service",
   "private": true,
+  "license": "UNLICENSED",
+  "main": "dist/main.js",
   "scripts": {
-    "dev": "npm run start:dev",
+    "dev": "nest start --watch",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
