@@ -1,9 +1,10 @@
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { Cron } from "@nestjs/schedule";
-
 import { getRunDate } from "@trade-signal/shared";
+
 import { PrismaService } from "src/common/database/prisma.service";
 import { EastMoneyStockService } from "./providers/eastmoney/stock.service";
+import { EastMoneyStockPlateService } from "./providers/eastmoney/stock-plate.service";
 
 @Injectable()
 export class StockService implements OnModuleInit {
@@ -13,7 +14,8 @@ export class StockService implements OnModuleInit {
 
   constructor(
     private readonly prisma: PrismaService,
-    private readonly eastMoneyStockService: EastMoneyStockService
+    private readonly eastMoneyStockService: EastMoneyStockService,
+    private readonly eastMoneyStockPlateService: EastMoneyStockPlateService
   ) {}
 
   // 初始化股票数据
@@ -24,7 +26,9 @@ export class StockService implements OnModuleInit {
       await Promise.all([
         this.initStockBasic(),
         this.initStockQuotes(),
-        this.initStockScreener()
+        this.initStockScreener(),
+        this.initStockPlateBasic(),
+        this.initStockPlateQuotes()
       ]);
 
       this.logger.log("Stock data initialization completed");
@@ -38,6 +42,7 @@ export class StockService implements OnModuleInit {
   async dailyUpdateHandle() {
     await this.getStockQuotes();
     await this.getStockScreener();
+    await this.getStockPlateQuotes();
   }
 
   // 每天清晨 5:30 清理数据（在开盘前）
@@ -45,12 +50,14 @@ export class StockService implements OnModuleInit {
   async dailyCleanHandle() {
     await this.cleanStockQuotes();
     await this.cleanStockScreener();
+    await this.cleanStockPlateQuotes();
   }
 
-  // 每月1号运行：更新所有股票的基本信息
+  // 每月1号运行：更新所有股票、板块基本信息
   @Cron("0 0 1 * *")
   async monthlyUpdateHandle() {
     await this.getStockBasic();
+    await this.getStockPlateBasic();
   }
 
   // --------------------- 股票基本信息 ---------------------
@@ -261,5 +268,129 @@ export class StockService implements OnModuleInit {
     }
 
     await this.getStockScreener();
+  }
+
+  // --------------------- 沪深京板块基本信息 ---------------------
+
+  // 检查沪深京板块基本信息是否存在
+  async checkStockPlateBasic() {
+    const stock = await this.prisma.stockPlateBasic.findFirst({});
+    return stock !== null;
+  }
+
+  // 获取沪深京板块基本信息
+  async getStockPlateBasic() {
+    const stocks = await this.eastMoneyStockPlateService.getStockPlateBasic();
+
+    try {
+      while (stocks.length > 0) {
+        const batch = stocks.splice(0, this.BATCH_SIZE);
+
+        await Promise.all(
+          batch.map(async item => {
+            await this.prisma.stockPlateBasic.upsert({
+              where: { code: item.code },
+              update: item,
+              create: item
+            });
+          })
+        );
+
+        this.logger.log(`insert ${batch.length} stocks, left ${stocks.length}`);
+      }
+
+      this.logger.log("get stock plate basic success");
+    } catch (error) {
+      this.logger.error(`get stock plate basic error: ${error}`);
+    }
+  }
+
+  // 初始化沪深京板块基本信息
+  async initStockPlateBasic() {
+    const hasStockPlateBasic = await this.checkStockPlateBasic();
+
+    if (hasStockPlateBasic) {
+      this.logger.log("stock plate basic available! No need to fetch.");
+      return;
+    }
+
+    await this.getStockPlateBasic();
+  }
+
+  // --------------------- 沪深京板块行情信息 ---------------------
+
+  // 检查沪深京板块行情信息是否存在
+  async checkStockPlateQuotes() {
+    const stock = await this.prisma.stockPlateQuotes.findFirst({});
+    return stock !== null;
+  }
+
+  // 清理沪深京板块行情信息
+  async cleanStockPlateQuotes(days: number = 7) {
+    try {
+      this.logger.log(`clean stock plate quotes older than ${days} days`);
+
+      const tradingDays = await this.prisma.stockPlateQuotes.findMany({
+        select: { date: true },
+        distinct: ["date"],
+        orderBy: { date: "desc" }
+      });
+
+      if (tradingDays.length > days) {
+        const cutoffDate = tradingDays[days - 1].date;
+        const result = await this.prisma.stockPlateQuotes.deleteMany({
+          where: { date: { lt: cutoffDate } }
+        });
+
+        this.logger.log(`clean ${result.count} data`);
+        return;
+      }
+
+      this.logger.log("no data to clean");
+    } catch (error) {
+      this.logger.error(`clean stock plate quotes error: ${error}`);
+    }
+  }
+
+  // 获取沪深京板块行情信息
+  async getStockPlateQuotes(date?: string) {
+    try {
+      this.logger.log(`get stock plate quotes`);
+
+      const stocks =
+        await this.eastMoneyStockPlateService.getStockPlateQuotes(date);
+
+      while (stocks.length > 0) {
+        const batch = stocks.splice(0, this.BATCH_SIZE);
+
+        await Promise.all(
+          batch.map(async item => {
+            await this.prisma.stockPlateQuotes.upsert({
+              where: { date_code: { date: item.date, code: item.code } },
+              update: item,
+              create: item
+            });
+          })
+        );
+
+        this.logger.log(`insert ${batch.length} stocks, left ${stocks.length}`);
+      }
+
+      this.logger.log("get stock plate quotes success");
+    } catch (error) {
+      this.logger.error(`get stock plate quotes error: ${error}`);
+    }
+  }
+
+  // 初始化沪深京板块行情信息
+  async initStockPlateQuotes() {
+    const hasStockPlateQuotes = await this.checkStockPlateQuotes();
+
+    if (hasStockPlateQuotes) {
+      this.logger.log("stock plate quotes available! No need to fetch.");
+      return;
+    }
+
+    await this.getStockPlateQuotes();
   }
 }
