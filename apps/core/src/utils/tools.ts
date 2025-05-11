@@ -3,7 +3,7 @@ import { IndicatorMapping, IndicatorType } from "@trade-signal/types";
 import { Logger } from "@trade-signal/shared";
 
 export const createLogger = (name: string, prefix?: string) => {
-  const logger = Logger.createLogger(name, prefix, false);
+  const logger = new Logger(name, prefix, false);
   return (message: string) => {
     logger.log(`${message}`);
   };

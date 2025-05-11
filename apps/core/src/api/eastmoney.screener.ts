@@ -1,8 +1,10 @@
-import { get, createLogger, getIndicatorFields } from "@trade-signal/shared";
+import { get, createLogger } from "@trade-signal/shared";
+
 import { selectionIndicatorMapping } from "./eastmoney.screener.indicator";
+import { getIndicatorFields } from "../utils/tools";
 
 const spider_name = "eastmoney.selection";
-const print = createLogger(spider_name, "stock");
+const logger = createLogger(spider_name, "stock");
 
 /**
  * 选股指标
@@ -35,7 +37,7 @@ export const getStockScreener = async (page: number, pageSize: number) => {
 
     return response;
   } catch (error) {
-    print(`get ${spider_name} stock screener error: ${error}`);
+    logger.error(`get ${spider_name} stock screener error: ${error}`);
     return [];
   }
 };

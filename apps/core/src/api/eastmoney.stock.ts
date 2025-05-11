@@ -1,7 +1,7 @@
 import { createLogger, get } from "@trade-signal/shared";
 
 const spider_name = "eastmoney";
-const print = createLogger(spider_name, "stock");
+const logger = createLogger(spider_name, "stock");
 
 // 获取随机数（用于请求参数 1-100）
 const getRandomNumber = () => {
@@ -28,7 +28,7 @@ const getEastMoneyStockQuotes = async (params: any) => {
       }`
     );
   } catch (error) {
-    print(`get ${spider_name} stock quotes error: ${error}`);
+    logger.error(`get ${spider_name} stock quotes error: ${error}`);
     return [];
   }
 };
@@ -51,7 +51,7 @@ const getEastMoneyStockMinuteKline = async (params: any) => {
       }`
     );
   } catch (error) {
-    print(`get ${spider_name} stock minute kline error: ${error}`);
+    logger.error(`get ${spider_name} stock minute kline error: ${error}`);
     return [];
   }
 };
