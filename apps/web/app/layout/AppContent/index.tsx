@@ -1,22 +1,11 @@
-import { useEffect } from "react";
 import { AppShell, rem } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 
-import Header from "@/apps/web/app/layout/Header";
-import RightAside from "@/apps/web/app/layout/RightAside";
-import { useLogin } from "@/app/hooks/useLogin";
+import Header from "@/app/layout/Header";
+import RightAside from "@/app/layout/RightAside";
 
 function AppContent({ children }: { children: React.ReactNode }) {
-  const { isLoggedIn } = useLogin();
-  const [collapsed, { open, close }] = useDisclosure(true);
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      close();
-    } else {
-      open();
-    }
-  }, [isLoggedIn]);
+  const [collapsed] = useDisclosure(true);
 
   const headerHeight = rem("56px");
   const asideWidth = rem("300px");

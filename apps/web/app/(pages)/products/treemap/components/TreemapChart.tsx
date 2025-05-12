@@ -1,15 +1,15 @@
 import { useMemo } from "react";
 import ReactECharts from "echarts-for-react";
 import { StockQuotes } from "@prisma/client";
-import { getThemeSetting } from "@/packages/shared/theme";
+import { getThemeSetting } from "@/app/utils/theme";
 import {
   getColor,
   formatPercent,
   formatNumber,
   formatLargeNumber
-} from "@/packages/shared/formatters";
-import { StockTreemap } from "@/apps/web/app/api/(stock)/stock-treemap/list/route";
-import { TreemapSortType } from "@/packages/shared/stock";
+} from "@/app/utils/formatters";
+import { StockTreemap } from "@/app/api/(stock)/stock-treemap/list/route";
+import { TreemapSortType } from "@trade-signal/shared";
 
 interface TreemapChartProps {
   data: StockTreemap[];

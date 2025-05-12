@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Box,
   Group,
   Image,
@@ -11,20 +10,12 @@ import {
   Title
 } from "@mantine/core";
 import { spotlight } from "@mantine/spotlight";
-import {
-  IconArrowsLeftRight,
-  IconLanguage,
-  IconMessageCircle,
-  IconPalette,
-  IconUser
-} from "@tabler/icons-react";
+import { IconLanguage, IconPalette } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { signOut } from "next-auth/react";
-import { useLoginContext } from "@/app/providers/LoginProvider";
-import { useThemeSettingContext } from "@/apps/web/app/providers/ThemeSettingProvider";
-import { useThemeIcon } from "@/apps/web/app/hooks/useThemeIcon";
-import links, { type RouteLink } from "@/apps/web/app/config/routes";
+import { useThemeSettingContext } from "@/app/providers/ThemeSettingProvider";
+import { useThemeIcon } from "@/app/hooks/useThemeIcon";
+import links, { type RouteLink } from "@/app/config/routes";
 
 import styles from "./index.module.css";
 
@@ -90,8 +81,6 @@ const Header = () => {
 
   const { openThemeMenu } = useThemeSettingContext();
   const { logo, userIcon } = useThemeIcon();
-
-  const { showLoginModal, isLoggedIn, userInfo } = useLoginContext();
 
   const items = links.map(link =>
     link.children ? (
@@ -172,99 +161,7 @@ const Header = () => {
         {items}
       </Group>
 
-      <Group justify="flex-end">
-        <Menu shadow="md">
-          {isLoggedIn ? (
-            <>
-              <Menu.Target>
-                {userInfo?.image ? (
-                  <Box className={styles.avatarWrapper}>
-                    <Avatar
-                      src={userInfo?.image || ""}
-                      size={rem(32)}
-                      alt={userInfo?.name || ""}
-                    />
-                  </Box>
-                ) : (
-                  <Text size="sm" className={styles.username}>
-                    {userInfo?.name}
-                  </Text>
-                )}
-              </Menu.Target>
-
-              <Menu.Dropdown style={{ width: rem(200) }}>
-                <Menu.Item
-                  key="profile"
-                  disabled
-                  leftSection={
-                    <IconUser style={{ width: rem(14), height: rem(14) }} />
-                  }
-                >
-                  个人资料
-                </Menu.Item>
-
-                <Menu.Item
-                  key="message"
-                  disabled
-                  leftSection={
-                    <IconMessageCircle
-                      style={{ width: rem(14), height: rem(14) }}
-                    />
-                  }
-                >
-                  最新消息
-                </Menu.Item>
-
-                <Menu.Divider />
-
-                {commonMenuItems}
-
-                <Menu.Divider />
-
-                <Menu.Item
-                  key="logout"
-                  leftSection={
-                    <IconArrowsLeftRight
-                      style={{ width: rem(14), height: rem(14) }}
-                    />
-                  }
-                  onClick={() => signOut()}
-                >
-                  退出登录
-                </Menu.Item>
-              </Menu.Dropdown>
-            </>
-          ) : (
-            <>
-              <Menu.Target>
-                <Box className={styles.avatarWrapper}>
-                  <Image
-                    src={userIcon}
-                    alt="user"
-                    style={{ width: rem(24), height: rem(24) }}
-                  />
-                </Box>
-              </Menu.Target>
-
-              <Menu.Dropdown style={{ width: rem(200) }}>
-                <Menu.Item
-                  key="login"
-                  leftSection={
-                    <IconUser style={{ width: rem(14), height: rem(14) }} />
-                  }
-                  onClick={() => showLoginModal("signin")}
-                >
-                  登录
-                </Menu.Item>
-
-                <Menu.Divider />
-
-                {commonMenuItems}
-              </Menu.Dropdown>
-            </>
-          )}
-        </Menu>
-      </Group>
+      <Group justify="flex-end"></Group>
     </Group>
   );
 };

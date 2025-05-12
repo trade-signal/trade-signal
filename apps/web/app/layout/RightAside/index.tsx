@@ -7,10 +7,7 @@ import {
 } from "@tabler/icons-react";
 import { Box, Stack, Tooltip, UnstyledButton } from "@mantine/core";
 
-import WatchList from "@/apps/web/app/components/WatchList";
-import InstrumentDetail from "@/apps/web/app/components/InstrumentDetail";
-import { useLoginContext } from "@/app/providers/LoginProvider";
-import { useThemeSettingContext } from "@/apps/web/app/providers/ThemeSettingProvider";
+import { useThemeSettingContext } from "@/app/providers/ThemeSettingProvider";
 
 import styles from "./index.module.css";
 
@@ -41,12 +38,7 @@ const mainLinksMockdata = [
 
 const RightAside = () => {
   const [active, setActive] = useState("watchlist");
-  const { userInfo } = useLoginContext();
   const { openThemeMenu } = useThemeSettingContext();
-
-  if (!userInfo) {
-    return null;
-  }
 
   const handleClick = (link: (typeof mainLinksMockdata)[0]) => {
     if (link.value === "theme") {
@@ -91,10 +83,6 @@ const RightAside = () => {
   return (
     <nav className={styles.navbar}>
       <Box className={styles.wrapper}>
-        <Stack gap="xs" className={styles.main}>
-          <WatchList />
-          <InstrumentDetail />
-        </Stack>
         <Stack gap="xs" className={styles.aside}>
           {mainLinks}
         </Stack>

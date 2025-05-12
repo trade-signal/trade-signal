@@ -1,6 +1,5 @@
 import { useEffect, useState, type FC } from "react";
 import {
-  Pill,
   Combobox,
   CheckIcon,
   Group,

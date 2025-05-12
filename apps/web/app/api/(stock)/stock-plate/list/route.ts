@@ -1,10 +1,7 @@
-import prisma from "@/packages/database/prisma/db";
+import prisma from "@/app/utils/prisma";
 import { MRT_ColumnFiltersState, MRT_SortingState } from "mantine-react-table";
 import { NextRequest } from "next/server";
-import {
-  generateWhereClause,
-  generateOrderByClause
-} from "@/packages/shared/util";
+import { generateWhereClause, generateOrderByClause } from "@/app/utils/tools";
 
 export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;

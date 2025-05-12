@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { Stack, Group, Title, Button } from "@mantine/core";
-import { get } from "@/packages/shared/request";
+import { get } from "@trade-signal/shared";
 
-import ScreenerMultiSelect from "@/apps/web/app/components/ScreenerMultiSelect";
-import ScreenerSelect from "@/apps/web/app/components/ScreenerSelect";
+import ScreenerMultiSelect from "@/app/components/ScreenerMultiSelect";
+import ScreenerSelect from "@/app/components/ScreenerSelect";
 import {
   getInitialFilters,
   StockFilters,
@@ -20,7 +20,7 @@ import {
   StockPriceRangeConfig
 } from "./StockScreenerConfig";
 
-const StockScreener = props => {
+const StockScreener = () => {
   const { filters, setFilters } = useStockContext();
 
   const handleFilterChange = (newFilters: Partial<StockFilters>) => {

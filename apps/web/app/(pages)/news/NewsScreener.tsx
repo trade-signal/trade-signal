@@ -8,12 +8,11 @@ import {
   SegmentedControl,
   useMantineTheme
 } from "@mantine/core";
-import { get } from "@/packages/shared/request";
+import { get } from "@trade-signal/shared";
 
-import ScreenerSelect, {
-  DataItem
-} from "@/apps/web/app/components/ScreenerSelect";
-import { getCategoryName } from "@/apps/core/cron/news/cls";
+import ScreenerSelect, { DataItem } from "@/app/components/ScreenerSelect";
+import { getCategoryName } from "@/app/utils/news";
+
 import { NewsFilters, useNewsContext } from "./NewsContext";
 import { SOURCE_MAP } from "./NewsListConfig";
 
@@ -28,7 +27,7 @@ const SOURCE_OPTIONS = [
   }))
 ];
 
-const NewsScreener = props => {
+const NewsScreener = () => {
   const { filters, setFilters } = useNewsContext();
   const theme = useMantineTheme();
 

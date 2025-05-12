@@ -13,23 +13,21 @@ import {
   List
 } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
-import { clientGet } from "@/packages/shared/request";
-import { getCurrentThemeColor } from "@/packages/shared/theme";
-import { StockTreemap } from "@/apps/web/app/api/(stock)/stock-treemap/list/route";
-import { useSyncTaskContext } from "@/app/providers/SyncTaskProvider";
+import { clientGet } from "@trade-signal/shared";
+import { getCurrentThemeColor } from "@/app/utils/theme";
+import { StockTreemap } from "@/app/api/(stock)/stock-treemap/list/route";
 import {
   MARKET_OPTIONS,
   MarketType,
   TREEMAP_SORT_OPTIONS,
   TreemapSortType
-} from "@/packages/shared/stock";
+} from "@trade-signal/shared";
 
-import ScreenerSelect from "@/apps/web/app/components/ScreenerSelect";
+import ScreenerSelect from "@/app/components/ScreenerSelect";
 import { TreemapChart } from "./components/TreemapChart";
 
-const TreemapChartClient = props => {
+const TreemapChartClient = () => {
   const { width, height } = useViewportSize();
-  const { task } = useSyncTaskContext();
 
   const currentThemeColor = getCurrentThemeColor();
 
@@ -37,13 +35,6 @@ const TreemapChartClient = props => {
   const [sortType, setSortType] = useState("totalMarketCap");
 
   const [data, setData] = useState<StockTreemap[]>([]);
-
-  const refreshTime = useMemo(() => {
-    const currentBatch = task.find(
-      (item: any) => item.taskType === "stock_plate_quotes"
-    );
-    return dayjs(currentBatch?.batchDate).format("YYYY-MM-DD HH:mm");
-  }, [task]);
 
   const { treemapH } = useMemo(
     () => ({
@@ -83,7 +74,8 @@ const TreemapChartClient = props => {
       <Group align="flex-start">
         <Paper p="xs" style={{ width: 200 }}>
           <Text span size="sm">
-            数据更新时间：{dayjs(refreshTime).format("MM-DD HH:mm")}
+            {/* todo: 数据更新时间 */}
+            数据更新时间：{dayjs().format("MM-DD HH:mm")}
           </Text>
 
           <Stack mt={20}>

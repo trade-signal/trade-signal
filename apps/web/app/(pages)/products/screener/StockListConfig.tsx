@@ -1,12 +1,12 @@
 import { StockScreener } from "@prisma/client";
-import { Column } from "@/apps/web/app/types/column.type";
+import { Column } from "@/app/types/column.type";
 
-import { renderSignal, renderPercent } from "@/packages/shared/renders";
+import { renderSignal, renderPercent } from "@/app/utils/renders";
 import {
   formatBillion,
   formatNumber,
   formatLargeNumber
-} from "@/packages/shared/formatters";
+} from "@/app/utils/formatters";
 
 interface TabConfig {
   value: string;

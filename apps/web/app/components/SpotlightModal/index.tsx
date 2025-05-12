@@ -1,9 +1,4 @@
-import {
-  IconDashboard,
-  IconFileText,
-  IconHome,
-  IconSearch
-} from "@tabler/icons-react";
+import { IconDashboard, IconHome, IconSearch } from "@tabler/icons-react";
 import { Spotlight, SpotlightActionData } from "@mantine/spotlight";
 import { rem } from "@mantine/core";
 import { useRouter } from "next/navigation";

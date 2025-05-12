@@ -1,7 +1,7 @@
 import { type NextRequest } from "next/server";
 import { Prisma } from "@prisma/client";
-import prisma from "@/packages/database/prisma/db";
-import { parseCommaSeparatedParam } from "@/packages/shared/util";
+import prisma from "@/app/utils/prisma";
+import { parseCommaSeparatedParam } from "@/app/utils/tools";
 
 export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;

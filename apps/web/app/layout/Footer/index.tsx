@@ -14,7 +14,7 @@ import {
   Title
 } from "@mantine/core";
 import Link from "next/link";
-import { useThemeIcon } from "@/apps/web/app/hooks/useThemeIcon";
+import { useThemeIcon } from "@/app/hooks/useThemeIcon";
 
 import styles from "./index.module.css";
 

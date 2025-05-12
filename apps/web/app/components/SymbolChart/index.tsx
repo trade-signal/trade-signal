@@ -13,11 +13,11 @@ import dayjs from "dayjs";
 import { Group, rem, SegmentedControl, Stack, Tooltip } from "@mantine/core";
 import { IconChartCandle } from "@tabler/icons-react";
 import { IconChartArea } from "@tabler/icons-react";
-import { hex2rgba } from "@/packages/shared/color";
-import { useThemeIcon } from "@/apps/web/app/hooks/useThemeIcon";
-import { SymbolChartData } from "@/apps/web/app/types/chart.type";
-import { ChartTrends } from "@/apps/web/app/types/chart.type";
-import { getThemeSetting } from "@/packages/shared/theme";
+import { useThemeIcon } from "@/app/hooks/useThemeIcon";
+import { SymbolChartData } from "@/app/types/chart.type";
+import { ChartTrends } from "@/app/types/chart.type";
+import { getThemeSetting } from "@/app/utils/theme";
+import { hex2rgba } from "@trade-signal/shared";
 
 const getChartColor = (
   price: number,

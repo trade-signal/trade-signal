@@ -1,19 +1,21 @@
 import { NextRequest } from "next/server";
-import prisma from "@/packages/database/prisma/db";
+import prisma from "@/app/utils/prisma";
 import { StockQuotes, StockPlateQuotes, Prisma } from "@prisma/client";
-import { getStockCodePrefixes } from "@/packages/shared/stock";
-import { MarketType } from "@/packages/shared/stock";
+import { getStockCodePrefixes, MarketType } from "@trade-signal/shared";
 
 export interface StockTreemap extends StockPlateQuotes {
   children: StockQuotes[];
 }
 
 const getStockQuotesMap = (stockQuotes: StockQuotes[]) => {
-  return stockQuotes.reduce((acc, stockQuote) => {
-    acc[stockQuote.industry] = acc[stockQuote.industry] || [];
-    acc[stockQuote.industry].push(stockQuote);
-    return acc;
-  }, {} as Record<string, StockQuotes[]>);
+  return stockQuotes.reduce(
+    (acc, stockQuote) => {
+      acc[stockQuote.industry] = acc[stockQuote.industry] || [];
+      acc[stockQuote.industry].push(stockQuote);
+      return acc;
+    },
+    {} as Record<string, StockQuotes[]>
+  );
 };
 
 export const GET = async (request: NextRequest) => {

@@ -1,24 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import dayjs from "dayjs";
-import { get } from "@/packages/shared/request";
+import { get } from "@trade-signal/shared";
 import { StockScreener } from "@prisma/client";
 import { Tabs } from "@mantine/core";
 
 import { useDebouncedCallback, useDisclosure } from "@mantine/hooks";
-import DataTable from "@/apps/web/app/components/DataTable";
-import { useActiveStock } from "@/app/providers/ActiveStockProvider";
-import { useSyncTaskContext } from "@/app/providers/SyncTaskProvider";
+import DataTable from "@/app/components/DataTable";
 import { getOrderBy } from "./StockListConfig";
 
 import { StockFilters, useStockContext } from "./StockContext";
 import { TAB_CONFIGS } from "./StockListConfig";
 
-const StockList = props => {
+const StockList = () => {
   const { filters, setFilters } = useStockContext();
-  const { setActiveStockCode } = useActiveStock();
-  const { task } = useSyncTaskContext();
   const [searchValue, setSearchValue] = useState(filters.search || "");
 
   const [stockList, setStockList] = useState<StockScreener[]>([]);
@@ -113,21 +108,6 @@ const StockList = props => {
     }
   }, [page]);
 
-  useEffect(() => {
-    if (task.length > 0) {
-      const currentBatch = task.find(
-        (item: any) => item.taskType === "stock_screener"
-      );
-
-      if (!currentBatch) return;
-      setRefreshTime(dayjs(currentBatch.batchDate).format("YYYY-MM-DD HH:mm"));
-    }
-  }, [task]);
-
-  const handleRowClick = (row: StockScreener) => {
-    setActiveStockCode(row.code);
-  };
-
   return (
     <Tabs defaultValue="overview">
       <Tabs.List>
@@ -152,7 +132,6 @@ const StockList = props => {
             order={filters.order}
             search={searchValue}
             onSort={handleSort}
-            onRowClick={handleRowClick}
             onSearch={handleSearchValueChange}
             onLoadMore={handleLoadMore}
             getOrderBy={getOrderBy}

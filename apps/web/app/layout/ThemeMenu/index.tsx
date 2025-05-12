@@ -9,17 +9,9 @@ import {
   ColorInput,
   useMantineColorScheme
 } from "@mantine/core";
-import {
-  SetThemeType,
-  useThemeSetting
-} from "@/apps/web/app/hooks/useThemeSetting";
+import { SetThemeType, useThemeSetting } from "@/app/hooks/useThemeSetting";
 import { useEffect, useState } from "react";
-import {
-  type ColorArray,
-  hex2rgbArray,
-  isTextReadable,
-  rgbArray2hex
-} from "@/packages/shared/color";
+import { ColorArray, hex2rgbArray, isTextReadable } from "@trade-signal/shared";
 
 export const ThemeMenu = ({
   visible,

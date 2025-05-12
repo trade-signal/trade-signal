@@ -2,25 +2,18 @@
 
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
-import { get } from "@/packages/shared/request";
-import { SyncTask, News } from "@prisma/client";
+import { get } from "@trade-signal/shared";
+import { News } from "@prisma/client";
 import { useDisclosure } from "@mantine/hooks";
-import DataTable from "@/apps/web/app/components/DataTable";
-import { useSyncTaskContext } from "@/app/providers/SyncTaskProvider";
+import DataTable from "@/app/components/DataTable";
 
 import { useNewsContext } from "./NewsContext";
 import { COLUMNS } from "./NewsListConfig";
 
-const NewsList = props => {
+const NewsList = () => {
   const { filters } = useNewsContext();
-  const { task } = useSyncTaskContext();
 
   const [newsList, setNewsList] = useState<News[]>([]);
-
-  const [refreshTimeMap, setRefreshTimeMap] = useState<
-    Record<string, Partial<SyncTask>>
-  >({});
-  const [refreshTime, setRefreshTime] = useState<string | undefined>();
 
   const [loading, { open, close }] = useDisclosure(false);
   const [isFirstLoading, setIsFirstLoading] = useState(true);
@@ -80,37 +73,13 @@ const NewsList = props => {
     }
   }, [page]);
 
-  const transformBatch = (batch: SyncTask[]) => {
-    return batch.reduce((acc, curr) => {
-      acc[curr.dataSource] = curr;
-      return acc;
-    }, {} as Record<string, Partial<SyncTask>>);
-  };
-
-  useEffect(() => {
-    if (task.length > 0) {
-      const batchMap = transformBatch(task);
-      setRefreshTimeMap(batchMap);
-      setRefreshTime(dayjs(batchMap.sina.batchDate).format("YYYY-MM-DD HH:mm"));
-    }
-  }, [task]);
-
-  useEffect(() => {
-    if (filters.source) {
-      setRefreshTime(
-        dayjs(refreshTimeMap[filters.source]?.batchDate).format(
-          "YYYY-MM-DD HH:mm"
-        )
-      );
-    }
-  }, [filters.source]);
-
   return (
     <DataTable
       height="calc(100vh - 215px)"
       columns={COLUMNS}
       data={newsList}
-      refreshTime={refreshTime}
+      // todo: 数据更新时间
+      refreshTime={dayjs().format("MM-DD HH:mm")}
       firstLoading={isFirstLoading}
       loading={loading}
       total={total}

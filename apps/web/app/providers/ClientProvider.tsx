@@ -5,12 +5,12 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Notifications } from "@mantine/notifications";
 import { useMediaQuery } from "@mantine/hooks";
 
-import SpotlightModal from "@/apps/web/app/components/SpotlightModal";
-import { ThemeSettingProvider } from "@/apps/web/app/providers/ThemeSettingProvider";
-import { useThemeSetting } from "@/apps/web/app/hooks/useThemeSetting";
+import SpotlightModal from "@/app/components/SpotlightModal";
+import { ThemeSettingProvider } from "@/app/providers/ThemeSettingProvider";
+import { useThemeSetting } from "@/app/hooks/useThemeSetting";
 
-import AppContent from "@/apps/web/app/layout/AppContent";
-import AppContentMobile from "@/apps/web/app/layout/AppContentMobile";
+import AppContent from "@/app/layout/AppContent";
+import AppContentMobile from "@/app/layout/AppContentMobile";
 
 export default function ClientProvider({
   children

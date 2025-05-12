@@ -1,4 +1,4 @@
-import prisma from "@/packages/database/prisma/db";
+import prisma from "@/app/utils/prisma";
 
 export const GET = async () => {
   const maxDate = await prisma.stockScreener.findFirst({

@@ -1,4 +1,4 @@
-import prisma from "@/packages/database/prisma/db";
+import prisma from "@/app/utils/prisma";
 import dayjs from "dayjs";
 
 const getUniqueItems = (

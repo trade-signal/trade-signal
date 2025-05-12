@@ -1,12 +1,12 @@
 import { type NextRequest } from "next/server";
 import { Prisma } from "@prisma/client";
-import prisma from "@/packages/database/prisma/db";
+import prisma from "@/app/utils/prisma";
+import { parseCommaSeparatedParam } from "@/app/utils/tools";
 import {
   StockPriceRange,
   StockMarketValue,
   StockPeRatio
-} from "@/apps/web/app/(pages)/products/screener/StockScreenerConfig";
-import { parseCommaSeparatedParam } from "@/packages/shared/util";
+} from "@/app/(pages)/products/screener/StockScreenerConfig";
 
 // 价格范围
 const getPriceRange = (price: StockPriceRange) => {

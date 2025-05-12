@@ -1,10 +1,13 @@
 "use client";
 
-import { themeOverride } from "@/packages/shared/theme";
 import { DEFAULT_THEME, mergeMantineTheme } from "@mantine/core";
 import { useLocalStorage } from "@mantine/hooks";
 import { useEffect, useMemo, useState } from "react";
-import { ThemeSetting, getThemeSetting } from "@/packages/shared/theme";
+import {
+  themeOverride,
+  ThemeSetting,
+  getThemeSetting
+} from "@/app/utils/theme";
 
 export type SetThemeType = "colorScheme" | "fontSize" | "upColor" | "downColor";
 
