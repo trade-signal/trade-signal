@@ -1,10 +1,8 @@
-"use client";
-
 import { readLocalStorageValue } from "@mantine/hooks";
-import { THEME_SETTING_KEY } from "../hooks/useThemeSetting";
 import {
+  type MantineColorScheme,
+  type MantineThemeOverride,
   createTheme,
-  MantineColorScheme,
   useMantineColorScheme,
   virtualColor
 } from "@mantine/core";
@@ -16,9 +14,25 @@ export interface ThemeSetting {
   downColor: string;
 }
 
+export type ThemeSettingKey =
+  | "colorScheme"
+  | "fontSize"
+  | "upColor"
+  | "downColor";
+
+export const THEME_COLOR_SCHEME_KEY = "trade-signal-theme-color-scheme";
+export const THEME_SETTING_KEY = "trade-signal-theme-setting";
+
+export const DEFAULT_THEME_SETTING: ThemeSetting = {
+  colorScheme: "dark",
+  fontSize: 16,
+  upColor: "#ec4040",
+  downColor: "#2e8b57"
+};
+
 export const getThemeSetting = (): ThemeSetting => {
   const themeSetting: any = readLocalStorageValue({ key: THEME_SETTING_KEY });
-  return themeSetting;
+  return themeSetting ?? DEFAULT_THEME_SETTING;
 };
 
 export const getCurrentThemeColor = () => {
@@ -35,4 +49,4 @@ export const themeOverride = createTheme({
       light: "indigo"
     })
   }
-});
+}) as MantineThemeOverride;

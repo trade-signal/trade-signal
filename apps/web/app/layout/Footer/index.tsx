@@ -1,123 +1,66 @@
-import dayjs from "dayjs";
+import { Group, Text } from "@mantine/core";
+
 import {
-  IconBrandGithub,
+  IconHelp,
+  IconInfoCircle,
   IconBrandTelegram,
-  IconBrandTwitter
+  IconBrandGithub,
+  IconLink
 } from "@tabler/icons-react";
-import {
-  ActionIcon,
-  Container,
-  Group,
-  Image,
-  rem,
-  Text,
-  Title
-} from "@mantine/core";
-import Link from "next/link";
+import { getCurrentYear } from "@trade-signal/shared";
 
 import styles from "./index.module.css";
 
-const data = [
-  {
-    title: "关于我们",
-    links: [
-      { label: "隐私条款", link: "/privacy.html" },
-      { label: "GitHub 组织", link: "https://github.com/trade-signal" }
-    ]
-  },
-  {
-    title: "社交媒体",
-    links: [
-      { label: "Telegram 群组", link: "https://t.me/+25mzy3YRvbA4ODM1" },
-      { label: "Twitter 官方", link: "https://x.com/yangzhi40338736" }
-    ]
-  }
-];
-
 const Footer = () => {
-  const groups = data.map(group => {
-    const links = group.links.map((link, index) => (
-      <Text<"a">
-        key={index}
-        className={styles.link}
-        component="a"
-        href={link.link}
-        target="_blank"
-      >
-        {link.label}
-      </Text>
-    ));
-
-    return (
-      <div className={styles.wrapper} key={group.title}>
-        <Text className={styles.title}>{group.title}</Text>
-        {links}
-      </div>
-    );
-  });
+  const year = getCurrentYear();
 
   return (
     <footer className={styles.footer}>
-      <Container className={styles.inner}>
-        <div className={styles.logo}>
-          <Group gap={5}>
-            <Image
-              style={{ width: rem(24), height: rem(24) }}
-              src="/logo.svg"
-              alt="TradeSignal logo"
-            />
-            <Title order={3} visibleFrom="xl">
-              <Text fw="bolder" size="xs" inherit>
-                TradeSignal
-              </Text>
-            </Title>
-          </Group>
-          <Text size="xs" c="dimmed" className={styles.description}>
-            整合多维度市场数据，提供专业的投资分析工具。
-          </Text>
-        </div>
-        <div className={styles.groups}>{groups}</div>
-      </Container>
-      <Container className={styles.afterFooter}>
-        <Text c="dimmed" size="xs">
-          © {dayjs().year()} TradeSignal • AGPL v3.0
-        </Text>
-
-        <Group
-          gap={0}
-          className={styles.social}
-          justify="flex-end"
-          wrap="nowrap"
-        >
-          <ActionIcon size="lg" color="gray" variant="subtle">
-            <Link
-              target="_blank"
-              className={styles.socialLink}
-              href="https://github.com/trade-signal"
-            >
-              <IconBrandGithub size={18} stroke={1.5} />
-            </Link>
-          </ActionIcon>
-          <ActionIcon size="lg" color="gray" variant="subtle">
-            <Link
-              target="_blank"
-              className={styles.socialLink}
-              href="https://t.me/+25mzy3YRvbA4ODM1"
-            >
-              <IconBrandTelegram size={18} stroke={1.5} />
-            </Link>
-          </ActionIcon>
-          <ActionIcon size="lg" color="gray" variant="subtle">
-            <Link
-              target="_blank"
-              className={styles.socialLink}
-              href="https://x.com/yangzhi40338736"
-            >
-              <IconBrandTwitter size={18} stroke={1.5} />
-            </Link>
-          </ActionIcon>
+      <Group w="100%" justify="space-between" px="xs">
+        <Group gap="lg">
+          <Text size="sm">© {year} TradeSignal</Text>
         </Group>
-      </Container>
+        <Group gap="lg">
+          <Group gap={4}>
+            <IconHelp width={18} height={18} />
+            <Text size="sm">使用教程</Text>
+          </Group>
+
+          {/* <Group gap={4}>
+            <IconInfoCircle width={18} height={18} />
+            <Text size="sm">关于我们</Text>
+          </Group> */}
+
+          {/* <Group gap={4}>
+            <IconLink width={18} height={18} />
+            <Text size="sm">API</Text>
+          </Group> */}
+
+          <Group gap={4}>
+            <IconBrandTelegram
+              width={18}
+              height={18}
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                window.open("https://t.me/+25mzy3YRvbA4ODM1", "_blank");
+              }}
+            />
+            <Text size="sm">Telegram</Text>
+          </Group>
+
+          <Group gap={4}>
+            <IconBrandGithub
+              width={18}
+              height={18}
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                window.open("https://github.com/trade-signal", "_blank");
+              }}
+            />
+            <Text size="sm">Github</Text>
+          </Group>
+        </Group>
+      </Group>
     </footer>
   );
 };

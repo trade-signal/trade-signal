@@ -83,3 +83,7 @@ export const formatDateDiff = (value: string) => {
     date: formatDateE(value)
   };
 };
+
+export const getCurrentYear = () => dayjs().year();
+export const getCurrentMonth = () => dayjs().month() + 1;
+export const getCurrentDay = () => dayjs().date();

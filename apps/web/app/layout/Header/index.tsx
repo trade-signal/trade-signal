@@ -1,20 +1,30 @@
+"use client";
+
+import { useCallback } from "react";
 import {
-  Box,
-  Group,
   Image,
+  Box,
+  Button,
+  Center,
+  Grid,
+  Group,
   Menu,
   rem,
-  Stack,
+  Switch,
   Text,
   TextInput,
-  Title
+  Title,
+  Select,
+  Avatar,
+  Stack
 } from "@mantine/core";
 import { spotlight } from "@mantine/spotlight";
-import { IconLanguage, IconPalette } from "@tabler/icons-react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useThemeSettingContext } from "@/app/providers/ThemeSettingProvider";
-import links, { type RouteLink } from "@/app/config/routes";
+import { useRouter, usePathname } from "next/navigation";
+import { IconSettings } from "@tabler/icons-react";
+
+import { RouteLink, userRoutes } from "@/app/config/routes";
+import { useThemeSetting } from "@/app/hooks/useThemeSetting";
 
 import styles from "./index.module.css";
 
@@ -24,7 +34,13 @@ const LinkMenu = (
   const pathname = usePathname();
 
   return (
-    <Menu key={link.label} shadow="md" trigger="hover">
+    <Menu
+      key={link.label}
+      shadow="md"
+      trigger="hover"
+      withArrow
+      position="bottom-start"
+    >
       <Menu.Target>
         <Link
           href={link.link}
@@ -35,7 +51,7 @@ const LinkMenu = (
           {link.label}
         </Link>
       </Menu.Target>
-      <Menu.Dropdown style={{ width: rem(200) }}>
+      <Menu.Dropdown style={{ minWidth: rem(160), zIndex: 1000 }}>
         {link.children.map((child, index) => {
           const lastGroup = link.children[index - 1]?.group;
 
@@ -60,7 +76,7 @@ const LinkMenu = (
                     return;
                   }
                 }}
-                leftSection={child.icon}
+                leftSection={child.icon ? <child.icon /> : undefined}
                 target={child.target}
                 disabled={child.disabled}
               >
@@ -78,9 +94,22 @@ const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const { openThemeMenu } = useThemeSettingContext();
+  const routes = userRoutes();
 
-  const items = links.map(link =>
+  const { setThemeSetting, colorScheme } = useThemeSetting();
+
+  const isActive = useCallback(
+    (link: RouteLink) => {
+      const active =
+        (link.link !== "/" && pathname.includes(link.link)) ||
+        pathname === link.link;
+
+      return active;
+    },
+    [pathname]
+  );
+
+  const items = routes.map(link =>
     link.children ? (
       <LinkMenu
         key={link.label}
@@ -92,17 +121,10 @@ const Header = () => {
         key={link.label}
         href={link.link}
         className={styles.link}
-        data-active={pathname.includes(link.link) ? "true" : undefined}
+        data-active={isActive(link)}
         style={{
           pointerEvents: link.disabled ? "none" : "auto",
           color: link.disabled ? "gray" : ""
-        }}
-        onClick={e => {
-          // hack: handle /quotes redirect
-          if (link.link.startsWith("/quotes") && !link.link.endsWith("/")) {
-            e.preventDefault();
-            router.push(link.link + "/index");
-          }
         }}
       >
         {link.label}
@@ -110,57 +132,103 @@ const Header = () => {
     )
   );
 
-  const commonMenuItems = [
-    <Menu.Item
-      key="theme"
-      leftSection={<IconPalette style={{ width: rem(14), height: rem(14) }} />}
-      onClick={openThemeMenu}
-    >
-      主题设置
-    </Menu.Item>,
-    <Menu.Item
-      key="language"
-      disabled
-      leftSection={<IconLanguage style={{ width: rem(14), height: rem(14) }} />}
-    >
-      切换语言
-    </Menu.Item>
-  ];
-
   return (
-    <Group justify="space-between" align="center" className={styles.header}>
-      <Group
-        gap={5}
+    <Grid className={styles.header}>
+      <Grid.Col
+        span={4}
+        className={styles.headerItem}
         style={{ cursor: "pointer" }}
-        onClick={() => router.push("/")}
       >
-        <Image
-          style={{ width: rem(32), height: rem(32) }}
-          src="/logo.svg"
-          alt="TradeSignal logo"
-        />
-        <Title order={3} visibleFrom="xl">
-          <Text fw="bolder" size="xl" inherit>
-            TradeSignal
-          </Text>
-        </Title>
-      </Group>
+        <Group gap="lg">
+          <Group
+            gap="xs"
+            mr={16}
+            onClick={() => router.push("/")}
+            style={{ cursor: "pointer" }}
+          >
+            <Image
+              style={{ width: rem(24), height: rem(24) }}
+              src={"/logo.svg"}
+              alt="TradeSignal logo"
+            />
+            <Title order={3} visibleFrom="xl">
+              <Text fw="bolder" size="xl" inherit>
+                TradeSignal
+              </Text>
+            </Title>
+          </Group>
 
-      <Group gap={5} align="center">
-        <Box onClick={spotlight.open} style={{ cursor: "pointer" }}>
-          <TextInput
-            radius="xl"
-            variant="filled"
-            placeholder="搜索（Ctrl+K）"
-            mr={10}
-            style={{ pointerEvents: "none" }}
-          />
-        </Box>
-        {items}
-      </Group>
+          {items}
+        </Group>
+      </Grid.Col>
 
-      <Group justify="flex-end"></Group>
-    </Group>
+      <Grid.Col span={4} className={styles.headerItem}>
+        <Center>
+          <Box onClick={spotlight.open} style={{ cursor: "pointer" }}>
+            <TextInput
+              size="xs"
+              w={300}
+              radius="xl"
+              variant="filled"
+              placeholder="搜索股票/基金/债券"
+              mr={10}
+              style={{ pointerEvents: "none" }}
+            />
+          </Box>
+        </Center>
+      </Grid.Col>
+
+      <Grid.Col span={4} className={styles.headerItem}>
+        <Group h="100%" align="center" justify="space-between">
+          <Group flex={1} justify="flex-end" mr={rem(60)}>
+            <Menu offset={20} withArrow={false} shadow="md">
+              <Menu.Target>
+                <Box className={styles.settings}>
+                  <IconSettings className={styles.icon} />
+                </Box>
+              </Menu.Target>
+
+              <Menu.Dropdown style={{ width: rem(200) }}>
+                {/* <Menu.Item key="bot">
+                  <Text size="xs">Telegram Bot</Text>
+                </Menu.Item> */}
+                <Menu.Item key="language" closeMenuOnClick={false}>
+                  <Group justify="space-between">
+                    <Text size="xs">语言</Text>
+                    <Select
+                      size="xs"
+                      w={100}
+                      disabled
+                      defaultValue={"zh"}
+                      variant="filled"
+                      withCheckIcon={false}
+                      data={[
+                        { label: "简体中文", value: "zh" },
+                        { label: "English", value: "en" }
+                      ]}
+                    />
+                  </Group>
+                </Menu.Item>
+                <Menu.Item key="theme" closeMenuOnClick={false}>
+                  <Group justify="space-between">
+                    <Text size="xs">深色模式</Text>
+                    <Switch
+                      checked={colorScheme === "dark"}
+                      onChange={() =>
+                        setThemeSetting(
+                          colorScheme === "dark" ? "light" : "dark"
+                        )
+                      }
+                      size="xs"
+                    />
+                  </Group>
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
+          </Group>
+        </Group>
+      </Grid.Col>
+    </Grid>
   );
 };
 

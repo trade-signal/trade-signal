@@ -1,13 +1,13 @@
 "use client";
 
-import { MantineProvider } from "@mantine/core";
+import { localStorageColorSchemeManager, MantineProvider } from "@mantine/core";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Notifications } from "@mantine/notifications";
 import { useMediaQuery } from "@mantine/hooks";
 
 import SpotlightModal from "@/app/components/SpotlightModal";
-import { ThemeSettingProvider } from "@/app/providers/ThemeSettingProvider";
-import { useThemeSetting } from "@/app/hooks/useThemeSetting";
+import { useThemeSettingState } from "@/app/hooks/useThemeSetting";
+import { THEME_COLOR_SCHEME_KEY } from "@/app/utils/theme";
 
 import AppContent from "@/app/layout/AppContent";
 import AppContentMobile from "@/app/layout/AppContentMobile";
@@ -20,28 +20,28 @@ export default function ClientProvider({
   const isMobile = useMediaQuery("(max-width: 768px)");
   const queryClient = new QueryClient();
 
-  const { colorScheme, themeLoaded } = useThemeSetting();
+  const { theme, themeLoaded } = useThemeSettingState();
 
-  if (!themeLoaded) {
-    return null;
-  }
+  if (!themeLoaded) return null;
+
+  const colorSchemeManager = localStorageColorSchemeManager({
+    key: THEME_COLOR_SCHEME_KEY
+  });
 
   if (isMobile) {
     return (
-      <MantineProvider theme={colorScheme}>
+      <MantineProvider theme={theme} colorSchemeManager={colorSchemeManager}>
         <AppContentMobile />
       </MantineProvider>
     );
   }
 
   return (
-    <MantineProvider theme={colorScheme}>
+    <MantineProvider theme={theme} colorSchemeManager={colorSchemeManager}>
       <QueryClientProvider client={queryClient}>
-        <ThemeSettingProvider>
-          <Notifications />
-          <SpotlightModal />
-          <AppContent>{children}</AppContent>
-        </ThemeSettingProvider>
+        <Notifications />
+        <SpotlightModal />
+        <AppContent>{children}</AppContent>
       </QueryClientProvider>
     </MantineProvider>
   );

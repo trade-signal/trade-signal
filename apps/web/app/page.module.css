@@ -9,7 +9,9 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  font-family: Greycliff CF, var(--mantine-font-family);
+  font-family:
+    Greycliff CF,
+    var(--mantine-font-family);
   font-size: rem(62px);
   font-weight: 900;
   line-height: 1.1;

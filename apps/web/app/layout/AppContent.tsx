@@ -1,13 +1,13 @@
 import { AppShell, rem } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 
-import Header from "@/app/layout/Header";
-import RightAside from "@/app/layout/RightAside";
+import Header from "./Header";
+import Footer from "./Footer";
 
 function AppContent({ children }: { children: React.ReactNode }) {
-  const [collapsed] = useDisclosure(true);
+  const [collapsed, { open, close }] = useDisclosure(true);
 
-  const headerHeight = rem("56px");
+  const headerHeight = rem("48px");
   const asideWidth = rem("300px");
 
   return (
@@ -28,9 +28,9 @@ function AppContent({ children }: { children: React.ReactNode }) {
 
       <AppShell.Main>{children}</AppShell.Main>
 
-      <AppShell.Aside top={collapsed ? headerHeight : 0} h="100%">
-        <RightAside />
-      </AppShell.Aside>
+      <AppShell.Footer>
+        <Footer />
+      </AppShell.Footer>
     </AppShell>
   );
 }

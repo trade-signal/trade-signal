@@ -1,49 +1,35 @@
 .header {
+  height: 48px;
   display: flex;
+  justify-content: center;
   align-items: center;
-  width: 100%;
-  height: rem(56px);
-  background-color: var(--mantine-color-body);
-  border-bottom: 1px solid
-    light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-5));
-  padding: 0 var(--mantine-spacing-md);
-  font-size: var(--mantine-font-size-xl);
-  font-weight: bold;
-  box-sizing: border-box !important;
+  padding: 0 16px;
 }
 
-.avatarWrapper {
-  cursor: pointer;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.username {
-  cursor: pointer;
-  text-align: right;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.headerItem {
+  height: 48px;
 }
 
 .link {
   display: block;
   line-height: 1;
-  padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
   border-radius: var(--mantine-radius-sm);
   text-decoration: none;
-  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-0));
-  font-size: var(--mantine-font-size-md);
-  font-weight: 500;
+  font-size: var(--mantine-font-size-sm);
+  color: light-dark(var(--mantine-color-dark-9), var(--mantine-color-white));
 
-  @mixin hover {
-    background-color: light-dark(
-      var(--mantine-color-gray-0),
-      var(--mantine-color-dark-6)
-    );
-  }
-
-  [data-mantine-color-scheme] &[data-active] {
+  &[data-active="true"] {
     color: var(--mantine-primary-color-filled);
   }
+}
+
+.settings {
+  cursor: pointer;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.icon {
+  width: rem(22);
+  height: rem(22);
 }
