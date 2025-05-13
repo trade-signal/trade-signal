@@ -14,7 +14,6 @@ import { IconLanguage, IconPalette } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useThemeSettingContext } from "@/app/providers/ThemeSettingProvider";
-import { useThemeIcon } from "@/app/hooks/useThemeIcon";
 import links, { type RouteLink } from "@/app/config/routes";
 
 import styles from "./index.module.css";
@@ -80,7 +79,6 @@ const Header = () => {
   const pathname = usePathname();
 
   const { openThemeMenu } = useThemeSettingContext();
-  const { logo, userIcon } = useThemeIcon();
 
   const items = links.map(link =>
     link.children ? (
@@ -138,7 +136,7 @@ const Header = () => {
       >
         <Image
           style={{ width: rem(32), height: rem(32) }}
-          src={logo}
+          src="/logo.svg"
           alt="TradeSignal logo"
         />
         <Title order={3} visibleFrom="xl">

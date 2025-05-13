@@ -1,4 +1,4 @@
-import { Column } from "@/apps/web/app/types/column.type";
+import { Column } from "@/app/types/column.type";
 import { Button, Group, Text } from "@mantine/core";
 import { IconSortAscending, IconSortDescending } from "@tabler/icons-react";
 

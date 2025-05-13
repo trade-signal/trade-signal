@@ -6,7 +6,7 @@ import "mantine-react-table/styles.css";
 
 import type { Metadata, Viewport } from "next";
 import { ColorSchemeScript } from "@mantine/core";
-import { Session } from "next-auth";
+
 import ClientProvider from "./providers/ClientProvider";
 
 export const metadata: Metadata = {
@@ -59,9 +59,9 @@ export const metadata: Metadata = {
   },
   robots: {
     index: true,
-    follow: true,
+    follow: true
   },
-  metadataBase: new URL("https://tradersignal.org"),
+  metadataBase: new URL("https://tradersignal.org")
 };
 
 export const viewport: Viewport = {
@@ -72,11 +72,9 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({
-  children,
-  session
+  children
 }: Readonly<{
   children: React.ReactNode;
-  session: Session;
 }>) {
   return (
     <html lang="zh-CN" suppressHydrationWarning>
@@ -84,7 +82,7 @@ export default function RootLayout({
         <ColorSchemeScript />
       </head>
       <body>
-        <ClientProvider session={session}>{children}</ClientProvider>
+        <ClientProvider>{children}</ClientProvider>
       </body>
     </html>
   );

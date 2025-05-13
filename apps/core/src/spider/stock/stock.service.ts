@@ -21,7 +21,7 @@ export class StockService implements OnModuleInit {
   // 初始化股票数据
   async onModuleInit() {
     try {
-      this.logger.log("Initializing stock data...");
+      this.logger.log("stock service init");
 
       await Promise.all([
         this.initStockBasic(),
@@ -31,15 +31,17 @@ export class StockService implements OnModuleInit {
         this.initStockPlateQuotes()
       ]);
 
-      this.logger.log("Stock data initialization completed");
+      this.logger.log("stock service init completed");
     } catch (error) {
-      this.logger.error(`Stock data initialization failed: ${error}`);
+      this.logger.error(`stock service init failed: ${error}`);
     }
   }
 
   // 收盘后运行：16:00
   @Cron("0 16 * * 1-5")
   async dailyUpdateHandle() {
+    this.logger.log("daily update stock data");
+
     await this.getStockQuotes();
     await this.getStockScreener();
     await this.getStockPlateQuotes();
@@ -48,6 +50,8 @@ export class StockService implements OnModuleInit {
   // 每天清晨 5:30 清理数据（在开盘前）
   @Cron("30 5 * * *")
   async dailyCleanHandle() {
+    this.logger.log("daily clean stock data");
+
     await this.cleanStockQuotes();
     await this.cleanStockScreener();
     await this.cleanStockPlateQuotes();
@@ -56,6 +60,8 @@ export class StockService implements OnModuleInit {
   // 每月1号运行：更新所有股票、板块基本信息
   @Cron("0 0 1 * *")
   async monthlyUpdateHandle() {
+    this.logger.log("monthly update stock data");
+
     await this.getStockBasic();
     await this.getStockPlateBasic();
   }
@@ -290,8 +296,14 @@ export class StockService implements OnModuleInit {
           batch.map(async item => {
             await this.prisma.stockPlateBasic.upsert({
               where: { code: item.code },
-              update: item,
-              create: item
+              update: {
+                ...item,
+                newPrice: undefined // 设置为 undefined 会被 Prisma 忽略
+              },
+              create: {
+                ...item,
+                newPrice: undefined // 设置为 undefined 会被 Prisma 忽略
+              }
             });
           })
         );
@@ -320,8 +332,10 @@ export class StockService implements OnModuleInit {
   // --------------------- 沪深京板块行情信息 ---------------------
 
   // 检查沪深京板块行情信息是否存在
-  async checkStockPlateQuotes() {
-    const stock = await this.prisma.stockPlateQuotes.findFirst({});
+  async checkStockPlateQuotes(date: string) {
+    const stock = await this.prisma.stockPlateQuotes.findFirst({
+      where: { date }
+    });
     return stock !== null;
   }
 
@@ -384,7 +398,8 @@ export class StockService implements OnModuleInit {
 
   // 初始化沪深京板块行情信息
   async initStockPlateQuotes() {
-    const hasStockPlateQuotes = await this.checkStockPlateQuotes();
+    const runDate = getRunDate();
+    const hasStockPlateQuotes = await this.checkStockPlateQuotes(runDate);
 
     if (hasStockPlateQuotes) {
       this.logger.log("stock plate quotes available! No need to fetch.");

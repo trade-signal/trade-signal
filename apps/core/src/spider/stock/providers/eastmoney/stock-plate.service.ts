@@ -5,7 +5,10 @@ import {
   getStockPlateBasic,
   getStockPlateQuotes
 } from "src/spider/api/eastmoney.stock";
-import { quotesPlateBaseIndicatorMapping } from "src/spider/api/eastmoney.stock.indicator";
+import {
+  quotesPlateBaseIndicatorMapping,
+  quotesPlateIndicatorMapping
+} from "src/spider/api/eastmoney.stock.indicator";
 import { getIndicatorFields, transformStockData } from "src/utils/tools";
 
 @Injectable()
@@ -37,7 +40,7 @@ export class EastMoneyStockPlateService {
     const currentDate = dayjs(date).format("YYYY-MM-DD");
 
     const data = await getStockPlateQuotes({
-      fields: getIndicatorFields(quotesPlateBaseIndicatorMapping)
+      fields: getIndicatorFields(quotesPlateIndicatorMapping)
     });
 
     if (data.length === 0) {
@@ -45,7 +48,7 @@ export class EastMoneyStockPlateService {
       return [];
     }
 
-    let list = transformStockData(data, quotesPlateBaseIndicatorMapping);
+    let list = transformStockData(data, quotesPlateIndicatorMapping);
     // 添加日期
     list = list.map(item => ({
       ...item,

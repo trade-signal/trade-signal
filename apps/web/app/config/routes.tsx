@@ -26,7 +26,6 @@ const links: RouteLink[] = [
       }
     ]
   },
-  { link: "/market", label: "市场" },
   { link: "/news", label: "新闻" },
   {
     link: "/more",

@@ -10,10 +10,16 @@ import {
   MouseEventParams
 } from "lightweight-charts";
 import dayjs from "dayjs";
-import { Group, rem, SegmentedControl, Stack, Tooltip } from "@mantine/core";
+import {
+  Group,
+  rem,
+  SegmentedControl,
+  Stack,
+  Tooltip,
+  useMantineColorScheme
+} from "@mantine/core";
 import { IconChartCandle } from "@tabler/icons-react";
 import { IconChartArea } from "@tabler/icons-react";
-import { useThemeIcon } from "@/app/hooks/useThemeIcon";
 import { SymbolChartData } from "@/app/types/chart.type";
 import { ChartTrends } from "@/app/types/chart.type";
 import { getThemeSetting } from "@/app/utils/theme";
@@ -141,7 +147,8 @@ const SymbolChart = (props: SymbolChartData) => {
 
   if (!code || !name || !stock || !trends || !trends.length) return null;
 
-  const { isDark } = useThemeIcon();
+  const { colorScheme } = useMantineColorScheme();
+  const isDark = colorScheme === "dark";
 
   const [chartType, setChartType] = useState<"area" | "candle">("area");
 

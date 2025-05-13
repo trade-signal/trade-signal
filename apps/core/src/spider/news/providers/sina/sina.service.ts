@@ -38,12 +38,12 @@ export class SinaService implements NewsProvider {
   }
 
   async getNews(): Promise<NewsItem[]> {
+    this.logger.debug(`开始获取新浪财经数据`);
+
     const result: NewsItem[] = [];
 
     let page = 1;
     let pageSize = 100;
-
-    this.logger.debug(`start getNews`);
 
     while (true) {
       try {
@@ -51,13 +51,15 @@ export class SinaService implements NewsProvider {
 
         if (!response.status || response.status.code !== 0) {
           this.logger.error(JSON.stringify(response));
-          throw new Error(`getNews error: ${response.msg || "unknown error"}`);
+          throw new Error(
+            `获取新浪财经数据失败: ${response.msg || "unknown error"}`
+          );
         }
 
         const { page_info, list } = (response.data && response.data.feed) || {};
 
         if (!page_info || !list || !Array.isArray(list)) {
-          throw new Error(`getNews error: data is empty`);
+          throw new Error(`获取新浪财经数据失败: 数据为空`);
         }
 
         result.push(...this.transformNews(list));
@@ -67,12 +69,12 @@ export class SinaService implements NewsProvider {
 
         page++;
       } catch (error) {
-        this.logger.error(`getNews error: ${error}`);
+        this.logger.error(`获取新浪财经数据失败: ${error}`);
         break;
       }
     }
 
-    this.logger.debug(`getNews end`);
+    this.logger.debug(`获取新浪财经数据完成`);
 
     return result;
   }
