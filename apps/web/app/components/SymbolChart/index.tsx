@@ -103,7 +103,6 @@ const createTooltip = (props: TooltipProps) => {
     const series = Array.from(param.seriesData.values())[0];
     if (!series) return;
 
-    // TODO
     // @ts-ignore
     const price = series.value ?? series.close;
     if (typeof price !== "number") return;

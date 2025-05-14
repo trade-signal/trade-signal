@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { get } from "@trade-signal/shared";
+import { formatDateDiff, get } from "@trade-signal/shared";
 import { StockScreener } from "@prisma/client";
 import { Tabs } from "@mantine/core";
 
@@ -12,14 +12,12 @@ import { getOrderBy } from "./StockListConfig";
 import { StockFilters, useStockContext } from "./StockContext";
 import { TAB_CONFIGS } from "./StockListConfig";
 
-const StockList = () => {
+const StockList = props => {
   const { filters, setFilters } = useStockContext();
   const [searchValue, setSearchValue] = useState(filters.search || "");
 
   const [stockList, setStockList] = useState<StockScreener[]>([]);
   const [statistics, setStatistics] = useState<{ date: string }>({ date: "" });
-
-  const [refreshTime, setRefreshTime] = useState<string | undefined>();
 
   const [loading, { open, close }] = useDisclosure(false);
   const [isFirstLoading, setIsFirstLoading] = useState(true);
@@ -108,6 +106,8 @@ const StockList = () => {
     }
   }, [page]);
 
+  const latestTime = stockList[0]?.createdAt;
+
   return (
     <Tabs defaultValue="overview">
       <Tabs.List>
@@ -121,13 +121,14 @@ const StockList = () => {
       {TAB_CONFIGS.map(tab => (
         <Tabs.Panel key={tab.value} value={tab.value}>
           <DataTable
+            height="calc(100vh - 280px)"
             columns={tab.columns}
             data={stockList}
             firstLoading={isFirstLoading}
             loading={loading}
             total={total}
             statisticsDate={statistics.date}
-            refreshTime={refreshTime}
+            refreshTime={formatDateDiff(latestTime).date}
             orderBy={filters.orderBy}
             order={filters.order}
             search={searchValue}

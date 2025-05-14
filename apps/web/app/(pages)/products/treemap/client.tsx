@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import dayjs from "dayjs";
 import { useViewportSize } from "@mantine/hooks";
 import {
   Skeleton,
@@ -10,10 +9,11 @@ import {
   Group,
   Text,
   Stack,
-  List
+  List,
+  Tooltip
 } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
-import { clientGet } from "@trade-signal/shared";
+import { clientGet, formatDateDiff } from "@trade-signal/shared";
 import { getCurrentThemeColor } from "@/app/utils/theme";
 import { StockTreemap } from "@/app/api/(stock)/stock-treemap/list/route";
 import {
@@ -26,7 +26,7 @@ import {
 import ScreenerSelect from "@/app/components/ScreenerSelect";
 import { TreemapChart } from "./components/TreemapChart";
 
-const TreemapChartClient = () => {
+const TreemapChartClient = props => {
   const { width, height } = useViewportSize();
 
   const currentThemeColor = getCurrentThemeColor();
@@ -69,14 +69,17 @@ const TreemapChartClient = () => {
     );
   }
 
+  const { date, relativeTime } = formatDateDiff(data[0]?.createdAt);
+
   return (
     <Paper mt={20} bg="transparent">
       <Group align="flex-start">
         <Paper p="xs" style={{ width: 200 }}>
-          <Text span size="sm">
-            {/* todo: 数据更新时间 */}
-            数据更新时间：{dayjs().format("MM-DD HH:mm")}
-          </Text>
+          <Tooltip position="top-start" label={date}>
+            <Text span size="sm">
+              数据更新时间：{relativeTime}
+            </Text>
+          </Tooltip>
 
           <Stack mt={20}>
             <ScreenerSelect

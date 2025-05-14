@@ -9,8 +9,8 @@ import { NewsService } from "./news.service";
 
 @Module({
   imports: [],
-  controllers: [NewsController],
   providers: [NewsService, PrismaService, SinaService, ClsService],
-  exports: [NewsService]
+  exports: [NewsService],
+  controllers: [NewsController]
 })
 export class NewsModule {}

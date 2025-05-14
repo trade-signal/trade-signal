@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
-import { get } from "@trade-signal/shared";
+import { formatDateDiff, get } from "@trade-signal/shared";
 import { News } from "@prisma/client";
 import { useDisclosure } from "@mantine/hooks";
 import DataTable from "@/app/components/DataTable";
@@ -10,7 +10,7 @@ import DataTable from "@/app/components/DataTable";
 import { useNewsContext } from "./NewsContext";
 import { COLUMNS } from "./NewsListConfig";
 
-const NewsList = () => {
+const NewsList = props => {
   const { filters } = useNewsContext();
 
   const [newsList, setNewsList] = useState<News[]>([]);
@@ -73,13 +73,14 @@ const NewsList = () => {
     }
   }, [page]);
 
+  const latestTime = newsList[0]?.createdAt;
+
   return (
     <DataTable
-      height="calc(100vh - 215px)"
+      height="calc(100vh - 255px)"
       columns={COLUMNS}
       data={newsList}
-      // todo: 数据更新时间
-      refreshTime={dayjs().format("MM-DD HH:mm")}
+      refreshTime={formatDateDiff(latestTime).date}
       firstLoading={isFirstLoading}
       loading={loading}
       total={total}

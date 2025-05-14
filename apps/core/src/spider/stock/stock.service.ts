@@ -406,6 +406,6 @@ export class StockService implements OnModuleInit {
       return;
     }
 
-    await this.getStockPlateQuotes();
+    await this.getStockPlateQuotes(runDate);
   }
 }

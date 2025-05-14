@@ -30,14 +30,22 @@ export default function ClientProvider({
 
   if (isMobile) {
     return (
-      <MantineProvider theme={theme} colorSchemeManager={colorSchemeManager}>
+      <MantineProvider
+        defaultColorScheme="dark"
+        theme={theme}
+        colorSchemeManager={colorSchemeManager}
+      >
         <AppContentMobile />
       </MantineProvider>
     );
   }
 
   return (
-    <MantineProvider theme={theme} colorSchemeManager={colorSchemeManager}>
+    <MantineProvider
+      defaultColorScheme="dark"
+      theme={theme}
+      colorSchemeManager={colorSchemeManager}
+    >
       <QueryClientProvider client={queryClient}>
         <Notifications />
         <SpotlightModal />
