@@ -61,14 +61,13 @@ RUN \
 FROM deps AS prisma-builder
 WORKDIR /app
 
-# # 复制整个 packages/database 目录，确保包含所有必要文件
-# COPY packages/database ./packages/database
+# 复制 prisma 目录
+COPY prisma ./prisma
 
-# # 生成 Prisma 客户端，并找到正确的 .prisma 目录
-# RUN cd packages/database && \
-#   npx prisma generate && \
-#   mkdir -p /app/node_modules/.prisma && \
-#   find /app -name ".prisma" -type d -exec cp -r {} /app/node_modules/ \;
+# 生成 Prisma 客户端
+RUN npx prisma generate && \
+    mkdir -p /app/node_modules/.prisma && \
+    find /app -name ".prisma" -type d -exec cp -r {} /app/node_modules/ \;
 
 #------------------------------------------------------------------
 # Build Web: 构建 Next.js 应用
