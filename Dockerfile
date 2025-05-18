@@ -57,6 +57,21 @@ RUN npx prisma generate && \
   find /app -name ".prisma" -type d -exec cp -r {} /app/node_modules/ \;
 
 #------------------------------------------------------------------
+# Packages: 构建 packages 模块
+#------------------------------------------------------------------
+FROM deps AS packages-builder
+WORKDIR /app
+
+# 复制 packages 目录
+COPY packages ./packages
+
+# 构建 packages 模块
+RUN pnpm packages:build
+
+# 移动 packages 目录到 node_modules 目录
+RUN find /app -name "node_modules" -type d -exec mv {} /app/node_modules/ \;
+
+#------------------------------------------------------------------
 # Build Web: 构建 Next.js 应用
 #------------------------------------------------------------------
 FROM deps AS web-builder

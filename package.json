@@ -15,17 +15,11 @@
     "lint": "turbo run lint",
     "format": "turbo run format",
     "clean": "turbo run clean",
-    "shared:build": "turbo run build --filter @trade-signal/shared",
-    "shared:dev": "turbo run dev --filter @trade-signal/shared",
-    "shared:lint": "turbo run lint --filter @trade-signal/shared",
-    "shared:format": "turbo run format --filter @trade-signal/shared",
-    "shared:clean": "turbo run clean --filter @trade-signal/shared",
-    "types:build": "turbo run build --filter @trade-signal/types",
-    "types:dev": "turbo run dev --filter @trade-signal/types",
-    "types:start": "turbo run start --filter @trade-signal/types",
-    "types:lint": "turbo run lint --filter @trade-signal/types",
-    "types:format": "turbo run format --filter @trade-signal/types",
-    "types:clean": "turbo run clean --filter @trade-signal/types"
+    "packages:build": "turbo run build --filter=./packages/*",
+    "packages:dev": "turbo run dev --filter=./packages/*",
+    "packages:lint": "turbo run lint --filter=./packages/*",
+    "packages:format": "turbo run format --filter=./packages/*",
+    "packages:clean": "turbo run clean --filter=./packages/*"
   },
   "packageManager": "pnpm@9.4.0",
   "engines": {
