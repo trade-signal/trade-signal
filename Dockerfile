@@ -3,19 +3,6 @@
 #------------------------------------------------------------------
 FROM node:20-alpine AS base
 
-# 系统配置
-RUN apk add --no-cache \
-  python3 \
-  py3-pip \
-  make \
-  g++ \
-  git \
-  openssl \
-  tzdata \
-  libc6-compat \
-  eudev-dev \
-  linux-headers
-
 # 安装 pnpm
 RUN npm install -g pnpm
 
@@ -66,8 +53,8 @@ COPY prisma ./prisma
 
 # 生成 Prisma 客户端
 RUN npx prisma generate && \
-    mkdir -p /app/node_modules/.prisma && \
-    find /app -name ".prisma" -type d -exec cp -r {} /app/node_modules/ \;
+  mkdir -p /app/node_modules/.prisma && \
+  find /app -name ".prisma" -type d -exec cp -r {} /app/node_modules/ \;
 
 #------------------------------------------------------------------
 # Build Web: 构建 Next.js 应用

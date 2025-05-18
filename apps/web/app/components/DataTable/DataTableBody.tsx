@@ -1,5 +1,5 @@
 import { Table, Text } from "@mantine/core";
-import { Column } from "@/app/types/column.type";
+import { Column } from "@trade-signal/types";
 import { generateRowKey } from "@/app/utils/renders";
 
 interface DataTableBodyProps<T> {

@@ -12,7 +12,7 @@ import { getOrderBy } from "./StockListConfig";
 import { StockFilters, useStockContext } from "./StockContext";
 import { TAB_CONFIGS } from "./StockListConfig";
 
-const StockList = props => {
+const StockList = () => {
   const { filters, setFilters } = useStockContext();
   const [searchValue, setSearchValue] = useState(filters.search || "");
 

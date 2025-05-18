@@ -55,12 +55,13 @@ export const isTradingTime = () => {
 };
 
 // 格式化日期
-export const formatDate = (value: string) => dayjs(value).format("YYYY-MM-DD");
-export const formatDateE = (value: string) =>
+export const formatDate = (value: string | Date) =>
+  dayjs(value).format("YYYY-MM-DD");
+export const formatDateE = (value: string | Date) =>
   dayjs(value).format("YYYY-MM-DD HH:mm:ss");
 
 // 格式化日期差
-export const formatDateDiff = (value: string) => {
+export const formatDateDiff = (value: string | Date) => {
   const now = dayjs();
   const date = dayjs(value);
   const diffMinutes = now.diff(date, "minutes");

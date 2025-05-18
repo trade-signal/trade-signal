@@ -10,7 +10,7 @@ import DataTable from "@/app/components/DataTable";
 import { useNewsContext } from "./NewsContext";
 import { COLUMNS } from "./NewsListConfig";
 
-const NewsList = props => {
+const NewsList = () => {
   const { filters } = useNewsContext();
 
   const [newsList, setNewsList] = useState<News[]>([]);

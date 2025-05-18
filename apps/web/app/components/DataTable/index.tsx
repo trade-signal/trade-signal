@@ -1,5 +1,5 @@
 import { Box, LoadingOverlay } from "@mantine/core";
-import { Column } from "@/app/types/column.type";
+import { Column } from "@trade-signal/types";
 
 import DataTableContainer from "./DataTableContainer";
 import DataTableHeader from "./DataTableHeader";

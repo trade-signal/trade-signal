@@ -20,8 +20,7 @@ import {
 } from "@mantine/core";
 import { IconChartCandle } from "@tabler/icons-react";
 import { IconChartArea } from "@tabler/icons-react";
-import { SymbolChartData } from "@/app/types/chart.type";
-import { ChartTrends } from "@/app/types/chart.type";
+import { SymbolChartData, ChartTrends } from "@trade-signal/types";
 import { getThemeSetting } from "@/app/utils/theme";
 import { hex2rgba } from "@trade-signal/shared";
 

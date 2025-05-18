@@ -37,37 +37,7 @@ npm install && npm run dev
 
 ## 生产环境
 
-### 使用 DockerHub 镜像
-
-最简单的方式是直接使用 DockerHub 上的镜像：
-
-```bash
-docker run -d -p 3000:3000 \
-  --env-file .env.production \
-  --name trade-signal \
-  trade-signal:latest
-```
-
-或者使用环境变量：
-
-```bash
-docker run -d -p 3000:3000 \
-  -e DATABASE_URL=${DATABASE_URL} \
-  -e DIRECT_URL=${DIRECT_URL} \
-  -e GITHUB_ID=${GITHUB_ID} \
-  -e GITHUB_SECRET=${GITHUB_SECRET} \
-  -e GOOGLE_ID=${GOOGLE_ID} \
-  -e GOOGLE_SECRET=${GOOGLE_SECRET} \
-  -e NEXTAUTH_SECRET=${NEXTAUTH_SECRET} \
-  -e NEXTAUTH_URL=${NEXTAUTH_URL} \
-  -e POSTGRES_USER=${POSTGRES_USER} \
-  -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
-  -e POSTGRES_DB=${POSTGRES_DB} \
-  --name trade-signal \
-  trade-signal:latest
-```
-
-### 本地构建（可选）
+### 本地构建
 
 如果您想自行构建镜像：
 

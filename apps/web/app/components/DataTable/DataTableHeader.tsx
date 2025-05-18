@@ -1,6 +1,6 @@
 import { Table, Group, TextInput } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
-import { Column } from "@/app/types/column.type";
+import { Column } from "@trade-signal/types";
 import { transformAlign } from "@/app/utils/renders";
 
 import DataTableColumnSortCell from "./DataTableColumnSortCell";

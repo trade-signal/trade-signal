@@ -1,5 +1,5 @@
 import { StockScreener } from "@prisma/client";
-import { Column } from "@/app/types/column.type";
+import { Column } from "@trade-signal/types";
 
 import { renderSignal, renderPercent } from "@/app/utils/renders";
 import {

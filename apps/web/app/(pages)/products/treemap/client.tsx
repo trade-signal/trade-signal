@@ -26,7 +26,7 @@ import {
 import ScreenerSelect from "@/app/components/ScreenerSelect";
 import { TreemapChart } from "./components/TreemapChart";
 
-const TreemapChartClient = props => {
+const TreemapChartClient = () => {
   const { width, height } = useViewportSize();
 
   const currentThemeColor = getCurrentThemeColor();

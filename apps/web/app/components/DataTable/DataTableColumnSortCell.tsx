@@ -1,4 +1,4 @@
-import { Column } from "@/app/types/column.type";
+import { Column } from "@trade-signal/types";
 import { Button, Group, Text } from "@mantine/core";
 import { IconSortAscending, IconSortDescending } from "@tabler/icons-react";
 
