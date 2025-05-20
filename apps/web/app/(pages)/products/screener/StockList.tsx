@@ -121,7 +121,7 @@ const StockList = () => {
       {TAB_CONFIGS.map(tab => (
         <Tabs.Panel key={tab.value} value={tab.value}>
           <DataTable
-            height="calc(100vh - 280px)"
+            height="calc(100vh - 230px)"
             columns={tab.columns}
             data={stockList}
             firstLoading={isFirstLoading}

@@ -4,7 +4,6 @@ import { useMemo, useState } from "react";
 import { useViewportSize } from "@mantine/hooks";
 import {
   Skeleton,
-  SegmentedControl,
   Paper,
   Group,
   Text,
@@ -14,7 +13,6 @@ import {
 } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { clientGet, formatDateDiff } from "@trade-signal/shared";
-import { getCurrentThemeColor } from "@/app/utils/theme";
 import { StockTreemap } from "@/app/api/(stock)/stock-treemap/list/route";
 import {
   MARKET_OPTIONS,
@@ -28,8 +26,6 @@ import { TreemapChart } from "./components/TreemapChart";
 
 const TreemapChartClient = () => {
   const { width, height } = useViewportSize();
-
-  const currentThemeColor = getCurrentThemeColor();
 
   const [marketType, setMarketType] = useState("all");
   const [sortType, setSortType] = useState("totalMarketCap");

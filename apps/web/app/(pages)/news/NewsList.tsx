@@ -77,7 +77,7 @@ const NewsList = () => {
 
   return (
     <DataTable
-      height="calc(100vh - 255px)"
+      height="calc(100vh - 210px)"
       columns={COLUMNS}
       data={newsList}
       refreshTime={formatDateDiff(latestTime).date}

@@ -2,7 +2,6 @@ import { AppShell, rem } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 
 import Header from "./Header";
-import Footer from "./Footer";
 
 function AppContent({ children }: { children: React.ReactNode }) {
   const [collapsed, { open, close }] = useDisclosure(true);
@@ -27,10 +26,6 @@ function AppContent({ children }: { children: React.ReactNode }) {
       </AppShell.Header>
 
       <AppShell.Main>{children}</AppShell.Main>
-
-      <AppShell.Footer>
-        <Footer />
-      </AppShell.Footer>
     </AppShell>
   );
 }
