@@ -15,11 +15,11 @@
     "lint": "turbo run lint",
     "format": "turbo run format",
     "clean": "turbo run clean",
-    "packages:build": "turbo run build --filter=./packages/*",
-    "packages:dev": "turbo run dev --filter=./packages/*",
-    "packages:lint": "turbo run lint --filter=./packages/*",
-    "packages:format": "turbo run format --filter=./packages/*",
-    "packages:clean": "turbo run clean --filter=./packages/*"
+    "packages:build": "turbo run build --filter ./packages/*",
+    "packages:dev": "turbo run dev --filter ./packages/*",
+    "packages:lint": "turbo run lint --filter ./packages/*",
+    "packages:format": "turbo run format --filter ./packages/*",
+    "packages:clean": "turbo run clean --filter ./packages/*"
   },
   "packageManager": "pnpm@9.4.0",
   "engines": {

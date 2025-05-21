@@ -1,5 +1,5 @@
 .footer {
-  margin-top: 25vh;
+  margin-top: 30vh;
   padding-top: calc(var(--mantine-spacing-xl) * 2);
   padding-bottom: calc(var(--mantine-spacing-xl) * 2);
   background-color: light-dark(

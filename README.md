@@ -37,17 +37,9 @@ npm install && npm run dev
 
 ## 生产环境
 
-### 本地构建
+您可以直接运行 `npm run build` 构建生产环境，然后运行 `npm run start` 启动生产环境。
 
-如果您想自行构建镜像：
-
-```bash
-docker build -t trade-signal:latest .
-```
-
-然后按上述方式运行容器。
-
-您也可以使用 docker-compose：
+您也可以使用 docker-compose 启动生产环境：
 
 ```bash
 docker-compose \

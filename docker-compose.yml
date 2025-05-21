@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+  # 前端服务
   web:
     build:
       context: .
@@ -10,18 +11,13 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      # 数据库
       - DATABASE_URL=${DATABASE_URL}
       - DIRECT_URL=${DATABASE_URL}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-      # 认证  
       - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
       - NEXTAUTH_URL=${NEXTAUTH_URL}
-      # 后端
-      - BACKEND_API_URL=${BACKEND_API_URL}
+      - BACKEND_API_URL=http://core:4000
 
+  # 后端服务
   core:
     build:
       context: .
@@ -31,15 +27,9 @@ services:
       - "4000:4000"
     environment:
       - NODE_ENV=production
-      # 数据库  
       - DATABASE_URL=${DATABASE_URL}
       - DIRECT_URL=${DATABASE_URL}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-      # 缓存
       - REDIS_URL=${REDIS_URL}
-      # 云存储
       - CLOUDFLARE_R2_DOMAIN=${CLOUDFLARE_R2_DOMAIN}
       - CLOUDFLARE_R2_ACCOUNT_ID=${CLOUDFLARE_R2_ACCOUNT_ID}
       - CLOUDFLARE_R2_ACCESS_KEY_ID=${CLOUDFLARE_R2_ACCESS_KEY_ID}
