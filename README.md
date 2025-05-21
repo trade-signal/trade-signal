@@ -31,13 +31,13 @@ npx prisma db push
 
 安装依赖并启动服务
 
-````bash
-npm install && npm run dev
-````
+```bash
+pnpm install && pnpm dev
+```
 
 ## 生产环境
 
-您可以直接运行 `npm run build` 构建生产环境，然后运行 `npm run start` 启动生产环境。
+您可以直接运行 `pnpm build` 构建生产环境，然后运行 `pnpm start` 启动生产环境。
 
 您也可以使用 docker-compose 启动生产环境：
 
