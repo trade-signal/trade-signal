@@ -22,7 +22,8 @@
     "packages:dev": "turbo run dev --filter ./packages/*",
     "packages:lint": "turbo run lint --filter ./packages/*",
     "packages:format": "turbo run format --filter ./packages/*",
-    "packages:clean": "turbo run clean --filter ./packages/*"
+    "packages:clean": "turbo run clean --filter ./packages/*",
+    "agents": "dotenv -e .env -- pnpm --filter @trade-signal/agents start:cli"
   },
   "packageManager": "pnpm@9.4.0",
   "engines": {
