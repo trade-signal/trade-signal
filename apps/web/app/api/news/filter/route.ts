@@ -1,5 +1,6 @@
 import prisma from "@/app/utils/prisma";
 import dayjs from "dayjs";
+import { success } from "@/app/utils/response";
 
 const getUniqueItems = (
   data: { categories: string[] }[],
@@ -40,8 +41,7 @@ export const GET = async () => {
     }
   });
 
-  return Response.json({
-    success: true,
+  return success(null, {
     data: {
       sina: {
         categories: getUniqueItems(sinaNews, "categories")

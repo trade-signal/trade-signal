@@ -1,4 +1,5 @@
 import prisma from "@/app/utils/prisma";
+import { success } from "@/app/utils/response";
 
 export const GET = async () => {
   const maxDate = await prisma.stockScreener.findFirst({
@@ -33,8 +34,7 @@ export const GET = async () => {
     return acc;
   }, new Set<string>());
 
-  return Response.json({
-    success: true,
+  return success(null, {
     data: {
       industries: data.map(item => item.industry),
       concepts: Array.from(concepts),

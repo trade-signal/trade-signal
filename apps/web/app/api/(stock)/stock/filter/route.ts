@@ -1,4 +1,5 @@
 import prisma from "@/app/utils/prisma";
+import { success } from "@/app/utils/response";
 
 export const GET = async () => {
   const data = await prisma.stockBasic.findMany({
@@ -7,8 +8,7 @@ export const GET = async () => {
     orderBy: { industry: "asc" }
   });
 
-  return Response.json({
-    success: true,
+  return success(null, {
     data: {
       industries: data.map(item => item.industry)
     }

@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import prisma from "@/app/utils/prisma";
 import { StockQuotes, StockPlateQuotes, Prisma } from "@prisma/client";
 import { getStockCodePrefixes, MarketType } from "@trade-signal/shared";
+import { success } from "@/app/utils/response";
 
 export interface StockTreemap extends StockPlateQuotes {
   children: StockQuotes[];
@@ -62,8 +63,7 @@ export const GET = async (request: NextRequest) => {
     }))
     .filter(item => item.children.length);
 
-  return Response.json({
-    success: true,
+  return success(null, {
     data: treemapData,
     statistics: {
       date: maxDate?.date

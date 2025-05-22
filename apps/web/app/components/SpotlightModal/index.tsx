@@ -1,54 +1,28 @@
-import { IconSearch, IconNews, IconScreenShare } from "@tabler/icons-react";
-import { Spotlight, SpotlightActionData } from "@mantine/spotlight";
+import { IconSearch } from "@tabler/icons-react";
+import { Spotlight } from "@mantine/spotlight";
 import { rem } from "@mantine/core";
-import { useRouter } from "next/navigation";
 
-const useActions = () => {
-  const router = useRouter();
-
-  const actions: SpotlightActionData[] = [
-    {
-      id: "stock",
-      label: "股票",
-      description: "搜索股票代码/名称",
-      onClick: () => router.push("/stock"),
-      leftSection: (
-        <IconScreenShare
-          style={{ width: rem(24), height: rem(24) }}
-          stroke={1.5}
-        />
-      )
-    },
-    {
-      id: "news",
-      label: "新闻",
-      description: "搜索新闻",
-      onClick: () => router.push("/news"),
-      leftSection: (
-        <IconNews style={{ width: rem(24), height: rem(24) }} stroke={1.5} />
-      )
-    }
-  ];
-
-  return actions;
-};
+import { useSpotlightSearch } from "@/app/hooks/useSpotlightSearch";
 
 const SpotlightModal = () => {
-  const actions = useActions();
+  const { search, setSearch, actions } = useSpotlightSearch();
 
   return (
     <Spotlight
       actions={actions}
-      nothingFound="Nothing found..."
-      highlightQuery
+      nothingFound="未找到相关内容"
+      scrollable
       searchProps={{
+        size: "sm",
         leftSection: (
           <IconSearch
             style={{ width: rem(20), height: rem(20) }}
             stroke={1.5}
           />
         ),
-        placeholder: "搜索..."
+        placeholder: "请输入股票代码或名称",
+        value: search,
+        onChange: e => setSearch(e.target.value)
       }}
     />
   );

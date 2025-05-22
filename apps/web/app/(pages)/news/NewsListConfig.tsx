@@ -109,7 +109,10 @@ const formatStocks = (stocks: Stock[], row: News) => {
                 {isCn ? (
                   <Text size="xs">
                     代码：
-                    <Link href={`/stock?symbol=${stock.code}`} target="_blank">
+                    <Link
+                      href={`/products/screener?symbol=${stock.code}`}
+                      target="_blank"
+                    >
                       {stock.code}
                     </Link>
                   </Text>
