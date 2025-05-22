@@ -1,6 +1,10 @@
+const checkIsEnabled = (value: string) => {
+  return value ? value === "true" : true;
+};
+
 export default () => ({
   nodeEnv: process.env.NODE_ENV,
   scheduled: {
-    enabled: process.env.SCHEDULED_ENABLED === "true" || false
+    enabled: checkIsEnabled(process.env.SCHEDULED_ENABLED)
   }
 });

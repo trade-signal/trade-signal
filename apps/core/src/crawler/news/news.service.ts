@@ -1,23 +1,26 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
 import { getRunDate } from "@trade-signal/shared";
+import { CronJob } from "cron";
+import { SchedulerRegistry } from "@nestjs/schedule";
+import { ConfigService } from "@nestjs/config";
 import dayjs from "dayjs";
 
 import { PrismaService } from "src/common/database/prisma.service";
 import { SinaService } from "./providers/sina/sina.service";
 import { ClsService } from "./providers/cls/cls.service";
-import { Cron } from "@nestjs/schedule";
 
 @Injectable()
 export class NewsService {
   private readonly logger = new Logger(NewsService.name);
-  private readonly enableScheduled: boolean;
+
+  private enableScheduled: boolean;
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly sinaService: SinaService,
     private readonly clsService: ClsService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
+    private readonly schedulerRegistry: SchedulerRegistry
   ) {
     this.enableScheduled = this.configService.get("scheduled.enabled");
   }
@@ -28,58 +31,59 @@ export class NewsService {
     await this.initNews();
 
     this.logger.log("news service init completed");
-  }
 
-  // 工作日运行:
-  // 1. 交易时段 (9:00-11:30, 13:00-15:00) 每30分钟抓取一次
-  @Cron("*/30 9-11,13-14 * * 1-5")
-  async workdayTradingHandle() {
     if (!this.enableScheduled) {
-      this.logger.debug(
-        "Scheduled tasks disabled, skipping workday trading update"
-      );
+      this.logger.log("scheduled disabled, skip cron job");
       return;
     }
-    this.logger.log("workday update news");
-    await this.getNews();
+
+    this.initCronJob();
   }
 
-  // 2. 非交易时段 (8:30-9:00, 11:30-13:00, 15:00-21:30) 每15分钟抓取一次
-  @Cron("*/15 8,12,15-21 * * 1-5")
-  async workdayNoTradingHandle() {
+  private async initCronJob() {
     if (!this.enableScheduled) {
-      this.logger.debug(
-        "Scheduled tasks disabled, skipping workday non-trading update"
-      );
+      this.logger.log("scheduled disabled, skip cron job");
       return;
     }
-    this.logger.log("workday update news");
-    await this.getNews();
-  }
 
-  // 非工作日运行: 每小时抓取一次
-  // 周末 (周六、周日 9:00-21:00) 每小时抓取一次
-  @Cron("0 9-21 * * 0,6")
-  async nonWorkdayHandle() {
-    if (!this.enableScheduled) {
-      this.logger.debug(
-        "Scheduled tasks disabled, skipping non-workday update"
-      );
-      return;
-    }
-    this.logger.log("non workday update news");
-    await this.getNews();
-  }
+    this.logger.log("init cron job");
 
-  // 每天清晨 5:30 清理数据（在开盘前）
-  @Cron("30 5 * * *")
-  async dailyCleanHandle() {
-    if (!this.enableScheduled) {
-      this.logger.debug("Scheduled tasks disabled, skipping daily clean");
-      return;
-    }
-    this.logger.log("daily clean news");
-    await this.cleanNews();
+    // 工作日运行:
+    // 1. 交易时段 (9:00-11:30, 13:00-15:00) 每30分钟抓取一次
+    this.schedulerRegistry.addCronJob(
+      "news-workdayTrading",
+      new CronJob("*/30 9-11,13-14 * * 1-5", () => {
+        this.logger.log("workday update news");
+        this.getNews();
+      })
+    );
+    // 2. 非交易时段 (8:30-9:00, 11:30-13:00, 15:00-21:30) 每15分钟抓取一次
+    this.schedulerRegistry.addCronJob(
+      "news-workdayNoTrading",
+      new CronJob("*/15 8,12,15-21 * * 1-5", () => {
+        this.logger.log("workday no trading update news");
+        this.getNews();
+      })
+    );
+
+    // 非工作日运行:
+    // 1. 周末 (周六、周日 9:00-21:00) 每小时抓取一次
+    this.schedulerRegistry.addCronJob(
+      "news-nonWorkday",
+      new CronJob("0 9-21 * * 0,6", () => {
+        this.logger.log("non workday update news");
+        this.getNews();
+      })
+    );
+
+    // 每天凌晨 5:30 清理数据（在开盘前）
+    this.schedulerRegistry.addCronJob(
+      "news-dailyClean",
+      new CronJob("30 5 * * *", () => {
+        this.logger.log("daily clean news");
+        this.cleanNews();
+      })
+    );
   }
 
   // --------------------- 新闻信息 ---------------------

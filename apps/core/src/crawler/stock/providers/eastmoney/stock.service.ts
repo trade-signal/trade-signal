@@ -1,13 +1,13 @@
 import { Injectable, Logger } from "@nestjs/common";
 import dayjs from "dayjs";
 
-import { getStockBasic, getStockQuotes } from "src/spider/api/eastmoney.stock";
+import { getStockBasic, getStockQuotes } from "src/crawler/api/eastmoney.stock";
 import {
   quotesBaseIndicatorMapping,
   quotesIndicatorMapping
-} from "src/spider/api/eastmoney.stock.indicator";
-import { getStockScreener } from "src/spider/api/eastmoney.screener";
-import { selectionIndicatorMapping } from "src/spider/api/eastmoney.screener.indicator";
+} from "src/crawler/api/eastmoney.stock.indicator";
+import { getStockScreener } from "src/crawler/api/eastmoney.screener";
+import { selectionIndicatorMapping } from "src/crawler/api/eastmoney.screener.indicator";
 
 import { getIndicatorFields, transformStockData } from "src/utils/tools";
 

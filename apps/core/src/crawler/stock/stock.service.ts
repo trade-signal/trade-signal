@@ -1,5 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
-import { Cron } from "@nestjs/schedule";
+import { CronJob } from "cron";
+import { SchedulerRegistry } from "@nestjs/schedule";
+import { ConfigService } from "@nestjs/config";
 import { getRunDate } from "@trade-signal/shared";
 
 import { PrismaService } from "src/common/database/prisma.service";
@@ -12,11 +14,17 @@ export class StockService implements OnModuleInit {
 
   private readonly BATCH_SIZE = 200;
 
+  private enableScheduled: boolean;
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly eastMoneyStockService: EastMoneyStockService,
-    private readonly eastMoneyStockPlateService: EastMoneyStockPlateService
-  ) {}
+    private readonly eastMoneyStockPlateService: EastMoneyStockPlateService,
+    private readonly configService: ConfigService,
+    private readonly schedulerRegistry: SchedulerRegistry
+  ) {
+    this.enableScheduled = this.configService.get("scheduled.enabled");
+  }
 
   // 初始化股票数据
   async onModuleInit() {
@@ -32,47 +40,60 @@ export class StockService implements OnModuleInit {
       ]);
 
       this.logger.log("stock service init completed");
+
+      this.initCronJob();
     } catch (error) {
       this.logger.error(`stock service init failed: ${error}`);
     }
   }
 
-  // 工作日运行：(9:00-11:30, 13:00-15:00) 每30分钟抓取一次
-  @Cron("*/30 9-11,13-14 * * 1-5")
-  async workdayTradingHandle() {
-    this.logger.log("workday trading update stock data");
+  private async initCronJob() {
+    if (!this.enableScheduled) {
+      this.logger.log("scheduled disabled, skip cron job");
+      return;
+    }
 
-    await this.getStockQuotes();
-    await this.getStockPlateQuotes();
-  }
+    this.logger.log("init cron job");
 
-  // 收盘后运行：16:00
-  @Cron("0 16 * * 1-5")
-  async dailyUpdateHandle() {
-    this.logger.log("daily update stock data");
+    // 工作日运行：(9:00-11:30, 13:00-15:00) 每30分钟抓取一次
+    this.schedulerRegistry.addCronJob(
+      "stock-workdayTrading",
+      new CronJob("*/30 9-11,13-14 * * 1-5", () => {
+        this.logger.log("workday trading update stock data");
+        this.getStockQuotes();
+        this.getStockPlateQuotes();
+      })
+    );
 
-    await this.getStockQuotes();
-    await this.getStockScreener();
-    await this.getStockPlateQuotes();
-  }
+    // 收盘后运行：16:00
+    this.schedulerRegistry.addCronJob(
+      "stock-dailyUpdate",
+      new CronJob("0 16 * * 1-5", () => {
+        this.logger.log("daily update stock data");
+        this.getStockQuotes();
+        this.getStockScreener();
+        this.getStockPlateQuotes();
+      })
+    );
 
-  // 每天清晨 5:30 清理数据（在开盘前）
-  @Cron("30 5 * * *")
-  async dailyCleanHandle() {
-    this.logger.log("daily clean stock data");
+    // 每月1号运行：更新所有股票、板块基本信息
+    this.schedulerRegistry.addCronJob(
+      "stock-monthlyUpdate",
+      new CronJob("0 0 1 * *", () => {
+        this.logger.log("monthly update stock data");
+      })
+    );
 
-    await this.cleanStockQuotes();
-    await this.cleanStockScreener();
-    await this.cleanStockPlateQuotes();
-  }
-
-  // 每月1号运行：更新所有股票、板块基本信息
-  @Cron("0 0 1 * *")
-  async monthlyUpdateHandle() {
-    this.logger.log("monthly update stock data");
-
-    await this.getStockBasic();
-    await this.getStockPlateBasic();
+    // 每天凌晨 5:30 清理数据（在开盘前）
+    this.schedulerRegistry.addCronJob(
+      "stock-dailyClean",
+      new CronJob("30 5 * * *", () => {
+        this.logger.log("daily clean stock data");
+        this.cleanStockQuotes();
+        this.cleanStockScreener();
+        this.cleanStockPlateQuotes();
+      })
+    );
   }
 
   // --------------------- 股票基本信息 ---------------------

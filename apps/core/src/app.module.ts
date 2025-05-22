@@ -4,8 +4,8 @@ import { ConfigModule } from "@nestjs/config";
 
 import configuration from "./common/configuration";
 
-import { StockModule } from "./spider/stock/stock.module";
-import { NewsModule } from "./spider/news/news.module";
+import { StockModule } from "./crawler/stock/stock.module";
+import { NewsModule } from "./crawler/news/news.module";
 
 @Module({
   imports: [

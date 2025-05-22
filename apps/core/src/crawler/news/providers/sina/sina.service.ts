@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 
-import { getSinaNews } from "src/spider/api/news.sina";
+import { getSinaNews } from "src/crawler/api/news.sina";
 
 import { NewsProvider } from "../../interfaces/news-provider.interface";
 import { NewsItem } from "../../news.types";

@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import { Injectable, Logger } from "@nestjs/common";
 import { getCurrentUnixTime, delayRandom } from "@trade-signal/shared";
 
-import { getClsNews } from "src/spider/api/news.cls";
+import { getClsNews } from "src/crawler/api/news.cls";
 import { NewsProvider } from "../../interfaces/news-provider.interface";
 import { NewsItem } from "../../news.types";
 
