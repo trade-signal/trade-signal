@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { useDebouncedCallback } from "@mantine/hooks";
 import { StockScreener } from "@prisma/client";
@@ -14,13 +16,15 @@ export const useSpotlightSearch = () => {
 
   const generateActions = (data: StockScreener[]) => {
     return data.map(result => {
-      const { name, code, concept } = result;
+      const { name, code, concept, style } = result;
+
       const shortName = `${name} · ${code}`;
+      const description = `${concept} · ${style}`;
 
       return {
         id: code,
         label: shortName,
-        description: concept,
+        description,
         onClick: () => router.push(`/products/screener?symbol=${code}`)
       };
     });

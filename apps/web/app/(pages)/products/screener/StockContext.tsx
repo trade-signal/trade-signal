@@ -5,7 +5,8 @@ import {
   useContext,
   useState,
   ReactNode,
-  Suspense
+  Suspense,
+  useEffect
 } from "react";
 import { useSearchParams } from "next/navigation";
 import { Loader } from "@mantine/core";
@@ -81,6 +82,10 @@ const FiltersProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const [filters, setFilters] = useState<StockFilters>(initialFilters);
+
+  useEffect(() => {
+    setFilters(initialFilters);
+  }, [search]);
 
   return (
     <StockContext.Provider value={{ filters, setFilters }}>
