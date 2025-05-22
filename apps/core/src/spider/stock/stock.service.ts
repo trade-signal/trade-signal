@@ -37,6 +37,15 @@ export class StockService implements OnModuleInit {
     }
   }
 
+  // 工作日运行：(9:00-11:30, 13:00-15:00) 每30分钟抓取一次
+  @Cron("*/30 9-11,13-14 * * 1-5")
+  async workdayTradingHandle() {
+    this.logger.log("workday trading update stock data");
+
+    await this.getStockQuotes();
+    await this.getStockPlateQuotes();
+  }
+
   // 收盘后运行：16:00
   @Cron("0 16 * * 1-5")
   async dailyUpdateHandle() {
