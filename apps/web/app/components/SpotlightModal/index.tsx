@@ -1,4 +1,4 @@
-import { IconDashboard, IconHome, IconSearch } from "@tabler/icons-react";
+import { IconSearch, IconNews, IconScreenShare } from "@tabler/icons-react";
 import { Spotlight, SpotlightActionData } from "@mantine/spotlight";
 import { rem } from "@mantine/core";
 import { useRouter } from "next/navigation";
@@ -10,22 +10,22 @@ const useActions = () => {
     {
       id: "stock",
       label: "股票",
-      description: "跳转至股票页面",
+      description: "搜索股票代码/名称",
       onClick: () => router.push("/stock"),
       leftSection: (
-        <IconHome style={{ width: rem(24), height: rem(24) }} stroke={1.5} />
+        <IconScreenShare
+          style={{ width: rem(24), height: rem(24) }}
+          stroke={1.5}
+        />
       )
     },
     {
       id: "news",
       label: "新闻",
-      description: "跳转至新闻页面",
+      description: "搜索新闻",
       onClick: () => router.push("/news"),
       leftSection: (
-        <IconDashboard
-          style={{ width: rem(24), height: rem(24) }}
-          stroke={1.5}
-        />
+        <IconNews style={{ width: rem(24), height: rem(24) }} stroke={1.5} />
       )
     }
   ];

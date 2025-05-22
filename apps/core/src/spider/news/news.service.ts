@@ -1,4 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { getRunDate } from "@trade-signal/shared";
 import dayjs from "dayjs";
 
@@ -10,12 +11,16 @@ import { Cron } from "@nestjs/schedule";
 @Injectable()
 export class NewsService {
   private readonly logger = new Logger(NewsService.name);
+  private readonly enableScheduled: boolean;
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly sinaService: SinaService,
-    private readonly clsService: ClsService
-  ) {}
+    private readonly clsService: ClsService,
+    private readonly configService: ConfigService
+  ) {
+    this.enableScheduled = this.configService.get("scheduled.enabled");
+  }
 
   async onModuleInit() {
     this.logger.log("news service init");
@@ -29,15 +34,26 @@ export class NewsService {
   // 1. 交易时段 (9:00-11:30, 13:00-15:00) 每30分钟抓取一次
   @Cron("*/30 9-11,13-14 * * 1-5")
   async workdayTradingHandle() {
+    if (!this.enableScheduled) {
+      this.logger.debug(
+        "Scheduled tasks disabled, skipping workday trading update"
+      );
+      return;
+    }
     this.logger.log("workday update news");
-
     await this.getNews();
   }
+
   // 2. 非交易时段 (8:30-9:00, 11:30-13:00, 15:00-21:30) 每15分钟抓取一次
   @Cron("*/15 8,12,15-21 * * 1-5")
   async workdayNoTradingHandle() {
+    if (!this.enableScheduled) {
+      this.logger.debug(
+        "Scheduled tasks disabled, skipping workday non-trading update"
+      );
+      return;
+    }
     this.logger.log("workday update news");
-
     await this.getNews();
   }
 
@@ -45,16 +61,24 @@ export class NewsService {
   // 周末 (周六、周日 9:00-21:00) 每小时抓取一次
   @Cron("0 9-21 * * 0,6")
   async nonWorkdayHandle() {
+    if (!this.enableScheduled) {
+      this.logger.debug(
+        "Scheduled tasks disabled, skipping non-workday update"
+      );
+      return;
+    }
     this.logger.log("non workday update news");
-
     await this.getNews();
   }
 
   // 每天清晨 5:30 清理数据（在开盘前）
   @Cron("30 5 * * *")
   async dailyCleanHandle() {
+    if (!this.enableScheduled) {
+      this.logger.debug("Scheduled tasks disabled, skipping daily clean");
+      return;
+    }
     this.logger.log("daily clean news");
-
     await this.cleanNews();
   }
 
