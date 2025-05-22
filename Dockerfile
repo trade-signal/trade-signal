@@ -1,7 +1,7 @@
 #------------------------------------------------------------------
 # Base: 设置基础镜像和系统环境
 #------------------------------------------------------------------
-FROM node:20 AS base
+FROM node:20-alpine AS base
 
 # 安装 pnpm
 RUN npm install -g pnpm
@@ -54,7 +54,6 @@ FROM base AS web
 WORKDIR /app
 
 # 复制构建产物和依赖
-COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/web/.next/standalone ./
 COPY --from=builder /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=builder /app/apps/web/public ./apps/web/public
@@ -75,10 +74,19 @@ CMD ["node", "apps/web/server.js"]
 FROM base AS core
 WORKDIR /app
 
+# 复制必要的配置文件
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/pnpm-lock.yaml ./
+COPY --from=builder /app/apps/core/package.json ./apps/core/
+COPY --from=builder /app/pnpm-workspace.yaml ./
+
+# 只安装生产环境依赖
+RUN pnpm install --prod --frozen-lockfile
+
 # 复制构建产物和依赖
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/core/dist ./apps/core/dist
-COPY --from=builder /app/apps/core/package.json ./apps/core/package.json
+COPY --from=builder /app/packages ./packages
 
 # 设置权限
 RUN chown -R appuser:appgroup /app
