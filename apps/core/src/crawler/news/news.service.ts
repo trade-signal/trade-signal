@@ -8,82 +8,20 @@ import dayjs from "dayjs";
 import { PrismaService } from "src/common/database/prisma.service";
 import { SinaService } from "./providers/sina/sina.service";
 import { ClsService } from "./providers/cls/cls.service";
+import { ScheduledService } from "../common/scheduled.service";
 
 @Injectable()
-export class NewsService {
-  private readonly logger = new Logger(NewsService.name);
-
-  private enableScheduled: boolean;
+export class NewsService extends ScheduledService {
+  protected readonly logger = new Logger(NewsService.name);
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly sinaService: SinaService,
     private readonly clsService: ClsService,
-    private readonly configService: ConfigService,
-    private readonly schedulerRegistry: SchedulerRegistry
+    configService: ConfigService,
+    schedulerRegistry: SchedulerRegistry
   ) {
-    this.enableScheduled = this.configService.get("scheduled.enabled");
-  }
-
-  async onModuleInit() {
-    this.logger.log("news service init");
-
-    await this.initNews();
-
-    this.logger.log("news service init completed");
-
-    if (!this.enableScheduled) {
-      this.logger.log("scheduled disabled, skip cron job");
-      return;
-    }
-
-    this.initCronJob();
-  }
-
-  private async initCronJob() {
-    if (!this.enableScheduled) {
-      this.logger.log("scheduled disabled, skip cron job");
-      return;
-    }
-
-    this.logger.log("init cron job");
-
-    // 工作日运行:
-    // 1. 交易时段 (9:00-11:30, 13:00-15:00) 每30分钟抓取一次
-    this.schedulerRegistry.addCronJob(
-      "news-workdayTrading",
-      new CronJob("*/30 9-11,13-14 * * 1-5", () => {
-        this.logger.log("workday update news");
-        this.getNews();
-      })
-    );
-    // 2. 非交易时段 (8:30-9:00, 11:30-13:00, 15:00-21:30) 每15分钟抓取一次
-    this.schedulerRegistry.addCronJob(
-      "news-workdayNoTrading",
-      new CronJob("*/15 8,12,15-21 * * 1-5", () => {
-        this.logger.log("workday no trading update news");
-        this.getNews();
-      })
-    );
-
-    // 非工作日运行:
-    // 1. 周末 (周六、周日 9:00-21:00) 每小时抓取一次
-    this.schedulerRegistry.addCronJob(
-      "news-nonWorkday",
-      new CronJob("0 9-21 * * 0,6", () => {
-        this.logger.log("non workday update news");
-        this.getNews();
-      })
-    );
-
-    // 每天凌晨 5:30 清理数据（在开盘前）
-    this.schedulerRegistry.addCronJob(
-      "news-dailyClean",
-      new CronJob("30 5 * * *", () => {
-        this.logger.log("daily clean news");
-        this.cleanNews();
-      })
-    );
+    super(schedulerRegistry, configService);
   }
 
   // --------------------- 新闻信息 ---------------------
@@ -148,8 +86,46 @@ export class NewsService {
     }
   }
 
+  // --------------------- 定时任务 ---------------------
+
+  protected initCronJob(): void {
+    this.logger.log("init news cron job");
+
+    // 工作日运行:
+    // 1. 交易时段 (9:00-11:30, 13:00-15:00) 每30分钟抓取一次
+    const newWorkdayTrading = new CronJob("*/30 9-11,13-14 * * 1-5", () => {
+      this.logger.log("workday update news");
+      this.getNews();
+    });
+    this.addCronJob("news-workdayTrading", newWorkdayTrading);
+
+    // 2. 非交易时段 (8:30-9:00, 11:30-13:00, 15:00-21:30) 每15分钟抓取一次
+    const newWorkdayNoTrading = new CronJob("*/15 8,12,15-21 * * 1-5", () => {
+      this.logger.log("workday no trading update news");
+      this.getNews();
+    });
+    this.addCronJob("news-workdayNoTrading", newWorkdayNoTrading);
+
+    // 非工作日运行:
+    // 1. 周末 (周六、周日 9:00-21:00) 每小时抓取一次
+    const newNonWorkday = new CronJob("0 9-21 * * 0,6", () => {
+      this.logger.log("non workday update news");
+      this.getNews();
+    });
+    this.addCronJob("news-nonWorkday", newNonWorkday);
+
+    // 每天凌晨 5:30 清理数据（在开盘前）
+    const newDailyClean = new CronJob("30 5 * * *", () => {
+      this.logger.log("daily clean news");
+      this.cleanNews();
+    });
+    this.addCronJob("news-dailyClean", newDailyClean);
+  }
+
+  // --------------------- 初始化 ---------------------
+
   // 初始化新闻
-  async initNews() {
+  protected async initialize() {
     const runDate = getRunDate();
     const hasNews = await this.checkNews(runDate);
 
