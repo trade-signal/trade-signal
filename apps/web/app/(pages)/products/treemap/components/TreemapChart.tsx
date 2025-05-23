@@ -9,7 +9,13 @@ import {
   formatLargeNumber
 } from "@/app/utils/formatters";
 import { StockTreemap } from "@/app/api/(stock)/stock-treemap/list/route";
-import { TreemapSortType } from "@trade-signal/shared";
+import {
+  MarketType,
+  TreemapSortType,
+  getMarketLabel,
+  getTreemapSortLabel
+} from "@trade-signal/shared";
+import dayjs from "dayjs";
 
 interface TreemapChartProps {
   data: StockTreemap[];
@@ -25,6 +31,14 @@ export const TreemapChart = ({
   sortType
 }: TreemapChartProps) => {
   const { colorScheme, upColor, downColor } = getThemeSetting();
+
+  // 保存图片的标题
+  const saveImageTitle = useMemo(() => {
+    const marketLabel = getMarketLabel(marketType as MarketType);
+    const sortLabel = getTreemapSortLabel(sortType);
+    const dateStr = dayjs().format("YYYYMMDD_HHmmss");
+    return `${marketLabel}_${sortLabel}_${dateStr}`;
+  }, [marketType, sortType]);
 
   // 提取计算显示值的逻辑
   const calculateDisplayValue = (stock: StockQuotes | StockTreemap): number => {
@@ -188,8 +202,6 @@ export const TreemapChart = ({
 
   // 优化 options 配置
   const options = useMemo(() => {
-    if (!data) return {};
-
     const getColorByChangeRate = (changeRate: number): string =>
       changeRate === 0 ? "#808080" : changeRate > 0 ? upColor : downColor;
 
@@ -197,6 +209,9 @@ export const TreemapChart = ({
       return data.map(plate => ({
         ...plate,
         value: calculateDisplayValue(plate),
+        itemStyle: {
+          color: getColorByChangeRate(plate.changeRate)
+        },
         children: plate.children.map(stock => ({
           value: calculateDisplayValue(stock),
           ...stock,
@@ -207,7 +222,8 @@ export const TreemapChart = ({
       }));
     };
 
-    const color = colorScheme === "dark" ? "#fff" : "#333";
+    const textColor = colorScheme === "dark" ? "#333" : "#fff";
+    const iconColor = colorScheme === "dark" ? "#fff" : "#333";
     const borderColor = colorScheme === "dark" ? "#333" : "#fff";
     const backgroundColor =
       colorScheme === "dark"
@@ -233,13 +249,13 @@ export const TreemapChart = ({
         right: 10,
         backgroundColor: backgroundColor,
         iconStyle: {
-          color,
+          color: iconColor,
           borderColor,
           borderWidth: 1
         },
         emphasis: {
           iconStyle: {
-            color,
+            color: iconColor,
             borderColor
           }
         },
@@ -256,27 +272,63 @@ export const TreemapChart = ({
           },
           saveAsImage: {
             show: true,
-            title: "",
-            type: "png"
+            name: saveImageTitle,
+            type: "png",
+            title: null
           }
         }
       },
       series: [
         {
+          name: `${getMarketLabel(marketType as MarketType)}`,
           type: "treemap",
           data: processData(data),
           width: "100%",
           height: "100%",
           roam: true,
-          nodeClick: false,
-          breadcrumb: { show: false },
+          nodeClick: true,
+          leafDepth: 1,
+          drillDownIcon: "⏵",
+          breadcrumb: {
+            show: true,
+            top: 10,
+            left: 10,
+            emptyItemWidth: 30,
+            itemStyle: {
+              color: backgroundColor,
+              borderWidth: 0,
+              textStyle: {
+                fontSize: 12,
+                color: textColor,
+                padding: [20, 0, 0, 0]
+              }
+            },
+            emphasis: {
+              itemStyle: {
+                color: backgroundColor
+              }
+            }
+          },
+          animation: false,
+          progressive: 100,
+          progressiveThreshold: 500,
+          silent: false,
+          throttle: 100,
           label: {
             show: true,
             formatter: (params: any) => {
+              const baseInfo = `${params.name} (${params.data.code})`;
+
+              const upCount = params.data.upCount;
+              const downCount = params.data.downCount;
+
               if (params.data.children) {
-                return `${params.name} (${params.data.code})`;
+                if (upCount != null && downCount != null) {
+                  return `${baseInfo} \n\n 上涨: ${upCount} 下跌: ${downCount}`;
+                }
+                return baseInfo;
               }
-              return `${params.name}\n${params.data.changeRate?.toFixed(2)}%`;
+              return baseInfo;
             },
             fontSize: 12,
             color: "#fff",
@@ -310,8 +362,11 @@ export const TreemapChart = ({
                 gapWidth: 1,
                 borderRadius: 2
               },
+              upperLabel: {
+                show: false
+              },
               label: {
-                show: false,
+                show: true,
                 fontSize: 12,
                 color: "#fff"
               }

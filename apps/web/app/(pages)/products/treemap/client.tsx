@@ -9,11 +9,10 @@ import {
   Text,
   Stack,
   List,
-  Tooltip
+  Title
 } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { clientGet, formatDateDiff } from "@trade-signal/shared";
-import { StockTreemap } from "@/app/api/(stock)/stock-treemap/list/route";
 import {
   MARKET_OPTIONS,
   MarketType,
@@ -21,6 +20,7 @@ import {
   TreemapSortType
 } from "@trade-signal/shared";
 
+import { StockTreemap } from "@/app/api/(stock)/stock-treemap/list/route";
 import ScreenerSelect from "@/app/components/ScreenerSelect";
 import { TreemapChart } from "./components/TreemapChart";
 
@@ -54,8 +54,8 @@ const TreemapChartClient = () => {
       <Paper>
         <Group align="flex-start">
           <Paper mt={20} p="md" style={{ width: 200 }}>
-            <Skeleton w={180} h={160} />
-            <Skeleton w={180} h={160} mt={20} />
+            <Skeleton w={180} h={180} />
+            <Skeleton w={180} h={300} mt={20} />
           </Paper>
           <Paper p="md" style={{ flex: 1 }}>
             <Skeleton height={treemapH} />
@@ -65,17 +65,22 @@ const TreemapChartClient = () => {
     );
   }
 
-  const { date, relativeTime } = formatDateDiff(data[0]?.createdAt);
+  const { date } = formatDateDiff(data[0]?.createdAt);
 
   return (
     <Paper mt={20} bg="transparent">
       <Group align="flex-start">
-        <Paper p="xs" style={{ width: 200 }}>
-          <Tooltip position="top-start" label={date}>
+        <Paper p="xs" style={{ width: 240 }}>
+          <Title order={5}>板块热力图</Title>
+
+          <Stack mt={10} gap={2}>
             <Text span size="sm">
-              数据更新时间：{relativeTime}
+              数据来源：东方财富
             </Text>
-          </Tooltip>
+            <Text span size="sm">
+              更新时间：{date}
+            </Text>
+          </Stack>
 
           <Stack mt={20}>
             <ScreenerSelect
@@ -107,6 +112,9 @@ const TreemapChartClient = () => {
                 <List.Item>
                   涨跌幅和换手率取绝对值后放大，保持正负值都能显示
                 </List.Item>
+                <List.Item>
+                  板块/个股颜色根据涨跌幅变化，涨的为绿色，跌的为红色
+                </List.Item>
               </List>
             </Stack>
 
@@ -115,17 +123,23 @@ const TreemapChartClient = () => {
             </Text>
             <List size="sm">
               <List.Item>支持悬浮查看详情</List.Item>
+              <List.Item>支持下钻查看个股</List.Item>
               <List.Item>支持滚动拖动鼠标</List.Item>
+              <List.Item>支持保存图片</List.Item>
             </List>
           </Stack>
         </Paper>
         <Paper p="xs" shadow="sm" style={{ flex: 1 }}>
-          <TreemapChart
-            data={data}
-            height={treemapH}
-            marketType={marketType}
-            sortType={sortType as TreemapSortType}
-          />
+          {data.length ? (
+            <TreemapChart
+              data={data}
+              height={treemapH}
+              marketType={marketType}
+              sortType={sortType as TreemapSortType}
+            />
+          ) : (
+            <Skeleton height={treemapH} />
+          )}
         </Paper>
       </Group>
     </Paper>

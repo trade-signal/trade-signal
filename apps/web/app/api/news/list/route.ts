@@ -2,6 +2,7 @@ import { type NextRequest } from "next/server";
 import { Prisma } from "@prisma/client";
 import prisma from "@/app/utils/prisma";
 import { parseCommaSeparatedParam } from "@/app/utils/tools";
+import { success } from "@/app/utils/response";
 
 export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;
@@ -38,8 +39,7 @@ export const GET = async (request: NextRequest) => {
     take: limit
   });
 
-  return Response.json({
-    success: true,
+  return success(null, {
     data,
     pagination: {
       page,

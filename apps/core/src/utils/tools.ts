@@ -31,7 +31,7 @@ export const arrayToObject = (array: any[]) => {
 
 export const getIndicatorFields = (indicatorMapping: IndicatorMapping) => {
   return Object.values(indicatorMapping)
-    .map(item => item.map)
+    .map((item: any) => item.map)
     .join(",");
 };
 

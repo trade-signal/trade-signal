@@ -1,56 +1,91 @@
-import { IconDashboard, IconHome, IconSearch } from "@tabler/icons-react";
+"use client";
+
+import { useState, useEffect } from "react";
+import { useDebouncedCallback } from "@mantine/hooks";
+import { IconSearch } from "@tabler/icons-react";
 import { Spotlight, SpotlightActionData } from "@mantine/spotlight";
-import { rem } from "@mantine/core";
+import { Group, rem, Text } from "@mantine/core";
 import { useRouter } from "next/navigation";
-
-const useActions = () => {
-  const router = useRouter();
-
-  const actions: SpotlightActionData[] = [
-    {
-      id: "stock",
-      label: "股票",
-      description: "跳转至股票页面",
-      onClick: () => router.push("/stock"),
-      leftSection: (
-        <IconHome style={{ width: rem(24), height: rem(24) }} stroke={1.5} />
-      )
-    },
-    {
-      id: "news",
-      label: "新闻",
-      description: "跳转至新闻页面",
-      onClick: () => router.push("/news"),
-      leftSection: (
-        <IconDashboard
-          style={{ width: rem(24), height: rem(24) }}
-          stroke={1.5}
-        />
-      )
-    }
-  ];
-
-  return actions;
-};
+import { StockScreener } from "@prisma/client";
+import { get } from "@trade-signal/shared";
 
 const SpotlightModal = () => {
-  const actions = useActions();
+  const router = useRouter();
+
+  const [search, setSearch] = useState("");
+  const [actions, setActions] = useState<SpotlightActionData[]>([]);
+
+  const generateActions = (data: StockScreener[]) => {
+    return data.map(result => {
+      const { name, code, concept, style } = result;
+
+      const shortName = `${name} · ${code}`;
+      const description = `${concept} · ${style}`;
+
+      return {
+        id: code,
+        label: shortName,
+        description,
+        onClick: () => router.push(`/products/screener?symbol=${code}`)
+      };
+    });
+  };
+
+  const handleSearch = useDebouncedCallback(async () => {
+    const response = await get("/api/search", { keyword: search });
+
+    if (!response.success) return;
+
+    setActions(generateActions(response.data));
+  }, 500);
+
+  useEffect(() => {
+    handleSearch();
+  }, [search]);
 
   return (
-    <Spotlight
-      actions={actions}
-      nothingFound="Nothing found..."
-      highlightQuery
-      searchProps={{
-        leftSection: (
+    <Spotlight.Root scrollable>
+      <Spotlight.Search
+        placeholder="请输入股票代码或名称"
+        value={search}
+        onChange={e => setSearch(e.target.value)}
+        leftSection={
           <IconSearch
             style={{ width: rem(20), height: rem(20) }}
             stroke={1.5}
           />
-        ),
-        placeholder: "搜索..."
-      }}
-    />
+        }
+      />
+      <Spotlight.ActionsList>
+        {actions.length > 0 ? (
+          actions.map(action => (
+            <Spotlight.Action
+              key={action.id}
+              dimmedSections={false}
+              highlightQuery={false}
+              onClick={() => console.log(action)}
+              style={{
+                backgroundColor: "none"
+              }}
+            >
+              <Group wrap="nowrap" w="100%">
+                <div style={{ flex: 1 }}>
+                  <Text>{action.label}</Text>
+
+                  {action.description && (
+                    <Text opacity={0.6} size="xs">
+                      {action.description}
+                    </Text>
+                  )}
+                </div>
+              </Group>
+            </Spotlight.Action>
+          ))
+        ) : (
+          <Spotlight.Empty>未搜索到相关内容</Spotlight.Empty>
+        )}
+      </Spotlight.ActionsList>
+    </Spotlight.Root>
   );
 };
 

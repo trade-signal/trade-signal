@@ -1,61 +1,27 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { getRunDate } from "@trade-signal/shared";
+import { CronJob } from "cron";
+import { SchedulerRegistry } from "@nestjs/schedule";
+import { ConfigService } from "@nestjs/config";
 import dayjs from "dayjs";
 
 import { PrismaService } from "src/common/database/prisma.service";
 import { SinaService } from "./providers/sina/sina.service";
 import { ClsService } from "./providers/cls/cls.service";
-import { Cron } from "@nestjs/schedule";
+import { ScheduledService } from "../common/scheduled.service";
 
 @Injectable()
-export class NewsService {
-  private readonly logger = new Logger(NewsService.name);
+export class NewsService extends ScheduledService {
+  protected readonly logger = new Logger(NewsService.name);
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly sinaService: SinaService,
-    private readonly clsService: ClsService
-  ) {}
-
-  async onModuleInit() {
-    this.logger.log("news service init");
-
-    await this.initNews();
-
-    this.logger.log("news service init completed");
-  }
-
-  // 工作日运行:
-  // 1. 交易时段 (9:00-11:30, 13:00-15:00) 每30分钟抓取一次
-  @Cron("*/30 9-11,13-14 * * 1-5")
-  async workdayTradingHandle() {
-    this.logger.log("workday update news");
-
-    await this.getNews();
-  }
-  // 2. 非交易时段 (8:30-9:00, 11:30-13:00, 15:00-21:30) 每15分钟抓取一次
-  @Cron("*/15 8,12,15-21 * * 1-5")
-  async workdayNoTradingHandle() {
-    this.logger.log("workday update news");
-
-    await this.getNews();
-  }
-
-  // 非工作日运行: 每小时抓取一次
-  // 周末 (周六、周日 9:00-21:00) 每小时抓取一次
-  @Cron("0 9-21 * * 0,6")
-  async nonWorkdayHandle() {
-    this.logger.log("non workday update news");
-
-    await this.getNews();
-  }
-
-  // 每天清晨 5:30 清理数据（在开盘前）
-  @Cron("30 5 * * *")
-  async dailyCleanHandle() {
-    this.logger.log("daily clean news");
-
-    await this.cleanNews();
+    private readonly clsService: ClsService,
+    protected readonly configService: ConfigService,
+    protected readonly schedulerRegistry: SchedulerRegistry
+  ) {
+    super(schedulerRegistry, configService);
   }
 
   // --------------------- 新闻信息 ---------------------
@@ -120,8 +86,52 @@ export class NewsService {
     }
   }
 
+  // --------------------- 定时任务 ---------------------
+
+  protected initCronJob() {
+    // 工作日运行:
+    // 1. 交易时段 (9:00-11:30, 13:00-15:00) 每30分钟抓取一次
+    this.addCronJob(
+      "news-workdayTrading",
+      new CronJob("*/30 9-11,13-14 * * 1-5", () => {
+        this.logger.log("workday update news");
+        this.getNews();
+      })
+    );
+
+    // 2. 非交易时段 (8:30-9:00, 11:30-13:00, 15:00-21:30) 每15分钟抓取一次
+    this.addCronJob(
+      "news-workdayNoTrading",
+      new CronJob("*/15 8,12,15-21 * * 1-5", () => {
+        this.logger.log("workday no trading update news");
+        this.getNews();
+      })
+    );
+
+    // 非工作日运行:
+    // 1. 周末 (周六、周日 9:00-21:00) 每小时抓取一次
+    this.addCronJob(
+      "news-nonWorkday",
+      new CronJob("0 9-21 * * 0,6", () => {
+        this.logger.log("non workday update news");
+        this.getNews();
+      })
+    );
+
+    // 每天凌晨 5:30 清理数据（在开盘前）
+    this.addCronJob(
+      "news-dailyClean",
+      new CronJob("30 5 * * *", () => {
+        this.logger.log("daily clean news");
+        this.cleanNews();
+      })
+    );
+  }
+
+  // --------------------- 初始化 ---------------------
+
   // 初始化新闻
-  async initNews() {
+  protected async initialize() {
     const runDate = getRunDate();
     const hasNews = await this.checkNews(runDate);
 

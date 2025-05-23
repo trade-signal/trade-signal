@@ -106,7 +106,7 @@ const StockScreenerSelect: FC<StockScreenerSelectProps> = props => {
           onClick={() => combobox.toggleDropdown()}
         >
           {title}{" "}
-          <Box mt={2} ml={8}>
+          <Box mt={1} ml={8}>
             {getValueName(value)}
           </Box>
           <Box ml={6}>

@@ -1,19 +1,12 @@
 import { NextRequest } from "next/server";
 import prisma from "@/app/utils/prisma";
+import { fail, success } from "@/app/utils/response";
 
 export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;
   const code = searchParams.get("code");
 
-  if (!code) {
-    return Response.json(
-      {
-        success: false,
-        message: "股票代码不能为空"
-      },
-      { status: 400 }
-    );
-  }
+  if (!code) return fail("股票代码不能为空");
 
   const maxDate = await prisma.stockMinuteKline.findFirst({
     orderBy: { date: "desc" },
@@ -28,8 +21,7 @@ export const GET = async (request: NextRequest) => {
     orderBy: [{ time: "asc" }]
   });
 
-  return Response.json({
-    success: true,
+  return success(null, {
     data: trends,
     statistics: {
       date: maxDate?.date

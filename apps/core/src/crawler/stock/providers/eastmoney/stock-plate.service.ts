@@ -4,11 +4,11 @@ import dayjs from "dayjs";
 import {
   getStockPlateBasic,
   getStockPlateQuotes
-} from "src/spider/api/eastmoney.stock";
+} from "src/crawler/api/eastmoney.stock";
 import {
   quotesPlateBaseIndicatorMapping,
   quotesPlateIndicatorMapping
-} from "src/spider/api/eastmoney.stock.indicator";
+} from "src/crawler/api/eastmoney.stock.indicator";
 import { getIndicatorFields, transformStockData } from "src/utils/tools";
 
 @Injectable()

@@ -1,11 +1,21 @@
 import { Module } from "@nestjs/common";
 import { ScheduleModule } from "@nestjs/schedule";
+import { ConfigModule } from "@nestjs/config";
 
-import { StockModule } from "./spider/stock/stock.module";
-import { NewsModule } from "./spider/news/news.module";
+import configuration from "./common/configuration";
+
+import { StockModule } from "./crawler/stock/stock.module";
+import { NewsModule } from "./crawler/news/news.module";
 
 @Module({
-  imports: [ScheduleModule.forRoot(), StockModule, NewsModule],
+  imports: [
+    ConfigModule.forRoot({
+      load: [configuration]
+    }),
+    ScheduleModule.forRoot(),
+    StockModule,
+    NewsModule
+  ],
   controllers: [],
   providers: []
 })

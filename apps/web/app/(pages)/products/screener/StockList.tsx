@@ -97,6 +97,7 @@ const StockList = () => {
     open();
     setPage(1);
     setHasMore(true);
+    setSearchValue(filters.search || "");
     getStockList(1, true);
   }, [filters]);
 

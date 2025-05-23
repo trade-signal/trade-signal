@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import dayjs from "dayjs";
-import { getTradeDate } from "src/spider/api/trade.sina";
+import { getTradeDate } from "src/crawler/api/trade.sina";
 
 @Injectable()
 export class TradeService {

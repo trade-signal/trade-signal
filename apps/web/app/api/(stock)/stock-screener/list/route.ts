@@ -7,6 +7,7 @@ import {
   StockMarketValue,
   StockPeRatio
 } from "@/app/(pages)/products/screener/StockScreenerConfig";
+import { success } from "@/app/utils/response";
 
 // 价格范围
 const getPriceRange = (price: StockPriceRange) => {
@@ -137,8 +138,7 @@ export const GET = async (request: NextRequest) => {
     where
   });
 
-  return Response.json({
-    success: true,
+  return success(null, {
     data,
     statistics: {
       date: maxDate?.date

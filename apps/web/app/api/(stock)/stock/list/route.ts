@@ -2,6 +2,7 @@ import { type NextRequest } from "next/server";
 import prisma from "@/app/utils/prisma";
 import { MRT_ColumnFiltersState, MRT_SortingState } from "mantine-react-table";
 import { generateWhereClause, generateOrderByClause } from "@/app/utils/tools";
+import { success } from "@/app/utils/response";
 
 export const GET = async (request: NextRequest) => {
   const searchParams = new URL(request.url).searchParams;
@@ -45,8 +46,7 @@ export const GET = async (request: NextRequest) => {
     })
     .then(result => result.length);
 
-  return Response.json({
-    success: true,
+  return success(null, {
     data,
     pagination: {
       page,

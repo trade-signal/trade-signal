@@ -1,69 +1,28 @@
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
-import { Cron } from "@nestjs/schedule";
+import { CronJob } from "cron";
+import { SchedulerRegistry } from "@nestjs/schedule";
+import { ConfigService } from "@nestjs/config";
 import { getRunDate } from "@trade-signal/shared";
 
 import { PrismaService } from "src/common/database/prisma.service";
 import { EastMoneyStockService } from "./providers/eastmoney/stock.service";
 import { EastMoneyStockPlateService } from "./providers/eastmoney/stock-plate.service";
+import { ScheduledService } from "../common/scheduled.service";
 
 @Injectable()
-export class StockService implements OnModuleInit {
-  private readonly logger = new Logger(StockService.name);
-
+export class StockService extends ScheduledService {
   private readonly BATCH_SIZE = 200;
+
+  protected readonly logger = new Logger(StockService.name);
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly eastMoneyStockService: EastMoneyStockService,
-    private readonly eastMoneyStockPlateService: EastMoneyStockPlateService
-  ) {}
-
-  // 初始化股票数据
-  async onModuleInit() {
-    try {
-      this.logger.log("stock service init");
-
-      await Promise.all([
-        this.initStockBasic(),
-        this.initStockQuotes(),
-        this.initStockScreener(),
-        this.initStockPlateBasic(),
-        this.initStockPlateQuotes()
-      ]);
-
-      this.logger.log("stock service init completed");
-    } catch (error) {
-      this.logger.error(`stock service init failed: ${error}`);
-    }
-  }
-
-  // 收盘后运行：16:00
-  @Cron("0 16 * * 1-5")
-  async dailyUpdateHandle() {
-    this.logger.log("daily update stock data");
-
-    await this.getStockQuotes();
-    await this.getStockScreener();
-    await this.getStockPlateQuotes();
-  }
-
-  // 每天清晨 5:30 清理数据（在开盘前）
-  @Cron("30 5 * * *")
-  async dailyCleanHandle() {
-    this.logger.log("daily clean stock data");
-
-    await this.cleanStockQuotes();
-    await this.cleanStockScreener();
-    await this.cleanStockPlateQuotes();
-  }
-
-  // 每月1号运行：更新所有股票、板块基本信息
-  @Cron("0 0 1 * *")
-  async monthlyUpdateHandle() {
-    this.logger.log("monthly update stock data");
-
-    await this.getStockBasic();
-    await this.getStockPlateBasic();
+    private readonly eastMoneyStockPlateService: EastMoneyStockPlateService,
+    protected readonly configService: ConfigService,
+    protected readonly schedulerRegistry: SchedulerRegistry
+  ) {
+    super(schedulerRegistry, configService);
   }
 
   // --------------------- 股票基本信息 ---------------------
@@ -407,5 +366,71 @@ export class StockService implements OnModuleInit {
     }
 
     await this.getStockPlateQuotes(runDate);
+  }
+
+  // --------------------- 定时任务 ---------------------
+
+  protected initCronJob() {
+    // 工作日运行：(9:00-11:30, 13:00-15:00) 每30分钟抓取一次
+    this.addCronJob(
+      "stock-workdayTrading",
+      new CronJob("*/30 9-11,13-14 * * 1-5", () => {
+        this.logger.log("workday trading update stock data");
+        this.getStockQuotes();
+        this.getStockPlateQuotes();
+      })
+    );
+
+    // 收盘后运行：16:00
+    this.addCronJob(
+      "stock-dailyUpdate",
+      new CronJob("0 16 * * 1-5", () => {
+        this.logger.log("daily update stock data");
+        this.getStockQuotes();
+        this.getStockScreener();
+        this.getStockPlateQuotes();
+      })
+    );
+
+    // 每月1号运行：更新所有股票、板块基本信息
+    this.addCronJob(
+      "stock-monthlyUpdate",
+      new CronJob("0 0 1 * *", () => {
+        this.logger.log("monthly update stock data");
+        this.getStockBasic();
+        this.getStockPlateBasic();
+      })
+    );
+
+    // 每天凌晨 5:30 清理数据（在开盘前）
+    this.addCronJob(
+      "stock-dailyClean",
+      new CronJob("30 5 * * *", () => {
+        this.logger.log("daily clean stock data");
+        this.cleanStockQuotes();
+        this.cleanStockScreener();
+        this.cleanStockPlateQuotes();
+      })
+    );
+  }
+
+  // --------------------- 模块初始化 ---------------------
+
+  protected async initialize() {
+    try {
+      this.logger.log("stock service init");
+
+      await Promise.all([
+        this.initStockBasic(),
+        this.initStockQuotes(),
+        this.initStockScreener(),
+        this.initStockPlateBasic(),
+        this.initStockPlateQuotes()
+      ]);
+
+      this.logger.log("stock service init completed");
+    } catch (error) {
+      this.logger.error(`stock service init failed: ${error}`);
+    }
   }
 }

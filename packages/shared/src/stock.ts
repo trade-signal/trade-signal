@@ -26,6 +26,12 @@ export const MARKET_OPTIONS = [
   { label: "创业板", value: "cyb" }
 ] as { label: string; value: string }[];
 
+export const getMarketLabel = (marketType: MarketType): string => {
+  return (
+    MARKET_OPTIONS.find(option => option.value === marketType)?.label || ""
+  );
+};
+
 export type TreemapSortType =
   | "totalMarketCap"
   | "freeCap"
@@ -54,3 +60,9 @@ export const TREEMAP_SORT_OPTIONS = [
   { label: "成交量", value: "volume" },
   { label: "成交额", value: "dealAmount" }
 ] as { label: string; value: TreemapSortType }[];
+
+export const getTreemapSortLabel = (sortType: TreemapSortType): string => {
+  return (
+    TREEMAP_SORT_OPTIONS.find(option => option.value === sortType)?.label || ""
+  );
+};

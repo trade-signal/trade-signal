@@ -15,7 +15,6 @@ import {
   TextInput,
   Title,
   Select,
-  Avatar,
   Stack
 } from "@mantine/core";
 import { spotlight } from "@mantine/spotlight";
@@ -170,7 +169,7 @@ const Header = () => {
               w={300}
               radius="xl"
               variant="filled"
-              placeholder="搜索股票/基金/债券"
+              placeholder="搜索股票代码/名称"
               mr={10}
               style={{ pointerEvents: "none" }}
             />

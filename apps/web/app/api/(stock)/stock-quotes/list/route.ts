@@ -3,6 +3,7 @@ import { MRT_ColumnFiltersState } from "mantine-react-table";
 import { NextRequest } from "next/server";
 import { MRT_SortingState } from "mantine-react-table";
 import { generateWhereClause, generateOrderByClause } from "@/app/utils/tools";
+import { success } from "@/app/utils/response";
 
 export const GET = async (request: NextRequest) => {
   const searchParams = request.nextUrl.searchParams;
@@ -51,8 +52,7 @@ export const GET = async (request: NextRequest) => {
     }
   });
 
-  return Response.json({
-    success: true,
+  return success(null, {
     data: quotes,
     statistics: {
       date: maxDate?.date
