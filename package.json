@@ -1,6 +1,6 @@
 {
   "name": "trade-signal",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "scripts": {
     "dev": "dotenv -e .env -- turbo run dev",
