@@ -1,6 +1,6 @@
 {
   "name": "trade-signal",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "scripts": {
     "dev": "dotenv -e .env -- turbo run dev",
@@ -32,6 +32,8 @@
     "turbo": "^2.4.4"
   },
   "dependencies": {
-    "@prisma/client": "^6.7.0"
+    "@prisma/client": "^6.7.0",
+    "cron": "^2.3.0",
+    "dayjs": "^1.11.13"
   }
 }

@@ -132,14 +132,18 @@ export class NewsService extends ScheduledService {
 
   // 初始化新闻
   protected async initialize() {
-    const runDate = getRunDate();
-    const hasNews = await this.checkNews(runDate);
+    try {
+      const runDate = getRunDate();
+      const hasNews = await this.checkNews(runDate);
 
-    if (hasNews) {
-      this.logger.log("news available! No need to fetch.");
-      return;
+      if (hasNews) {
+        this.logger.log("news available! No need to fetch.");
+        return;
+      }
+
+      await this.getNews();
+    } catch (error) {
+      this.logger.error(`news service init failed: ${error}`);
     }
-
-    await this.getNews();
   }
 }
