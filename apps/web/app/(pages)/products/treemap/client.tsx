@@ -130,12 +130,16 @@ const TreemapChartClient = () => {
           </Stack>
         </Paper>
         <Paper p="xs" shadow="sm" style={{ flex: 1 }}>
-          <TreemapChart
-            data={data}
-            height={treemapH}
-            marketType={marketType}
-            sortType={sortType as TreemapSortType}
-          />
+          {data.length ? (
+            <TreemapChart
+              data={data}
+              height={treemapH}
+              marketType={marketType}
+              sortType={sortType as TreemapSortType}
+            />
+          ) : (
+            <Skeleton height={treemapH} />
+          )}
         </Paper>
       </Group>
     </Paper>

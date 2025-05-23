@@ -18,8 +18,8 @@ export class NewsService extends ScheduledService {
     private readonly prisma: PrismaService,
     private readonly sinaService: SinaService,
     private readonly clsService: ClsService,
-    configService: ConfigService,
-    schedulerRegistry: SchedulerRegistry
+    protected readonly configService: ConfigService,
+    protected readonly schedulerRegistry: SchedulerRegistry
   ) {
     super(schedulerRegistry, configService);
   }
@@ -88,38 +88,44 @@ export class NewsService extends ScheduledService {
 
   // --------------------- 定时任务 ---------------------
 
-  protected initCronJob(): void {
-    this.logger.log("init news cron job");
-
+  protected initCronJob() {
     // 工作日运行:
     // 1. 交易时段 (9:00-11:30, 13:00-15:00) 每30分钟抓取一次
-    const newWorkdayTrading = new CronJob("*/30 9-11,13-14 * * 1-5", () => {
-      this.logger.log("workday update news");
-      this.getNews();
-    });
-    this.addCronJob("news-workdayTrading", newWorkdayTrading);
+    this.addCronJob(
+      "news-workdayTrading",
+      new CronJob("*/30 9-11,13-14 * * 1-5", () => {
+        this.logger.log("workday update news");
+        this.getNews();
+      })
+    );
 
     // 2. 非交易时段 (8:30-9:00, 11:30-13:00, 15:00-21:30) 每15分钟抓取一次
-    const newWorkdayNoTrading = new CronJob("*/15 8,12,15-21 * * 1-5", () => {
-      this.logger.log("workday no trading update news");
-      this.getNews();
-    });
-    this.addCronJob("news-workdayNoTrading", newWorkdayNoTrading);
+    this.addCronJob(
+      "news-workdayNoTrading",
+      new CronJob("*/15 8,12,15-21 * * 1-5", () => {
+        this.logger.log("workday no trading update news");
+        this.getNews();
+      })
+    );
 
     // 非工作日运行:
     // 1. 周末 (周六、周日 9:00-21:00) 每小时抓取一次
-    const newNonWorkday = new CronJob("0 9-21 * * 0,6", () => {
-      this.logger.log("non workday update news");
-      this.getNews();
-    });
-    this.addCronJob("news-nonWorkday", newNonWorkday);
+    this.addCronJob(
+      "news-nonWorkday",
+      new CronJob("0 9-21 * * 0,6", () => {
+        this.logger.log("non workday update news");
+        this.getNews();
+      })
+    );
 
     // 每天凌晨 5:30 清理数据（在开盘前）
-    const newDailyClean = new CronJob("30 5 * * *", () => {
-      this.logger.log("daily clean news");
-      this.cleanNews();
-    });
-    this.addCronJob("news-dailyClean", newDailyClean);
+    this.addCronJob(
+      "news-dailyClean",
+      new CronJob("30 5 * * *", () => {
+        this.logger.log("daily clean news");
+        this.cleanNews();
+      })
+    );
   }
 
   // --------------------- 初始化 ---------------------

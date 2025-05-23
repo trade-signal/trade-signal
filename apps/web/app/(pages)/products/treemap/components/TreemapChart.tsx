@@ -291,7 +291,8 @@ export const TreemapChart = ({
           drillDownIcon: "⏵",
           breadcrumb: {
             show: true,
-            top: 5,
+            top: 10,
+            left: 10,
             emptyItemWidth: 30,
             itemStyle: {
               color: backgroundColor,

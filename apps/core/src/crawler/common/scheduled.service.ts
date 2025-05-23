@@ -1,12 +1,12 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, OnModuleInit } from "@nestjs/common";
 import { SchedulerRegistry } from "@nestjs/schedule";
 import { CronJob } from "cron";
 import { ConfigService } from "@nestjs/config";
 import { Logger } from "@nestjs/common";
 
 @Injectable()
-export abstract class ScheduledService {
-  protected abstract logger: Logger;
+export abstract class ScheduledService implements OnModuleInit {
+  protected readonly logger = new Logger(this.constructor.name);
   protected enableScheduled: boolean;
 
   constructor(
@@ -16,22 +16,22 @@ export abstract class ScheduledService {
     this.enableScheduled = this.configService.get("scheduled.enabled");
   }
 
+  protected abstract initialize(): Promise<void>;
+
+  protected abstract initCronJob(): void;
+
   async onModuleInit() {
+    await this.initialize();
+
     if (!this.enableScheduled) {
       this.logger.log("scheduled disabled, skip cron job");
       return;
     }
 
-    this.initialize();
-
     this.logger.log("init cron job");
 
     this.initCronJob();
   }
-
-  protected abstract initialize(): void;
-
-  protected abstract initCronJob(): void;
 
   protected async addCronJob(name: string, job: CronJob) {
     this.schedulerRegistry.addCronJob(name, job);
