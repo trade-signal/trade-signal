@@ -2,7 +2,15 @@
 
 import { useMemo, useState } from "react";
 import { useViewportSize } from "@mantine/hooks";
-import { Skeleton, Paper, Group, Text, Stack, List } from "@mantine/core";
+import {
+  Skeleton,
+  Paper,
+  Group,
+  Text,
+  Stack,
+  List,
+  Title
+} from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { clientGet, formatDateDiff } from "@trade-signal/shared";
 import {
@@ -63,9 +71,14 @@ const TreemapChartClient = () => {
     <Paper mt={20} bg="transparent">
       <Group align="flex-start">
         <Paper p="xs" style={{ width: 240 }}>
-          <Text span size="sm">
-            更新时间：{date}
-          </Text>
+          <Stack gap={2}>
+            <Text span size="sm">
+              数据来源：东方财富
+            </Text>
+            <Text span size="sm">
+              更新时间：{date}
+            </Text>
+          </Stack>
 
           <Stack mt={20}>
             <ScreenerSelect

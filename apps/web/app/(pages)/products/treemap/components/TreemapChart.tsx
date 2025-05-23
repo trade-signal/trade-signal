@@ -282,7 +282,7 @@ export const TreemapChart = ({
       },
       series: [
         {
-          name: `${getMarketLabel(marketType as MarketType)} 板块`,
+          name: `${getMarketLabel(marketType as MarketType)}`,
           type: "treemap",
           data: processData(data),
           width: "100%",
@@ -318,7 +318,18 @@ export const TreemapChart = ({
           label: {
             show: true,
             formatter: (params: any) => {
-              return `${params.name} (${params.data.code})`;
+              const baseInfo = `${params.name} (${params.data.code})`;
+
+              const upCount = params.data.upCount;
+              const downCount = params.data.downCount;
+
+              if (params.data.children) {
+                if (upCount != null && downCount != null) {
+                  return `${baseInfo} \n\n 上涨: ${upCount} 下跌: ${downCount}`;
+                }
+                return baseInfo;
+              }
+              return baseInfo;
             },
             fontSize: 12,
             color: "#fff",
@@ -351,6 +362,9 @@ export const TreemapChart = ({
                 borderWidth: 1,
                 gapWidth: 1,
                 borderRadius: 2
+              },
+              upperLabel: {
+                show: false
               },
               label: {
                 show: true,
