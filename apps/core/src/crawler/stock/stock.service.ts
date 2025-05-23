@@ -429,8 +429,6 @@ export class StockService extends ScheduledService {
       ]);
 
       this.logger.log("stock service init completed");
-
-      this.initCronJob();
     } catch (error) {
       this.logger.error(`stock service init failed: ${error}`);
     }
