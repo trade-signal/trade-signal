@@ -2,18 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { useViewportSize } from "@mantine/hooks";
-import {
-  Skeleton,
-  Paper,
-  Group,
-  Text,
-  Stack,
-  List,
-  Tooltip
-} from "@mantine/core";
+import { Skeleton, Paper, Group, Text, Stack, List } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { clientGet, formatDateDiff } from "@trade-signal/shared";
-import { StockTreemap } from "@/app/api/(stock)/stock-treemap/list/route";
 import {
   MARKET_OPTIONS,
   MarketType,
@@ -21,6 +12,7 @@ import {
   TreemapSortType
 } from "@trade-signal/shared";
 
+import { StockTreemap } from "@/app/api/(stock)/stock-treemap/list/route";
 import ScreenerSelect from "@/app/components/ScreenerSelect";
 import { TreemapChart } from "./components/TreemapChart";
 
@@ -65,17 +57,15 @@ const TreemapChartClient = () => {
     );
   }
 
-  const { date, relativeTime } = formatDateDiff(data[0]?.createdAt);
+  const { date } = formatDateDiff(data[0]?.createdAt);
 
   return (
     <Paper mt={20} bg="transparent">
       <Group align="flex-start">
-        <Paper p="xs" style={{ width: 200 }}>
-          <Tooltip position="top-start" label={date}>
-            <Text span size="sm">
-              数据更新时间：{relativeTime}
-            </Text>
-          </Tooltip>
+        <Paper p="xs" style={{ width: 240 }}>
+          <Text span size="sm">
+            更新时间：{date}
+          </Text>
 
           <Stack mt={20}>
             <ScreenerSelect

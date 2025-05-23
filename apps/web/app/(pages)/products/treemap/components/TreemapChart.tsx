@@ -9,7 +9,13 @@ import {
   formatLargeNumber
 } from "@/app/utils/formatters";
 import { StockTreemap } from "@/app/api/(stock)/stock-treemap/list/route";
-import { TreemapSortType } from "@trade-signal/shared";
+import {
+  MarketType,
+  TreemapSortType,
+  getMarketLabel,
+  getTreemapSortLabel
+} from "@trade-signal/shared";
+import dayjs from "dayjs";
 
 interface TreemapChartProps {
   data: StockTreemap[];
@@ -214,6 +220,14 @@ export const TreemapChart = ({
         ? "rgba(255, 255, 255, 0.9)"
         : "rgba(50, 50, 50, 0.9)";
 
+    const saveImageTitle = useMemo(() => {
+      const marketLabel = getMarketLabel(marketType as MarketType);
+      const sortLabel = getTreemapSortLabel(sortType);
+      const date = dayjs().format("YYYY-MM-DD");
+      const time = dayjs().format("HH:mm:ss");
+      return `${marketLabel}_${sortLabel}_${date}_${time}`;
+    }, [marketType, sortType]);
+
     return {
       tooltip: {
         backgroundColor: "rgba(50, 50, 50, 0.9)",
@@ -228,7 +242,7 @@ export const TreemapChart = ({
       },
       toolbox: {
         show: true,
-        padding: [10, 10],
+        padding: [20, 20],
         top: 10,
         right: 10,
         backgroundColor: backgroundColor,
@@ -256,8 +270,9 @@ export const TreemapChart = ({
           },
           saveAsImage: {
             show: true,
-            title: "",
-            type: "png"
+            name: saveImageTitle,
+            type: "png",
+            title: null
           }
         }
       },
@@ -270,6 +285,11 @@ export const TreemapChart = ({
           roam: true,
           nodeClick: false,
           breadcrumb: { show: false },
+          animation: false,
+          progressive: 100,
+          progressiveThreshold: 500,
+          silent: false,
+          throttle: 100,
           label: {
             show: true,
             formatter: (params: any) => {
