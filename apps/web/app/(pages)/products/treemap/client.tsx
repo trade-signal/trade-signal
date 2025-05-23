@@ -97,6 +97,9 @@ const TreemapChartClient = () => {
                 <List.Item>
                   涨跌幅和换手率取绝对值后放大，保持正负值都能显示
                 </List.Item>
+                <List.Item>
+                  板块/个股颜色根据涨跌幅变化，涨的为绿色，跌的为红色
+                </List.Item>
               </List>
             </Stack>
 
@@ -105,7 +108,9 @@ const TreemapChartClient = () => {
             </Text>
             <List size="sm">
               <List.Item>支持悬浮查看详情</List.Item>
+              <List.Item>支持下钻查看个股</List.Item>
               <List.Item>支持滚动拖动鼠标</List.Item>
+              <List.Item>支持保存图片</List.Item>
             </List>
           </Stack>
         </Paper>

@@ -203,6 +203,9 @@ export const TreemapChart = ({
       return data.map(plate => ({
         ...plate,
         value: calculateDisplayValue(plate),
+        itemStyle: {
+          color: getColorByChangeRate(plate.changeRate)
+        },
         children: plate.children.map(stock => ({
           value: calculateDisplayValue(stock),
           ...stock,
@@ -213,7 +216,8 @@ export const TreemapChart = ({
       }));
     };
 
-    const color = colorScheme === "dark" ? "#fff" : "#333";
+    const textColor = colorScheme === "dark" ? "#333" : "#fff";
+    const iconColor = colorScheme === "dark" ? "#fff" : "#333";
     const borderColor = colorScheme === "dark" ? "#333" : "#fff";
     const backgroundColor =
       colorScheme === "dark"
@@ -242,18 +246,18 @@ export const TreemapChart = ({
       },
       toolbox: {
         show: true,
-        padding: [20, 20],
+        padding: [10, 10],
         top: 10,
         right: 10,
         backgroundColor: backgroundColor,
         iconStyle: {
-          color,
+          color: iconColor,
           borderColor,
           borderWidth: 1
         },
         emphasis: {
           iconStyle: {
-            color,
+            color: iconColor,
             borderColor
           }
         },
@@ -278,13 +282,34 @@ export const TreemapChart = ({
       },
       series: [
         {
+          name: `${getMarketLabel(marketType as MarketType)} 板块`,
           type: "treemap",
           data: processData(data),
           width: "100%",
           height: "100%",
           roam: true,
-          nodeClick: false,
-          breadcrumb: { show: false },
+          nodeClick: true,
+          leafDepth: 1,
+          drillDownIcon: "⏵",
+          breadcrumb: {
+            show: true,
+            top: 5,
+            emptyItemWidth: 30,
+            itemStyle: {
+              color: backgroundColor,
+              borderWidth: 0,
+              textStyle: {
+                fontSize: 12,
+                color: textColor,
+                padding: [20, 0, 0, 0]
+              }
+            },
+            emphasis: {
+              itemStyle: {
+                color: backgroundColor
+              }
+            }
+          },
           animation: false,
           progressive: 100,
           progressiveThreshold: 500,
@@ -293,10 +318,7 @@ export const TreemapChart = ({
           label: {
             show: true,
             formatter: (params: any) => {
-              if (params.data.children) {
-                return `${params.name} (${params.data.code})`;
-              }
-              return `${params.name}\n${params.data.changeRate?.toFixed(2)}%`;
+              return `${params.name} (${params.data.code})`;
             },
             fontSize: 12,
             color: "#fff",
@@ -331,7 +353,7 @@ export const TreemapChart = ({
                 borderRadius: 2
               },
               label: {
-                show: false,
+                show: true,
                 fontSize: 12,
                 color: "#fff"
               }
