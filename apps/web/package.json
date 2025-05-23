@@ -22,8 +22,6 @@
     "@tabler/icons-react": "^3.26.0",
     "@tanstack/react-query": "^4.36.1",
     "clsx": "^2.1.1",
-    "cron": "^2.3.0",
-    "dayjs": "^1.11.13",
     "echarts": "^5.6.0",
     "echarts-for-react": "^3.0.2",
     "lightweight-charts": "^4.2.2",

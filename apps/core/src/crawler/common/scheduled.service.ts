@@ -1,8 +1,8 @@
 import { Injectable, OnModuleInit } from "@nestjs/common";
 import { SchedulerRegistry } from "@nestjs/schedule";
-import { CronJob } from "cron";
 import { ConfigService } from "@nestjs/config";
 import { Logger } from "@nestjs/common";
+import { CronJob } from "cron";
 
 @Injectable()
 export abstract class ScheduledService implements OnModuleInit {
@@ -33,20 +33,23 @@ export abstract class ScheduledService implements OnModuleInit {
     this.initCronJob();
   }
 
-  protected async addCronJob(name: string, job: CronJob) {
-    this.schedulerRegistry.addCronJob(name, job);
+  protected addCronJob(name: string, job: CronJob) {
+    this.schedulerRegistry.addCronJob(name, job as any);
     job.start();
   }
 
-  protected async removeCronJob(name: string) {
+  protected removeCronJob(name: string) {
     this.schedulerRegistry.deleteCronJob(name);
   }
 
-  protected async getCronJob(name: string) {
-    return this.schedulerRegistry.getCronJob(name);
+  protected getCronJob(name: string): CronJob {
+    return this.schedulerRegistry.getCronJob(name) as unknown as CronJob;
   }
 
-  protected async getCronJobs() {
-    return this.schedulerRegistry.getCronJobs();
+  protected getCronJobs() {
+    return this.schedulerRegistry.getCronJobs() as unknown as Map<
+      string,
+      CronJob
+    >;
   }
 }

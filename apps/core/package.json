@@ -29,7 +29,6 @@
     "@nestjs/schedule": "^6.0.0",
     "@trade-signal/shared": "workspace:*",
     "@trade-signal/types": "workspace:*",
-    "dayjs": "^1.11.13",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1"
   },

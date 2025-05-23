@@ -418,8 +418,6 @@ export class StockService extends ScheduledService {
 
   protected async initialize() {
     try {
-      this.logger.log("stock service init");
-
       await Promise.all([
         this.initStockBasic(),
         this.initStockQuotes(),
@@ -427,8 +425,6 @@ export class StockService extends ScheduledService {
         this.initStockPlateBasic(),
         this.initStockPlateQuotes()
       ]);
-
-      this.logger.log("stock service init completed");
     } catch (error) {
       this.logger.error(`stock service init failed: ${error}`);
     }
