@@ -32,6 +32,15 @@ export const TreemapChart = ({
 }: TreemapChartProps) => {
   const { colorScheme, upColor, downColor } = getThemeSetting();
 
+  // 保存图片的标题
+  const saveImageTitle = useMemo(() => {
+    const marketLabel = getMarketLabel(marketType as MarketType);
+    const sortLabel = getTreemapSortLabel(sortType);
+    const date = dayjs().format("YYYY-MM-DD");
+    const time = dayjs().format("HH:mm:ss");
+    return `${marketLabel}_${sortLabel}_${date}_${time}`;
+  }, [marketType, sortType]);
+
   // 提取计算显示值的逻辑
   const calculateDisplayValue = (stock: StockQuotes | StockTreemap): number => {
     let value = stock[sortType];
@@ -194,8 +203,6 @@ export const TreemapChart = ({
 
   // 优化 options 配置
   const options = useMemo(() => {
-    if (!data) return {};
-
     const getColorByChangeRate = (changeRate: number): string =>
       changeRate === 0 ? "#808080" : changeRate > 0 ? upColor : downColor;
 
@@ -223,14 +230,6 @@ export const TreemapChart = ({
       colorScheme === "dark"
         ? "rgba(255, 255, 255, 0.9)"
         : "rgba(50, 50, 50, 0.9)";
-
-    const saveImageTitle = useMemo(() => {
-      const marketLabel = getMarketLabel(marketType as MarketType);
-      const sortLabel = getTreemapSortLabel(sortType);
-      const date = dayjs().format("YYYY-MM-DD");
-      const time = dayjs().format("HH:mm:ss");
-      return `${marketLabel}_${sortLabel}_${date}_${time}`;
-    }, [marketType, sortType]);
 
     return {
       tooltip: {

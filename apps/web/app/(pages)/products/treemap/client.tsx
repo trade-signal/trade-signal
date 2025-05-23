@@ -54,8 +54,8 @@ const TreemapChartClient = () => {
       <Paper>
         <Group align="flex-start">
           <Paper mt={20} p="md" style={{ width: 200 }}>
-            <Skeleton w={180} h={160} />
-            <Skeleton w={180} h={160} mt={20} />
+            <Skeleton w={180} h={180} />
+            <Skeleton w={180} h={300} mt={20} />
           </Paper>
           <Paper p="md" style={{ flex: 1 }}>
             <Skeleton height={treemapH} />
@@ -71,7 +71,9 @@ const TreemapChartClient = () => {
     <Paper mt={20} bg="transparent">
       <Group align="flex-start">
         <Paper p="xs" style={{ width: 240 }}>
-          <Stack gap={2}>
+          <Title order={5}>板块热力图</Title>
+
+          <Stack mt={10} gap={2}>
             <Text span size="sm">
               数据来源：东方财富
             </Text>
