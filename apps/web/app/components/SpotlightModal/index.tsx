@@ -25,8 +25,7 @@ const SpotlightModal = () => {
       return {
         id: code,
         label: shortName,
-        description,
-        onClick: () => router.push(`/products/screener?symbol=${code}`)
+        description
       };
     });
   };
@@ -38,6 +37,10 @@ const SpotlightModal = () => {
 
     setActions(generateActions(response.data));
   }, 500);
+
+  const handleClick = (action: SpotlightActionData) => {
+    router.push(`/products/screener?symbol=${action.id}`);
+  };
 
   useEffect(() => {
     handleSearch();
@@ -63,7 +66,7 @@ const SpotlightModal = () => {
               key={action.id}
               dimmedSections={false}
               highlightQuery={false}
-              onClick={() => console.log(action)}
+              onClick={() => handleClick(action)}
               style={{
                 backgroundColor: "none"
               }}
