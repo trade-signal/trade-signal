@@ -36,9 +36,8 @@ export const TreemapChart = ({
   const saveImageTitle = useMemo(() => {
     const marketLabel = getMarketLabel(marketType as MarketType);
     const sortLabel = getTreemapSortLabel(sortType);
-    const date = dayjs().format("YYYY-MM-DD");
-    const time = dayjs().format("HH:mm:ss");
-    return `${marketLabel}_${sortLabel}_${date}_${time}`;
+    const dateStr = dayjs().format("YYYYMMDD_HHmmss");
+    return `${marketLabel}_${sortLabel}_${dateStr}`;
   }, [marketType, sortType]);
 
   // 提取计算显示值的逻辑
